@@ -281,6 +281,7 @@ function sakolawp_student_roles_custom_column_row($val, $column_name, $user_id)
 
 	$user_meta = get_userdata($user_id);
 	$user_roles = $user_meta->roles;
+	$classes_name = '';
 
 	switch ($column_name) {
 		case 'class':
