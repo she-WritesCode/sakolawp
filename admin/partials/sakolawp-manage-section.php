@@ -22,8 +22,8 @@
 			<div class="skwp-logo">
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
-			<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><?php esc_html_e('Sections', 'sakolawp'); ?></a>
-			<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false"><?php esc_html_e('Add Section', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><?php esc_html_e('Parent Groups', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false"><?php esc_html_e('Add Parent Group', 'sakolawp'); ?></a>
 		</div>
 	</nav>
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
@@ -35,7 +35,7 @@
 					<thead>
 						<tr>
 							<th>
-								<?php esc_html_e('Section', 'sakolawp'); ?>
+								<?php esc_html_e('Parent Group', 'sakolawp'); ?>
 							</th>
 							<th>
 								<?php esc_html_e('Class', 'sakolawp'); ?>
@@ -100,12 +100,12 @@
 			<form id="myForm" name="myform" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
 				<input type="hidden" name="action" value="save_section_setting" />
 				<h5 class="skwp-form-header">
-					<?php esc_html_e('Add New Section', 'sakolawp'); ?>
+					<?php esc_html_e('Add New Parent Group', 'sakolawp'); ?>
 				</h5>
 				<div class="skwp-form-group skwp-clearfix">
 					<div class="skwp-row">
 						<div class="skwp-column skwp-column-3">
-							<label for=""><?php esc_html_e('Section Name', 'sakolawp'); ?></label>
+							<label for=""><?php esc_html_e('Parent Group Name', 'sakolawp'); ?></label>
 							<div class="input-group">
 								<input class="skwp-form-control" placeholder="Section Name" name="name" required="" type="text">
 							</div>

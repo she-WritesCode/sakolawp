@@ -51,7 +51,7 @@ $running_year = get_option('running_year');
 							</div>
 						</div>
 						<div class="skwp-column skwp-column-5">
-							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Section :', 'sakolawp'); ?></label>
+							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group :', 'sakolawp'); ?></label>
 								<select class="skwp-form-control" name="section_id" id="section_holder" required="">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 								</select>
@@ -148,7 +148,7 @@ $running_year = get_option('running_year');
 							</div>
 						</div>
 						<div class="skwp-column skwp-column-5">
-							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Section:', 'sakolawp'); ?></label>
+							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group:', 'sakolawp'); ?></label>
 								<select class="skwp-form-control" name="section_id" id="section_holder" required="">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 									<?php
@@ -212,9 +212,9 @@ $running_year = get_option('running_year');
 								<?php endforeach; ?>
 							</tbody>
 						</table>
-						<input type="hidden" name="class_id" value="<?php echo esc_attr( $class_id ); ?>">
-						<input type="hidden" name="section_id" value="<?php echo esc_attr( $section_id ); ?>">
-						<input type="hidden" name="timestamp" value="<?php echo esc_attr( $timestamp ); ?>">
+						<input type="hidden" name="class_id" value="<?php echo esc_attr($class_id); ?>">
+						<input type="hidden" name="section_id" value="<?php echo esc_attr($section_id); ?>">
+						<input type="hidden" name="timestamp" value="<?php echo esc_attr($timestamp); ?>">
 						<div class="skwp-skwp-form-button">
 							<button class="btn skwp-btn btn-rounded btn-primary" type="submit" value="absensi" name="absensi"> <?php esc_html_e('Update', 'sakolawp'); ?></button>
 						</div>

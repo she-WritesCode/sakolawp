@@ -39,7 +39,7 @@ $running_year = get_option('running_year');
 						<?php $cl = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", ARRAY_A);
 						foreach ($cl as $row) :
 						?>
-							<option value="<?php echo esc_attr( $row['class_id'] ); ?>"><?php echo esc_html($row['name']); ?></option>
+							<option value="<?php echo esc_attr($row['class_id']); ?>"><?php echo esc_html($row['name']); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -63,16 +63,16 @@ $running_year = get_option('running_year');
 			} else {
 				$class = $wpdb->get_row("SELECT class_id FROM {$wpdb->prefix}sakolawp_class", ARRAY_A);
 				$class_id = $class['class_id'];
-				if(!empty($class_id)) {
+				if (!empty($class_id)) {
 					$sections = $wpdb->get_results("SELECT section_id, class_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = $class_id", OBJECT);
 				}
 			}
-			if(!empty($sections)) {
+			if (!empty($sections)) {
 				foreach ($sections as $rows) : ?>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="tab" href="#rombel-<?php echo esc_attr($rows->section_id); ?>"><?php esc_html_e('Section', 'sakolawp'); ?> <?php echo esc_html($rows->name); ?></a>
+						<a class="nav-link" data-toggle="tab" href="#rombel-<?php echo esc_attr($rows->section_id); ?>"><?php esc_html_e('Parent Group', 'sakolawp'); ?> <?php echo esc_html($rows->name); ?></a>
 					</li>
-				<?php endforeach; 
+			<?php endforeach;
 			} ?>
 		</ul>
 	</div>
@@ -85,7 +85,7 @@ $running_year = get_option('running_year');
 		} else {
 			$class = $wpdb->get_row("SELECT class_id FROM {$wpdb->prefix}sakolawp_class", ARRAY_A);
 			$class_id = $class['class_id'];
-			if(!empty($class_id)) {
+			if (!empty($class_id)) {
 				$query = $wpdb->get_results("SELECT section_id, class_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = $class_id", OBJECT);
 			}
 		}
@@ -93,7 +93,7 @@ $running_year = get_option('running_year');
 			$sections = $query;
 			foreach ($sections as $row) : ?>
 
-				<div class="tab-pane" id="rombel-<?php echo esc_attr( $row->section_id ); ?>">
+				<div class="tab-pane" id="rombel-<?php echo esc_attr($row->section_id); ?>">
 					<div class="element-wrapper">
 						<div class="element-box table-responsive lined-primary shadow">
 							<div class="row m-b">
@@ -101,7 +101,7 @@ $running_year = get_option('running_year');
 									<p>
 										<?php
 										$class_name = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $row->class_id");
-										echo esc_html($class_name->name); ?><br><?php esc_html_e('Section', 'sakolawp'); ?>
+										echo esc_html($class_name->name); ?><br><?php esc_html_e('Parent Group', 'sakolawp'); ?>
 										<?php echo esc_html($row->name); ?>
 									</p>
 								</div>
@@ -110,7 +110,7 @@ $running_year = get_option('running_year');
 							<table class="table table-bordered table-schedule table-hover" cellpadding="0" cellspacing="0" width="100%">
 								<?php
 								$days = get_option('sakolawp_routine');
-								if(!empty($days)) {
+								if (!empty($days)) {
 									$days = $days;
 								} else {
 									$days = 1;
@@ -156,13 +156,13 @@ $running_year = get_option('running_year');
 											AND year = '$running_year'
 											ORDER BY time_start ASC", ARRAY_A);
 
-											if(!empty($row->class_id)) {
+											if (!empty($row->class_id)) {
 												foreach ($routines as $row2) :
 													$sub_id = $row2['subject_id'];
 													$teacher = $wpdb->get_row("SELECT teacher_id FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $sub_id");
 
 													$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $sub_id");
-												?>
+											?>
 													<td style="text-align:center">
 														<div class="pi-controls" style="text-align:right;">
 															<div class="pi-settings os-dropdown-trigger">
@@ -184,9 +184,9 @@ $running_year = get_option('running_year');
 														</div>
 														<?php
 														if ($row2['time_start_min'] == 0 && $row2['time_end_min'] == 0)
-															echo esc_html( $row2['time_start'] . ':' . $row2['time_start_min'] . '-' . $row2['time_end'] . ':' . $row2['time_end_min'] );
+															echo esc_html($row2['time_start'] . ':' . $row2['time_start_min'] . '-' . $row2['time_end'] . ':' . $row2['time_end_min']);
 														if ($row2['time_start_min'] != 0 || $row2['time_end_min'] != 0)
-															echo esc_html( $row2['time_start'] . ':' . $row2['time_start_min'] . '-' . $row2['time_end'] . ':' . $row2['time_end_min'] );
+															echo esc_html($row2['time_start'] . ':' . $row2['time_start_min'] . '-' . $row2['time_end'] . ':' . $row2['time_end_min']);
 														?>
 														<br>
 														<b><?php echo esc_html($subject->name); ?></b>
@@ -197,7 +197,7 @@ $running_year = get_option('running_year');
 														<br><br>
 													</td>
 
-												<?php endforeach; 
+											<?php endforeach;
 											} ?>
 										</table>
 									</tr>
@@ -234,7 +234,7 @@ $running_year = get_option('running_year');
 										<?php $cl = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", ARRAY_A);
 										foreach ($cl as $row) :
 										?>
-											<option value="<?php echo esc_attr( $row['class_id'] ); ?>"><?php echo esc_html( $row['name'] ); ?></option>
+											<option value="<?php echo esc_attr($row['class_id']); ?>"><?php echo esc_html($row['name']); ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -242,7 +242,7 @@ $running_year = get_option('running_year');
 						</div>
 						<div class="skwp-form-group skwp-row skwp-clearfix">
 							<div class="skwp-column skwp-column-1">
-								<label for=""> <?php esc_html_e('Section', 'sakolawp'); ?></label>
+								<label for=""> <?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 								<div class="input-group">
 									<div class="input-group-addon">
 										<i class="picons-thin-icon-thin-0003_write_pencil_new_edit"></i>
@@ -302,7 +302,7 @@ $running_year = get_option('running_year');
 									<select name="time_start" class="skwp-form-control" required>
 										<option value=""><?php esc_html_e('Hour', 'sakolawp'); ?></option>
 										<?php for ($i = 0; $i <= 12; $i++) : ?>
-											<option value="<?php echo esc_attr( $i ); ?>"><?php echo esc_html( $i ); ?></option>
+											<option value="<?php echo esc_attr($i); ?>"><?php echo esc_html($i); ?></option>
 										<?php endfor; ?>
 									</select>
 								</div>
@@ -314,9 +314,9 @@ $running_year = get_option('running_year');
 										<?php for ($i = 0; $i <= 11; $i++) : ?>
 											<option value="<?php $n = $i * 5;
 															if ($n < 10) echo '0' . $n;
-															else echo esc_attr( $n ); ?>"><?php $n = $i * 5;
-																				if ($n < 10) echo '0' . $n;
-																				else echo esc_html( $n ); ?></option>
+															else echo esc_attr($n); ?>"><?php $n = $i * 5;
+																							if ($n < 10) echo '0' . $n;
+																							else echo esc_html($n); ?></option>
 										<?php endfor; ?>
 									</select>
 								</div>
@@ -340,7 +340,7 @@ $running_year = get_option('running_year');
 									<select name="time_end" class="skwp-form-control" required>
 										<option value=""><?php esc_html_e('Hour', 'sakolawp'); ?></option>
 										<?php for ($i = 0; $i <= 12; $i++) : ?>
-											<option value="<?php echo esc_attr( $i ); ?>"><?php echo esc_html( $i ); ?></option>
+											<option value="<?php echo esc_attr($i); ?>"><?php echo esc_html($i); ?></option>
 										<?php endfor; ?>
 									</select>
 								</div>
@@ -352,9 +352,9 @@ $running_year = get_option('running_year');
 										<?php for ($i = 0; $i <= 11; $i++) : ?>
 											<option value="<?php $n = $i * 5;
 															if ($n < 10) echo '0' . $n;
-															else echo esc_attr( $n ); ?>"><?php $n = $i * 5;
-																				if ($n < 10) echo '0' . $n;
-																				else echo esc_html( $n ); ?></option>
+															else echo esc_attr($n); ?>"><?php $n = $i * 5;
+																							if ($n < 10) echo '0' . $n;
+																							else echo esc_html($n); ?></option>
 										<?php endfor; ?>
 									</select>
 								</div>

@@ -112,10 +112,14 @@ global $wpdb;
 					<div class="skwp-tab-menu">
 						<ul class="nav nav-tabs upper">
 							<li class="nav-item">
-								<a class="nav-link <?php if ($action == 'homeworkroom') { echo 'active'; } ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Homework', 'sakolawp'); ?></span></a>
+								<a class="nav-link <?php if ($action == 'homeworkroom') {
+														echo 'active';
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Homework', 'sakolawp'); ?></span></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link <?php if ($action == 'homeworkroom_details') {	echo 'active'; } ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Delivered Homework', 'sakolawp'); ?></span></a>
+								<a class="nav-link <?php if ($action == 'homeworkroom_details') {
+														echo 'active';
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Delivered Homework', 'sakolawp'); ?></span></a>
 							</li>
 						</ul>
 					</div>
@@ -176,14 +180,14 @@ global $wpdb;
 											<?php esc_html_e('Teacher:', 'sakolawp'); ?>
 										</th>
 										<td>
-											<?php 
+											<?php
 											$user_info = get_user_meta($row['uploader_id']);
 											$first_name = $user_info["first_name"][0];
 											$last_name = $user_info["last_name"][0];
 
-											$user_name = $first_name .' '. $last_name;
+											$user_name = $first_name . ' ' . $last_name;
 
-											if(empty($first_name)) {
+											if (empty($first_name)) {
 												$user_info = get_userdata($row['uploader_id']);
 												$user_name = $user_info->display_name;
 											}
@@ -204,7 +208,7 @@ global $wpdb;
 									</tr>
 									<tr>
 										<th>
-											<?php echo esc_html__('Section', 'sakolawp'); ?>
+											<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
 										</th>
 										<td>
 											<?php
@@ -218,7 +222,7 @@ global $wpdb;
 							</div>
 						</div>
 					</div>
-				<?php endforeach;
+			<?php endforeach;
 			} ?>
 
 			<?php if ($action == 'homeworkroom_details') {
@@ -229,10 +233,14 @@ global $wpdb;
 					<div class="skwp-tab-menu">
 						<ul class="nav nav-tabs upper">
 							<li class="nav-item">
-								<a class="nav-link <?php if ($action == 'homeworkroom') { echo 'active'; } ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Homework', 'sakolawp'); ?></span></a>
+								<a class="nav-link <?php if ($action == 'homeworkroom') {
+														echo 'active';
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Homework', 'sakolawp'); ?></span></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link <?php if ($action == 'homeworkroom_details') { echo 'active'; } ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Delivered Homework', 'sakolawp'); ?></span></a>
+								<a class="nav-link <?php if ($action == 'homeworkroom_details') {
+														echo 'active';
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Delivered Homework', 'sakolawp'); ?></span></a>
 							</li>
 						</ul>
 					</div>
@@ -320,14 +328,14 @@ global $wpdb;
 											<?php esc_html_e('Teacher:', 'sakolawp'); ?>
 										</th>
 										<td>
-											<?php 
+											<?php
 											$user_info = get_user_meta($row['uploader_id']);
 											$first_name = $user_info["first_name"][0];
 											$last_name = $user_info["last_name"][0];
 
-											$user_name = $first_name .' '. $last_name;
+											$user_name = $first_name . ' ' . $last_name;
 
-											if(empty($first_name)) {
+											if (empty($first_name)) {
 												$user_info = get_userdata($row['uploader_id']);
 												$user_name = $user_info->display_name;
 											}
@@ -348,7 +356,7 @@ global $wpdb;
 									</tr>
 									<tr>
 										<th>
-											<?php echo esc_html__('Section', 'sakolawp'); ?>
+											<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
 										</th>
 										<td>
 											<?php
@@ -362,7 +370,7 @@ global $wpdb;
 							</div>
 						</div>
 					</div>
-				<?php 
+		<?php
 				endforeach;
 			}
 		} ?>

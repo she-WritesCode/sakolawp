@@ -51,13 +51,13 @@ if (isset($_POST['submit'])) {
 									$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
 									foreach ($classes as $class) :
 									?>
-										<option value="<?php echo esc_attr( $class->class_id ); ?>"><?php echo esc_html($class->name); ?></option>
+										<option value="<?php echo esc_attr($class->class_id); ?>"><?php echo esc_html($class->name); ?></option>
 									<?php endforeach; ?>
 								</select>
 							</div>
 						</div>
 						<div class="skwp-column skwp-column-5">
-							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Section', 'sakolawp'); ?></label>
+							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 								<select class="skwp-form-control" name="section_id" id="section_holder">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 								</select>
@@ -93,8 +93,8 @@ if (isset($_POST['submit'])) {
 										else if ($i == 12)
 											$m = esc_html__('December', 'sakolawp');
 									?>
-										<option value="<?php echo esc_attr( $i ); ?>">
-											<?php echo esc_html( $m ); ?>
+										<option value="<?php echo esc_attr($i); ?>">
+											<?php echo esc_html($m); ?>
 										</option>
 									<?php
 									endfor;
@@ -108,8 +108,8 @@ if (isset($_POST['submit'])) {
 								<select name="year_sel" class="skwp-form-control" required="">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 									<?php $year = explode('-', $running_year); ?>
-									<option value="<?php echo esc_attr( $year[0] ); ?>"><?php echo esc_html( $year[0] ); ?></option>
-									<option value="<?php echo esc_attr( $year[1] ); ?>"><?php echo esc_html( $year[1] ); ?></option>
+									<option value="<?php echo esc_attr($year[0]); ?>"><?php echo esc_html($year[0]); ?></option>
+									<option value="<?php echo esc_attr($year[1]); ?>"><?php echo esc_html($year[1]); ?></option>
 								</select>
 							</div>
 						</div>
@@ -117,7 +117,7 @@ if (isset($_POST['submit'])) {
 							<div class="skwp-form-group skwp-mt-30"> <button class="btn skwp-btn btn-rounded btn-primary" type="submit" value="submit" name="submit"><span><?php esc_html_e('View', 'sakolawp'); ?></span></button></div>
 						</div>
 					</div>
-					<input type="hidden" name="year" value="<?php echo esc_attr( $running_year ); ?>">
+					<input type="hidden" name="year" value="<?php echo esc_attr($running_year); ?>">
 				</form>
 			<?php endif; ?>
 
@@ -134,20 +134,24 @@ if (isset($_POST['submit'])) {
 									$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
 									foreach ($classes as $class) :
 									?>
-										<option value="<?php echo esc_attr($class->class_id); ?>" <?php if ($class->class_id == $class_id) { echo "selected"; } ?>><?php echo esc_html($class->name); ?></option>
+										<option value="<?php echo esc_attr($class->class_id); ?>" <?php if ($class->class_id == $class_id) {
+																										echo "selected";
+																									} ?>><?php echo esc_html($class->name); ?></option>
 									<?php endforeach; ?>
 								</select>
 							</div>
 						</div>
 						<div class="skwp-column skwp-column-5">
-							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Section', 'sakolawp'); ?></label>
+							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 								<select class="skwp-form-control" name="section_id" id="section_holder">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 									<?php
 									$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
 									echo '<option value="">' . esc_html__('Select', 'sakolawp') . '</option>';
 									foreach ($sections as $row) { ?>
-										<option value="<?php echo esc_attr($row['section_id']); ?>" <?php if ($row['section_id'] == $section_id) { echo "selected"; } ?>><?php echo esc_html($row['name']); ?></option>
+										<option value="<?php echo esc_attr($row['section_id']); ?>" <?php if ($row['section_id'] == $section_id) {
+																										echo "selected";
+																									} ?>><?php echo esc_html($row['name']); ?></option>
 									<?php } ?>
 								</select>
 							</div>
@@ -319,9 +323,9 @@ if (isset($_POST['submit'])) {
 												if ($status == 0 || $status == NULL) { ?>
 
 												<?php } ?>
-											</td>
-										<?php endforeach;
-									} ?>
+										</td>
+								<?php endforeach;
+										} ?>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>

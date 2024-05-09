@@ -1,5 +1,5 @@
 <?php
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 global $wpdb;
 
@@ -9,7 +9,7 @@ $teacher_id = get_current_user_id();
 
 $rand = substr(md5(rand(100000000, 200000000)), 0, 10);
 
-if(isset($_POST['submit'])) {
+if (isset($_POST['submit'])) {
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sanitize_text_field($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
@@ -32,7 +32,7 @@ if(isset($_POST['submit'])) {
 
 	$wpdb->insert(
 		$wpdb->prefix . 'sakolawp_exams',
-		array( 
+		array(
 			'title' => $title,
 			'description' => $description,
 			'availablefrom' => $availablefrom,
@@ -54,116 +54,116 @@ if(isset($_POST['submit'])) {
 	);
 }
 
-if(isset($_GET['action']) == 'delete') {
+if (isset($_GET['action']) == 'delete') {
 	$exam_code = $_GET['exam_code'];
 
 	$wpdb->delete(
 		$wpdb->prefix . 'sakolawp_exams',
-		array( 
+		array(
 			'exam_code' => $exam_code
 		)
 	);
 }
 
-get_header(); 
-do_action( 'sakolawp_before_main_content' ); 
+get_header();
+do_action('sakolawp_before_main_content');
 
-$my_exams = $wpdb->get_row( "SELECT teacher_id FROM {$wpdb->prefix}sakolawp_exams WHERE teacher_id = $teacher_id"); ?>
+$my_exams = $wpdb->get_row("SELECT teacher_id FROM {$wpdb->prefix}sakolawp_exams WHERE teacher_id = $teacher_id"); ?>
 
 <input id="teacher_id_sel" type="hidden" name="teacher_id_target" value="<?php echo esc_attr($teacher_id); ?>">
 
-<?php if(!empty($my_exams)) :
+<?php if (!empty($my_exams)) :
 
-$user_info = get_userdata($teacher_id);
-$teacher_name = $user_info->display_name;
+	$user_info = get_userdata($teacher_id);
+	$teacher_name = $user_info->display_name;
 
 ?>
-<div class="exams-online-page skwp-content-inner">
-	<div class="skwp-page-title skwp-clearfix">
-		<h5 class="pull-left"><?php echo esc_html_e('Online Exams', 'sakolawp'); ?>
-			<span class="skwp-subtitle">
-				<?php echo esc_html($teacher_name); ?>
-			</span>
-		</h5>
-	
-		<div class="pull-right">
-			<a class="btn btn-primary btn-rounded btn-upper skwp-btn" href="#" data-target="#exampleModal1" data-toggle="modal" type="button"><?php echo esc_html__('Add New', 'sakolawp'); ?></a>
+	<div class="exams-online-page skwp-content-inner">
+		<div class="skwp-page-title skwp-clearfix">
+			<h5 class="pull-left"><?php echo esc_html_e('Online Exams', 'sakolawp'); ?>
+				<span class="skwp-subtitle">
+					<?php echo esc_html($teacher_name); ?>
+				</span>
+			</h5>
+
+			<div class="pull-right">
+				<a class="btn btn-primary btn-rounded btn-upper skwp-btn" href="#" data-target="#exampleModal1" data-toggle="modal" type="button"><?php echo esc_html__('Add New', 'sakolawp'); ?></a>
+			</div>
+		</div>
+
+		<div class="skwp-table table-responsive skwp-mt-20">
+			<table id="tableini" class="table dataTable exams-table">
+				<thead>
+					<tr>
+						<th class="online_exams"><?php esc_html_e('Title', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Date Start', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Date End', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$today = strtotime(date("m/d/Y"));
+					$today2 = strtotime(date("d-m-Y"));
+
+					$post = $wpdb->get_results("SELECT title,class_id,section_id,subject_id,availablefrom,clock_start,availableto,clock_end,exam_code FROM {$wpdb->prefix}sakolawp_exams WHERE teacher_id = $teacher_id", ARRAY_A);
+					foreach ($post as $row) :
+					?>
+						<tr>
+							<td class="tes">
+								<?php echo $row['title']; ?>
+							</td>
+							<td>
+								<?php
+								$class_id = $row['class_id'];
+								$section_id = $row['section_id'];
+								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
+								echo esc_html($class->name);
+
+								echo esc_html__(' - ', 'sakolawp');
+
+								$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
+								echo esc_html($section->name);
+								?>
+							</td>
+							<td>
+								<?php $subject_id = $row['subject_id'];
+								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
+								echo esc_html($subject->name);
+								?>
+							</td>
+							<td>
+								<?php echo esc_html($row['availablefrom']); ?>
+								<?php echo esc_html($row['clock_start']); ?>
+							</td>
+							<td>
+								<?php echo esc_html($row['availableto']); ?>
+								<?php echo esc_html($row['clock_end']); ?>
+							</td>
+							<td class="row-actions">
+								<a class="btn btn-rounded btn-sm btn-primary skwp-btn" href="<?php echo add_query_arg('exam_code', $row['exam_code'], home_url('examroom')); ?>">
+									<i class="picons-thin-icon-thin-0071_document_file_paper"></i><span><?php esc_html_e('View', 'sakolawp'); ?></span>
+								</a>
+								<a class="btn btn-rounded btn-sm btn-danger skwp-btn" href="<?php echo add_query_arg(array('exam_code' => $row['exam_code'], 'action' => 'delete'), home_url('online_exams')); ?>" onClick="return confirm('Konfirmasi Hapus')">
+									<span><?php esc_html_e('Delete', 'sakolawp'); ?></span>
+								</a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
 		</div>
 	</div>
 
-	<div class="skwp-table table-responsive skwp-mt-20">
-		<table id="tableini" class="table dataTable exams-table">
-			<thead>
-				<tr>
-					<th class="online_exams"><?php esc_html_e('Title', 'sakolawp'); ?></th>
-					<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
-					<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
-					<th><?php esc_html_e('Date Start', 'sakolawp'); ?></th>
-					<th><?php esc_html_e('Date End', 'sakolawp'); ?></th>
-					<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php
-				$today = strtotime(date("m/d/Y"));
-				$today2 = strtotime(date("d-m-Y"));
-
-				$post = $wpdb->get_results( "SELECT title,class_id,section_id,subject_id,availablefrom,clock_start,availableto,clock_end,exam_code FROM {$wpdb->prefix}sakolawp_exams WHERE teacher_id = $teacher_id", ARRAY_A );
-				foreach ($post as $row):
-				?>
-				<tr>
-					<td class="tes">
-						<?php echo $row['title'];?>
-					</td>
-					<td>
-						<?php
-							$class_id = $row['class_id'];
-							$section_id = $row['section_id'];
-							$class = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
-							echo esc_html($class->name);
-
-							echo esc_html__(' - ', 'sakolawp');
-
-							$section = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
-							echo esc_html($section->name);
-						?>
-					</td>
-					<td>
-						<?php $subject_id = $row['subject_id'];
-							$subject = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
-							echo esc_html($subject->name);
-						?>
-					</td>
-					<td>
-						<?php echo esc_html($row['availablefrom']);?>
-						<?php echo esc_html($row['clock_start']);?>
-					</td>
-					<td>
-						<?php echo esc_html($row['availableto']);?>
-						<?php echo esc_html($row['clock_end']);?>
-					</td>
-					<td class="row-actions">
-						<a class="btn btn-rounded btn-sm btn-primary skwp-btn" href="<?php echo add_query_arg( 'exam_code', $row['exam_code'], home_url( 'examroom' ) );?>">
-							<i class="picons-thin-icon-thin-0071_document_file_paper"></i><span><?php esc_html_e('View', 'sakolawp'); ?></span>
-						</a>
-						<a class="btn btn-rounded btn-sm btn-danger skwp-btn" href="<?php echo add_query_arg( array('exam_code' => $row['exam_code'], 'action' => 'delete'), home_url( 'online_exams' ) );?>" onClick="return confirm('Konfirmasi Hapus')">
-							<span><?php esc_html_e('Delete', 'sakolawp'); ?></span>
-						</a>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-	</div>
-</div>
-
-<?php 
+<?php
 else :
-	echo esc_html_e('You are not create an exams for your class yet', 'sakolawp' ); ?>
+	echo esc_html_e('You are not create an exams for your class yet', 'sakolawp'); ?>
 	<div style="margin-bottom:15px;text-align:right;">
 		<button class="btn btn-primary btn-rounded btn-upper" data-target="#exampleModal1" data-toggle="modal" type="button"><?php esc_html_e('Add New Exam', 'sakolawp'); ?></button>
 	</div>
-	<?php
+<?php
 endif;
 ?>
 
@@ -187,18 +187,18 @@ endif;
 									<!-- id="class_changer" -->
 									<select class="form-control" name="class_id" required="" id="class_holder">
 										<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
-										<?php $cl = $wpdb->get_results( "SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", ARRAY_A );
-											foreach($cl as $row):
+										<?php $cl = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", ARRAY_A);
+										foreach ($cl as $row) :
 										?>
-											<option value="<?php echo $row['class_id'];?>"><?php echo $row['name'];?></option>
-										<?php endforeach;?>
+											<option value="<?php echo $row['class_id']; ?>"><?php echo $row['name']; ?></option>
+										<?php endforeach; ?>
 									</select>
 								</div>
 							</div>
 						</div>
 						<div class="skwp-column skwp-column-3">
 							<div class="form-group">
-								<label class="col-form-label" for=""><?php esc_html_e('Section', 'sakolawp'); ?></label>
+								<label class="col-form-label" for=""><?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 								<div class="input-group">
 									<div class="input-group-addon">
 										<i class="os-icon picons-thin-icon-thin-0002_write_pencil_new_edit"></i>
@@ -276,15 +276,15 @@ endif;
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="modal-footer skwp-form-button">
-					<button class="btn btn-rounded btn-success skwp-btn" name="submit" value="submit" type="submit"> <?php esc_html_e('Create', 'sakolawp'); ?></button>
-				</div>
+			</div>
+			<div class="modal-footer skwp-form-button">
+				<button class="btn btn-rounded btn-success skwp-btn" name="submit" value="submit" type="submit"> <?php esc_html_e('Create', 'sakolawp'); ?></button>
+			</div>
 			</form>
 		</div>
 	</div>
 </div>
 
 <?php
-do_action( 'sakolawp_after_main_content' );
+do_action('sakolawp_after_main_content');
 get_footer();

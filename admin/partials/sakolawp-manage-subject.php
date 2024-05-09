@@ -34,7 +34,7 @@
 					<thead>
 						<tr>
 							<th>
-								<?php esc_html_e('Section', 'sakolawp'); ?>
+								<?php esc_html_e('Parent Group', 'sakolawp'); ?>
 							</th>
 							<th>
 								<?php esc_html_e('Class', 'sakolawp'); ?>
@@ -131,7 +131,7 @@
 						</div>
 
 						<div class="skwp-column skwp-column-5">
-							<label for=""> <?php esc_html_e('Section', 'sakolawp'); ?></label>
+							<label for=""> <?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 							<div class="input-group">
 								<select class="skwp-form-control" name="section_id" id="section_holder">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>

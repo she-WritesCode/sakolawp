@@ -54,14 +54,14 @@ if (isset($_POST['submit'])) {
 								$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
 								foreach ($classes as $class) :
 								?>
-									<option value="<?php echo esc_attr( $class->class_id ); ?>"><?php echo esc_html( $class->name ); ?></option>
+									<option value="<?php echo esc_attr($class->class_id); ?>"><?php echo esc_html($class->name); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
 
 					<div class="skwp-column skwp-column-4">
-						<div class="skwp-form-group"> <label class="gi" for=""><?php echo esc_html__('Section :', 'sakolawp'); ?></label>
+						<div class="skwp-form-group"> <label class="gi" for=""><?php echo esc_html__('Parent Group :', 'sakolawp'); ?></label>
 							<select class="skwp-form-control" name="section_id" id="section_holder">
 								<option value=""><?php echo esc_html__('Select', 'sakolawp'); ?></option>
 							</select>
@@ -85,14 +85,14 @@ if (isset($_POST['submit'])) {
 								$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
 								foreach ($classes as $class) :
 								?>
-									<option value="<?php echo esc_attr( $class->class_id ); ?>"><?php echo esc_html( $class->name ); ?></option>
+									<option value="<?php echo esc_attr($class->class_id); ?>"><?php echo esc_html($class->name); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
 
 					<div class="skwp-column skwp-column-4">
-						<div class="skwp-form-group"> <label class="gi" for=""><?php echo esc_html__('Section :', 'sakolawp'); ?></label>
+						<div class="skwp-form-group"> <label class="gi" for=""><?php echo esc_html__('Parent Group :', 'sakolawp'); ?></label>
 							<select class="skwp-form-control" name="section_id" id="section_holder">
 								<option value=""><?php echo esc_html__('Select', 'sakolawp'); ?></option>
 							</select>
@@ -124,7 +124,7 @@ if (isset($_POST['submit'])) {
 											<span>
 												<?php
 												$school_name = get_option('school_name');
-												echo esc_html( $school_name ); ?>
+												echo esc_html($school_name); ?>
 											</span>
 										</a>
 									</div>
@@ -149,8 +149,8 @@ if (isset($_POST['submit'])) {
 												echo get_avatar($current_id, 80);
 											}
 
-											$class = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
-											$section = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
+											$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
+											$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
 											$tgt_id = intval($current_id);
 											?>
 										</div>
@@ -159,11 +159,11 @@ if (isset($_POST['submit'])) {
 												<span class="name">
 													<?php echo esc_html($user_name); ?><br>
 												</span>
-												<small>Class: <?php echo esc_html($class->name).'-'.esc_html($section->name); ?></small>
+												<small>Class: <?php echo esc_html($class->name) . '-' . esc_html($section->name); ?></small>
 											</div>
 										</div>
 										<div class="pi-link">
-											<a href="<?php echo esc_url(add_query_arg(array('tgt_id' => $tgt_id), home_url( 'view-user' ) )); ?>">
+											<a href="<?php echo esc_url(add_query_arg(array('tgt_id' => $tgt_id), home_url('view-user'))); ?>">
 												<i class="sakolawp-icon icon-user"></i>
 											</a>
 										</div>

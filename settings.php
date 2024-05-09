@@ -24,7 +24,7 @@ add_action('sakolawp_after_main_content', 'sakolawp_output_content_wrapper_end')
 add_action('show_user_profile', 'sakolawp_show_user_enroll_fields');
 add_action('edit_user_profile', 'sakolawp_show_user_enroll_fields');
 
-function sakolawp_show_user_enroll_fields( $user )
+function sakolawp_show_user_enroll_fields($user)
 { ?>
 	<h3><?php echo esc_html__('Enrollment Year', 'sakolawp'); ?></h3>
 	<table class="form-table">
@@ -35,9 +35,9 @@ function sakolawp_show_user_enroll_fields( $user )
 				$options = get_option('running_year');
 				//$items = array("Red", "Green", "Blue", "Orange", "White", "Violet", "Yellow");
 				echo "<select id='running_year' name='running_year'>";
-				for($i = 0; $i < 10; $i++):
-					$selected = ($options == (2016+$i).'-'.(2016+$i+1)) ? 'selected="selected"' : '';
-					echo "<option value=".(2016+$i).'-'.(2016+$i+1)." $selected>".(2016+$i).'-'.(2016+$i+1)."</option>";
+				for ($i = 0; $i < 10; $i++) :
+					$selected = ($options == (2016 + $i) . '-' . (2016 + $i + 1)) ? 'selected="selected"' : '';
+					echo "<option value=" . (2016 + $i) . '-' . (2016 + $i + 1) . " $selected>" . (2016 + $i) . '-' . (2016 + $i + 1) . "</option>";
 				endfor;
 				echo "</select>"; ?>
 			</td>
@@ -54,7 +54,7 @@ function sakolawp_save_user_enroll_fields($user_id)
 		return false;
 
 	global $wpdb;
-	$year = sanitize_text_field( $_POST['running_year'] );
+	$year = sanitize_text_field($_POST['running_year']);
 	$wpdb->update(
 		$wpdb->prefix . 'sakolawp_enroll',
 		array(
@@ -267,112 +267,107 @@ add_filter('document_title_parts', 'sakolawp_modify_page_title');
 
 
 // Add custom column to student user table
-function sakolawp_student_roles_custom_column( $column ) {
+function sakolawp_student_roles_custom_column($column)
+{
 	$column['class'] = esc_html__('Class', 'sakolawp');
 	$column['status'] = esc_html__('Status', 'sakolawp');
 	$column['enroll'] = esc_html__('Enroll', 'sakolawp');
 	return $column;
 }
-add_filter( 'manage_users_columns', 'sakolawp_student_roles_custom_column' );
+add_filter('manage_users_columns', 'sakolawp_student_roles_custom_column');
 
-function sakolawp_student_roles_custom_column_row( $val, $column_name, $user_id ) {
+function sakolawp_student_roles_custom_column_row($val, $column_name, $user_id)
+{
 
-		$user_meta = get_userdata($user_id);
-		$user_roles = $user_meta->roles;
+	$user_meta = get_userdata($user_id);
+	$user_roles = $user_meta->roles;
 
-			switch ($column_name) {
-				case 'class' :
-					global $wpdb;
+	switch ($column_name) {
+		case 'class':
+			global $wpdb;
 
-					if($user_roles[0] == 'student') {
-						$enroll = $wpdb->get_row( "SELECT class_id, section_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $user_id");
+			if ($user_roles[0] == 'student') {
+				$enroll = $wpdb->get_row("SELECT class_id, section_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $user_id");
 
-						if(!empty($enroll)) {
-							$class_id = $enroll->class_id;
-							$section_id = $enroll->section_id;
+				if (!empty($enroll)) {
+					$class_id = $enroll->class_id;
+					$section_id = $enroll->section_id;
 
-							$class = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
-							$section = $wpdb->get_row( "SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
+					$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
+					$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
 
-							if(!empty($class) && !empty($section)) {
-								$classes_name = esc_html($class->name) . esc_html__(' - ', 'sakolawp') . esc_html($section->name);
-							}
-							else {
-								$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
-							}
-						}
-						else {
-							$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
-						}
-					} // if student
-					if($user_roles[0] == 'administrator') {
-						$classes_name = esc_html__('-admin-', 'sakolawp');
+					if (!empty($class) && !empty($section)) {
+						$classes_name = esc_html($class->name) . esc_html__(' - ', 'sakolawp') . esc_html($section->name);
+					} else {
+						$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
 					}
-					if($user_roles[0] == 'teacher') {
-						$classes_name = esc_html__('-teacher-', 'sakolawp');
-					}
-					if($user_roles[0] == 'parent') {
-						$classes_name = esc_html__('-parent-', 'sakolawp');
-					}
-					return $classes_name;
-
-				case 'status' :
-					global $wpdb;
-					$user_active = get_user_meta($user_id, 'user_active', true);
-
-					if(!empty($user_active)) {
-						if($user_roles[0] == 'administrator') {
-							$status_col = esc_html__('Administrator', 'sakolawp');
-						}
-						else {
-							$status_col = esc_html__('User Active', 'sakolawp');
-						}
-					}
-					else {
-						if($user_roles[0] == 'administrator') {
-							$status_col = esc_html__('Administrator', 'sakolawp');
-						}
-						else {
-							$status_col = esc_html__('User Not Active', 'sakolawp');
-						}
-					}
-					return $status_col;
-
-					case 'enroll' :
-						global $wpdb;
-
-						if($user_roles[0] == 'student') {
-							$enroll = $wpdb->get_row( "SELECT year FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $user_id");
-
-							if(!empty($enroll)) {
-								$enroll_year = $enroll->year;
-
-								if(!empty($enroll_year)) {
-									$classes_name = esc_html($enroll_year);
-								}
-								else {
-									$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
-								}
-							}
-							else {
-								$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
-							}
-						} // if student
-						if($user_roles[0] == 'administrator') {
-							$classes_name = esc_html__('-admin-', 'sakolawp');
-						}
-						if($user_roles[0] == 'teacher') {
-							$classes_name = esc_html__('-teacher-', 'sakolawp');
-						}
-						if($user_roles[0] == 'parent') {
-							$classes_name = esc_html__('-parent-', 'sakolawp');
-						}
-						return $classes_name;
-				default:
+				} else {
+					$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+				}
+			} // if student
+			if ($user_roles[0] == 'administrator') {
+				$classes_name = esc_html__('-admin-', 'sakolawp');
 			}
-			return $val;
+			if ($user_roles[0] == 'teacher') {
+				$classes_name = esc_html__('-teacher-', 'sakolawp');
+			}
+			if ($user_roles[0] == 'parent') {
+				$classes_name = esc_html__('-parent-', 'sakolawp');
+			}
+			return $classes_name;
+
+		case 'status':
+			global $wpdb;
+			$user_active = get_user_meta($user_id, 'user_active', true);
+
+			if (!empty($user_active)) {
+				if ($user_roles[0] == 'administrator') {
+					$status_col = esc_html__('Administrator', 'sakolawp');
+				} else {
+					$status_col = esc_html__('User Active', 'sakolawp');
+				}
+			} else {
+				if ($user_roles[0] == 'administrator') {
+					$status_col = esc_html__('Administrator', 'sakolawp');
+				} else {
+					$status_col = esc_html__('User Not Active', 'sakolawp');
+				}
+			}
+			return $status_col;
+
+		case 'enroll':
+			global $wpdb;
+
+			if ($user_roles[0] == 'student') {
+				$enroll = $wpdb->get_row("SELECT year FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $user_id");
+
+				if (!empty($enroll)) {
+					$enroll_year = $enroll->year;
+
+					if (!empty($enroll_year)) {
+						$classes_name = esc_html($enroll_year);
+					} else {
+						$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+					}
+				} else {
+					$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+				}
+			} // if student
+			if ($user_roles[0] == 'administrator') {
+				$classes_name = esc_html__('-admin-', 'sakolawp');
+			}
+			if ($user_roles[0] == 'teacher') {
+				$classes_name = esc_html__('-teacher-', 'sakolawp');
+			}
+			if ($user_roles[0] == 'parent') {
+				$classes_name = esc_html__('-parent-', 'sakolawp');
+			}
+			return $classes_name;
+		default:
+	}
+	return $val;
 }
-add_filter( 'manage_users_custom_column', 'sakolawp_student_roles_custom_column_row', 10, 3 );
+add_filter('manage_users_custom_column', 'sakolawp_student_roles_custom_column_row', 10, 3);
 
 // Sakolawp Student Class
 add_action('show_user_profile', 'sakolawp_student_class_select');
@@ -383,7 +378,7 @@ function sakolawp_student_class_select($user)
 
 	global $wpdb;
 	$student_id = $user->data->ID;
-	$enroll = $wpdb->get_row( "SELECT class_id, section_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
+	$enroll = $wpdb->get_row("SELECT class_id, section_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
 
 	$class_id_tgt = $enroll->class_id;
 	$section_id_tgt = $enroll->section_id; ?>
@@ -393,33 +388,33 @@ function sakolawp_student_class_select($user)
 	<div class="info">
 		<?php echo esc_html__('Please note that if you change the student classes after assign them to a class, it will make the content that this student already have disappear.', 'sakolawp'); ?>
 	</div>
-	
+
 	<table class="form-table">
 		<tr>
 			<th><label for="user_active"><?php echo esc_html__('Class', 'sakolawp'); ?></label></th>
 			<td>
 				<select class="skwp-form-control" name="class_id" id="class_holder">
-					<option value=""><?php esc_html_e( 'Select', 'sakolawp' ); ?></option>
-					<?php 
-					$classes = $wpdb->get_results( "SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT );
-					foreach($classes as $class):
+					<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+					<?php
+					$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
+					foreach ($classes as $class) :
 					?>
-					<option value="<?php echo esc_attr($class->class_id); ?>" <?php if($class->class_id == $class_id_tgt) { ?> selected <?php } ?>><?php echo esc_html( $class->name ); ?></option>
-					<?php endforeach;?>
+						<option value="<?php echo esc_attr($class->class_id); ?>" <?php if ($class->class_id == $class_id_tgt) { ?> selected <?php } ?>><?php echo esc_html($class->name); ?></option>
+					<?php endforeach; ?>
 				</select>
 			</td>
 		</tr>
 		<tr>
-			<th><label for="user_active"><?php echo esc_html__('Section', 'sakolawp'); ?></label></th>
+			<th><label for="user_active"><?php echo esc_html__('Parent Group', 'sakolawp'); ?></label></th>
 			<td>
 				<select class="skwp-form-control" name="section_id" id="section_holder">
-					<option value=""><?php esc_html_e( 'Select', 'sakolawp' ); ?></option>
-					<?php 
+					<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+					<?php
 					global $wpdb;
-					$sections = $wpdb->get_results( "SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section", OBJECT );
-					foreach($sections as $section):
+					$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section", OBJECT);
+					foreach ($sections as $section) :
 					?>
-					<option value="<?php echo esc_attr($section->section_id); ?>" <?php if($section->section_id == $section_id_tgt) { ?> selected <?php } ?>><?php echo esc_html( $section->name ); ?></option>
+						<option value="<?php echo esc_attr($section->section_id); ?>" <?php if ($section->section_id == $section_id_tgt) { ?> selected <?php } ?>><?php echo esc_html($section->name); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</td>
@@ -442,7 +437,7 @@ function sakolawp_save_user_reassign_Class($user_id)
 
 	$wpdb->update(
 		$wpdb->prefix . 'sakolawp_enroll',
-		array( 
+		array(
 			'class_id' => $class_id,
 			'section_id' => $section_id
 		),
