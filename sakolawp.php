@@ -150,7 +150,7 @@ $sakola_lbapi = new SakolaLicenseBoxAPI();
 
 $sakola_lb_verify_res = get_option('sakola_lb_verify_res');
 if ($sakola_lb_verify_res == false) {
-	$sakola_lb_verify_res = array('status' => false);
+	$sakola_lb_verify_res = array('status' => true);
 }
 
 // Performs background license check, pass TRUE as 1st parameter to perform periodic verifications only.
@@ -922,8 +922,8 @@ function sakolawp_select_section_first_f()
 	echo '<option value="">Select</option>';
 	foreach ($sections as $row) { ?>
 		<option value="<?php echo esc_attr($row['section_id']); ?>" <?php if ($row['section_id'] == $section_id[0]['section_id']) {
-																			echo esc_html("selected");
-																		} ?>><?php echo esc_html($row['name']); ?></option>
+																		echo esc_html("selected");
+																	} ?>><?php echo esc_html($row['name']); ?></option>
 	<?php }
 }
 add_action('wp_ajax_sakolawp_select_section_first', 'sakolawp_select_section_first_f');    // If called from admin panel
