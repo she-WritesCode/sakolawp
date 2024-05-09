@@ -181,6 +181,20 @@ CREATE TABLE $mark_table (
 	lab8 int(11) NULL,
 	lab9 int(11) NULL,
 	lab10 int(11) NULL,
+	-- lab11 int(11) NULL,
+	-- lab12 int(11) NULL,
+	-- lab13 int(11) NULL,
+	-- lab14 int(11) NULL,
+	-- lab15 int(11) NULL,
+	-- lab16 int(11) NULL,
+	-- lab17 int(11) NULL,
+	-- lab18 int(11) NULL,
+	-- lab19 int(11) NULL,
+	-- lab20 int(11) NULL,
+	-- lab21 int(11) NULL,
+	-- lab22 int(11) NULL,
+	-- lab23 int(11) NULL,
+	-- lab24 int(11) NULL,
 	lab_total int(11) NULL,
 	year longtext NOT NULL,
 	final varchar(200) NULL,
@@ -313,6 +327,6 @@ CREATE TABLE $student_answer_table (
 	UNIQUE KEY id (answer_id)
 ) $charset_collate;";
 
-require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-dbDelta( $sql );
-add_option( 'sakolawp_db_version', $sakolawp_db_version );
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+dbDelta($sql);
+add_option('sakolawp_db_version', $sakolawp_db_version);

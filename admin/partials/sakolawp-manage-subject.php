@@ -62,7 +62,12 @@
 									global $wpdb;
 									$classes = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $subject->class_id");
 									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $subject->section_id");
-									echo esc_html($classes->name) . '-' . esc_html($section->name); ?>
+									if ($section) {
+										echo esc_html($classes->name) . '-' . esc_html($section->name);
+									} else {
+										echo esc_html($classes->name);
+									}
+									?>
 								</td>
 								<td>
 									<?php
