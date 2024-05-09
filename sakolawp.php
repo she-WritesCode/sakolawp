@@ -845,7 +845,7 @@ function sakolawp_show_error_messages()
 		// Loop error codes and display errors
 		foreach ($codes as $code) {
 			$message = sakolawp_errors()->get_error_message($code);
-			echo '<span class="error"><strong>' . esc_html__('Error', 'sakolawp') . '</strong>: ' . $message . '</span><br/>';
+			echo '<span class="error" style="color:green;"><strong>' . esc_html__('Error', 'sakolawp') . '</strong>: ' . $message . '</span><br/>';
 		}
 		echo '</div>';
 	}
@@ -1304,3 +1304,27 @@ function sakolawp_remove_empty_area()
 
 add_action('admin_post_nopriv_remove_empty_area', 'sakolawp_remove_empty_area');
 add_action('admin_post_remove_empty_area', 'sakolawp_remove_empty_area');
+
+
+function skwp_get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
+{
+	$args  = array(
+		'title'                  => $page_title,
+		'post_type'              => $post_type,
+		// 'post_status'            => get_post_stati(),
+		'posts_per_page'         => 1,
+		'update_post_term_cache' => false,
+		'update_post_meta_cache' => false,
+		'no_found_rows'          => true,
+		'orderby'                => 'post_date ID',
+		'order'                  => 'ASC',
+	);
+	$query = new WP_Query($args);
+	$pages = $query->posts;
+
+	if (empty($pages)) {
+		return null;
+	}
+
+	return get_post($pages[0], $output);
+}
