@@ -1328,3 +1328,44 @@ function skwp_get_page_by_title($page_title, $output = OBJECT, $post_type = 'pag
 
 	return get_post($pages[0], $output);
 }
+
+
+/**
+ * Busola's Additions Starts Here
+ */
+
+
+function sakolawp_add_student()
+{
+	global $wpdb;
+
+	$target_dir = "uploads/";
+	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+	$uploadOk = 1;
+	$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+	$student_id = sanitize_file_name($_POST['csvFile']);
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$date_added = sanitize_text_field(time());
+	$running_year = get_option('running_year');
+	$year           = sanitize_text_field($running_year);
+	$random_code = sanitize_text_field(substr(md5(rand(0, 1000000)), 0, 7));
+	$wpdb->insert(
+		$wpdb->prefix . 'sakolawp_enroll',
+		array(
+			'enroll_code' => $random_code,
+			'student_id' => $student_id,
+			'class_id' => $class_id,
+			'section_id' => $section_id,
+			'roll' => $random_code,
+			'date_added' => $date_added,
+			'year' => $year
+		)
+	);
+
+	wp_redirect(admin_url('admin.php?page=sakolawp-student-area')); // <-- here goes address of site that user should be redirected after submitting that form
+	die;
+}
+
+add_action('admin_post_nopriv_add_student_user', 'sakolawp_add_student');
+add_action('admin_post_add_student_user', 'sakolawp_add_student');

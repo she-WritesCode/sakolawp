@@ -137,6 +137,7 @@ class Sakolawp_Admin
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Report Attendance', 'sakolawp'), esc_html__('Manage Report Attendance', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-report-attendance', array($this, 'manageReportAttendanceAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Students Area', 'sakolawp'), esc_html__('Students Area', 'sakolawp'), 'administrator', $this->plugin_name . '-student-area', array($this, 'studentAreaAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Assign Student', 'sakolawp'), esc_html__('Assign Student', 'sakolawp'), 'administrator', $this->plugin_name . '-assign-student', array($this, 'assignStudentAdminSettings'));
+			add_submenu_page($this->plugin_name . '-settings', esc_html__('Add Student', 'sakolawp'), esc_html__('Add Student', 'sakolawp'), 'administrator', $this->plugin_name . '-add-student', array($this, 'addStudentAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Homeworks', 'sakolawp'), esc_html__('Homeworks', 'sakolawp'), 'administrator', $this->plugin_name . '-homework', array($this, 'homeworkAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Exams', 'sakolawp'), esc_html__('Exams', 'sakolawp'), 'administrator', $this->plugin_name . '-exam', array($this, 'examAdminSettings'));
 			$docs_url = esc_url('https://themesawesome.zendesk.com/hc/en-us/categories/360003331032-SakolaWP');
@@ -1021,6 +1022,12 @@ class Sakolawp_Admin
 		require_once 'partials/' . $this->plugin_name . '-assign-student.php';
 	}
 
+	public function addStudentAdminSettings()
+	{
+		// set this var to be used in the settings-display view
+		require_once 'partials/' . $this->plugin_name . '-add-student.php';
+	}
+
 	public function homeworkAdminSettings()
 	{
 		// set this var to be used in the settings-display view
@@ -1165,12 +1172,13 @@ class Sakolawp_Admin
 
 	public function Dropdown_select_field_render($args)
 	{
+		$startingYear = 2024;
 		$options = get_option('running_year');
 		//$items = array("Red", "Green", "Blue", "Orange", "White", "Violet", "Yellow");
 		echo "<select id='running_year' name='running_year'>";
 		for ($i = 0; $i < 10; $i++) :
-			$selected = ($options == (2016 + $i) . '-' . (2016 + $i + 1)) ? 'selected="selected"' : '';
-			echo "<option value=" . (2016 + $i) . '-' . (2016 + $i + 1) . " $selected>" . (2016 + $i) . '-' . (2016 + $i + 1) . "</option>";
+			$selected = ($options == ($startingYear + $i) . '-' . ($startingYear + $i + 1)) ? 'selected="selected"' : '';
+			echo "<option value=" . ($startingYear + $i) . '-' . ($startingYear + $i + 1) . " $selected>" . ($startingYear + $i) . '-' . ($startingYear + $i + 1) . "</option>";
 		endfor;
 		echo "</select>";
 	}

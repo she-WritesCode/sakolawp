@@ -34,6 +34,10 @@ global $wpdb;
 				<span><?php esc_html_e('Assign Student', 'sakolawp'); ?></span>
 			</a>
 
+			<a class="nav-item nav-link" href="admin.php?page=sakolawp-add-student">
+				<span><?php esc_html_e('Add Student', 'sakolawp'); ?></span>
+			</a>
+
 		</ul>
 	</nav>
 

@@ -284,6 +284,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="tab-pane fade" id="nav-semester" role="tabpanel" aria-labelledby="nav-semester-tab">
 
 			<a class="add-new-semes" href="<?php echo add_query_arg(array('create' => 'create'), admin_url('admin.php?page=sakolawp-settings')); ?>"><?php esc_html_e('Add New', 'sakolawp'); ?></a>

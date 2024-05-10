@@ -39,6 +39,10 @@ if (isset($_POST['submit'])) {
 				<span><?php echo esc_html__('Assign Student', 'sakolawp'); ?></span>
 			</a>
 
+			<a class="nav-item nav-link" href="admin.php?page=sakolawp-add-student">
+				<span><?php esc_html_e('Add Student', 'sakolawp'); ?></span>
+			</a>
+
 		</ul>
 	</nav>
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
