@@ -40,7 +40,7 @@ if (isset($_POST['submit'])) {
 			</a>
 
 			<a class="nav-item nav-link" href="admin.php?page=sakolawp-add-student">
-				<span><?php esc_html_e('Add Student', 'sakolawp'); ?></span>
+				<span><?php esc_html_e('Add Students', 'sakolawp'); ?></span>
 			</a>
 
 		</ul>

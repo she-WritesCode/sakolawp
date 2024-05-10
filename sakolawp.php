@@ -1330,40 +1330,210 @@ function skwp_get_page_by_title($page_title, $output = OBJECT, $post_type = 'pag
 }
 
 
-/**
+/*************************************
  * Busola's Additions Starts Here
- */
+ ***************************************/
 
+/**
+ * Inserts a new record into the specified table or updates an existing record if a unique key constraint is violated.
+ * Returns the ID of the inserted/updated record.
+ *
+ * @param string $table_name      The name of the table to insert/update records into.
+ * @param array  $data            An associative array where keys are column names and values are the corresponding values to be inserted/updated.
+ * @param array  $unique_columns  An array containing the names of the columns that define uniqueness in the table.
+ * @param string $id_column		  the id column of table
+ * @return int|false The ID of the inserted/updated record, or false on failure.
+ */
+function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_column = 'id')
+{
+	global $wpdb;
+
+	// Filter $data array with keys from $unique_columns and extract values
+	$whereValues =  array_map(function ($key) use ($data) {
+		return $data[$key] ?? null; // return null if key does not exist
+	}, $unique_columns);
+	// Prepare the SQL statement
+	$sql = $wpdb->prepare(
+		"INSERT IGNORE INTO {$table_name} (" . implode(', ', array_keys($data)) . ")
+         SELECT " . implode(', ', array_fill(0, count($data), '%s')) . "
+         FROM dual
+         WHERE NOT EXISTS (
+             SELECT 1
+             FROM {$table_name}
+             WHERE " . implode(' AND ', array_map(function ($key) {
+			return "{$key} = %s";
+		}, $unique_columns)) . ")
+         LIMIT 1",
+		array_merge(array_values($data), $whereValues)
+	);
+
+	// Log the SQL query for debugging
+	error_log("`skwp_insert_or_update_record` SQL Query: " . $sql);
+
+	// Execute the query
+	$result = $wpdb->query($sql);
+
+	// Log any MySQL error messages for debugging
+	if ($result === false) {
+		error_log("`skwp_insert_or_update_record` MySQL Error: " . $wpdb->last_error);
+	}
+
+	// If the insert operation was successful, return the ID of the inserted record
+	if ($result !== 0) {
+		return $wpdb->insert_id;
+	} else {
+		// If the record already exists, return its ID
+		$findSql = $wpdb->prepare("SELECT " . $id_column . " FROM {$table_name} WHERE " . implode(' AND ', array_map(function ($key) {
+			return "{$key} = %s";
+		}, $unique_columns)), $whereValues);
+
+		error_log("SQL Query: " . $findSql);
+
+		$existing_record_id = $wpdb->get_var($findSql);
+		return $existing_record_id !== null ? $existing_record_id : false;
+	}
+}
 
 function sakolawp_add_student()
 {
 	global $wpdb;
 
-	$target_dir = "uploads/";
-	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-	$uploadOk = 1;
-	$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-	$student_id = sanitize_file_name($_POST['csvFile']);
-	$class_id = sanitize_text_field($_POST['class_id']);
-	$section_id = sanitize_text_field($_POST['section_id']);
-	$date_added = sanitize_text_field(time());
-	$running_year = get_option('running_year');
-	$year           = sanitize_text_field($running_year);
-	$random_code = sanitize_text_field(substr(md5(rand(0, 1000000)), 0, 7));
-	$wpdb->insert(
-		$wpdb->prefix . 'sakolawp_enroll',
-		array(
-			'enroll_code' => $random_code,
-			'student_id' => $student_id,
-			'class_id' => $class_id,
-			'section_id' => $section_id,
-			'roll' => $random_code,
-			'date_added' => $date_added,
-			'year' => $year
-		)
-	);
+	if (isset($_FILES["filetoupload"]['tmp_name'])) {
 
-	wp_redirect(admin_url('admin.php?page=sakolawp-student-area')); // <-- here goes address of site that user should be redirected after submitting that form
+		$tmpName = $_FILES["filetoupload"]["tmp_name"];
+		$class_id = sanitize_text_field($_POST['class_id']);
+		// $teacher_id = sanitize_text_field($_POST['teacher_id']);
+		$should_send_email = ($_POST['should_send_email']);
+
+		if ($_FILES["filetoupload"]["error"] > 0) {
+			sakolawp_errors()->add('csv_upload_failed', esc_html__($_FILES["file"]["error"], 'sakolawp'));
+		}
+
+		$csv_data = array_map('str_getcsv', file($tmpName));
+
+		array_walk($csv_data, function (&$x) use ($csv_data) {
+			$x = array_combine($csv_data[0], $x);
+		});
+
+		// array_shift = remove first value of array in csv file header was the first value
+		array_shift($csv_data);
+
+		foreach ($csv_data as $row) {
+			$username				= sanitize_text_field($row["Username"]);
+			$user_email				= sanitize_email($row["Email"]);
+			$user_first 			= sanitize_text_field($row["First Name"]);
+			$user_last	 			= sanitize_text_field($row["Last Name"]);
+			$user_mobile_number	 	= sanitize_text_field($row["Mobile Number"]);
+			$user_next_of_kin	 	= sanitize_text_field($row["Next of Kin"]);
+			$user_gender	 		= sanitize_text_field($row["Gender"]);
+			$user_city	 			= sanitize_text_field($row["City"]);
+			$user_state	 			= sanitize_text_field($row["State"]);
+			$user_matriculation_code = sanitize_text_field($row["Student ID"]);
+			$user_parent_group 		= trim(sanitize_text_field($row["Parent Group"]));
+			$user_pass				= sanitize_text_field($row["Password"]);
+			$user_roles 			= 'student';
+
+			if (!validate_username($username)) {
+				// invalid username
+				sakolawp_errors()->add('username_invalid', esc_html__('Invalid username', 'sakolawp'));
+			}
+			if ($username == '') {
+				// empty username
+				sakolawp_errors()->add('username_empty', esc_html__('Please enter a username', 'sakolawp'));
+			}
+			if (!is_email($user_email)) {
+				//invalid email
+				sakolawp_errors()->add('email_invalid', esc_html__('Invalid email', 'sakolawp'));
+			}
+
+			$user_by_username = username_exists($username);
+			$user_by_email = email_exists($user_email);
+
+			if (isset($user_by_username) && isset($user_by_email) && $user_by_username !== $user_by_email) {
+				// Username already registered
+				sakolawp_errors()->add('username_unavailable', esc_html__('Username already taken ', 'sakolawp'));
+			}
+
+
+			if (isset($user_by_username) && !isset($user_by_email)) {
+				// Username already registered but email is new so go ahead with a different username
+				$username = $username . sanitize_text_field(substr(md5(rand(0, 10000)), 0, 5));
+			}
+
+
+			$errors = sakolawp_errors()->get_error_messages();
+
+			// only create the user in if there are no errors
+			if (empty($errors)) {
+
+				$new_user_id = (isset($user_by_email) ? $user_by_email : isset($user_by_username)) ? $user_by_username : wp_insert_user(
+					array(
+						'user_login'		=> $username,
+						'user_pass'	 		=> $user_pass,
+						'user_email'		=> $user_email,
+						'first_name'		=> $user_first,
+						'last_name'			=> $user_last,
+						'user_registered'	=> date('Y-m-d H:i:s'),
+						'role'				=> $user_roles
+					)
+				);
+
+				if ($new_user_id) {
+
+					update_user_meta($new_user_id, 'mobile_number', $user_mobile_number);
+					update_user_meta($new_user_id, 'next_of_kin', $user_next_of_kin);
+					update_user_meta($new_user_id, 'gender', $user_gender);
+					update_user_meta($new_user_id, 'user_city', $user_city);
+					update_user_meta($new_user_id, 'user_state', $user_state);
+					update_user_meta($new_user_id, 'user_active', 1);
+
+					// find or create section
+					$table_name = $wpdb->prefix . 'sakolawp_section';
+					$data = array(
+						'name' => $user_parent_group,
+						'class_id' => $class_id,
+						'teacher_id' => null,
+					);
+					$unique_columns = array('class_id', 'name');
+					$section_id = skwp_insert_or_update_record($table_name, $data, $unique_columns, "section_id");
+
+
+					// enroll user in a class
+					$student_id 	= $new_user_id;
+					$date_added 	= sanitize_text_field(time());
+					$running_year 	= get_option('running_year');
+					$year           = sanitize_text_field($running_year);
+					skwp_insert_or_update_record(
+						$wpdb->prefix . 'sakolawp_enroll',
+						array(
+							'enroll_code' => $user_matriculation_code,
+							'student_id' => $student_id,
+							'class_id' => $class_id,
+							'section_id' => $section_id,
+							'roll' => $user_matriculation_code,
+							'date_added' => $date_added,
+							'year' => $year
+						),
+						array('student_id', 'section_id', 'class_id', "year", 'enroll_code')
+					);
+
+					if ($should_send_email) {
+						// send an email to the user alerting them of the registration
+						wp_new_user_notification($new_user_id, null, 'user');
+					}
+				}
+			}
+			// else {
+			// 	var_dump("failed", $errors);
+			// 	die;
+			// }
+		}
+	} else {
+		sakolawp_errors()->add('csv_upload_failed', esc_html__('Failed to upload csv file', 'sakolawp'));
+	}
+	// $errors = sakolawp_errors()->get_error_messages();
+	// var_dump($errors, $_FILES, $_POST);
+	wp_redirect(admin_url('admin.php?page=sakolawp-add-student&success=1')); // <-- here goes address of site that user should be redirected after submitting that form
 	die;
 }
 

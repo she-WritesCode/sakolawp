@@ -67,7 +67,8 @@
 								<td>
 									<?php
 									$user_info = get_userdata($section->teacher_id);
-									echo esc_html($user_info->display_name); ?>
+
+									echo $user_info ? esc_html($user_info->display_name) : ""; ?>
 								</td>
 								<td>
 									<a class="btn skwp-btn btn-sm btn-primary" href="<?php echo add_query_arg(array('edit' => $section->section_id), admin_url('admin.php?page=sakolawp-manage-section')); ?>">
