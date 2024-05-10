@@ -938,7 +938,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 }
 
 .admin-welcome-inner {
-	grid-column: span 6;
+	grid-column: span 9;
 }
 .admin-dash-grid-item.skwp-user-counter-item {
 	grid-column: span 3;

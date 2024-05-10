@@ -81,7 +81,7 @@
 							<h4 class="user-count-role"><?php esc_html_e('Students', 'sakolawp'); ?></h4>
 						</div>
 					</div>
-					<div class="parent-counter admin-dash-grid-item skwp-user-counter-item skwp-clearfix">
+					<!-- <div class="parent-counter admin-dash-grid-item skwp-user-counter-item skwp-clearfix">
 						<?php
 						$parent_query = new WP_User_Query(array('role' => 'parent'));
 						$parent_count = (int) $parent_query->get_total();
@@ -90,7 +90,7 @@
 							<h2 class="user-item-count"><?php echo esc_html($parent_count); ?></h2>
 							<h4 class="user-count-role"><?php esc_html_e('Parents', 'sakolawp'); ?></h4>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 
