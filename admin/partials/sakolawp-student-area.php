@@ -122,9 +122,8 @@ if (isset($_POST['submit'])) {
 						$students = $wpdb->get_results("SELECT student_id, roll, class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE section_id = $section_id", ARRAY_A);
 
 						foreach ($students as $row2) :
-							$accountability_id = isset($row2['$accountability_id']) ? $row2['$accountability_id'] : 0;
 						?>
-							<pre><?php var_dump($row2); ?></pre>
+							<!-- <pre><?php var_dump($row2); ?></pre> -->
 							<div class="skwp-column skwp-column-4 m-b murid-list">
 								<div class="pipeline-item">
 									<div class="pi-foot">
@@ -140,6 +139,7 @@ if (isset($_POST['submit'])) {
 										<div class="avatar">
 											<?php
 											$current_id = $row2['student_id'];
+											$accountability_id = $row2['accountability_id'];
 											$user_info = get_user_meta($current_id);
 											$first_name = $user_info["first_name"][0];
 											$last_name = $user_info["last_name"][0];
@@ -169,7 +169,8 @@ if (isset($_POST['submit'])) {
 													<?php echo esc_html($user_name); ?><br>
 												</span>
 												<small>Class: <?php echo esc_html($class->name) . '-' . esc_html($section->name); ?></small>
-												<small>Accountability group: <?php echo isset($accountability->name) ? esc_html($accountability->name) : '<i>Unassigned</i>'; ?></small>
+												<br />
+												<small>Accountability group: <?php echo isset($accountability) ? esc_html($accountability->name) : '<i>Unassigned</i>'; ?></small>
 											</div>
 										</div>
 										<div class="pi-link">
