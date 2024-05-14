@@ -67,7 +67,7 @@ global $wpdb;
 
 			<div class="skwp-form-group skwp-clearfix">
 				<div class="skwp-row">
-					<div class="skwp-column skwp-column-4">
+					<div class="skwp-column skwp-column-2">
 						<div class="skwp-form-group">
 							<label for=""> <?php esc_html_e('Student Name', 'sakolawp'); ?></label>
 							<select class="skwp-form-control" name="student_id">
@@ -83,7 +83,7 @@ global $wpdb;
 						</div>
 					</div>
 
-					<div class="skwp-column skwp-column-4">
+					<div class="skwp-column skwp-column-2">
 						<div class="skwp-form-group">
 							<label for=""> <?php esc_html_e('Class', 'sakolawp'); ?></label>
 							<select class="skwp-form-control" name="class_id" id="class_holder">
@@ -98,7 +98,7 @@ global $wpdb;
 						</div>
 					</div>
 
-					<div class="skwp-column skwp-column-4">
+					<div class="skwp-column skwp-column-2">
 						<label for=""> <?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 						<div class="skwp-form-group">
 							<select class="skwp-form-control" name="section_id" id="section_holder">
@@ -114,7 +114,23 @@ global $wpdb;
 						</div>
 					</div>
 
-					<div class="skwp-column skwp-column-4">
+					<div class="skwp-column skwp-column-2">
+						<label for=""> <?php esc_html_e('Accountability Group', 'sakolawp'); ?></label>
+						<div class="skwp-form-group">
+							<select class="skwp-form-control" name="accountability_id" id="accountability_holder">
+								<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+								<?php
+								global $wpdb;
+								$accountabilityGroups = $wpdb->get_results("SELECT accountability_id, name FROM {$wpdb->prefix}sakolawp_accountability", OBJECT);
+								foreach ($accountabilityGroups as $accountability) :
+								?>
+									<option value="<?php echo esc_attr($accountability->accountability_id); ?>"><?php echo esc_html($accountability->name); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+
+					<div class="skwp-column skwp-column-2">
 						<button class="btn skwp-btn btn-rounded btn-primary skwp-mt-30" type="submit"> <?php esc_html_e('Add', 'sakolawp'); ?></button>
 					</div>
 				</div>

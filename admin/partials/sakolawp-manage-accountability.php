@@ -38,10 +38,10 @@
 								<?php esc_html_e('Accountability Group', 'sakolawp'); ?>
 							</th>
 							<th>
-								<?php esc_html_e('Class', 'sakolawp'); ?>
+								<?php esc_html_e('Parent Group', 'sakolawp'); ?>
 							</th>
 							<th>
-								<?php esc_html_e('Parent Group', 'sakolawp'); ?>
+								<?php esc_html_e('Class', 'sakolawp'); ?>
 							</th>
 							<th class="text-center">
 								<?php esc_html_e('Action', 'sakolawp'); ?>
@@ -61,13 +61,13 @@
 								<td>
 									<?php
 									global $wpdb;
-									$classes = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $accountabilityGroup->class_id");
+									$classes = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $accountabilityGroup->section_id");
 									echo esc_html($classes->name); ?>
 								</td>
 								<td>
 									<?php
 									global $wpdb;
-									$classes = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $accountabilityGroup->section_id");
+									$classes = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $accountabilityGroup->class_id");
 									echo esc_html($classes->name); ?>
 								</td>
 								<td>

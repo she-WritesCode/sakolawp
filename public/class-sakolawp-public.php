@@ -20,7 +20,8 @@
  * @subpackage Sakolawp/public
  * @author     Themes Awesome <themesawesome@gmail.com>
  */
-class Sakolawp_Public {
+class Sakolawp_Public
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,17 +48,17 @@ class Sakolawp_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct($plugin_name, $version)
+	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
 		add_action('wp_ajax_sakolawp_select_section',        'sakolawp_select_section_f');
 		add_action('wp_ajax_nopriv_sakolawp_select_section', 'sakolawp_select_section_f');
-		
-		add_action( 'wp_ajax_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f' );    // If called from admin panel
-		add_action( 'wp_ajax_nopriv_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f' );
 
+		add_action('wp_ajax_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');    // If called from admin panel
+		add_action('wp_ajax_nopriv_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');
 	}
 
 	/**
@@ -65,7 +66,8 @@ class Sakolawp_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -79,14 +81,13 @@ class Sakolawp_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( 'datatablesstyle', plugin_dir_url( __FILE__ ) . 'css/datatables.min.css', array());
-		wp_enqueue_style( 'daterangepicker', plugin_dir_url( __FILE__ ) . 'css/daterangepicker.css', array());
-		wp_enqueue_style( 'clockpicker', plugin_dir_url( __FILE__ ) . 'css/clockpicker.min.css', array());
-		wp_enqueue_style( 'fonts', plugin_dir_url( __FILE__ ) . 'css/fonts.css', array());
-		wp_enqueue_style( $this->plugin_name.'-rtl', plugin_dir_url( __FILE__ ) . 'css/sakolawp-public-rtl.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/sakolawp-public.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name.'-responsive', plugin_dir_url( __FILE__ ) . 'css/sakolawp-responsive.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style('datatablesstyle', plugin_dir_url(__FILE__) . 'css/datatables.min.css', array());
+		wp_enqueue_style('daterangepicker', plugin_dir_url(__FILE__) . 'css/daterangepicker.css', array());
+		wp_enqueue_style('clockpicker', plugin_dir_url(__FILE__) . 'css/clockpicker.min.css', array());
+		wp_enqueue_style('fonts', plugin_dir_url(__FILE__) . 'css/fonts.css', array());
+		wp_enqueue_style($this->plugin_name . '-rtl', plugin_dir_url(__FILE__) . 'css/sakolawp-public-rtl.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/sakolawp-public.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name . '-responsive', plugin_dir_url(__FILE__) . 'css/sakolawp-responsive.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -94,7 +95,8 @@ class Sakolawp_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -110,52 +112,51 @@ class Sakolawp_Public {
 
 		global $wp;
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/sakolawp-public.js', array( 'jquery' ), $this->version, false );
-		if($wp->request !== "exam") {
-			wp_enqueue_script( 'bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js', array( 'jquery' ), false );
-			wp_enqueue_script( 'daterange', plugin_dir_url( __FILE__ ) . 'js/daterange.js', array( 'jquery' ), false );
-			wp_enqueue_script( 'modal', plugin_dir_url( __FILE__ ) . 'js/modal.js', array( 'jquery' ), false );
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sakolawp-public.js', array('jquery'), $this->version, false);
+		if ($wp->request !== "exam") {
+			wp_enqueue_script('bootstrap', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false);
+			wp_enqueue_script('daterange', plugin_dir_url(__FILE__) . 'js/daterange.js', array('jquery'), false);
+			wp_enqueue_script('modal', plugin_dir_url(__FILE__) . 'js/modal.js', array('jquery'), false);
 		}
-		wp_enqueue_script( 'clockpicker', plugin_dir_url( __FILE__ ) . 'js/clockpicker.min.js', array( 'jquery' ), false );
-		wp_enqueue_script( 'isotope', plugin_dir_url( __FILE__ ) . 'js/isotope.js', array( 'jquery' ), false );
-		wp_enqueue_script( 'datatables', plugin_dir_url( __FILE__ ) . 'js/dataTables.min.js', array( 'jquery' ), false, true );
-		wp_enqueue_script( 'datatables-checkbox', plugin_dir_url( __FILE__ ) . 'js/dataTables.checkboxes.min.js', array( 'jquery' ), false, true );
+		wp_enqueue_script('clockpicker', plugin_dir_url(__FILE__) . 'js/clockpicker.min.js', array('jquery'), false);
+		wp_enqueue_script('isotope', plugin_dir_url(__FILE__) . 'js/isotope.js', array('jquery'), false);
+		wp_enqueue_script('datatables', plugin_dir_url(__FILE__) . 'js/dataTables.min.js', array('jquery'), false, true);
+		wp_enqueue_script('datatables-checkbox', plugin_dir_url(__FILE__) . 'js/dataTables.checkboxes.min.js', array('jquery'), false, true);
 
-		wp_enqueue_script( 'skwp-custom', plugin_dir_url( __FILE__ ) .'js/skwp-custom.js', array(), '1.0.0', true );
-		wp_localize_script( 'skwp-custom', 'skwp_ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-		
-		if($wp->request === "exam") {
-			wp_enqueue_script( 'cookie-js', plugin_dir_url( __FILE__ ) . 'js/js.cookie.js', array( 'jquery' ), false );
-			wp_enqueue_script( 'jquery-simple-pagination-plugin', plugin_dir_url( __FILE__ ) . 'js/jquery-simple-pagination-plugin.js', array( 'jquery' ), false );
-			wp_enqueue_script( 'sakolawp-validations', plugin_dir_url( __FILE__ ) . 'js/validations.js', array( 'jquery' ), false );
+		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', array(), '1.0.0', true);
+		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', 'datatables')));
+
+		if ($wp->request === "exam") {
+			wp_enqueue_script('cookie-js', plugin_dir_url(__FILE__) . 'js/js.cookie.js', array('jquery'), false);
+			wp_enqueue_script('jquery-simple-pagination-plugin', plugin_dir_url(__FILE__) . 'js/jquery-simple-pagination-plugin.js', array('jquery'), false);
+			wp_enqueue_script('sakolawp-validations', plugin_dir_url(__FILE__) . 'js/validations.js', array('jquery'), false);
 		}
 	}
 
-	function sakolawp_select_section_f() {
+	function sakolawp_select_section_f()
+	{
 		global $wpdb;
 		$class_id = $_REQUEST['class_id'];
-		$sections = $wpdb->get_results( "SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A );
+		$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
 		echo '<option value="">Select</option>';
-		foreach ($sections as $row) 
-		{
+		foreach ($sections as $row) {
 			echo '<option value="' . esc_attr($row['section_id']) . '">' . esc_html($row['name']) . '</option>';
 		}
 
 		exit();
 	}
 
-	function sakolawp_select_subject_teacher_f() {
+	function sakolawp_select_subject_teacher_f()
+	{
 		global $wpdb;
 		$section_id = $_REQUEST['section_id'];
 		$teacher_id = $_REQUEST['teacher_id'];
-		$subjects = $wpdb->get_results( "SELECT subject_id, name FROM {$wpdb->prefix}sakolawp_subject WHERE section_id = '$section_id' AND teacher_id = '$teacher_id'", ARRAY_A );
+		$subjects = $wpdb->get_results("SELECT subject_id, name FROM {$wpdb->prefix}sakolawp_subject WHERE section_id = '$section_id' AND teacher_id = '$teacher_id'", ARRAY_A);
 		echo '<option value="">Select</option>';
-		foreach ($subjects as $row) 
-		{
+		foreach ($subjects as $row) {
 			echo '<option value="' . esc_attr($row['subject_id']) . '">' . esc_html($row['name']) . '</option>';
 		}
 
 		exit();
 	}
-
 }

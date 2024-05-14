@@ -1437,7 +1437,7 @@ function sakolawp_add_student()
 			$user_state	 			= sanitize_text_field($row["State"]);
 			$user_matriculation_code = sanitize_text_field($row["Student ID"]);
 			$user_parent_group 		= trim(sanitize_text_field($row["Parent Group"]));
-			$user_accountability_group 		= trim(sanitize_text_field($row["Parent Group"]));
+			$user_accountability_group 		= trim(sanitize_text_field($row["Accountability Group"]));
 			$user_pass				= sanitize_text_field($row["Password"]);
 			$user_roles 			= 'student';
 
@@ -1514,7 +1514,7 @@ function sakolawp_add_student()
 						'section_id' => $section_id,
 					);
 					$unique_columns = array('class_id', 'name');
-					$accountability_id = skwp_insert_or_update_record($table_name, $data, $unique_columns, "section_id");
+					$accountability_id = skwp_insert_or_update_record($table_name, $data, $unique_columns, "accountability_id");
 
 
 					// enroll user in a class
@@ -1534,7 +1534,8 @@ function sakolawp_add_student()
 							'date_added' => $date_added,
 							'year' => $year
 						),
-						array('student_id', 'section_id', 'class_id', "year", 'enroll_code')
+						array('student_id', 'section_id', 'class_id', "year", 'enroll_code', 'accountability_id'),
+						"enroll_id"
 					);
 
 					if ($should_send_email) {
@@ -1559,7 +1560,6 @@ function sakolawp_add_student()
 
 add_action('admin_post_nopriv_add_student_user', 'sakolawp_add_student');
 add_action('admin_post_add_student_user', 'sakolawp_add_student');
-
 
 
 function sakolawp_manage_accountability()
@@ -1632,3 +1632,20 @@ function sakolawp_manage_delete_accountability()
 
 add_action('admin_post_nopriv_delete_accountability_setting', 'sakolawp_manage_delete_accountability');
 add_action('admin_post_delete_accountability_setting', 'sakolawp_manage_delete_accountability');
+
+
+function sakolawp_select_accountability_f()
+{
+	// Implement ajax function here
+	global $wpdb;
+	$section_id = $_REQUEST['section_id'];
+	$accountabilityGroups = $wpdb->get_results("SELECT accountability_id, name FROM {$wpdb->prefix}sakolawp_accountability WHERE section_id = '$section_id'", ARRAY_A);
+	echo '<option value="">Select</option>';
+	foreach ($accountabilityGroups as $row) {
+		echo '<option value="' . $row['accountability_id'] . '">' . $row['name'] . '</option>';
+	}
+
+	exit();
+}
+add_action('wp_ajax_sakolawp_select_accountability', 'sakolawp_select_accountability_f');    // If called from admin panel
+add_action('wp_ajax_nopriv_sakolawp_select_accountability', 'sakolawp_select_accountability_f');

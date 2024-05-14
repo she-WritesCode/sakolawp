@@ -89,6 +89,7 @@ class Sakolawp_Admin
 		 */
 		wp_enqueue_style($this->plugin_name . '-fonts', plugin_dir_url(__FILE__) . 'css/sakolawp-admin-fonts.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-rtl', plugin_dir_url(__FILE__) . 'css/sakolawp-admin-rtl.css', array(), $this->version, 'all');
+		wp_enqueue_style('datatables', plugin_dir_url(__FILE__) . 'css/dataTables.min.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/sakolawp-admin.css', array(), $this->version, 'all');
 	}
 
@@ -116,6 +117,7 @@ class Sakolawp_Admin
 		wp_enqueue_script('modal', plugin_dir_url(__FILE__) . 'js/modal.js', array('jquery'), false);
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/sakolawp-admin.js', array('jquery'), $this->version, false);
 		wp_enqueue_script('daterange', plugin_dir_url(__FILE__) . 'js/daterange.js', array('jquery'), false, true);
+		wp_enqueue_script('datatables', plugin_dir_url(__FILE__) . 'js/dataTables.min.js', array('jquery'), false, true);
 		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', array(), '1.0.0', true);
 		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
 	}

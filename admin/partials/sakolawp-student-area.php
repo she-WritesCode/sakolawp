@@ -119,8 +119,12 @@ if (isset($_POST['submit'])) {
 						<?php
 						$class_id = $class_id;
 						$section_id = $section_id;
-						$students = $wpdb->get_results("SELECT student_id, roll, class_id, section_id FROM {$wpdb->prefix}sakolawp_enroll WHERE section_id = $section_id", ARRAY_A);
-						foreach ($students as $row2) : ?>
+						$students = $wpdb->get_results("SELECT student_id, roll, class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE section_id = $section_id", ARRAY_A);
+
+						foreach ($students as $row2) :
+							$accountability_id = isset($row2['$accountability_id']) ? $row2['$accountability_id'] : 0;
+						?>
+							<pre><?php var_dump($row2); ?></pre>
 							<div class="skwp-column skwp-column-4 m-b murid-list">
 								<div class="pipeline-item">
 									<div class="pi-foot">
@@ -155,6 +159,7 @@ if (isset($_POST['submit'])) {
 
 											$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
 											$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
+											$accountability = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $accountability_id");
 											$tgt_id = intval($current_id);
 											?>
 										</div>
@@ -164,6 +169,7 @@ if (isset($_POST['submit'])) {
 													<?php echo esc_html($user_name); ?><br>
 												</span>
 												<small>Class: <?php echo esc_html($class->name) . '-' . esc_html($section->name); ?></small>
+												<small>Accountability group: <?php echo isset($accountability->name) ? esc_html($accountability->name) : '<i>Unassigned</i>'; ?></small>
 											</div>
 										</div>
 										<div class="pi-link">
