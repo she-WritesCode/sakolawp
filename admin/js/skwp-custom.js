@@ -4,12 +4,14 @@
 	if ($('#class_holder').length) {
 		$('#class_holder').on( 'change', function () {
 			var skwpClassVal = $('#class_holder').val();
+			var skwpSectionVal = $('#section_holder').attr("data-value");
 			$.ajax({
 				url: skwp_ajax_object.ajaxurl,
 				type: 'POST',
 				data: {
 					action: 'sakolawp_select_section',
-					class_id: skwpClassVal
+					class_id: skwpClassVal,
+					selected: skwpSectionVal
 				},
 				success: function(response) {
 					$('#section_holder').html(response);

@@ -856,12 +856,19 @@ function sakolawp_select_section_f()
 	// Implement ajax function here
 	global $wpdb;
 	$class_id = $_REQUEST['class_id'];
+	$selected = $_REQUEST['selected'];
 	$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
 	echo '<option value="">Select</option>';
 	foreach ($sections as $row) {
-		echo '<option value="' . $row['section_id'] . '">' . $row['name'] . '</option>';
+		$isSelected = $row['section_id'] == $selected ? 'selected' : '';
+		// echo '<option value="' . $row['section_id'] . '">' . $row['name'] . '</option>';
+		echo '<option ' .  $isSelected . ' value="' . $row['section_id'] . '">' . $row['name'] . '</option>';
 	}
-
+	/*
+<?php if ($class->class_id == $accountabilityGroup->class_id) {
+	echo "selected";
+} ?>
+*/
 	exit();
 }
 add_action('wp_ajax_sakolawp_select_section', 'sakolawp_select_section_f');    // If called from admin panel
@@ -1430,6 +1437,7 @@ function sakolawp_add_student()
 			$user_state	 			= sanitize_text_field($row["State"]);
 			$user_matriculation_code = sanitize_text_field($row["Student ID"]);
 			$user_parent_group 		= trim(sanitize_text_field($row["Parent Group"]));
+			$user_accountability_group 		= trim(sanitize_text_field($row["Parent Group"]));
 			$user_pass				= sanitize_text_field($row["Password"]);
 			$user_roles 			= 'student';
 
@@ -1498,6 +1506,17 @@ function sakolawp_add_student()
 					$section_id = skwp_insert_or_update_record($table_name, $data, $unique_columns, "section_id");
 
 
+					// find or create accountability group
+					$table_name = $wpdb->prefix . 'sakolawp_accountability';
+					$data = array(
+						'name' => $user_accountability_group,
+						'class_id' => $class_id,
+						'section_id' => $section_id,
+					);
+					$unique_columns = array('class_id', 'name');
+					$accountability_id = skwp_insert_or_update_record($table_name, $data, $unique_columns, "section_id");
+
+
 					// enroll user in a class
 					$student_id 	= $new_user_id;
 					$date_added 	= sanitize_text_field(time());
@@ -1511,6 +1530,7 @@ function sakolawp_add_student()
 							'class_id' => $class_id,
 							'section_id' => $section_id,
 							'roll' => $user_matriculation_code,
+							'accountability_id' => $accountability_id,
 							'date_added' => $date_added,
 							'year' => $year
 						),
@@ -1539,3 +1559,76 @@ function sakolawp_add_student()
 
 add_action('admin_post_nopriv_add_student_user', 'sakolawp_add_student');
 add_action('admin_post_add_student_user', 'sakolawp_add_student');
+
+
+
+function sakolawp_manage_accountability()
+{
+	global $wpdb;
+
+	$class_name = sanitize_text_field($_POST['name']);
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$wpdb->insert(
+		$wpdb->prefix . 'sakolawp_accountability',
+		array(
+			'name' => $class_name,
+			'class_id' => $class_id,
+			'section_id' => $section_id,
+
+		)
+	);
+
+	wp_redirect(admin_url('admin.php?page=sakolawp-manage-accountability')); // <-- here goes address of site that user should be redirected after submitting that form
+	die;
+}
+
+add_action('admin_post_nopriv_save_accountability_setting', 'sakolawp_manage_accountability');
+add_action('admin_post_save_accountability_setting', 'sakolawp_manage_accountability');
+
+
+function sakolawp_manage_edit_accountability()
+{
+	global $wpdb;
+
+	$class_name = sanitize_text_field($_POST['name']);
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$accountability_id = sanitize_text_field($_POST['accountability_id']);
+	$wpdb->update(
+		$wpdb->prefix . 'sakolawp_accountability',
+		array(
+			'name' => $class_name,
+			'class_id' => $class_id,
+			'section_id' => $section_id
+		),
+		array(
+			'accountability_id' => $accountability_id
+		)
+	);
+
+	wp_redirect(admin_url('admin.php?page=sakolawp-manage-accountability')); // <-- here goes address of site that user should be redirected after submitting that form
+	die;
+}
+
+add_action('admin_post_nopriv_edit_accountability_setting', 'sakolawp_manage_edit_accountability');
+add_action('admin_post_edit_accountability_setting', 'sakolawp_manage_edit_accountability');
+
+function sakolawp_manage_delete_accountability()
+{
+	global $wpdb;
+
+	$accountability_id = $_POST['accountability_id'];
+	$wpdb->delete(
+		$wpdb->prefix . 'sakolawp_accountability',
+		array(
+			'accountability_id' => $accountability_id
+		)
+	);
+
+	wp_redirect(admin_url('admin.php?page=sakolawp-manage-accountability')); // <-- here goes address of site that user should be redirected after submitting that form
+	die;
+}
+
+add_action('admin_post_nopriv_delete_accountability_setting', 'sakolawp_manage_delete_accountability');
+add_action('admin_post_delete_accountability_setting', 'sakolawp_manage_delete_accountability');

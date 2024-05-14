@@ -131,6 +131,7 @@ class Sakolawp_Admin
 
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Classes', 'sakolawp'), esc_html__('Manage Classes', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-class', array($this, 'manageClassAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Parent Groups', 'sakolawp'), esc_html__('Manage Parent Groups', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-section', array($this, 'manageSectionAdminSettings'));
+			add_submenu_page($this->plugin_name . '-settings', esc_html__('Accountability Groups', 'sakolawp'), esc_html__('Manage Accountability Groups', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-accountability', array($this, 'manageAccountabilityAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Subjects', 'sakolawp'), esc_html__('Manage Subjects', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-subject', array($this, 'manageSubjectAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Routine', 'sakolawp'), esc_html__('Manage Routines', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-routine', array($this, 'manageRoutineAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Attendance', 'sakolawp'), esc_html__('Manage Attendance', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-attendance', array($this, 'manageAttendanceAdminSettings'));
@@ -594,6 +595,123 @@ class Sakolawp_Admin
 		<?php }
 
 		require_once 'partials/' . $this->plugin_name . '-manage-section.php';
+	}
+
+	public function manageAccountabilityAdminSettings()
+	{
+		// set this var to be used in the settings-display view
+
+		if (isset($_GET['delete'])) {
+			$accountability_id = sanitize_text_field($_GET['delete']); ?>
+			<div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel"><?php esc_html_e('Delete Parent Group', 'sakolawp'); ?></h5>
+							<a href="?page=sakolawp-manage-accountability">
+								<span aria-hidden="true">&times;</span>
+							</a>
+						</div>
+						<form id="myForm" name="myform" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
+							<input type="hidden" name="action" value="delete_accountability_setting" />
+							<input type="hidden" name="accountability_id" value="<?php echo esc_attr($accountability_id); ?>" />
+							<div class="modal-body">
+								<?php esc_html_e('Are you sure ?', 'sakolawp'); ?>
+							</div>
+							<div class="modal-footer">
+								<a href="?page=sakolawp-manage-accountability" class="btn skwp-btn btn-sm btn-danger"><?php esc_html_e('Close', 'sakolawp'); ?></a>
+								<button class="btn btn-primary skwp-btn" type="submit"><?php esc_html_e('Delete', 'sakolawp'); ?></button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="modal-backdrop fade show"></div>
+		<?php }
+
+		if (isset($_GET['edit'])) {
+			$accountabilityGroup_id = sanitize_text_field($_GET['edit']);
+
+		?>
+			<!-- Modal -->
+			<div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel"><?php esc_html_e('Edit Parent Group', 'sakolawp'); ?></h5>
+							<a href="?page=sakolawp-manage-accountability">
+								<span aria-hidden="true">&times;</span>
+							</a>
+						</div>
+						<?php
+						global $wpdb;
+						$accountabilityGroups = $wpdb->get_results("SELECT section_id, name, accountability_id, class_id FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id =" . $accountabilityGroup_id . "", OBJECT);
+						foreach ($accountabilityGroups as $accountabilityGroup) :
+						?>
+							<form id="myForm" name="myform" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
+								<input type="hidden" name="action" value="edit_accountability_setting" />
+								<input type="hidden" name="accountability_id" value="<?php echo esc_attr($accountabilityGroup_id); ?>" />
+								<div class="modal-body">
+									<div class="form-group skwp-row">
+										<label class="skwp-column skwp-column-3 col-form-label" for=""> <?php esc_html_e('Accountability Group Name', 'sakolawp'); ?></label>
+										<div class="skwp-column skwp-column-2of3">
+											<div class="input-group">
+												<input class="skwp-form-control" placeholder="<?php esc_html_e('Accountability Group Name', 'sakolawp'); ?>" name="name" required="" type="text" value="<?php echo esc_attr($accountabilityGroup->name) ?>">
+											</div>
+										</div>
+									</div>
+									<div class="form-group skwp-row">
+										<label class="col-form-label skwp-column skwp-column-3" for=""> <?php esc_html_e('Class', 'sakolawp'); ?></label>
+										<div class="skwp-column skwp-column-2of3">
+											<div class="input-group">
+												<select class="skwp-form-control" name="class_id" id="class_holder">
+													<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+													<?php
+													global $wpdb;
+													$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
+													foreach ($classes as $class) :
+													?>
+														<option value="<?php echo esc_attr($class->class_id); ?>" <?php if ($class->class_id == $accountabilityGroup->class_id) {
+																														echo "selected";
+																													} ?>><?php echo esc_html($class->name); ?></option>
+													<?php endforeach; ?>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-group skwp-row">
+										<label class="col-form-label skwp-column skwp-column-3" for=""> <?php esc_html_e('Edit Parent Group', 'sakolawp'); ?></label>
+										<div class="skwp-column skwp-column-2of3">
+											<div class="input-group">
+												<div class="input-group-addon">
+													<i class="picons-thin-icon-thin-0003_write_pencil_new_edit"></i>
+												</div>
+												<select class="skwp-form-control" name="section_id" data-value="<?php echo $accountabilityGroup->section_id; ?>" required="" id="section_holder">
+													<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+													<?php $sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$accountabilityGroup->class_id'", ARRAY_A);
+
+													foreach ($sections as $row) {
+														$isSelected = $row['section_id'] == $accountabilityGroup->section_id ? 'selected' : '';
+														echo '<option ' .  $isSelected . ' value="' . $row['section_id'] . '">' . $row['name'] . '</option>';
+													} ?>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<a href="?page=sakolawp-manage-section" class="btn skwp-btn btn-sm btn-danger"><?php esc_html_e('Close', 'sakolawp'); ?></a>
+									<button class="btn btn-primary skwp-btn" type="submit"><?php esc_html_e('Save changes', 'sakolawp'); ?></button>
+								</div>
+							</form>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			</div>
+			<div class="modal-backdrop fade show"></div>
+		<?php }
+
+		require_once 'partials/' . $this->plugin_name . '-manage-accountability.php';
 	}
 
 	public function manageSubjectAdminSettings()

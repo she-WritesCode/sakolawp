@@ -6,6 +6,7 @@ $sakolawp_db_version = '1.0.0';
 $table_name = $wpdb->prefix . 'sakolawp_settings';
 $class_table = $wpdb->prefix . 'sakolawp_class';
 $section_table = $wpdb->prefix . 'sakolawp_section';
+$accountability_table = $wpdb->prefix . 'sakolawp_accountability';
 $subject_table = $wpdb->prefix . 'sakolawp_subject';
 $routine_table = $wpdb->prefix . 'sakolawp_class_routine';
 $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
@@ -43,6 +44,14 @@ CREATE TABLE $section_table (
 	UNIQUE KEY id (section_id)
 ) $charset_collate;
 
+CREATE TABLE $accountability_table (
+	accountability_id mediumint(11) NOT NULL AUTO_INCREMENT,
+	name longtext NOT NULL,
+	class_id int(11) NOT NULL,
+	section_id int(11) NOT NULL,
+	UNIQUE KEY id (accountability_id)
+) $charset_collate;
+
 CREATE TABLE $subject_table (
 	subject_id mediumint(11) NOT NULL AUTO_INCREMENT,
 	name longtext NOT NULL,
@@ -74,6 +83,7 @@ CREATE TABLE $enroll_table (
 	student_id varchar(110) NOT NULL,
 	class_id int(11) NOT NULL,
 	section_id int(11) NOT NULL,
+	accountability_id int(11) NOT NULL,
 	roll varchar(110) NOT NULL,
 	date_added text NULL,
 	year text NULL,
