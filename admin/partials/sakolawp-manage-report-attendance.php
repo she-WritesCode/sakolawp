@@ -45,7 +45,7 @@ if (isset($_POST['submit'])) {
 						<div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Class', 'sakolawp'); ?></label>
 								<select class="skwp-form-control" name="class_id" id="class_holder">
-									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+									<!-- <option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option> -->
 									<?php
 									global $wpdb;
 									$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
@@ -57,7 +57,7 @@ if (isset($_POST['submit'])) {
 							</div>
 						</div>
 						<div class="skwp-column skwp-column-5">
-							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
+							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Section', 'sakolawp'); ?></label>
 								<select class="skwp-form-control" name="section_id" id="section_holder">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 								</select>
@@ -106,7 +106,7 @@ if (isset($_POST['submit'])) {
 							<div class="skwp-form-group">
 								<label class="gi" for=""><?php esc_html_e('Year', 'sakolawp'); ?></label>
 								<select name="year_sel" class="skwp-form-control" required="">
-									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+									<!-- <option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option> -->
 									<?php $year = explode('-', $running_year); ?>
 									<option value="<?php echo esc_attr($year[0]); ?>"><?php echo esc_html($year[0]); ?></option>
 									<option value="<?php echo esc_attr($year[1]); ?>"><?php echo esc_html($year[1]); ?></option>
@@ -266,7 +266,11 @@ if (isset($_POST['submit'])) {
 							$attendance = get_option('sakolawp_routine');
 							$libur = $attendance;
 
-							$students = $wpdb->get_results("SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = $class_id AND section_id = $section_id AND year = '$running_year'", ARRAY_A);
+
+							$sql = $section_id
+								? "SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = $class_id AND section_id = $section_id AND year = '$running_year'"
+								: "SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = $class_id AND year = '$running_year'";
+							$students = $wpdb->get_results($sql, ARRAY_A);
 							foreach ($students as $row) : ?>
 								<tr>
 									<td nowrap>
@@ -295,7 +299,10 @@ if (isset($_POST['submit'])) {
 
 											$student_id = $row['student_id'];
 
-											$absens = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sakolawp_attendance_log WHERE class_id = $class_id AND month = '$month' AND year = '$year_sel' AND section_id = $section_id AND student_id = '$student_id'", ARRAY_A);
+											$sql = $section_id
+												? "SELECT * FROM {$wpdb->prefix}sakolawp_attendance_log WHERE class_id = $class_id AND month = '$month' AND year = '$year_sel' AND section_id = $section_id AND student_id = '$student_id'"
+												: "SELECT * FROM {$wpdb->prefix}sakolawp_attendance_log WHERE class_id = $class_id AND month = '$month' AND year = '$year_sel' AND student_id = '$student_id'";
+											$absens = $wpdb->get_results($sql, ARRAY_A);
 											foreach ($absens as $absen) :
 												$timestamps = $absen['time_' . $i];
 												$dayw2 = date('l', $timestamps);

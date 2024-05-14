@@ -21,7 +21,7 @@
 			<div class="skwp-logo">
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
-			<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><?php esc_html_e('Subjets', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><?php esc_html_e('Subjects', 'sakolawp'); ?></a>
 			<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false"><?php esc_html_e('Add Subject', 'sakolawp'); ?></a>
 		</div>
 	</nav>
@@ -50,8 +50,8 @@
 					<tbody>
 						<?php
 						global $wpdb;
-						$subjets = $wpdb->get_results("SELECT name, class_id, section_id, teacher_id, subject_id FROM {$wpdb->prefix}sakolawp_subject", OBJECT);
-						foreach ($subjets as $subject) :
+						$subjects = $wpdb->get_results("SELECT name, class_id, section_id, teacher_id, subject_id FROM {$wpdb->prefix}sakolawp_subject", OBJECT);
+						foreach ($subjects as $subject) :
 						?>
 							<tr>
 								<td>
@@ -72,7 +72,7 @@
 								<td>
 									<?php
 									$user_info = get_userdata($subject->teacher_id);
-									echo esc_html($user_info->display_name); ?>
+									echo $user_info ? esc_html($user_info->display_name) : '<i class="text-gray-500">No teacher assigned</i>'; ?>
 								</td>
 								<td>
 									<a class="btn skwp-btn btn-sm btn-primary" href="<?php echo add_query_arg(array('edit' => $subject->subject_id), admin_url('admin.php?page=sakolawp-manage-subject')); ?>">
@@ -162,7 +162,7 @@
 						<div class="skwp-column skwp-column-5">
 							<label for=""> <?php esc_html_e('Total Lab', 'sakolawp'); ?></label>
 							<div class="input-group">
-								<input class="skwp-form-control" placeholder="Total Lab" name="total_lab" type="number" min="1" max="10">
+								<input class="skwp-form-control" placeholder="Total Lab" name="total_lab" type="number" min="1" max="24">
 							</div>
 						</div>
 					</div>

@@ -21,12 +21,14 @@
 	if ($('#section_holder').length) {
 		$('#section_holder').on( 'change', function () {
 			var skwpSectionVal = $('#section_holder').val();
+			var skwpClassVal = $('#class_holder').val();
 			$.ajax({
 				url: skwp_ajax_object.ajaxurl,
 				type: 'POST',
 				data: {
 					action: 'sakolawp_select_subject',
-					section_id: skwpSectionVal
+					section_id: skwpSectionVal,
+					class_id: skwpClassVal
 				},
 				success: function(response) {
 					$('#subject_holder').html(response);

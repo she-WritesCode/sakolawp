@@ -714,7 +714,7 @@ class Sakolawp_Admin
 										<label class="skwp-column skwp-column-3 col-form-label" for=""> <?php esc_html_e('Total Lab', 'sakolawp'); ?></label>
 										<div class="skwp-column skwp-column-2of3">
 											<div class="input-group">
-												<input class="skwp-form-control" name="total_lab" type="number" min="1" max="10" value="<?php echo esc_attr($subject->total_lab) ?>">
+												<input class="skwp-form-control" name="total_lab" type="number" min="1" max="24" value="<?php echo esc_attr($subject->total_lab) ?>">
 											</div>
 										</div>
 									</div>

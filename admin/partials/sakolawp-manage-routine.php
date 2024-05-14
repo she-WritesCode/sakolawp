@@ -292,79 +292,83 @@ $running_year = get_option('running_year');
 								</div>
 							</div>
 						</div>
-						<div class="skwp-form-group skwp-row skwp-clearfix">
-							<div class="skwp-column skwp-column-1">
-								<label for=""> <?php esc_html_e('Time Start', 'sakolawp'); ?></label>
-								<div class="input-group">
-									<div class="input-group-addon">
-										<i class="picons-thin-icon-thin-0029_time_watch_clock_wall"></i>
+						<div class="skwp-form-group ">
+							<label for=""> <?php esc_html_e('Time Start', 'sakolawp'); ?></label>
+							<div class="skwp-form-group skwp-row skwp-clearfix">
+								<div class="skwp-column skwp-column-3">
+									<div class="input-group">
+										<div class="input-group-addon">
+											<i class="picons-thin-icon-thin-0029_time_watch_clock_wall"></i>
+										</div>
+										<select name="time_start" class="skwp-form-control" required>
+											<option value=""><?php esc_html_e('Hour', 'sakolawp'); ?></option>
+											<?php for ($i = 0; $i <= 12; $i++) : ?>
+												<option value="<?php echo esc_attr($i); ?>"><?php echo esc_html($i); ?></option>
+											<?php endfor; ?>
+										</select>
 									</div>
-									<select name="time_start" class="skwp-form-control" required>
-										<option value=""><?php esc_html_e('Hour', 'sakolawp'); ?></option>
-										<?php for ($i = 0; $i <= 12; $i++) : ?>
-											<option value="<?php echo esc_attr($i); ?>"><?php echo esc_html($i); ?></option>
-										<?php endfor; ?>
-									</select>
 								</div>
-							</div>
-							<div class="skwp-column skwp-column-1">
-								<div class="input-group">
-									<select name="time_start_min" class="skwp-form-control" required>
-										<option value=""><?php esc_html_e('Minute', 'sakolawp'); ?></option>
-										<?php for ($i = 0; $i <= 11; $i++) : ?>
-											<option value="<?php $n = $i * 5;
-															if ($n < 10) echo '0' . $n;
-															else echo esc_attr($n); ?>"><?php $n = $i * 5;
+								<div class="skwp-column skwp-column-3">
+									<div class="input-group">
+										<select name="time_start_min" class="skwp-form-control" required>
+											<option value=""><?php esc_html_e('Minute', 'sakolawp'); ?></option>
+											<?php for ($i = 0; $i <= 11; $i++) : ?>
+												<option value="<?php $n = $i * 5;
+																if ($n < 10) echo '0' . $n;
+																else echo esc_attr($n); ?>"><?php $n = $i * 5;
 																							if ($n < 10) echo '0' . $n;
 																							else echo esc_html($n); ?></option>
-										<?php endfor; ?>
-									</select>
+											<?php endfor; ?>
+										</select>
+									</div>
 								</div>
-							</div>
-							<div class="skwp-column skwp-column-1">
-								<div class="input-group">
-									<select class="skwp-form-control" name="starting_ampm" required>
-										<option value="1"><?php esc_html_e('AM', 'sakolawp'); ?></option>
-										<option value="2"><?php esc_html_e('PM', 'sakolawp'); ?></option>
-									</select>
+								<div class="skwp-column skwp-column-3">
+									<div class="input-group">
+										<select class="skwp-form-control" name="starting_ampm" required>
+											<option value="1"><?php esc_html_e('AM', 'sakolawp'); ?></option>
+											<option value="2"><?php esc_html_e('PM', 'sakolawp'); ?></option>
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>
-						<div class="skwp-form-group skwp-row skwp-clearfix">
-							<div class="skwp-column skwp-column-1">
-								<label for=""> <?php esc_html_e('Time End', 'sakolawp'); ?></label>
-								<div class="input-group">
-									<div class="input-group-addon">
-										<i class="picons-thin-icon-thin-0029_time_watch_clock_wall"></i>
+						<div class="skwp-form-group ">
+							<label for=""> <?php esc_html_e('Time End', 'sakolawp'); ?></label>
+							<div class="skwp-form-group skwp-row skwp-clearfix">
+								<div class="skwp-column skwp-column-3">
+									<div class="input-group">
+										<div class="input-group-addon">
+											<i class="picons-thin-icon-thin-0029_time_watch_clock_wall"></i>
+										</div>
+										<select name="time_end" class="skwp-form-control" required>
+											<option value=""><?php esc_html_e('Hour', 'sakolawp'); ?></option>
+											<?php for ($i = 0; $i <= 12; $i++) : ?>
+												<option value="<?php echo esc_attr($i); ?>"><?php echo esc_html($i); ?></option>
+											<?php endfor; ?>
+										</select>
 									</div>
-									<select name="time_end" class="skwp-form-control" required>
-										<option value=""><?php esc_html_e('Hour', 'sakolawp'); ?></option>
-										<?php for ($i = 0; $i <= 12; $i++) : ?>
-											<option value="<?php echo esc_attr($i); ?>"><?php echo esc_html($i); ?></option>
-										<?php endfor; ?>
-									</select>
 								</div>
-							</div>
-							<div class="skwp-column skwp-column-1">
-								<div class="input-group">
-									<select name="time_end_min" class="skwp-form-control" required>
-										<option value=""><?php esc_html_e('Minute', 'sakolawp'); ?></option>
-										<?php for ($i = 0; $i <= 11; $i++) : ?>
-											<option value="<?php $n = $i * 5;
-															if ($n < 10) echo '0' . $n;
-															else echo esc_attr($n); ?>"><?php $n = $i * 5;
+								<div class="skwp-column skwp-column-3">
+									<div class="input-group">
+										<select name="time_end_min" class="skwp-form-control" required>
+											<option value=""><?php esc_html_e('Minute', 'sakolawp'); ?></option>
+											<?php for ($i = 0; $i <= 11; $i++) : ?>
+												<option value="<?php $n = $i * 5;
+																if ($n < 10) echo '0' . $n;
+																else echo esc_attr($n); ?>"><?php $n = $i * 5;
 																							if ($n < 10) echo '0' . $n;
 																							else echo esc_html($n); ?></option>
-										<?php endfor; ?>
-									</select>
+											<?php endfor; ?>
+										</select>
+									</div>
 								</div>
-							</div>
-							<div class="skwp-column skwp-column-1">
-								<div class="input-group">
-									<select class="skwp-form-control" required="" name="ending_ampm">
-										<option value="1"><?php esc_html_e('AM', 'sakolawp'); ?></option>
-										<option value="2"><?php esc_html_e('PM', 'sakolawp'); ?></option>
-									</select>
+								<div class="skwp-column skwp-column-3">
+									<div class="input-group">
+										<select class="skwp-form-control" required="" name="ending_ampm">
+											<option value="1"><?php esc_html_e('AM', 'sakolawp'); ?></option>
+											<option value="2"><?php esc_html_e('PM', 'sakolawp'); ?></option>
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>

@@ -897,8 +897,8 @@ function sakolawp_select_subject_f()
 {
 	// Implement ajax function here
 	global $wpdb;
-	$section_id = $_REQUEST['section_id'];
-	$subjects = $wpdb->get_results("SELECT subject_id, name FROM {$wpdb->prefix}sakolawp_subject WHERE section_id = '$section_id'", ARRAY_A);
+	$class_id = $_REQUEST['class_id'];
+	$subjects = $wpdb->get_results("SELECT subject_id, name FROM {$wpdb->prefix}sakolawp_subject WHERE class_id = '$class_id'", ARRAY_A);
 	echo '<option value="">Select</option>';
 	foreach ($subjects as $row) {
 		echo '<option value="' . $row['subject_id'] . '">' . $row['name'] . '</option>';

@@ -157,7 +157,7 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 
 <?php
 else :
-	esc_html_e('You are not create a homework for your class yet', 'sakolawp'); ?>
+	esc_html_e('You have not create a homework for your class yet', 'sakolawp'); ?>
 	<div class="button-empty">
 		<button class="btn btn-primary btn-rounded btn-upper skwp-btn" data-target="#exampleModal1" data-toggle="modal" type="button"><?php esc_html_e('Add New Homework', 'sakolawp'); ?></button>
 	</div>
