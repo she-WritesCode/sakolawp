@@ -128,7 +128,7 @@ class Sakolawp_Admin
 		global $sakola_lbapi;
 		global $sakola_lb_verify_res;
 		if (($sakola_lb_verify_res['status'])) {
-			add_menu_page('Sakola WP', 'Sakola WP', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings'), 'dashicons-welcome-learn-more', 2);
+			add_menu_page('RIG University', 'RIG University', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings'), 'dashicons-welcome-learn-more', 2);
 			add_submenu_page($this->plugin_name . '-settings', 'Dashboard', 'Dashboard', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings'));
 
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Classes', 'sakolawp'), esc_html__('Manage Classes', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-class', array($this, 'manageClassAdminSettings'));
@@ -147,7 +147,7 @@ class Sakolawp_Admin
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Documentation', 'sakolawp'), esc_html__('Documentation', 'sakolawp'), 'administrator', $docs_url, '');
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('SakolaWP License', 'sakolawp'), esc_html__('SakolaWP License', 'sakolawp'), 'administrator', $this->plugin_name . '-licensebox', array($this, 'sakolawp_licensebox_plugin_page'));
 		} else {
-			add_menu_page('Sakola WP', 'Sakola WP', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings2'), 'dashicons-welcome-learn-more', 2);
+			add_menu_page('RIG University', 'RIG University', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings2'), 'dashicons-welcome-learn-more', 2);
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('SakolaWP License', 'sakolawp'), esc_html__('SakolaWP License', 'sakolawp'), 'administrator', $this->plugin_name . '-licensebox', array($this, 'sakolawp_licensebox_plugin_page'));
 		}
 	}

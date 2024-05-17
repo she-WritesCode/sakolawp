@@ -203,8 +203,8 @@ $year_sel = $_GET['year_sel'];  ?>
 								$user_info = get_userdata($row['student_id']);
 								$user_name = $user_info->display_name;
 
-								$user_info = get_userdata($row['student_id']);
-								echo esc_html($user_info->display_name); ?>
+								// $user_info = get_userdata($row['student_id']);
+								echo isset($user_info) ? esc_html($user_info->display_name) : "<i>User not found</i>"; ?>
 							</td>
 							<?php
 							$status = 0;

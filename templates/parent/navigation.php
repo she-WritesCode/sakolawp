@@ -1,82 +1,81 @@
 <div class="skwp-user-area skwp-clearfix">
-	<?php 
+	<?php
 	global $wp;
 	$current_id = get_current_user_id();
 	$user_info = get_user_meta($current_id);
 	$first_name = $user_info["first_name"][0];
 	$last_name = $user_info["last_name"][0];
 
-	$user_name = $first_name .' '. $last_name;
+	$user_name = $first_name . ' ' . $last_name;
 
-	if(empty($first_name)) {
+	if (empty($first_name)) {
 		$user_info = get_userdata($current_id);
 		$user_name = $user_info->display_name;
 	} ?>
 	<div class="skwp-user-img">
-		<?php 
-		$user_img = wp_get_attachment_image_src( get_user_meta($current_id,'_user_img', array('80','80'), true, true ));
-		if(!empty($user_img)) { ?>
+		<?php
+		$user_img = wp_get_attachment_image_src(get_user_meta($current_id, '_user_img', array('80', '80'), true, true));
+		if (!empty($user_img)) { ?>
 			<img class="profile_img" src="<?php echo esc_url($user_img[0]); ?>" alt="<?php echo esc_attr($user_name); ?>">
-		<?php }
-		else {
-			echo get_avatar( $current_id, 60 );
+		<?php } else {
+			echo get_avatar($current_id, 60);
 		} ?>
 	</div>
 	<div class="skwp-user-name-area">
-		<h5 class="skwp-user"><?php echo esc_html( $user_name ); ?></h5>
+		<h5 class="skwp-user"><?php echo esc_html($user_name); ?></h5>
 		<a href="<?php echo esc_url(home_url('edit_profile')); ?>" class="skwp-edit-profile-link skwp-prof-side">
 			<i class="sakolawp2-icon-edit"></i>
 		</a>
-		<a href="<?php echo esc_url(wp_logout_url( home_url() )); ?>" class="skwp-edit-profile-logout skwp-prof-side">
+		<a href="<?php echo esc_url(wp_logout_url(home_url())); ?>" class="skwp-edit-profile-logout skwp-prof-side">
 			<i class="sakolawp2-icon-logout"></i>
 		</a>
 	</div>
 </div>
 <div class="skwp-menu-wrap">
-	<div class="skwp-menu-item <?php if($wp->request === "myaccount") echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/myaccount' ) ); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "myaccount") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/myaccount')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-web-page-home"></i>
 			<?php echo esc_html__('My Account', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "class_routine") echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/class_routine' ) ); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "class_routine") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/class_routine')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-calendar"></i>
 			<?php echo esc_html__('Class Routines', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "homework" || $wp->request === "homeworkroom") echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/homework' ) ); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "homework" || $wp->request === "homeworkroom") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/homework')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-shopping-list"></i>
 			<?php echo esc_html__('Homeworks', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "attendance_report" || $wp->request === "report_attendance_view") echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/attendance_report' ) ); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "attendance_report" || $wp->request === "report_attendance_view") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/attendance_report')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-biodata"></i>
 			<?php echo esc_html__('Attendance', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "online_exams" || $wp->request === "view_exam_result") echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/online_exams' ) ); ?>">
+	<!-- <div class="skwp-menu-item <?php if ($wp->request === "online_exams" || $wp->request === "view_exam_result") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/online_exams')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-blogging"></i>
 			<?php echo esc_html__('Online Exams', 'sakolawp'); ?>
 		</a>
-	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "marks" || $wp->request === "view_mark") echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/marks' ) ); ?>">
+	</div> -->
+	<div class="skwp-menu-item <?php if ($wp->request === "marks" || $wp->request === "view_mark") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/marks')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-checkmark"></i>
 			<?php echo esc_html__('Marks', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "news_post" || 'sakolawp-news' == get_post_type()) echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/news_post' ) ); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "news_post" || 'sakolawp-news' == get_post_type()) echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/news_post')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-newspaper"></i>
 			<?php echo esc_html__('News', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if($wp->request === "event_post" || 'sakolawp-event' == get_post_type()) echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url( home_url( '/event_post' ) ); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "event_post" || 'sakolawp-event' == get_post_type()) echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/event_post')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-printed"></i>
 			<?php echo esc_html__('Event', 'sakolawp'); ?>
 		</a>

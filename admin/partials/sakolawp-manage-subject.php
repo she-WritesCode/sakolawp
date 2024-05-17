@@ -72,7 +72,7 @@
 								<td>
 									<?php
 									$user_info = get_userdata($subject->teacher_id);
-									echo $user_info ? esc_html($user_info->display_name) : '<i class="text-gray-500">No teacher assigned</i>'; ?>
+									echo $user_info ? esc_html($user_info->display_name) : '<i class="text-gray-500">No faculty assigned</i>'; ?>
 								</td>
 								<td>
 									<a class="btn skwp-btn btn-sm btn-primary" href="<?php echo add_query_arg(array('edit' => $subject->subject_id), admin_url('admin.php?page=sakolawp-manage-subject')); ?>">
