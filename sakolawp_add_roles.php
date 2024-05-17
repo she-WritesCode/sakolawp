@@ -2,7 +2,7 @@
 
 add_role(
 	'teacher',
-	esc_html__( 'Teacher', 'sakolawp' ),
+	esc_html__('Faculty', 'sakolawp'),
 	array(
 		'read'			=> true,  // true allows this capability
 		'edit_posts'	=> true,
@@ -12,7 +12,7 @@ add_role(
 
 add_role(
 	'student',
-	esc_html__( 'Student', 'sakolawp' ),
+	esc_html__('Student', 'sakolawp'),
 	array(
 		'read'			=> true,  // true allows this capability
 		'edit_posts'	=> false,
@@ -22,7 +22,7 @@ add_role(
 
 add_role(
 	'parent',
-	esc_html__( 'Parent', 'sakolawp' ),
+	esc_html__('Parent', 'sakolawp'),
 	array(
 		'read'			=> true,  // true allows this capability
 		'edit_posts'	=> false,

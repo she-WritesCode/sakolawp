@@ -247,7 +247,7 @@ if (!empty($enroll)) :
 								</tr>
 								<tr>
 									<th>
-										<?php esc_html_e('Teacher:', 'sakolawp'); ?>
+										<?php esc_html_e('Faculty:', 'sakolawp'); ?>
 									</th>
 									<td>
 										<?php
@@ -332,10 +332,10 @@ if (!empty($enroll)) :
 									</td>
 								</tr>
 								<?php
-								if ($ada_nilai_main[0]["teacher_comment"] != NULL) { ?>
+								if (isset($ada_nilai_main) && isset($ada_nilai_main[0]) && $ada_nilai_main[0]["teacher_comment"] != NULL) { ?>
 									<tr>
 										<th>
-											<?php esc_html_e('Teacher Comment', 'sakolawp'); ?>
+											<?php esc_html_e('Faculty Comment', 'sakolawp'); ?>
 										</th>
 										<td>
 											<?php echo esc_html($ada_nilai_main[0]["teacher_comment"]); ?>

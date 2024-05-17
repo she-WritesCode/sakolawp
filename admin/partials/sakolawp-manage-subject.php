@@ -40,7 +40,7 @@
 								<?php esc_html_e('Class', 'sakolawp'); ?>
 							</th>
 							<th>
-								<?php esc_html_e('Teacher', 'sakolawp'); ?>
+								<?php esc_html_e('Faculty', 'sakolawp'); ?>
 							</th>
 							<th class="text-center">
 								<?php esc_html_e('Action', 'sakolawp'); ?>
@@ -145,7 +145,7 @@
 						</div>
 
 						<div class="skwp-column skwp-column-5">
-							<label for=""> <?php esc_html_e('Teacher', 'sakolawp'); ?></label>
+							<label for=""> <?php esc_html_e('Faculty', 'sakolawp'); ?></label>
 							<div class="input-group">
 								<select class="skwp-form-control" name="teacher_id">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>

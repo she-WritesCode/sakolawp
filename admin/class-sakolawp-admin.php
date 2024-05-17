@@ -566,7 +566,7 @@ class Sakolawp_Admin
 										</div>
 									</div>
 									<div class="form-group skwp-row">
-										<label class="col-form-label skwp-column skwp-column-3" for=""> <?php esc_html_e('Edit Parent Group', 'sakolawp'); ?>Teacher</label>
+										<label class="col-form-label skwp-column skwp-column-3" for=""> <?php esc_html_e('Edit Parent Group', 'sakolawp'); ?>Faculty</label>
 										<div class="skwp-column skwp-column-2of3">
 											<div class="input-group">
 												<select class="skwp-form-control" name="teacher_id">
@@ -813,7 +813,7 @@ class Sakolawp_Admin
 										</div>
 									</div>
 									<div class="form-group skwp-row">
-										<label class="col-form-label skwp-column skwp-column-3" for=""> <?php esc_html_e('Teacher', 'sakolawp'); ?></label>
+										<label class="col-form-label skwp-column skwp-column-3" for=""> <?php esc_html_e('Faculty', 'sakolawp'); ?></label>
 										<div class="skwp-column skwp-column-2of3">
 											<div class="input-group">
 												<select class="skwp-form-control" name="teacher_id">

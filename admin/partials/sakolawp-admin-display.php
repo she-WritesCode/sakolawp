@@ -68,7 +68,7 @@
 						?>
 						<div class="skwp-role-info">
 							<h2 class="user-item-count"><?php echo esc_html($teacher_count); ?></h2>
-							<h4 class="user-count-role"><?php esc_html_e('Teachers', 'sakolawp'); ?></h4>
+							<h4 class="user-count-role"><?php esc_html_e('Facultys', 'sakolawp'); ?></h4>
 						</div>
 					</div>
 					<div class="student-counter admin-dash-grid-item skwp-user-counter-item skwp-clearfix">

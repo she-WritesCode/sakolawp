@@ -46,7 +46,7 @@ global $wpdb;
 								<?php echo esc_html__('Class', 'sakolawp'); ?>
 							</th>
 							<th>
-								<?php echo esc_html__('Teacher', 'sakolawp'); ?>
+								<?php echo esc_html__('Faculty', 'sakolawp'); ?>
 							</th>
 							<th>
 								<?php echo esc_html__('Due Date', 'sakolawp'); ?>
@@ -177,7 +177,7 @@ global $wpdb;
 									</tr>
 									<tr>
 										<th>
-											<?php esc_html_e('Teacher:', 'sakolawp'); ?>
+											<?php esc_html_e('Faculty:', 'sakolawp'); ?>
 										</th>
 										<td>
 											<?php
@@ -258,7 +258,7 @@ global $wpdb;
 										<th><?php echo esc_html__('Student Comment', 'sakolawp'); ?></th>
 										<th><?php echo esc_html__('Delivery Status', 'sakolawp'); ?></th>
 										<th><?php echo esc_html__('Homework Detail', 'sakolawp'); ?></th>
-										<th><?php echo esc_html__('Teacher Comment', 'sakolawp'); ?></th>
+										<th><?php echo esc_html__('Faculty Comment', 'sakolawp'); ?></th>
 										<th style="width:50px"><?php echo esc_html__('Mark', 'sakolawp'); ?></th>
 									</tr>
 								</thead>
@@ -325,7 +325,7 @@ global $wpdb;
 									</tr>
 									<tr>
 										<th>
-											<?php esc_html_e('Teacher:', 'sakolawp'); ?>
+											<?php esc_html_e('Faculty:', 'sakolawp'); ?>
 										</th>
 										<td>
 											<?php
