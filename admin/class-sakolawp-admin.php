@@ -142,7 +142,7 @@ class Sakolawp_Admin
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Assign Student', 'sakolawp'), esc_html__('Assign Student', 'sakolawp'), 'administrator', $this->plugin_name . '-assign-student', array($this, 'assignStudentAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Add Students', 'sakolawp'), esc_html__('Add Students', 'sakolawp'), 'administrator', $this->plugin_name . '-add-student', array($this, 'addStudentAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Homeworks', 'sakolawp'), esc_html__('Homeworks', 'sakolawp'), 'administrator', $this->plugin_name . '-homework', array($this, 'homeworkAdminSettings'));
-			add_submenu_page($this->plugin_name . '-settings', esc_html__('Exams', 'sakolawp'), esc_html__('Exams', 'sakolawp'), 'administrator', $this->plugin_name . '-exam', array($this, 'examAdminSettings'));
+			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Exams', 'sakolawp'), esc_html__('Exams', 'sakolawp'), 'administrator', $this->plugin_name . '-exam', array($this, 'examAdminSettings'));
 			// $docs_url = esc_url('https://themesawesome.zendesk.com/hc/en-us/categories/360003331032-SakolaWP');
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Documentation', 'sakolawp'), esc_html__('Documentation', 'sakolawp'), 'administrator', $docs_url, '');
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('SakolaWP License', 'sakolawp'), esc_html__('SakolaWP License', 'sakolawp'), 'administrator', $this->plugin_name . '-licensebox', array($this, 'sakolawp_licensebox_plugin_page'));
