@@ -47,96 +47,43 @@ if (isset($_POST['marks_uploads'])) {
 	$class_id_tar = $_GET['class_id'];
 	$section_id_tar = $_GET['section_id'];
 	$subject_id_tar = $_GET['subject_id'];
+	$subject = $wpdb->get_row("SELECT total_lab FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id_tar");
+	$total_kd = $subject->total_lab;
 
 	$marks_of_students = $wpdb->get_results("SELECT mark_id FROM {$wpdb->prefix}sakolawp_mark WHERE section_id = $section_id_tar AND class_id = $class_id_tar AND year = '$running_year' AND exam_id = $exam_id_tar AND subject_id = $subject_id_tar", ARRAY_A);
 	foreach ($marks_of_students as $row) {
-		if (!empty($_POST['marks_obtained_' . $row['mark_id']])) {
-			$obtained_marks = sanitize_text_field($_POST['marks_obtained_' . $row['mark_id']]);
-		} else {
-			$obtained_marks = NULL;
+		$mark_id = $row['mark_id'];
+
+		$obtained_marks = !empty($_POST['marks_obtained_' . $mark_id]) ? sanitize_text_field($_POST['marks_obtained_' . $mark_id]) : 0;
+
+		$lab_fields = [];
+		$lab_total = $obtained_marks;
+
+		for ($i = 1; $i <= $total_kd; $i++) {
+			$lab_field = 'lab_' . $i . '_' . $mark_id;
+			if (isset($_POST[$lab_field])) {
+				$lab_value = sanitize_text_field($_POST[$lab_field]);
+				$lab_fields['lab' . $i] = $lab_value;
+				$lab_total += (int)$lab_value;
+			} else {
+				$lab_fields['lab' . $i] = NULL;
+			}
 		}
 
-		if ($_POST['lab_2_' . $row['mark_id']] != NULL) {
-			$lab2 = sanitize_text_field($_POST['lab_2_' . $row['mark_id']]);
-		} else {
-			$lab2 = NULL;
-		}
-
-		if ($_POST['lab_3_' . $row['mark_id']] != NULL) {
-			$lab3 = sanitize_text_field($_POST['lab_3_' . $row['mark_id']]);
-		} else {
-			$lab3 = NULL;
-		}
-
-		if ($_POST['lab_4_' . $row['mark_id']] != NULL) {
-			$lab4 = sanitize_text_field($_POST['lab_4_' . $row['mark_id']]);
-		} else {
-			$lab4 = NULL;
-		}
-
-		if ($_POST['lab_5_' . $row['mark_id']] != NULL) {
-			$lab5 = sanitize_text_field($_POST['lab_5_' . $row['mark_id']]);
-		} else {
-			$lab5 = NULL;
-		}
-
-		if ($_POST['lab_6_' . $row['mark_id']] != NULL) {
-			$lab6 = sanitize_text_field($_POST['lab_6_' . $row['mark_id']]);
-		} else {
-			$lab6 = NULL;
-		}
-
-		if ($_POST['lab_7_' . $row['mark_id']] != NULL) {
-			$lab7 = sanitize_text_field($_POST['lab_7_' . $row['mark_id']]);
-		} else {
-			$lab7 = NULL;
-		}
-
-		if ($_POST['lab_8_' . $row['mark_id']] != NULL) {
-			$lab8 = sanitize_text_field($_POST['lab_8_' . $row['mark_id']]);
-		} else {
-			$lab8 = NULL;
-		}
-
-		if ($_POST['lab_9_' . $row['mark_id']] != NULL) {
-			$lab9 = sanitize_text_field($_POST['lab_9_' . $row['mark_id']]);
-		} else {
-			$lab9 = NULL;
-		}
-
-		if ($_POST['lab_10_' . $row['mark_id']] != NULL) {
-			$lab10 = sanitize_text_field($_POST['lab_10_' . $row['mark_id']]);
-		} else {
-			$lab10 = NULL;
-		}
-
-		$lab_total = $obtained_marks + $lab2 + $lab3 + $lab4 + $lab5 + $lab6 + $lab7 + $lab8 + $lab9 + $lab10;
+		$lab_fields['mark_obtained'] = $obtained_marks;
+		$lab_fields['lab_total'] = $lab_total;
 
 		$wpdb->update(
 			$wpdb->prefix . 'sakolawp_mark',
-			array(
-				'mark_obtained' => $obtained_marks,
-				'lab2' => $lab2,
-				'lab3' => $lab3,
-				'lab4' => $lab4,
-				'lab5' => $lab5,
-				'lab6' => $lab6,
-				'lab7' => $lab7,
-				'lab8' => $lab8,
-				'lab9' => $lab9,
-				'lab10' => $lab10,
-				'lab_total' => $lab_total,
-			),
-			array(
-				'mark_id' => $row['mark_id']
-			)
+			$lab_fields,
+			array('mark_id' => $mark_id)
 		);
 	}
 
 	wp_redirect(home_url('marks?exam_id=' . $exam_id_tar . '&class_id=' . $class_id_tar . '&section_id=' . $section_id_tar . '&subject_id=' . $subject_id_tar));
-
 	die;
 }
+
 
 get_header();
 do_action('sakolawp_before_main_content');
@@ -307,388 +254,33 @@ do_action('sakolawp_before_main_content');
 						$total_kd = $subject->total_lab; ?>
 						<th><?php echo esc_html__('Student', 'sakolawp'); ?></th>
 						<?php
-						if (empty($total_kd)) { ?>
-							<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-							<?php } else {
-							if ($total_kd == 1) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 2) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 3) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 4) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 5) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 5', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 6) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 5', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 6', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 7) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 5', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 6', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 7', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 8) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 5', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 6', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 7', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 8', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 9) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 5', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 6', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 7', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 8', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 9', 'sakolawp'); ?></th>
-							<?php } elseif ($total_kd == 10) { ?>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 1', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 2', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 3', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 4', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 5', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 6', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 7', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 8', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 9', 'sakolawp'); ?></th>
-								<th style="text-align: center;"><?php echo esc_html__('Lab 10', 'sakolawp'); ?></th>
-						<?php }
-						} ?>
+						if (empty($total_kd) || $total_kd >= 1) {
+							$total_kd = $total_kd ?: 1; // Set $total_kd to 1 if it's empty
+							for ($i = 1; $i <= $total_kd; $i++) {
+						?>
+								<th style="text-align: center;"><?php echo esc_html__('Lab ' . $i, 'sakolawp'); ?></th>
+						<?php
+							}
+						}
+						?>
 						<th><?php echo esc_html__('Total', 'sakolawp'); ?></th>
 						<!-- <th>Rata-rata</th> -->
 					</tr>
 				</thead>
 				<tbody>
 					<?php
-					$marks_of_students = $wpdb->get_results("SELECT student_id,mark_id,mark_obtained,lab2,lab3,lab4,lab5,lab6,lab7,lab8,lab9,lab10 FROM {$wpdb->prefix}sakolawp_mark WHERE section_id = $section_id_tar AND class_id = $class_id_tar AND year = '$running_year' AND exam_id = $exam_id_tar AND subject_id = $subject_id_tar", ARRAY_A);
+					$lab_columns = '';
+					for ($i = 1; $i <= $total_kd; $i++) {
+						$lab_columns .= ",lab{$i}";
+					}
+					$marks_of_students = $wpdb->get_results("SELECT student_id,mark_id,mark_obtained{$lab_columns} FROM {$wpdb->prefix}sakolawp_mark WHERE section_id = $section_id_tar AND class_id = $class_id_tar AND year = '$running_year' AND exam_id = $exam_id_tar AND subject_id = $subject_id_tar", ARRAY_A);
 					foreach ($marks_of_students as $row) { ?>
 						<tr>
-							<td><?php
-								$student_id = $row['student_id'];
-								$student = get_userdata($student_id);
-								$user_name = $student->display_name;
-								echo $user_name; ?></td>
-
-							<?php
-							if (empty($total_kd)) { ?>
-								<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-								<?php } else {
-								if ($total_kd == 1) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-								<?php } elseif ($total_kd == 2) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-								<?php } elseif ($total_kd == 3) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-								<?php } elseif ($total_kd == 4) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-								<?php } elseif ($total_kd == 5) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-									<td><input type="number" name="lab_5_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab5']; ?>"></td>
-								<?php } elseif ($total_kd == 6) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-									<td><input type="number" name="lab_5_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab5']; ?>"></td>
-									<td><input type="number" name="lab_6_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab6']; ?>"></td>
-								<?php } elseif ($total_kd == 7) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-									<td><input type="number" name="lab_5_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab5']; ?>"></td>
-									<td><input type="number" name="lab_6_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab6']; ?>"></td>
-									<td><input type="number" name="lab_7_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab7']; ?>"></td>
-								<?php } elseif ($total_kd == 8) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-									<td><input type="number" name="lab_5_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab5']; ?>"></td>
-									<td><input type="number" name="lab_6_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab6']; ?>"></td>
-									<td><input type="number" name="lab_7_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab7']; ?>"></td>
-									<td><input type="number" name="lab_8_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab8']; ?>"></td>
-								<?php } elseif ($total_kd == 9) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-									<td><input type="number" name="lab_5_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab5']; ?>"></td>
-									<td><input type="number" name="lab_6_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab6']; ?>"></td>
-									<td><input type="number" name="lab_7_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab7']; ?>"></td>
-									<td><input type="number" name="lab_8_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab8']; ?>"></td>
-									<td><input type="number" name="lab_9_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab9']; ?>"></td>
-								<?php } elseif ($total_kd == 10) { ?>
-									<td><input type="number" name="marks_obtained_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['mark_obtained']; ?>"></td>
-									<td><input type="number" name="lab_2_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab2']; ?>"></td>
-									<td><input type="number" name="lab_3_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab3']; ?>"></td>
-									<td><input type="number" name="lab_4_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab4']; ?>"></td>
-									<td><input type="number" name="lab_5_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab5']; ?>"></td>
-									<td><input type="number" name="lab_6_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab6']; ?>"></td>
-									<td><input type="number" name="lab_7_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab7']; ?>"></td>
-									<td><input type="number" name="lab_8_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab8']; ?>"></td>
-									<td><input type="number" name="lab_9_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab9']; ?>"></td>
-									<td><input type="number" name="lab_10_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo $row['lab10']; ?>"></td>
-							<?php }
-							} ?>
-
-							<?php
-							if (empty($total_kd)) {
-								$labtotal = $row['mark_obtained'];
-							} else {
-								$total_nol = array();
-								if ($total_kd == 1) {
-									$labtotal = $row['mark_obtained'];
-
-									if ($row['mark_obtained'] == NULL) {
-										$total_nol = array($row['mark_obtained']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 2) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL) {
-										$total_nol = array($row['mark_obtained']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 3) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 4) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 5) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'] + $row['lab5'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL || $row['lab5'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4'], $row['lab5']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 6) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'] + $row['lab5'] + $row['lab6'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL || $row['lab5'] == NULL || $row['lab6'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4'], $row['lab5'], $row['lab6']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 7) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'] + $row['lab5'] + $row['lab6'] + $row['lab7'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL || $row['lab5'] == NULL || $row['lab6'] == NULL || $row['lab7'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4'], $row['lab5'], $row['lab6'], $row['lab7']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 8) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'] + $row['lab5'] + $row['lab6'] + $row['lab7'] + $row['lab8'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL || $row['lab5'] == NULL || $row['lab6'] == NULL || $row['lab7'] == NULL || $row['lab8'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4'], $row['lab5'], $row['lab6'], $row['lab7'], $row['lab8']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 9) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'] + $row['lab5'] + $row['lab6'] + $row['lab7'] + $row['lab8'] + $row['lab9'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL || $row['lab5'] == NULL || $row['lab6'] == NULL || $row['lab7'] == NULL || $row['lab8'] == NULL || $row['lab9'] == NULL) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4'], $row['lab5'], $row['lab6'], $row['lab7'], $row['lab8'], $row['lab9']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								} elseif ($total_kd == 10) {
-									$labtotal = $row['mark_obtained'] + $row['lab2'] + $row['lab3'] + $row['lab4'] + $row['lab5'] + $row['lab6'] + $row['lab7'] + $row['lab8'] + $row['lab9'] + $row['lab10'];
-
-									if ($row['mark_obtained'] == NULL || $row['lab2'] == NULL || $row['lab3'] == NULL || $row['lab4'] == NULL || $row['lab5'] == NULL || $row['lab6'] == NULL || $row['lab7'] == NULL || $row['lab8'] == NULL || $row['lab9'] == 0 || $row['lab10'] == 0) {
-										$total_nol = array($row['mark_obtained'], $row['lab2'], $row['lab3'], $row['lab4'], $row['lab5'], $row['lab6'], $row['lab7'], $row['lab8'], $row['lab9'], $row['lab10']);
-
-										$array_null = array();
-										foreach ($total_nol as $val) {
-											if ($val == NULL) {
-												$array_null[] = $val;
-											}
-										}
-										$varvar = $total_kd - count($array_null);
-										if ($varvar != 0) {
-											$total_kd2 = $total_kd - count($array_null);
-										} else {
-											$total_kd2 = $total_kd;
-										}
-									} else {
-										$total_kd2 = $total_kd;
-									}
-								}
-							} ?>
-
-							<td><?php
-								if (empty($total_kd)) {
-									echo $row['mark_obtained'];
-								} else {
-									echo round($labtotal / $total_kd2, 1);
-								} ?></td>
-							<!-- <td></td> -->
+							<td><?php echo get_userdata($row['student_id'])->display_name; ?></td>
+							<?php for ($i = 1; $i <= $total_kd; $i++) { ?>
+								<td><input type="number" name="lab_<?php echo $i; ?>_<?php echo $row['mark_id']; ?>" min="0" max="100" placeholder="0" value="<?php echo ($i == 1) ? $row['mark_obtained'] : $row['lab' . $i]; ?>"></td>
+							<?php } ?>
+							<td><?php echo empty($total_kd) ? $row['mark_obtained'] : round(array_sum(array_filter(array_slice($row, 2, $total_kd))), 1); ?></td>
 						</tr>
 					<?php } ?>
 				</tbody>

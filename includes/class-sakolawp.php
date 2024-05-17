@@ -135,7 +135,7 @@ class Sakolawp
 		/**
 		 * All rest endpoints are defined here
 		 */
-		new SakolaWpEndpoints();
+		// new SakolaWpEndpoints();
 	}
 
 	/**
