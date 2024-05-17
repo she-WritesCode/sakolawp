@@ -10,7 +10,9 @@ $page = skwp_get_page_by_title('Student Registration');
 <form id="sakolawp_login_form" class="sakolawp_user_form sakolawp_form" action="" method="post">
 	<fieldset class="skwp-form-inner">
 		<?php if (!empty($logo_image)) { ?>
-			<img src="<?php echo esc_url($logo_image[0]); ?>" alt="<?php esc_html_e('logo', 'sakolawp'); ?>" />
+			<div class="skwp-logo">
+				<img src="<?php echo esc_url($logo_image[0]); ?>" alt="<?php esc_html_e('logo', 'sakolawp'); ?>" />
+			</div>
 		<?php } ?>
 		<h4 class="sakolawp_header"><?php esc_html_e('Login Account', 'sakolawp'); ?></h4>
 		<?php sakolawp_show_error_messages(); ?>
