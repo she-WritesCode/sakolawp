@@ -266,7 +266,7 @@ global $wpdb;
 
 					<div class="skwp-row skwp-clearfix">
 						<div class="skwp-column skwp-column-1">
-							<table class="table table-lightborder">
+							<table id="dataTable1" class="table table-lightborder">
 								<thead>
 									<tr>
 										<th><?php echo esc_html__('Student', 'sakolawp'); ?></th>
