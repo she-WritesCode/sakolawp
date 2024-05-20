@@ -25,6 +25,7 @@ global $wpdb;
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
 			<a class="nav-item nav-link active" href="admin.php?page=sakolawp-homework"><?php esc_html_e('Homework', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link" target="__blank" href="<?php echo site_url(); ?>/homework"><?php esc_html_e('Add Homework', 'sakolawp'); ?></a>
 
 		</div>
 	</nav>
@@ -59,7 +60,7 @@ global $wpdb;
 					<tbody>
 						<?php
 						global $wpdb;
-						$homework = $wpdb->get_results("SELECT title, subject_id, class_id, section_id, uploader_id, date_end, homework_code FROM {$wpdb->prefix}sakolawp_homework", OBJECT);
+						$homework = $wpdb->get_results("SELECT title, subject_id, class_id, section_id, uploader_id, date_end, homework_code, allow_peer_review, peer_review_template FROM {$wpdb->prefix}sakolawp_homework", OBJECT);
 						foreach ($homework as $row) :
 						?>
 							<tr>
@@ -69,14 +70,19 @@ global $wpdb;
 								<td>
 									<?php
 									$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $row->subject_id");
-									echo esc_html($subject->name); ?>
+									echo esc_html($subject->name);
+									$allow_peer_review = $row->allow_peer_review;
+									echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-sm btn-success skwp-btn">peer reviewable</span>' : ""; ?>
 								</td>
 								<td>
 									<?php
 									global $wpdb;
 									$classes = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $row->class_id");
+									echo esc_html($classes->name);
 									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $row->section_id");
-									echo esc_html($classes->name) . '-' . esc_html($section->name); ?>
+									if ($section) {
+										echo '-' . esc_html($section->name);
+									} ?>
 								</td>
 								<td>
 									<?php
@@ -106,7 +112,7 @@ global $wpdb;
 
 			<?php if ($action == 'homeworkroom') {
 
-				$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, subject_id, class_id, section_id, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+				$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, subject_id, class_id, section_id, uploader_id,peer_review_template,allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 				foreach ($current_homework as $row) : ?>
 
 					<div class="skwp-tab-menu">
@@ -129,7 +135,7 @@ global $wpdb;
 					</div>
 
 					<div class="skwp-row skwp-clearfix">
-						<div class="skwp-column skwp-column-75">
+						<div class="skwp-column skwp-column-1">
 							<div class="homework-wrap">
 								<h5 class="homework-name">
 									<?php echo esc_html($row['title']); ?>
@@ -155,7 +161,7 @@ global $wpdb;
 							</div>
 						</div>
 
-						<div class="skwp-column skwp-column-4 homework-info">
+						<div class="skwp-column skwp-column-1 homework-info">
 							<div class="skwp-header">
 								<h5 class="skwp-form-header">
 									<?php echo esc_html__('Homework Information', 'sakolawp'); ?>
@@ -194,30 +200,39 @@ global $wpdb;
 											echo esc_html($user_name); ?>
 										</td>
 									</tr>
-									<tr>
-										<th>
-											<?php echo esc_html__('Class', 'sakolawp'); ?>
-										</th>
-										<td>
-											<?php
-											$class_id = $row["class_id"];
-											$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$class_id'", ARRAY_A);
-											echo esc_html($class['name']);
-											?>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
-										</th>
-										<td>
-											<?php
-											$section_id = $row["section_id"];
-											$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
-											echo esc_html($section['name']);
-											?>
-										</td>
-									</tr>
+									<?php
+									$section_id = $row["section_id"];
+									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+
+									if (isset($section)) {
+									?>
+										<tr>
+											<th>
+												<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
+											</th>
+											<td>
+												<?php
+												echo $section['name'];
+												?>
+											</td>
+										</tr>
+									<?php } ?>
+									<?php
+									$peer_review_template = $row["peer_review_template"];
+
+									if (isset($peer_review_template)) {
+									?>
+										<tr>
+											<th>
+												<?php echo esc_html__('Peer Review Template', 'sakolawp'); ?>
+											</th>
+											<td>
+												<?php
+												echo $peer_review_template;
+												?>
+											</td>
+										</tr>
+									<?php } ?>
 								</table>
 							</div>
 						</div>
@@ -227,7 +242,7 @@ global $wpdb;
 
 			<?php if ($action == 'homeworkroom_details') {
 
-				$current_homework = $wpdb->get_results("SELECT date_end, time_end, subject_id, class_id, section_id, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+				$current_homework = $wpdb->get_results("SELECT date_end, time_end, subject_id, class_id, section_id, uploader_id,peer_review_template,allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 				foreach ($current_homework as $row) : ?>
 
 					<div class="skwp-tab-menu">
@@ -250,7 +265,7 @@ global $wpdb;
 					</div>
 
 					<div class="skwp-row skwp-clearfix">
-						<div class="skwp-column skwp-column-75">
+						<div class="skwp-column skwp-column-1">
 							<table class="table table-lightborder">
 								<thead>
 									<tr>
@@ -303,7 +318,7 @@ global $wpdb;
 							</table>
 						</div>
 
-						<div class="skwp-column skwp-column-4 homework-info">
+						<div class="skwp-column skwp-column-1 homework-info">
 							<div class="skwp-header">
 								<h5 class="skwp-form-header">
 									<?php echo esc_html__('Homework Information', 'sakolawp'); ?>
@@ -354,18 +369,39 @@ global $wpdb;
 											?>
 										</td>
 									</tr>
-									<tr>
-										<th>
-											<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
-										</th>
-										<td>
-											<?php
-											$section_id = $row["section_id"];
-											$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
-											echo esc_html($section['name']);
-											?>
-										</td>
-									</tr>
+									<?php
+									$section_id = $row["section_id"];
+									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+
+									if (isset($section)) {
+									?>
+										<tr>
+											<th>
+												<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
+											</th>
+											<td>
+												<?php
+												echo $section['name'];
+												?>
+											</td>
+										</tr>
+									<?php } ?>
+									<?php
+									$peer_review_template = $row["peer_review_template"];
+
+									if (isset($peer_review_template)) {
+									?>
+										<tr>
+											<th>
+												<?php echo esc_html__('Peer Review Template', 'sakolawp'); ?>
+											</th>
+											<td>
+												<?php
+												echo $peer_review_template;
+												?>
+											</td>
+										</tr>
+									<?php } ?>
 								</table>
 							</div>
 						</div>
