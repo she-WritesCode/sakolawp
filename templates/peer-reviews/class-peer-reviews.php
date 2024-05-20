@@ -13,6 +13,9 @@ class SakolawpPeerReview
     {
         add_action('wp_ajax_sakolawp_peer_review_templates_select_options', array($this, 'peer_review_templates_select_options'));    // If called from admin panel
         add_action('wp_ajax_nopriv_sakolawp_peer_review_templates_select_options', array($this, 'peer_review_templates_select_options'));
+
+        add_action('sakolawp_form_prophetic_word_assessment',  array($this, 'output_prophetic_word_assessment'));
+        add_action('sakolawp_form_biblical_teaching_assessment',  array($this, 'output_biblical_teaching_assessment'));
     }
 
     public function peer_review_templates_select_options()
@@ -27,5 +30,19 @@ class SakolawpPeerReview
         }
 
         exit();
+    }
+
+
+    function output_prophetic_word_assessment()
+    {
+        require_once plugin_dir_path(__FILE__) . 'prophetic_word_assessment.php';
+        require_once plugin_dir_path(__FILE__) . 'assessment_form.php';
+    }
+
+
+    function output_biblical_teaching_assessment()
+    {
+        require_once plugin_dir_path(__FILE__) . 'biblical_teaching_assessment.php';
+        require_once plugin_dir_path(__FILE__) . 'assessment_form.php';
     }
 }

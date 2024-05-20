@@ -55,6 +55,9 @@ foreach ($current_homework as $row) :
 						<p>
 							<?php echo $row['description']; ?>
 						</p>
+						<!-- <div>
+							<?php do_action('sakolawp_form_prophetic_word_assessment') ?>
+						</div> -->
 						<?php if ($row['file_name'] != "") :
 							$url_file = site_url() . '/wp-content/uploads/sakolawp/homework/' . $row['file_name']; ?>
 							<div class="b-t padded-v-big homework-attachment">
