@@ -3,6 +3,7 @@ defined('ABSPATH') || exit;
 
 global $wpdb;
 
+$homework_code = "";
 if (isset($_POST['submit'])) {
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sanitize_text_field($_POST['title']);
@@ -18,7 +19,7 @@ if (isset($_POST['submit'])) {
 	$file_name = $_FILES["file_name"]["name"];
 	$section_id = sanitize_text_field($_POST['section_id']);
 	$subject_id = sanitize_text_field($_POST['subject_id']);
-	$allow_peer_review = sanitize_text_field($_POST['allow_peer_review']);
+	$allow_peer_review = isset($_POST['allow_peer_review']);
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
 	$uploader_type  = 'teacher';
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
@@ -114,7 +115,7 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 				<tbody>
 					<?php
 					$counter = 1;
-					$homework_sql = $user_is_admin ? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id FROM {$wpdb->prefix}sakolawp_homework" : "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id";
+					$homework_sql = $user_is_admin ? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template FROM {$wpdb->prefix}sakolawp_homework" : "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id";
 					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
 					foreach ($homeworks as $row) :
 					?>
@@ -151,6 +152,8 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								<?php $subject_id = $row['subject_id'];
 								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
 								echo esc_html($subject->name);
+								$allow_peer_review = $row['allow_peer_review'];
+								echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-sm btn-success skwp-btn">peer reviewable</span>' : "";
 								?>
 							</td>
 							<td>
@@ -247,7 +250,7 @@ endif;
 					</div>
 
 					<div class="skwp-form-group">
-						<input class="" type="checkbox" name="allow_peer_review" id="allow_peer_review" />
+						<input value="yes" type="checkbox" name="allow_peer_review" id="allow_peer_review" />
 						<label class="row-form-label" for=""><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
 					</div>
 					<div class="skwp-form-group peer-review-template-group">

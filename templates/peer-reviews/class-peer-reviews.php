@@ -18,10 +18,12 @@ class SakolawpPeerReview
     public function peer_review_templates_select_options()
     {
         $peer_review_templates_select_options = array_keys($this->peer_review_templates);
+        $selected = $_REQUEST['selected'];
 
         echo '<option value="">Select</option>';
         foreach ($peer_review_templates_select_options as $row) {
-            echo '<option value="' . $row . '">' . $row . '</option>';
+            $isSelected = $row == $selected ? 'selected' : '';
+            echo '<option ' . $isSelected . ' value="' . $row . '">' . $row . '</option>';
         }
 
         exit();

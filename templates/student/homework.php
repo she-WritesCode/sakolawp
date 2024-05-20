@@ -45,7 +45,7 @@ if (!empty($enroll)) :
 				<tbody>
 					<?php
 					$counter = 1;
-					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework 
+					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework 
 					WHERE (class_id = '$enroll->class_id'
 					AND section_id = '$enroll->section_id') OR (class_id = '$enroll->class_id' AND section_id = 0)", ARRAY_A);
 
@@ -73,6 +73,8 @@ if (!empty($enroll)) :
 								<?php $subject_id = $row['subject_id'];
 								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
 								echo esc_html($subject->name);
+								$allow_peer_review = $row['allow_peer_review'];
+								echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-sm btn-success skwp-btn">peer reviewable</span>' : "";
 								?>
 							</td>
 							<td>

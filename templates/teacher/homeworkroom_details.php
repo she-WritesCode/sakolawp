@@ -11,7 +11,7 @@ $teacher_id = get_current_user_id();
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
-$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 foreach ($current_homework as $row) :
 
@@ -120,13 +120,13 @@ foreach ($current_homework as $row) :
 							?>
 						</td>
 					</tr>
-					<tr>
-						<?php
-						$section_id = $row["section_id"];
-						$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+					<?php
+					$section_id = $row["section_id"];
+					$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
 
-						if (isset($section)) {
-						?>
+					if (isset($section)) {
+					?>
+						<tr>
 							<th>
 								<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
 							</th>
@@ -135,8 +135,24 @@ foreach ($current_homework as $row) :
 								echo $section['name'];
 								?>
 							</td>
-						<?php } ?>
-					</tr>
+						</tr>
+					<?php } ?>
+					<?php
+					$peer_review_template = $row["peer_review_template"];
+
+					if (isset($peer_review_template)) {
+					?>
+						<tr>
+							<th>
+								<?php echo esc_html__('Peer Review Template', 'sakolawp'); ?>
+							</th>
+							<td>
+								<?php
+								echo $peer_review_template;
+								?>
+							</td>
+						</tr>
+					<?php } ?>
 				</table>
 			</div>
 

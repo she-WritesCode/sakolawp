@@ -7,6 +7,8 @@ if (isset($_POST['submit'])) {
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sakolawp_sanitize_html($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
+	$allow_peer_review = isset($_POST['allow_peer_review']);
+	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
 	$time_end = sanitize_text_field($_POST['time_end']);
 	$date_end = sanitize_text_field($_POST['date_end']);
 
@@ -23,7 +25,9 @@ if (isset($_POST['submit'])) {
 			'uploader_id' => $uploader_id,
 			'uploader_type' => $uploader_type,
 			'time_end' => $time_end,
-			'date_end' => $date_end
+			'date_end' => $date_end,
+			'allow_peer_review' => $allow_peer_review,
+			'peer_review_template' => $peer_review_template,
 		),
 		array(
 			'homework_code' => $homework_code
@@ -41,8 +45,8 @@ $teacher_id = get_current_user_id();
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
-$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
-
+$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+echo ($current_homework[0]['allow_peer_review']);
 foreach ($current_homework as $row) :
 
 ?>
@@ -85,6 +89,22 @@ foreach ($current_homework as $row) :
 							<label> <?php echo esc_html__('Description', 'sakolawp'); ?></label>
 							<textarea id="editordatateacher" name="description"><?php echo esc_textarea($row['description']); ?></textarea>
 						</div>
+
+
+						<div class="skwp-form-group">
+							<input value="yes" <?php echo $row['allow_peer_review'] === '1' ? 'checked' : ""; ?> type="checkbox" name="allow_peer_review" id="allow_peer_review" />
+							<label class="row-form-label" for=""><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
+						</div>
+						<div class="skwp-form-group peer-review-template-group">
+							<label class="col-form-label" for=""><?php esc_html_e('Peer Review Template', 'sakolawp'); ?></label>
+							<div class="input-group">
+								<select data-value="<?php echo esc_attr($row['peer_review_template']); ?>" class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
+									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+								</select>
+							</div>
+						</div>
+
+
 						<div class="skwp-form-group">
 							<label for=""> <?php echo esc_html__('Due Date', 'sakolawp'); ?></label>
 							<input class="single-daterange skwp-form-control" required="" type="text" name="date_end" value="<?php echo esc_attr($row['date_end']); ?>">
@@ -136,13 +156,13 @@ foreach ($current_homework as $row) :
 								?>
 							</td>
 						</tr>
-						<tr>
-							<?php
-							$section_id = $row["section_id"];
-							$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+						<?php
+						$section_id = $row["section_id"];
+						$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
 
-							if (isset($section)) {
-							?>
+						if (isset($section)) {
+						?>
+							<tr>
 								<th>
 									<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
 								</th>
@@ -151,8 +171,24 @@ foreach ($current_homework as $row) :
 									echo $section['name'];
 									?>
 								</td>
-							<?php } ?>
-						</tr>
+							</tr>
+						<?php } ?>
+						<?php
+						$peer_review_template = $row["peer_review_template"];
+
+						if (isset($peer_review_template)) {
+						?>
+							<tr>
+								<th>
+									<?php echo esc_html__('Peer Review Template', 'sakolawp'); ?>
+								</th>
+								<td>
+									<?php
+									echo $peer_review_template;
+									?>
+								</td>
+							</tr>
+						<?php } ?>
 					</table>
 				</div>
 

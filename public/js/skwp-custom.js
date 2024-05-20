@@ -104,9 +104,9 @@
 		$('.peer-review-template-group').show();
 		$('.peer-review-template-group').prop('required', true);
 		fetchPeerReviewTemplates()
-		$('.peer-review-template-group').prop('required', false);
 	} else {
 		$('.peer-review-template-group').hide();
+		$('.peer-review-template-group').prop('required', false);
 	}
 
 	// Add a change event listener to the checkbox
@@ -123,11 +123,13 @@
 
 	// Function to fetch peer review templates options via AJAX
 	function fetchPeerReviewTemplates() {
+		var skwpTemplateVal = $('#peer_review_template').attr("data-value");
 		$.ajax({
 			url: skwp_ajax_object.ajaxurl,
 			type: 'POST',
 			data: {
 				action: 'sakolawp_peer_review_templates_select_options',
+				selected: skwpTemplateVal,
 			},
 			success: function (response) {
 				$('#peer_review_template').html(response);
