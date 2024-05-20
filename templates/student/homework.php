@@ -45,9 +45,9 @@ if (!empty($enroll)) :
 				<tbody>
 					<?php
 					$counter = 1;
-					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework 
-					WHERE class_id = '$enroll->class_id'
-					AND section_id = '$enroll->section_id'", ARRAY_A);
+					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework 
+					WHERE (class_id = '$enroll->class_id'
+					AND section_id = '$enroll->section_id') OR (class_id = '$enroll->class_id' AND section_id = 0)", ARRAY_A);
 
 					foreach ($homeworks as $row) :
 					?>
@@ -62,10 +62,11 @@ if (!empty($enroll)) :
 								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
 								echo esc_html($class->name);
 
-								echo esc_html__(' - ', 'sakolawp');
-
 								$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
-								echo esc_html($section->name);
+								if (isset($section)) {
+									echo esc_html__(' - ', 'sakolawp');
+									echo esc_html($section->name);
+								}
 								?>
 							</td>
 							<td>
@@ -76,8 +77,9 @@ if (!empty($enroll)) :
 							</td>
 							<td>
 								<a class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
-									<?php echo esc_html($row['date_end']); ?>
+									<?php echo esc_html($row['date_end']) . ' ' . esc_html($row['time_end']); ?>
 								</a>
+								<span class="skwp-date" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
 							</td>
 							<td>
 								<?php

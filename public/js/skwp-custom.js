@@ -91,4 +91,6 @@
 		$('.skwp-masking').toggleClass("open");
 	});
 
+	function updateCountdown() {}
+
 })( jQuery );

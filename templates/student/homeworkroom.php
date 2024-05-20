@@ -278,17 +278,19 @@ if (!empty($enroll)) :
 									</td>
 								</tr>
 								<tr>
-									<th>
-										<?php esc_html_e('Parent Group:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<?php
-										$section_id = $row["section_id"];
-										$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
-										echo esc_html($section['name']);
-										?>
-									</td>
-									</td>
+									<?php
+									$section_id = $row["section_id"];
+									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+									if (isset($section)) {
+									?>
+
+										<th>
+											<?php esc_html_e('Parent Group:', 'sakolawp'); ?>
+										</th>
+										<td>
+											<?php echo esc_html($section['name']); ?>
+										</td>
+									<?php } ?>
 								</tr>
 								<tr>
 									<th>

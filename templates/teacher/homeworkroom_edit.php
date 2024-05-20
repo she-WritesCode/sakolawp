@@ -137,16 +137,21 @@ foreach ($current_homework as $row) :
 							</td>
 						</tr>
 						<tr>
-							<th>
-								<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
-							</th>
-							<td>
-								<?php
-								$section_id = $row["section_id"];
-								$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
-								echo esc_html($section['name']);
-								?>
-							</td>
+							<?php
+							$section_id = $row["section_id"];
+							$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+
+							if (isset($section)) {
+							?>
+								<th>
+									<?php echo esc_html__('Parent Group', 'sakolawp'); ?>
+								</th>
+								<td>
+									<?php
+									echo $section['name'];
+									?>
+								</td>
+							<?php } ?>
 						</tr>
 					</table>
 				</div>
