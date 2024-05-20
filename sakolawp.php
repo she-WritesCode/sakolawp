@@ -1690,3 +1690,8 @@ function sakolawp_select_accountability_f()
 }
 add_action('wp_ajax_sakolawp_select_accountability', 'sakolawp_select_accountability_f');    // If called from admin panel
 add_action('wp_ajax_nopriv_sakolawp_select_accountability', 'sakolawp_select_accountability_f');
+
+
+
+require_once plugin_dir_path(__FILE__) . 'templates/peer-reviews/class-peer-reviews.php';
+new SakolawpPeerReview();

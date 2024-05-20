@@ -18,6 +18,8 @@ if (isset($_POST['submit'])) {
 	$file_name = $_FILES["file_name"]["name"];
 	$section_id = sanitize_text_field($_POST['section_id']);
 	$subject_id = sanitize_text_field($_POST['subject_id']);
+	$allow_peer_review = sanitize_text_field($_POST['allow_peer_review']);
+	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
 	$uploader_type  = 'teacher';
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
@@ -35,7 +37,9 @@ if (isset($_POST['submit'])) {
 			'uploader_type' => $uploader_type,
 			'time_end' => $time_end,
 			'date_end' => $date_end,
-			'file_name' => $file_name
+			'file_name' => $file_name,
+			'allow_peer_review' => $allow_peer_review,
+			'peer_review_template' => $peer_review_template,
 		)
 	);
 
@@ -153,6 +157,7 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								<a class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
 									<?php echo esc_html($row['date_end']) . ' ' . esc_html($row['time_end']); ?>
 								</a>
+								<br />
 								<span class="skwp-date" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
 							</td>
 							<td>
@@ -240,6 +245,20 @@ endif;
 					<div class="skwp-form-group">
 						<label> <?php esc_html_e('Description', 'sakolawp'); ?></label><textarea id="editordatateacher" name="description"></textarea>
 					</div>
+
+					<div class="skwp-form-group">
+						<input class="" type="checkbox" name="allow_peer_review" id="allow_peer_review" />
+						<label class="row-form-label" for=""><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
+					</div>
+					<div class="skwp-form-group peer-review-template-group">
+						<label class="col-form-label" for=""><?php esc_html_e('Peer Review Template', 'sakolawp'); ?></label>
+						<div class="input-group">
+							<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
+								<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+							</select>
+						</div>
+					</div>
+
 					<div class="skwp-form-group">
 						<label for=""> <?php esc_html_e('Due End', 'sakolawp'); ?></label><input class="single-daterange skwp-form-control" required="" type="text" name="date_end" value="">
 					</div>
@@ -249,6 +268,7 @@ endif;
 							<input type="text" required="" name="time_end" class="skwp-form-control" value="09:30">
 						</div>
 					</div>
+
 					<div class="skwp-form-group">
 						<label class="col-form-label" for=""> <?php esc_html_e('Upload File', 'sakolawp'); ?></label>
 						<div class="input-group skwp-form-control mb-2">

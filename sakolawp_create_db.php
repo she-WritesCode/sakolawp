@@ -104,7 +104,8 @@ CREATE TABLE $homework_table (
 	time_end varchar(100) NOT NULL,
 	date_end varchar(100) NOT NULL,
 	file_name longtext NULL,
-	file_date longtext NULL,	allow_peer_review BOOLEAN DEFAULT 0,
+	file_date longtext NULL,
+	allow_peer_review BOOLEAN DEFAULT 0,
 	peer_review_template VARCHAR(255) NULL,
 	UNIQUE KEY id (homework_id)
 ) $charset_collate;
