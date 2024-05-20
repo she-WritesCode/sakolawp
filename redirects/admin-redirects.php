@@ -1,25 +1,32 @@
 <?php
-if(is_page( 'myaccount' ) || $wp->request === "myaccount") {
+if (is_page('myaccount') || $wp->request === "myaccount") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/administrator/myaccount.php';
 	return $new_template;
-}
-elseif($wp->request === "class_routine") {
+} elseif ($wp->request === "class_routine") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/administrator/class_routine.php';
 	return $new_template;
-}
-elseif($wp->request === "news_post") {
+} elseif ($wp->request === "news_post") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/administrator/news_post.php';
 	return $new_template;
-}
-elseif($wp->request === "event_post") {
+} elseif ($wp->request === "event_post") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/administrator/event_post.php';
 	return $new_template;
-}
-elseif($wp->request === "edit_profile") {
+} elseif ($wp->request === "homework") {
+	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/teacher/homework.php';
+	return $new_template;
+} elseif ($wp->request === "homeworkroom") {
+	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/teacher/homeworkroom.php';
+	return $new_template;
+} elseif ($wp->request === "homeworkroom_edit") {
+	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/teacher/homeworkroom_edit.php';
+	return $new_template;
+} elseif ($wp->request === "homeworkroom_details") {
+	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/teacher/homeworkroom_details.php';
+	return $new_template;
+} elseif ($wp->request === "edit_profile") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/parent/edit_profile.php';
 	return $new_template;
-}
-elseif($wp->request === "view-user") {
+} elseif ($wp->request === "view-user") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/administrator/view_user.php';
 	return $new_template;
 }

@@ -12,6 +12,7 @@ $routine_table = $wpdb->prefix . 'sakolawp_class_routine';
 $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
 $homework_table = $wpdb->prefix . 'sakolawp_homework';
 $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
+$peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
 $questions_bank_table = $wpdb->prefix . 'sakolawp_questions_bank';
 $exams_table = $wpdb->prefix . 'sakolawp_exams';
 $mark_table = $wpdb->prefix . 'sakolawp_mark';
@@ -78,7 +79,7 @@ CREATE TABLE $routine_table (
 ) $charset_collate;
 
 CREATE TABLE $enroll_table (
-	enroll_id int(110) NOT NULL AUTO_INCREMENT,
+	enroll_id int(11) NOT NULL AUTO_INCREMENT,
 	enroll_code varchar(110) NOT NULL,
 	student_id varchar(110) NOT NULL,
 	class_id int(11) NOT NULL,
@@ -91,24 +92,25 @@ CREATE TABLE $enroll_table (
 ) $charset_collate;
 
 CREATE TABLE $homework_table (
-	homework_id int(110) NOT NULL AUTO_INCREMENT,
+	homework_id int(11) NOT NULL AUTO_INCREMENT,
 	homework_code varchar(110) NOT NULL,
 	title longtext NOT NULL,
 	description longtext NULL,
 	class_id int(11) NOT NULL,
-	section_id int(11) NOT NULL,
+	section_id int(11) NULL,
 	subject_id int(11) NOT NULL,
 	uploader_id int(11) NOT NULL,
 	uploader_type varchar(100) NOT NULL,
 	time_end varchar(100) NOT NULL,
 	date_end varchar(100) NOT NULL,
 	file_name longtext NULL,
-	file_date longtext NULL,
+	file_date longtext NULL,	allow_peer_review BOOLEAN DEFAULT 0,
+	peer_review_template VARCHAR(255) NULL,
 	UNIQUE KEY id (homework_id)
 ) $charset_collate;
 
 CREATE TABLE $deliveries_table (
-	delivery_id int(110) NOT NULL AUTO_INCREMENT,
+	delivery_id int(11) NOT NULL AUTO_INCREMENT,
 	homework_code varchar(110) NOT NULL,
 	student_id int(11) NOT NULL,
 	date varchar(110) NOT NULL,
@@ -125,8 +127,25 @@ CREATE TABLE $deliveries_table (
 	UNIQUE KEY id (delivery_id)
 ) $charset_collate;
 
+CREATE TABLE $peer_reviews_table (
+	peer_review_id int(11) NOT NULL AUTO_INCREMENT,
+	date varchar(110) NOT NULL,
+	delivery_id INT NOT NULL,
+	homework_id INT NOT NULL,
+	reviewer_id INT NOT NULL,
+	class_id INT NOT NULL,
+	section_id INT NOT NULL,
+	accountability_id INT NOT NULL,
+	subject_id INT NOT NULL,
+	homework_reply JSON NOT NULL,
+	mark varchar(110) NULL,
+	reviewer_comment longtext NULL,
+	reviewer_type varchar(110) NULL,
+	UNIQUE KEY id (peer_review_id)
+) $charset_collate;
+
 CREATE TABLE $questions_bank_table (
-	question_id int(110) NOT NULL AUTO_INCREMENT,
+	question_id int(11) NOT NULL AUTO_INCREMENT,
 	question longtext NULL,
 	question_excerpt longtext NULL,
 	audio_file longtext NULL,
@@ -146,7 +165,7 @@ CREATE TABLE $questions_bank_table (
 ) $charset_collate;
 
 CREATE TABLE $exams_table (
-	exam_id int(110) NOT NULL AUTO_INCREMENT,
+	exam_id int(11) NOT NULL AUTO_INCREMENT,
 	title longtext NULL,
 	description longtext NULL,
 	availablefrom longtext NULL,
@@ -239,7 +258,7 @@ CREATE TABLE $questions_table (
 ) $charset_collate;
 
 CREATE TABLE $attendance_table (
-	attendance_id int(110) NOT NULL AUTO_INCREMENT,
+	attendance_id int(11) NOT NULL AUTO_INCREMENT,
 	timestamp longtext NOT NULL,
 	time varchar(200) NULL,
 	year varchar(200) NULL,
@@ -251,7 +270,7 @@ CREATE TABLE $attendance_table (
 ) $charset_collate;
 
 CREATE TABLE $attendance_log_table (
-	id int(110) NOT NULL AUTO_INCREMENT,
+	id int(11) NOT NULL AUTO_INCREMENT,
 	student_id varchar(110) NULL,
 	month varchar(70) NULL,
 	year varchar(70) NULL,
@@ -325,7 +344,7 @@ CREATE TABLE $attendance_log_table (
 ) $charset_collate;
 
 CREATE TABLE $student_answer_table (
-	answer_id int(110) NOT NULL AUTO_INCREMENT,
+	answer_id int(11) NOT NULL AUTO_INCREMENT,
 	student_id varchar(200) NOT NULL,
 	exam_code varchar(200) NOT NULL,
 	answered varchar(200) NULL,

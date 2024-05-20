@@ -16,6 +16,20 @@
 				}
 			});
 		});
+		$('#class_holder').on( 'change', function () {
+			var skwpClassVal = $('#class_holder').val();
+			$.ajax({
+				url: skwp_ajax_object.ajaxurl,
+				type: 'POST',
+				data: {
+					action: 'sakolawp_select_section2',
+					class_id: skwpClassVal
+				},
+				success: function(response) {
+					$('#section_holder2').html(response);
+				}
+			});
+		});
 	}
 
 	if ($('#class_holder_spe').length) {
@@ -46,6 +60,23 @@
 					action: 'sakolawp_select_subject_teacher',
 					section_id: skwpSectionVal,
 					teacher_id: skwpTeacherVal
+				},
+				success: function(response) {
+					$('#subject_holder').html(response);
+				}
+			});
+		});
+	}
+
+	if ($('#class_holder.select-subjects').length) {
+		$('#class_holder.select-subjects').on( 'change', function () {
+			var skwpClassVal = $('#class_holder').val();
+			$.ajax({
+				url: skwp_ajax_object.ajaxurl,
+				type: 'POST',
+				data: {
+					action: 'sakolawp_select_all_subjects',
+					class_id: skwpClassVal,
 				},
 				success: function(response) {
 					$('#subject_holder').html(response);

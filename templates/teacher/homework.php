@@ -81,6 +81,7 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 
 	$user_info = get_userdata($teacher_id);
 	$teacher_name = $user_info->display_name;
+	$user_is_admin = in_array('administrator',  $user_info->roles);
 
 ?>
 	<div class="homework-inner skwp-content-inner">
@@ -103,18 +104,28 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Due Date', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Submissions', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php
 					$counter = 1;
-					$homeworks = $wpdb->get_results("SELECT title,class_id,section_id,subject_id,date_end,homework_code FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id", ARRAY_A);
+					$homework_sql = $user_is_admin ? "SELECT title,class_id,section_id,subject_id,date_end,homework_code,uploader_id FROM {$wpdb->prefix}sakolawp_homework" : "SELECT title, class_id, section_id, subject_id, date_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id";
+					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
 					foreach ($homeworks as $row) :
 					?>
 						<tr>
 							<td>
-								<?php echo $row['title']; ?>
+								<?php
+								echo $row['title'];
+								if ($user_is_admin) {
+									$uploader = get_user_by('id', $row['uploader_id']);
+									if ($uploader) {
+										echo '<br/><i class="text-gray-500">Uploaded by: ' . $uploader->display_name, '</i>';
+									}
+								}
+								?>
 							</td>
 							<td>
 								<?php
@@ -123,10 +134,11 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
 								echo esc_html($class->name);
 
-								echo esc_html__(' - ', 'sakolawp');
-
 								$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
-								echo esc_html($section->name);
+								if (isset($section)) {
+									echo esc_html__(' - ', 'sakolawp');
+									echo esc_html($section->name);
+								}
 								?>
 							</td>
 							<td>
@@ -136,8 +148,16 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								?>
 							</td>
 							<td>
-								<a class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
+								<span class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
 									<?php echo esc_html($row['date_end']); ?>
+								</span>
+							</td>
+							<td>
+								<a class="btn nc btn-rounded btn-sm btn-success skwp-btn">
+									<?php
+									$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
+									echo $count;
+									?>
 								</a>
 							</td>
 							<td>
@@ -184,7 +204,7 @@ endif;
 							<div class="skwp-form-group">
 								<label class="col-form-label" for=""><?php esc_html_e('Class', 'sakolawp') ?></label>
 								<div class="input-group">
-									<select class="skwp-form-control" name="class_id" id="class_holder" required="">
+									<select class="skwp-form-control select-subjects" name="class_id" id="class_holder" required="">
 										<option value=""><?php echo __('Select', 'sakolawp'); ?></option>
 										<?php
 										global $wpdb;
@@ -201,8 +221,8 @@ endif;
 							<div class="skwp-form-group">
 								<label class="col-form-label" for=""><?php esc_html_e('Parent Group', 'sakolawp'); ?></label>
 								<div class="input-group">
-									<select class="skwp-form-control teacher-section" name="section_id" required="" id="section_holder">
-										<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+									<select class="skwp-form-control teacher-section" name="section_id" id="section_holder2">
+										<option value=""><?php esc_html_e('All', 'sakolawp'); ?></option>
 									</select>
 								</div>
 							</div>

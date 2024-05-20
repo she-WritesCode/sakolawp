@@ -874,6 +874,30 @@ function sakolawp_select_section_f()
 add_action('wp_ajax_sakolawp_select_section', 'sakolawp_select_section_f');    // If called from admin panel
 add_action('wp_ajax_nopriv_sakolawp_select_section', 'sakolawp_select_section_f');
 
+
+function sakolawp_select_section2_f()
+{
+	// Implement ajax function here
+	global $wpdb;
+	$class_id = $_REQUEST['class_id'];
+	$selected = $_REQUEST['selected'];
+	$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
+	echo '<option value="">All</option>';
+	foreach ($sections as $row) {
+		$isSelected = $row['section_id'] == $selected ? 'selected' : '';
+		// echo '<option value="' . $row['section_id'] . '">' . $row['name'] . '</option>';
+		echo '<option ' .  $isSelected . ' value="' . $row['section_id'] . '">' . $row['name'] . '</option>';
+	}
+	/*
+<?php if ($class->class_id == $accountabilityGroup->class_id) {
+	echo "selected";
+} ?>
+*/
+	exit();
+}
+add_action('wp_ajax_sakolawp_select_section2', 'sakolawp_select_section2_f');    // If called from admin panel
+add_action('wp_ajax_nopriv_sakolawp_select_section2', 'sakolawp_select_section2_f');
+
 function sakolawp_select_section_spe()
 {
 	// Implement ajax function here
@@ -966,6 +990,23 @@ function sakolawp_select_subject_teacher_f()
 }
 add_action('wp_ajax_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');    // If called from admin panel
 add_action('wp_ajax_nopriv_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');
+
+function sakolawp_select_all_subjects_f()
+{
+	// Implement ajax function here
+	global $wpdb;
+	$class_id = $_REQUEST['class_id'];
+	// $teacher_id = $_REQUEST['teacher_id'];
+	$subjects = $wpdb->get_results("SELECT subject_id, name FROM {$wpdb->prefix}sakolawp_subject WHERE class_id = '$class_id'", ARRAY_A);
+	echo '<option value="">Select</option>';
+	foreach ($subjects as $row) {
+		echo '<option value="' . $row['subject_id'] . '">' . $row['name'] . '</option>';
+	}
+
+	exit();
+}
+add_action('wp_ajax_sakolawp_select_all_subjects', 'sakolawp_select_all_subjects_f');    // If called from admin panel
+add_action('wp_ajax_nopriv_sakolawp_select_all_subjects', 'sakolawp_select_all_subjects_f');
 
 add_filter('single_template', 'sakolawp_single_news_template');
 function sakolawp_single_news_template($single)

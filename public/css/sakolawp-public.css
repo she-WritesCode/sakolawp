@@ -2421,3 +2421,7 @@ span.no-soal {
 	width: 70px;
 	margin: 0 auto;
 }
+.text-gray-500 {
+    --tw-text-opacity: 1 !important;
+    color: rgb(107 114 128 / var(--tw-text-opacity)) !important;
+}
