@@ -104,28 +104,30 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Due Date', 'sakolawp'); ?></th>
-						<th><?php esc_html_e('Submissions', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php
 					$counter = 1;
-					$homework_sql = $user_is_admin ? "SELECT title,class_id,section_id,subject_id,date_end,homework_code,uploader_id FROM {$wpdb->prefix}sakolawp_homework" : "SELECT title, class_id, section_id, subject_id, date_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id";
+					$homework_sql = $user_is_admin ? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id FROM {$wpdb->prefix}sakolawp_homework" : "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id";
 					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
 					foreach ($homeworks as $row) :
 					?>
 						<tr>
 							<td>
 								<?php
-								echo $row['title'];
+								echo esc_html($row['title']);
 								if ($user_is_admin) {
 									$uploader = get_user_by('id', $row['uploader_id']);
 									if ($uploader) {
 										echo '<br/><i class="text-gray-500">Uploaded by: ' . $uploader->display_name, '</i>';
 									}
 								}
+								$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
+								echo '<br/><i class="text-gray-500">' . $count . ' submission(s)</i>';
 								?>
+
 							</td>
 							<td>
 								<?php
@@ -148,17 +150,10 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								?>
 							</td>
 							<td>
-								<span class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
-									<?php echo esc_html($row['date_end']); ?>
-								</span>
-							</td>
-							<td>
-								<a class="btn nc btn-rounded btn-sm btn-success skwp-btn">
-									<?php
-									$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
-									echo $count;
-									?>
+								<a class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
+									<?php echo esc_html($row['date_end']) . ' ' . esc_html($row['time_end']); ?>
 								</a>
+								<span class="skwp-date" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
 							</td>
 							<td>
 								<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
