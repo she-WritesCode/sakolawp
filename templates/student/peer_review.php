@@ -1,0 +1,129 @@
+<?php
+
+defined('ABSPATH') || exit;
+
+get_header();
+do_action('sakolawp_before_main_content');
+
+global $wpdb;
+
+$running_year = get_option('running_year');
+
+$student_id = get_current_user_id();
+
+$enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
+
+if (!empty($enroll)) :
+
+	$user_info = get_userdata($student_id);
+	$student_name = $user_info->display_name;
+
+	$student_class = $wpdb->get_row("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$enroll->class_id'");
+	$student_section = $wpdb->get_row("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $enroll->section_id");
+	$student_accountability = $wpdb->get_row("SELECT accountability_id, name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $enroll->accountability_id");
+
+	$homework_table = $wpdb->prefix . 'sakolawp_homework';
+	$deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
+	$homeworks = $wpdb->get_results("SELECT d.*, h.title, h.section_id
+		FROM $homework_table h
+		JOIN $deliveries_table d ON h.homework_code = d.homework_code
+		WHERE h.allow_peer_review = 1  
+		AND d.student_id != '$student_id' 
+		AND ((h.class_id = '$enroll->class_id' AND h.section_id = '$enroll->section_id') 
+		OR (h.class_id = '$enroll->class_id' AND h.section_id = 0))", ARRAY_A);
+?>
+
+	<div class="homework-inner skwp-content-inner skwp-clearfix">
+
+		<div class="skwp-page-title">
+			<h5><?php esc_html_e('My Peer Reviews', 'sakolawp'); ?>
+				<span class="skwp-subtitle">
+					<?php echo esc_html($student_name); ?>
+					<br /><i>
+						<?php
+						if (isset($student_class)) {
+							echo ' ' . esc_html($student_class->name);
+						}
+						if (isset($student_section)) {
+							echo ' ' . esc_html($student_section->name);
+						}
+						if (isset($student_accountability)) {
+							echo ' - ' . esc_html($student_accountability->name);
+						}
+						?>
+					</i>
+				</span>
+			</h5>
+		</div>
+
+		<div class="skwp-table table-responsive">
+			<table id="tableini" class="table dataTable homework-table">
+				<thead>
+					<tr>
+						<th class="title-homework"><?php esc_html_e('Student', 'sakolawp'); ?></th>
+						<th class="title-homework"><?php esc_html_e('Title', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Submitted on', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					foreach ($homeworks as $row) :
+						$peer_id = $row['student_id'];
+						$peer_enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
+
+					?>
+						<tr>
+							<td>
+								<?php
+								$user_info = get_user_meta($peer_id);
+								$first_name = $user_info["first_name"][0];
+								$last_name = $user_info["last_name"][0];
+
+								$user_name = $first_name . ' ' . $last_name;
+
+								if (empty($first_name)) {
+									$user_info = get_userdata($peer_id);
+									$user_name = $user_info->display_name;
+								}
+								echo esc_html($user_name);
+
+								$peer_section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $peer_enroll->section_id");
+								$peer_accountability = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $peer_enroll->accountability_id");
+								if (isset($peer_section) && isset($peer_accountability)) {
+								?>
+									<i> <?php echo '<br/>' . esc_html($peer_section->name) . ' - ' . $peer_accountability->name; ?> </i>
+								<?php } ?>
+							</td>
+							<td>
+								<?php echo esc_html($row['title']); ?>
+							</td>
+							<td>
+								<?php $subject_id = $row['subject_id'];
+								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
+								echo esc_html($subject->name);
+								?>
+							</td>
+							<td>
+								<?php echo esc_html($row['date']); ?>
+							</td>
+							<td class="row-actions">
+								<a href="<?php echo add_query_arg('delivery_id', $row['delivery_id'], home_url('peer_review_room')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
+									<?php echo esc_html__('Review', 'sakolawp'); ?>
+								</a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+<?php
+else :
+	esc_html_e('You are not assign to  a class yet', 'sakolawp');
+endif;
+
+do_action('sakolawp_after_main_content');
+get_footer();

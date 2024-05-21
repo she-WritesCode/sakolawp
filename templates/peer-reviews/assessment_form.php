@@ -5,8 +5,8 @@ defined('ABSPATH') || exit;
 
 <div class="assessment_form" id="assessment_form1">
     <div>
-        <h2><?php echo esc_html($form['title']); ?></h2>
-        <p><?php echo $form['description']; ?></p>
+        <h5><?php echo esc_html($form['title']); ?></h5>
+        <div class="text-sm"><?php echo $form['description']; ?></div>
     </div>
     <div class="questions flex flex-col gap-4">
         <?php foreach ($form['questions'] as $question) : ?>
@@ -42,7 +42,7 @@ defined('ABSPATH') || exit;
                     <fieldset>
                         <?php foreach ($question['options'] as $option) : ?>
                             <div>
-                                <input type="radio" name="<?php echo esc_attr($question['question_id']); ?>" value="<?php echo esc_attr($option['value']); ?>" />
+                                <input type="radio" name="<?php echo esc_attr($question['question_id']); ?>" value="<?php echo esc_attr($option['value']); ?>" id="<?php echo esc_attr($question['question_id'] . '_' . $option['value']); ?>" />
                                 <label for="<?php echo esc_attr($question['question_id'] . '_' . $option['value']); ?>"><?php echo esc_html($option['label']); ?></label>
                             </div>
                         <?php endforeach; ?>

@@ -53,6 +53,12 @@
 			<?php echo esc_html__('Homeworks', 'sakolawp'); ?>
 		</a>
 	</div>
+	<div class="skwp-menu-item <?php if ($wp->request === "peer_review" || $wp->request === "peer_review_room") echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/peer_review')); ?>">
+			<i class="sakolawp-icon sakolawp-icon-shopping-list"></i>
+			<?php echo esc_html__('Peer Reviews', 'sakolawp'); ?>
+		</a>
+	</div>
 	<div class="skwp-menu-item <?php if ($wp->request === "attendance_report" || $wp->request === "report_attendance_view") echo esc_attr('active'); ?>">
 		<a href="<?php echo esc_url(home_url('/attendance_report')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-biodata"></i>

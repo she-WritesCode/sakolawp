@@ -18,20 +18,6 @@ class SakolawpPeerReview
         add_action('sakolawp_form_biblical_teaching_assessment',  array($this, 'output_biblical_teaching_assessment'));
     }
 
-    public function peer_review_templates_select_options()
-    {
-        $peer_review_templates_select_options = array_keys($this->peer_review_templates);
-        $selected = $_REQUEST['selected'];
-
-        echo '<option value="">Select</option>';
-        foreach ($peer_review_templates_select_options as $row) {
-            $isSelected = $row == $selected ? 'selected' : '';
-            echo '<option ' . $isSelected . ' value="' . $row . '">' . $row . '</option>';
-        }
-
-        exit();
-    }
-
 
     function output_prophetic_word_assessment()
     {
