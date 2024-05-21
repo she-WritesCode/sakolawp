@@ -34,10 +34,10 @@ foreach ($current_homework as $row) :
 		<div class="back skwp-back hidden-sm-down">
 			<a href="<?php echo site_url('homework'); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
 		</div>
+
 		<div class="homework-top">
+			<div style="width: 100%;"><canvas id="peer_review_chart2"></canvas></div>
 			<div style="width: 100%;"><canvas id="peer_review_chart"></canvas></div>
-			<div class="tugas-wrap">
-			</div>
 		</div>
 
 		<div class="homework-info skwp-mt-20">

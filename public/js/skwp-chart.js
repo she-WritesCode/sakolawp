@@ -1,6 +1,6 @@
 
 (async function () {
-	if (document.getElementById('peer_review_chart')) {
+	if (document.getElementById('peer_review_chart') || document.getElementById('peer_review_chart2')) {
 		const urlParams = new URLSearchParams(window.location.search);
 		const homework_code = urlParams.get('homework_code');
 
@@ -18,25 +18,49 @@
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
-					const datasets = data.data.flatMap((i) => {
-						const item = Object.values(i);
-						return item.map((j, index) => ({ label: Object.keys(i)[index], data: typeof j == 'string' ? (j ? 1 : 0) : j }))
-					})
-					console.log({
-						labels: Object.keys(data.data[0]),
-						datasets
-					});
-					// Handle the data here
+					const ctx = document.getElementById('peer_review_chart').getContext('2d');
+					const ctx2 = document.getElementById('peer_review_chart2').getContext('2d');
 
-					new Chart(
-						document.getElementById('peer_review_chart'),
-						{
-							type: 'bar',
-							data: {
-								datasets: data.data.map(d => ({ data: d })),
+					const datasets = data.data.dataSets.map((dataPoints, index) => ({
+						label: `Review ${index + 1}`,
+						data: dataPoints,
+						backgroundColor: `rgba(54, 162, 235, 0.${index + 2})`,
+						borderColor: `rgba(54, 162, 235, 1)`,
+						borderWidth: 1
+					}));
+
+					new Chart(ctx, {
+						type: 'radar',
+						data: {
+							labels: data.data.labels,
+							datasets: datasets
+						},
+						options: {
+							scale: {
+								ticks: {
+									beginAtZero: true,
+									max: 100
+								}
 							}
 						}
-					);
+					});
+					new Chart(ctx2, {
+						type: 'bar',
+						data: {
+							labels: data.data.labels,
+							datasets: datasets
+						},
+						options: {
+							indexAxis: 'y',
+							responsive: true,
+							scales: {
+								y: {
+									beginAtZero: true,
+									max: 100
+								}
+							}
+						}
+					});
 				} else {
 					console.error(data.data);
 					// Handle the error here

@@ -72,11 +72,11 @@ class SakolawpPeerReview
 
         // Get peer reviews for the current user and the specific homework
         $peer_reviews = $wpdb->get_results($wpdb->prepare(
-            "SELECT pr.*, d.*, h.title 
-         FROM $peer_reviews_table pr 
-         JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
-         JOIN $homework_table h ON pr.homework_id = h.homework_id 
-         WHERE pr.reviewer_id = %d AND pr.homework_id = %d",
+            "SELECT pr.*, d.*, h.title, h.peer_review_template
+                FROM $peer_reviews_table pr 
+                JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
+                JOIN $homework_table h ON pr.homework_id = h.homework_id 
+                WHERE pr.reviewer_id = %d AND pr.homework_id = %d",
             $current_user_id,
             $homework_id
         ));
@@ -85,13 +85,50 @@ class SakolawpPeerReview
             wp_send_json_error('No peer reviews found for the current user and specified homework.');
         }
 
-        $results = [];
+        $responses = [];
         foreach ($peer_reviews as $peer_review) {
-            $results[] = json_decode($peer_review->assessment);
+            $responses[] = json_decode($peer_review->assessment, true); // Decode JSON as associative array
         }
 
-        wp_send_json_success($results);
+        try {
+            require_once plugin_dir_path(__FILE__) . $peer_review->peer_review_template . '_assessment.php';
+
+            $dataSets = [];
+            $labels = [];
+
+            foreach ($form['questions'] as $question) {
+                $labels[] = $question['question'];
+            }
+
+            foreach ($responses as $response) {
+                $dataPoints = [];
+
+                foreach ($form['questions'] as $question) {
+                    $questionId = $question['question_id'];
+                    $answer = $response[$questionId];
+
+                    if ($question['type'] === 'linear-scale') {
+                        $points = (float)$answer / $question['expected_points'] * $question['score_percentage'];
+                        $dataPoints[] = $points;
+                    } else if ($question['type'] === 'radio') {
+                        $option = array_filter($question['options'], function ($opt) use ($answer) {
+                            return $opt['value'] === $answer;
+                        });
+                        $option = reset($option);
+                        $points = $option ? ($option['points'] / $question['expected_points'] * $question['score_percentage']) : 0;
+                        $dataPoints[] = $points;
+                    }
+                }
+
+                $dataSets[] = $dataPoints;
+            }
+
+            wp_send_json_success(['labels' => $labels, 'dataSets' => $dataSets]);
+        } catch (Throwable $th) {
+            wp_send_json_error('An error occurred while processing the peer reviews.');
+        }
     }
+
 
 
 
