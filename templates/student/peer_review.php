@@ -10,6 +10,9 @@ global $wpdb;
 $running_year = get_option('running_year');
 
 $student_id = get_current_user_id();
+$homework_table = $wpdb->prefix . 'sakolawp_homework';
+$deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
+$peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
 
 $enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
 
@@ -22,9 +25,7 @@ if (!empty($enroll)) :
 	$student_section = $wpdb->get_row("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $enroll->section_id");
 	$student_accountability = $wpdb->get_row("SELECT accountability_id, name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $enroll->accountability_id");
 
-	$homework_table = $wpdb->prefix . 'sakolawp_homework';
-	$deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
-	$homeworks = $wpdb->get_results("SELECT d.*, h.title, h.section_id
+	$homework_deliveries = $wpdb->get_results("SELECT d.*, h.title, h.section_id
 		FROM $homework_table h
 		JOIN $deliveries_table d ON h.homework_code = d.homework_code
 		WHERE h.allow_peer_review = 1  
@@ -60,8 +61,8 @@ if (!empty($enroll)) :
 			<table id="tableini" class="table dataTable homework-table">
 				<thead>
 					<tr>
-						<th class="title-homework"><?php esc_html_e('Student', 'sakolawp'); ?></th>
-						<th class="title-homework"><?php esc_html_e('Title', 'sakolawp'); ?></th>
+						<th class="title-homework"><?php esc_html_e('Peer', 'sakolawp'); ?></th>
+						<th class="title-homework"><?php esc_html_e('Homework', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Submitted on', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
@@ -69,7 +70,8 @@ if (!empty($enroll)) :
 				</thead>
 				<tbody>
 					<?php
-					foreach ($homeworks as $row) :
+					foreach ($homework_deliveries as $row) :
+						$delivery_id = $row['delivery_id'];
 						$peer_id = $row['student_id'];
 						$peer_enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
 
@@ -93,7 +95,7 @@ if (!empty($enroll)) :
 								$peer_accountability = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $peer_enroll->accountability_id");
 								if (isset($peer_section) && isset($peer_accountability)) {
 								?>
-									<i> <?php echo '<br/>' . esc_html($peer_section->name) . ' - ' . $peer_accountability->name; ?> </i>
+									<i class="text-sm"> <?php echo '<br/>' . esc_html($peer_section->name) . ' - ' . $peer_accountability->name; ?> </i>
 								<?php } ?>
 							</td>
 							<td>
@@ -109,9 +111,22 @@ if (!empty($enroll)) :
 								<?php echo esc_html($row['date']); ?>
 							</td>
 							<td class="row-actions">
-								<a href="<?php echo add_query_arg('delivery_id', $row['delivery_id'], home_url('peer_review_room')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
-									<?php echo esc_html__('Review', 'sakolawp'); ?>
-								</a>
+								<?php
+
+								$current_peer_review = $wpdb->get_row("SELECT * FROM $peer_reviews_table
+									WHERE delivery_id = '$delivery_id'
+									AND reviewer_id = '$student_id';", ARRAY_A);
+								if (empty($current_peer_review)) :
+								?>
+
+									<a href="<?php echo add_query_arg('delivery_id', $delivery_id, home_url('peer_review_room')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
+										<?php echo esc_html__('Review', 'sakolawp'); ?>
+									</a>
+								<?php else : ?>
+									<a href="<?php echo add_query_arg('delivery_id', $delivery_id, home_url('peer_review_room')); ?>" class="btn btn-success btn-rounded btn-sm skwp-btn">
+										<?php echo esc_html__('Reviewed', 'sakolawp'); ?>
+									</a>
+								<?php endif; ?>
 							</td>
 						</tr>
 					<?php endforeach; ?>

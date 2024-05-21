@@ -2501,3 +2501,10 @@ fieldset {
     font-size: 0.875rem/* 14px */ !important;
     line-height: 1.25rem/* 20px */ !important;
 }
+.mt-4 {
+    margin-top: 1rem/* 16px */ !important;
+}
+.text-red-500 {
+    --tw-text-opacity: 1 !important;
+    color: rgb(239 68 68 / var(--tw-text-opacity)) !important;
+}

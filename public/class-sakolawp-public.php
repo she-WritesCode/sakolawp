@@ -59,6 +59,9 @@ class Sakolawp_Public
 
 		add_action('wp_ajax_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');    // If called from admin panel
 		add_action('wp_ajax_nopriv_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');
+
+
+		add_filter('script_loader_tag', [$this, 'add_type_attribute'], 10, 3);
 	}
 
 	/**
@@ -118,12 +121,17 @@ class Sakolawp_Public
 			wp_enqueue_script('daterange', plugin_dir_url(__FILE__) . 'js/daterange.js', array('jquery'), false);
 			wp_enqueue_script('modal', plugin_dir_url(__FILE__) . 'js/modal.js', array('jquery'), false);
 		}
+		wp_register_script('chartjs', plugin_dir_url(__FILE__) . 'js/chart.umd.min.js', [], false);
+		wp_enqueue_script('chartjs');
 		wp_enqueue_script('clockpicker', plugin_dir_url(__FILE__) . 'js/clockpicker.min.js', array('jquery'), false);
 		wp_enqueue_script('isotope', plugin_dir_url(__FILE__) . 'js/isotope.js', array('jquery'), false);
 		wp_enqueue_script('datatables', plugin_dir_url(__FILE__) . 'js/dataTables.min.js', array('jquery'), false, true);
 		wp_enqueue_script('datatables-checkbox', plugin_dir_url(__FILE__) . 'js/dataTables.checkboxes.min.js', array('jquery'), false, true);
 
-		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', array(), '1.0.0', true);
+		wp_enqueue_script('skwp-chart', plugin_dir_url(__FILE__) . 'js/skwp-chart.js', ['chartjs'], '1.0.0', true);
+		wp_localize_script('skwp-chart', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', 'datatables')));
+
+		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', [], '1.0.0', true);
 		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', 'datatables')));
 
 		if ($wp->request === "exam") {
@@ -158,5 +166,19 @@ class Sakolawp_Public
 		}
 
 		exit();
+	}
+
+
+	function add_type_attribute($tag, $handle, $src)
+	{
+		// if not your script, do nothing and return original $tag
+		$typeMoudelScripts = ['chartjs', 'skwp-chart'];
+		if (!in_array($handle, $typeMoudelScripts)) {
+			return $tag;
+		}
+		// change the script tag by adding type="module" and return it.
+		$tag = '<script id="' . $handle . '" type="module" src="' . esc_url($src) . '"></script>';
+
+		return $tag;
 	}
 }

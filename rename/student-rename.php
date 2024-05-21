@@ -9,6 +9,8 @@ if (is_page('myaccount') || $wp->request === "myaccount") {
     $title_parts['title'] = 'Class Homework';
 } elseif ($wp->request === "homeworkroom") {
     $title_parts['title'] = 'Class Homework Room';
+} elseif ($wp->request === "homeworkroom_details") {
+    $title_parts['title'] = 'Peer Review Report';
 } elseif ($wp->request === "peer_review") {
     $title_parts['title'] = 'My Peer Review';
 } elseif ($wp->request === "peer_review_room") {

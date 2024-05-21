@@ -1442,6 +1442,60 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
 	}
 }
 
+
+function calculate_assessment_total_score($responses, $form)
+{
+	$total_score = 0;
+	$total_weight = 0;
+
+	foreach ($form['questions'] as $question) {
+		$question_id = $question['question_id'];
+		if (!isset($responses[$question_id])) {
+			continue;
+		}
+
+		$response = $responses[$question_id];
+		$score_percentage = $question['score_percentage'];
+		$expected_points = $question['expected_points'];
+
+		switch ($question['type']) {
+			case 'linear-scale':
+				$points = (float)$response;
+				$score = ($points / $expected_points) * $score_percentage;
+				break;
+
+			case 'radio':
+				$points = 0;
+				foreach ($question['options'] as $option) {
+					if ($option['value'] == $response) {
+						$points = $option['points'];
+						break;
+					}
+				}
+				$score = ($points / $expected_points) * $score_percentage;
+				break;
+
+			default:
+				$score = 0;
+				break;
+		}
+
+		$total_score += $score;
+		$total_weight += $score_percentage;
+	}
+
+	// Handle the case where the total weight is zero
+	if ($total_weight === 0) {
+		wp_die(__('Error: Total weight of the form is zero. Please check the form configuration.', 'sakolawp'), __('Form Calculation Error', 'sakolawp'), array('back_link' => true));
+	}
+
+	// Normalize the total score to a percentage out of 100
+	$final_score = ($total_score / $total_weight) * 100;
+
+	return $final_score;
+}
+
+
 function sakolawp_add_student()
 {
 	global $wpdb;

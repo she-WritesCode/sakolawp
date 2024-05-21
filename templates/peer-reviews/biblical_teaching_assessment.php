@@ -20,6 +20,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q2',
@@ -35,6 +38,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q3',
@@ -50,6 +56,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q4',
@@ -65,6 +74,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q5',
@@ -80,26 +92,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
-        [
-            'question_id' => 'q6',
-            'question' => 'Did the prophetic word resonate with the individual? ',
-            'type' => 'select',
-            'options' => [
-                [
-                    'label' => 'Yes',
-                    'value' => "yes"
-                ],
-                [
-                    'label' => 'No',
-                    'value' => "no"
-                ],
-                [
-                    'label' => "Individual's response was not captured (verbally)",
-                    'value' => "Individual's response was not captured (verbally)"
-                ],
-            ]
-        ]
-        // TODO: Comments and Feedback on every form
     ]
 ];

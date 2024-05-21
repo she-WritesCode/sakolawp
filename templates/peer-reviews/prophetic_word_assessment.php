@@ -20,6 +20,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q2',
@@ -35,6 +38,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q3',
@@ -50,6 +56,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q4',
@@ -65,6 +74,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 20,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q5',
@@ -80,6 +92,9 @@ $form = [
                     '10' => 'Expert - demonstrates a deep understanding and mastery'
                 ],
             ],
+            'required' => true,
+            'score_percentage' => 10,
+            'expected_points' => 10,
         ],
         [
             'question_id' => 'q6',
@@ -88,18 +103,23 @@ $form = [
             'options' => [
                 [
                     'label' => 'Yes',
-                    'value' => "yes"
+                    'value' => "yes",
+                    'points' => 10
                 ],
                 [
                     'label' => 'No',
-                    'value' => "no"
+                    'value' => "no",
+                    'points' => 0
                 ],
                 [
                     'label' => "Individual's response was not captured (verbally)",
-                    'value' => "Individual's response was not captured (verbally)"
+                    'value' => "Individual's response was not captured (verbally)",
+                    'points' => null // ignore question when capturing points
                 ],
-            ]
+            ],
+            'required' => true,
+            'score_percentage' => 10,
+            'expected_points' => 10,
         ]
-        // TODO: Comments and Feedback on every form
     ]
 ];

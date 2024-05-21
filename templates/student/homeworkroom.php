@@ -118,6 +118,21 @@ if (!empty($enroll)) :
 		<?php $query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A); ?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
 
+			<div class="skwp-tab-menu">
+				<ul class="skwp-tab-wrap">
+					<li class="skwp-tab-items active">
+						<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom')); ?>">
+							<span><?php echo esc_html__('Homework', 'sakolawp'); ?></span>
+						</a>
+					</li>
+					<li class="skwp-tab-items">
+						<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom_details')); ?>">
+							<span><?php echo esc_html__('Peer Reviews Reports', 'sakolawp'); ?></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+
 			<div class="back skwp-back hidden-sm-down">
 				<a href="<?php echo esc_url(site_url('homework')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php esc_html_e('Back', 'sakolawp'); ?></a>
 			</div>

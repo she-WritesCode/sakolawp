@@ -3,88 +3,59 @@ defined('ABSPATH') || exit;
 
 global $wpdb;
 
+$homework_table = $wpdb->prefix . 'sakolawp_homework';
+$deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
+$peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
+
 if (isset($_POST['submit'])) {
 	$homework_act = $_POST['action'];
-	$homework_type = $_POST['homework_type'];
 
-	if ($homework_act == "insert_homework") {
-		//$_POST = array_map( 'stripslashes_deep', $_POST );
-		$homework_code = sanitize_text_field($_POST['homework_code']);
-		$student_id    = sanitize_text_field($_POST['student_id']);
-		$date          = sanitize_text_field(current_time('m/d/Y H:i'));
-		$class_id      = sanitize_text_field($_POST['class_id']);
+	if ($homework_act == "add_peer_review") {
+		$_POST 	= array_map('stripslashes_deep', $_POST);
+		$date   =  date("Y-m-d H:i:s");;
+		$delivery_id =  sakolawp_sanitize_html($_POST['delivery_id']);
+		$homework_id = sakolawp_sanitize_html($_POST['homework_id']);
+		$peer_id = sanitize_text_field($_POST['peer_id']);
+		$reviewer_id = sanitize_text_field($_POST['reviewer_id']);
+		$class_id = sanitize_text_field($_POST['class_id']);
 		$section_id    = sanitize_text_field($_POST['section_id']);
-		$homework_reply =  sakolawp_sanitize_html($_POST['reply']);
-		$file_name =  $_FILES['file_name']['name'];
-		$student_comment = sakolawp_sanitize_html($_POST['comment']);
-		$subject_id = sanitize_text_field($_POST['subject_id']);
-		$post_id = sanitize_text_field($_POST['post_id']);
-		$status = sanitize_text_field('1');
+		$accountability_id =  sakolawp_sanitize_html($_POST['accountability_id']);
+		$subject_id = sakolawp_sanitize_html($_POST['subject_id']);
+		$assessment = array_map('stripslashes_deep', $_POST['assessment']);
+		$reviewer_comment = sakolawp_sanitize_html($_POST['reviewer_comment']);
+		$reviewer_type = sanitize_text_field($_POST['reviewer_type']);
 
-		$wpdb->insert(
-			$wpdb->prefix . 'sakolawp_deliveries',
-			array(
-				'homework_code' => $homework_code,
-				'student_id' => $student_id,
+		$current_delivery = $wpdb->get_row("SELECT * 
+		FROM $deliveries_table d
+		JOIN $homework_table h ON d.homework_code = h.homework_code
+		WHERE d.delivery_id = '$delivery_id';", ARRAY_A);
+
+		require_once plugin_dir_path(__FILE__) . '../peer-reviews/' . $current_delivery['peer_review_template'] . '_assessment.php';
+		$mark =  calculate_assessment_total_score($assessment, $form); // form is gotten from the require once file
+
+
+		skwp_insert_or_update_record(
+			$peer_reviews_table,
+			[
 				'date' => $date,
+				'delivery_id' => $delivery_id,
+				'homework_id' => $homework_id,
+				'peer_id' => $peer_id,
+				'reviewer_id' => $reviewer_id,
 				'class_id' => $class_id,
 				'section_id' => $section_id,
-				'file_name' => $file_name,
-				'homework_reply' => $homework_reply,
-				'student_comment' => $student_comment,
+				'accountability_id' => $accountability_id,
 				'subject_id' => $subject_id,
-				'status' => $status
-			)
+				'assessment' => json_encode($assessment),
+				'mark' => $mark,
+				'reviewer_comment' => $reviewer_comment,
+				'reviewer_type' => $reviewer_type,
+			],
+			['delivery_id', 'reviewer_id'],
+			"peer_review_id"
 		);
 
-		add_filter('upload_dir', 'sakolawp_custom_dir_deliveries');
-		require_once(ABSPATH . 'wp-admin/includes/image.php');
-		require_once(ABSPATH . 'wp-admin/includes/file.php');
-		require_once(ABSPATH . 'wp-admin/includes/media.php');
-		$attach_id = media_handle_upload('file_name', $post_id);
-		if (is_numeric($attach_id)) {
-			update_option('deliveries_homework_student', $attach_id);
-			update_post_meta($post_id, '_file_name', $attach_id);
-		}
-		remove_filter('upload_dir', 'sakolawp_custom_dir_deliveries');
-
-		wp_redirect(add_query_arg(array('homework_code' => $homework_code), home_url('homeworkroom')));
-		die;
-	}
-
-	if ($homework_act == "update_homework") {
-		//$_POST = array_map( 'stripslashes_deep', $_POST );
-		$homework_code = sanitize_text_field($_POST['homework_code']);
-		$student_id    = sanitize_text_field($_POST['student_id']);
-		$homework_reply =  sakolawp_sanitize_html($_POST['reply']);
-		$file_name =  $_FILES['file_name']['name'];
-		$student_comment = sakolawp_sanitize_html($_POST['comment']);
-		$post_id = sanitize_text_field($_POST['post_id']);
-
-		add_filter('upload_dir', 'sakolawp_custom_dir_deliveries');
-		require_once(ABSPATH . 'wp-admin/includes/image.php');
-		require_once(ABSPATH . 'wp-admin/includes/file.php');
-		require_once(ABSPATH . 'wp-admin/includes/media.php');
-		$attach_id = media_handle_upload('file_name', $post_id);
-		if (is_numeric($attach_id)) {
-			update_option('deliveries_homework_student', $attach_id);
-			update_post_meta($post_id, '_file_name', $attach_id);
-		}
-		remove_filter('upload_dir', 'sakolawp_custom_dir_deliveries');
-
-		$wpdb->update(
-			$wpdb->prefix . 'sakolawp_deliveries',
-			array(
-				'file_name' => $file_name,
-				'student_comment' => $student_comment
-			),
-			array(
-				'homework_code' => $homework_code,
-				'student_id' => $student_id,
-			)
-		);
-
-		wp_redirect(add_query_arg(array('homework_code' => $homework_code), home_url('homeworkroom')));
+		wp_redirect(add_query_arg(array('delivery_id' => $delivery_id), home_url('peer_review_room')));
 		die;
 	}
 }
@@ -105,8 +76,6 @@ if (!empty($enroll)) :
 
 	$delivery_id = $_GET['delivery_id'];
 
-	$homework_table = $wpdb->prefix . 'sakolawp_homework';
-	$deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 	$current_delivery = $wpdb->get_results("SELECT * 
 		FROM $deliveries_table d
 		JOIN $homework_table h ON d.homework_code = h.homework_code
@@ -176,13 +145,51 @@ if (!empty($enroll)) :
 					<?php endif; ?>
 				</div>
 
-				<div class="skwp-column skwp-column-1">
-					<form>
-						<?php
-						do_action('sakolawp_form_' . $row['peer_review_template'] . '_assessment');
-						?>
-					</form>
-				</div>
+				<?php
+
+				$current_peer_review = $wpdb->get_row("SELECT * FROM $peer_reviews_table
+					WHERE delivery_id = '$delivery_id'
+					AND reviewer_id = '$student_id';", ARRAY_A);
+
+				if (empty($current_peer_review)) :
+				?>
+					<div class="skwp-column skwp-column-1">
+						<form id="<?php echo $row['peer_review_template'] . '_form'; ?>" method="POST">
+							<input type="hidden" name="action" value="add_peer_review" />
+
+							<input type="hidden" name="delivery_id" value="<?php echo esc_attr($delivery_id); ?>">
+							<input type="hidden" name="homework_id" value="<?php echo esc_attr($row['homework_id']); ?>">
+							<input type="hidden" name="reviewer_id" value="<?php echo esc_attr($student_id); ?>">
+							<input type="hidden" name="peer_id" value="<?php echo esc_attr($peer_id); ?>">
+							<input type="hidden" name="class_id" value="<?php echo esc_attr($peer_enroll->class_id); ?>">
+							<input type="hidden" name="section_id" value="<?php echo esc_attr($peer_enroll->section_id); ?>">
+							<input type="hidden" name="accountability_id" value="<?php echo esc_attr($peer_enroll->accountability_id); ?>">
+							<input type="hidden" name="subject_id" value="<?php echo esc_attr($row['subject_id']); ?>">
+							<input type="hidden" name="reviewer_type" value="<?php echo esc_attr($user_info->roles[0]); ?>">
+
+							<?php do_action('sakolawp_form_' . $row['peer_review_template'] . '_assessment'); ?>
+
+							<div class="flex flex-col gap-2 p-4 border bg-gray-50 mt-4">
+								<div class="flex flex-col gap-2">
+									<label class="font-medium"><?php echo esc_html("Any comments or observation"); ?></label>
+
+									<textarea name="reviewer_comment"></textarea>
+								</div>
+							</div>
+							<button class="btn btn-success skwp-btn" type="submit" name="submit" value="submit">Submit</button>
+						</form>
+					</div>
+
+				<?php else : ?>
+					<div class="skwp-column skwp-column-1">
+						<div class="skwp-sidebar-title">
+							<h5 class="skwp-title btn btn-rounded btn-sm skwp-btn btn-primary">
+								<?php esc_html_e('You already reviewed this submission', 'sakolawp'); ?>
+							</h5>
+						</div>
+					</div>
+				<?php endif; ?>
+
 				<div class="skwp-column skwp-column-1 homework-info">
 					<div class="skwp-content-sidebar">
 						<div class="skwp-sidebar-title">
@@ -267,12 +274,12 @@ if (!empty($enroll)) :
 										<?php esc_html_e('Status:', 'sakolawp'); ?>
 									</th>
 									<td>
-										<!-- <?php if (count($query) <= 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Delivered', 'sakolawp'); ?></a>
+										<?php if (empty($current_peer_review)) : ?>
+											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Reviewed', 'sakolawp'); ?></a>
 										<?php endif; ?>
-										<?php if (count($query) > 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Delivered', 'sakolawp'); ?></a>
-										<?php endif; ?> -->
+										<?php if (!empty($current_peer_review)) : ?>
+											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Reviewed', 'sakolawp'); ?></a>
+										<?php endif; ?>
 									</td>
 								</tr>
 								<tr>
@@ -280,16 +287,16 @@ if (!empty($enroll)) :
 										<?php esc_html_e('Mark:', 'sakolawp'); ?>
 									</th>
 									<td>
-										<!-- <?php if (count($query) < 0) : ?>
+										<?php if (empty($current_peer_review)) : ?>
 											<a class="btn btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Marked', 'sakolawp'); ?></a>
 										<?php endif; ?>
-										<?php if (count($query) > 0) : ?>
-											<?php if ($ada_nilai != NULL) { ?>
-												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($ada_nilai); ?></a>
+										<?php if (!empty($current_peer_review)) : ?>
+											<?php if ($current_peer_review['mark'] != NULL) { ?>
+												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($current_peer_review['mark']); ?></a>
 											<?php } else {
-												esc_html_e('On Review', 'sakolawp');
+												esc_html_e('In Review', 'sakolawp');
 											} ?>
-										<?php endif; ?> -->
+										<?php endif; ?>
 									</td>
 								</tr>
 							</table>

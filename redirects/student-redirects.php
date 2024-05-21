@@ -18,6 +18,9 @@ if ($user_active == 1) {
 	} elseif ($wp->request === "homeworkroom") {
 		$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/student/homeworkroom.php';
 		return $new_template;
+	} elseif ($wp->request === "homeworkroom_details") {
+		$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/student/homeworkroom_details.php';
+		return $new_template;
 	} elseif ($wp->request === "peer_review") {
 		$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/student/peer_review.php';
 		return $new_template;
