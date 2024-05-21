@@ -2,6 +2,9 @@
 defined('ABSPATH') || exit;
 
 global $wpdb;
+$peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
+$homework_table = $wpdb->prefix . 'sakolawp_homework';
+$deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 
 if (isset($_POST['submit'])) {
 	$homework_act = $_POST['action'];
@@ -104,7 +107,7 @@ if (!empty($enroll)) :
 	$student_name = $user_info->display_name;
 
 	$homework_code = $_GET['homework_code'];
-	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 	$ada_nilai_main = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
 	if ($wpdb->num_rows > 0) {
@@ -113,7 +116,18 @@ if (!empty($enroll)) :
 		$ada_nilai = NULL;
 	}
 	foreach ($current_homework as $row) :
+		$homework_id = $row['homework_id'];
 
+		// Get peer reviews for the current user and the specific homework
+		$peer_reviews = $wpdb->get_results($wpdb->prepare(
+			"SELECT pr.*, d.*, h.title, h.peer_review_template
+				FROM $peer_reviews_table pr 
+				JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
+				JOIN $homework_table h ON pr.homework_id = h.homework_id 
+				WHERE pr.reviewer_id = %d AND pr.homework_id = %d",
+			$student_id,
+			$homework_id
+		));
 ?>
 		<?php $query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A); ?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
@@ -127,7 +141,7 @@ if (!empty($enroll)) :
 					</li>
 					<li class="skwp-tab-items">
 						<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom_details')); ?>">
-							<span><?php echo esc_html__('Peer Reviews Reports', 'sakolawp'); ?></span>
+							<span><?php echo esc_html__('Peer Reviews Reports', 'sakolawp') . ' (' . count($peer_reviews) . ')'; ?></span>
 						</a>
 					</li>
 				</ul>
