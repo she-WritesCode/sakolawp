@@ -127,7 +127,6 @@ if (!empty($enroll)) :
 							</div>
 						</div>
 
-
 					</div>
 				</div>
 
@@ -151,11 +150,13 @@ if (!empty($enroll)) :
 
 				<?php
 
-				$current_peer_review = $wpdb->get_row("SELECT * FROM $peer_reviews_table
+				$current_peer_review = $wpdb->get_results("SELECT * FROM $peer_reviews_table
 					WHERE delivery_id = '$delivery_id'
 					AND reviewer_id = '$student_id';", ARRAY_A);
 
-				if (empty($current_peer_review)) :
+				error_log("current_peer_review is " . $current_peer_review);
+
+				if (count($current_peer_review) == 0) :
 				?>
 					<div class="skwp-column skwp-column-1">
 						<form id="<?php echo $row['peer_review_template'] . '_form'; ?>" method="POST">
@@ -253,7 +254,6 @@ if (!empty($enroll)) :
 									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
 									if (isset($section)) {
 									?>
-
 										<th>
 											<?php esc_html_e('Parent Group:', 'sakolawp'); ?>
 										</th>

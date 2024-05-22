@@ -1406,7 +1406,7 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
          SELECT " . implode(', ', array_fill(0, count($data), '%s')) . "
          FROM dual
          WHERE NOT EXISTS (
-             SELECT 1
+             SELECT COUNT(*)
              FROM {$table_name}
              WHERE " . implode(' AND ', array_map(function ($key) {
 			return "{$key} = %s";
