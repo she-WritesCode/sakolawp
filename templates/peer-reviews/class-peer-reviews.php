@@ -35,7 +35,6 @@ class SakolawpPeerReview
         exit();
     }
 
-
     function peer_review_results()
     {
         // Check if the user is logged in
@@ -156,9 +155,6 @@ class SakolawpPeerReview
             wp_send_json_error('An error occurred while processing the peer reviews.');
         }
     }
-
-
-
 
     function output_prophetic_word_assessment()
     {

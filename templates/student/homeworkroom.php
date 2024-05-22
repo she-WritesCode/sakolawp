@@ -107,7 +107,7 @@ if (!empty($enroll)) :
 	$student_name = $user_info->display_name;
 
 	$homework_code = $_GET['homework_code'];
-	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 	$ada_nilai_main = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
 	if ($wpdb->num_rows > 0) {
@@ -132,20 +132,26 @@ if (!empty($enroll)) :
 		<?php $query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A); ?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
 
-			<div class="skwp-tab-menu">
-				<ul class="skwp-tab-wrap">
-					<li class="skwp-tab-items active">
-						<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom')); ?>">
-							<span><?php echo esc_html__('Homework', 'sakolawp'); ?></span>
-						</a>
-					</li>
-					<li class="skwp-tab-items">
-						<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom_details')); ?>">
-							<span><?php echo esc_html__('Peer Reviews Reports', 'sakolawp') . ' (' . count($peer_reviews) . ')'; ?></span>
-						</a>
-					</li>
-				</ul>
-			</div>
+			<?php
+			// Only display menu for peer reviewable homeworks
+			$allow_peer_review = $row['allow_peer_review'];
+			if ($allow_peer_review) :
+			?>
+				<div class="skwp-tab-menu">
+					<ul class="skwp-tab-wrap">
+						<li class="skwp-tab-items active">
+							<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom')); ?>">
+								<span><?php echo esc_html__('Homework', 'sakolawp'); ?></span>
+							</a>
+						</li>
+						<li class="skwp-tab-items">
+							<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $homework_code, home_url('homeworkroom_details')); ?>">
+								<span><?php echo esc_html__('Peer Reviews Reports', 'sakolawp') . ' (' . count($peer_reviews) . ')'; ?></span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			<?php endif; ?>
 
 			<div class="back skwp-back hidden-sm-down">
 				<a href="<?php echo esc_url(site_url('homework')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php esc_html_e('Back', 'sakolawp'); ?></a>
