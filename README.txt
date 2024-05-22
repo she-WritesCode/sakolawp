@@ -1,6 +1,6 @@
 === SakolaWP ===
-Plugin Name: SakolaWP
-Plugin Author: Themes Awesome
+Plugin Name: SakolaWP (Modified For RUN)
+Plugin Author: Themes Awesome, Busola Okeowo
 Tags: academic, management
 Requires at least: 4.5
 Tested up to: 6.1
@@ -75,3 +75,6 @@ Multiple User Roles (admin,teacher,student,parents)
 
 = 1.1.2 | 15 November 2022 =
 - FIXED   : Login / Register fatal error or blank after submit.
+
+= 2.0.0 | 25 May 2023 =
+- ADDED   : Many feature to support RIG University's goals
