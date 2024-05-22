@@ -123,7 +123,6 @@ if (isset($_POST['submit'])) {
 
 						foreach ($students as $row2) :
 						?>
-							<!-- <pre><?php var_dump($row2); ?></pre> -->
 							<div class="skwp-column skwp-column-4 m-b murid-list">
 								<div class="pipeline-item">
 									<div class="pi-foot">

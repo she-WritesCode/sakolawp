@@ -431,7 +431,6 @@ function sakolawp_save_user_reassign_Class($user_id)
 	if (!current_user_can('edit_user', $user_id))
 		return false;
 	global $wpdb;
-	var_dump($user_id);
 
 	$class_id = sanitize_text_field($_POST['class_id']);
 	$section_id = sanitize_text_field($_POST['section_id']);
