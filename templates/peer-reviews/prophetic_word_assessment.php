@@ -114,7 +114,7 @@ $form = [
                 [
                     'label' => "Individual's response was not captured (verbally)",
                     'value' => "Individual's response was not captured (verbally)",
-                    'points' => null // ignore question when capturing points
+                    'points' => 0
                 ],
             ],
             'required' => true,
