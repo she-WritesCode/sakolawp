@@ -129,7 +129,16 @@ if (!empty($enroll)) :
 			$homework_id
 		));
 ?>
-		<?php $query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A); ?>
+		<?php
+
+		$query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name, date FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
+		$date_end = $row['date_end'];
+		$time_end = $row['time_end'];
+		$time = $date_end . ' ' . $time_end;
+		$is_late = strtotime($query[0]['date']) <= strtotime($time);
+
+
+		?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
 
 			<?php
@@ -172,6 +181,18 @@ if (!empty($enroll)) :
 									<?php echo esc_html($row['time_end']); ?>
 								</div>
 							</div>
+
+							<?php
+							if ($is_late) :
+								$action = (count($query) > 0) ? 'update' : 'submit';
+							?>
+								<div class="">
+									<div class="btn btn-danger skwp-btn">
+										<?php esc_html_e('Sorry you cannot ' . $action . ' this homework any longer. The deadline was', 'sakolawp'); ?>
+										<span class="skwp-date" data-end-date="<?php echo esc_html($date_end); ?>" data-end-time="<?php echo esc_html($time_end); ?>"></span>
+									</div>
+								</div>
+							<?php endif; ?>
 						</div>
 						<p>
 							<?php echo esc_html($row['description']); ?>
@@ -185,11 +206,11 @@ if (!empty($enroll)) :
 						<?php endif; ?>
 						<?php if (count($query) <= 0) : ?>
 							<form id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
-								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10"></textarea>
+								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
 								<br>
 								<br>
 
-								<input class="form-control" id="file-3" name="file_name" type="file" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" />
+								<input class="form-control" id="file-3" name="file_name" type="file" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" <?php echo ($is_late) ? 'readonly' : ''; ?> />
 								<input type="hidden" name="post_id" id="post_id" value="<?php echo esc_attr($homework_code); ?>" />
 								<?php wp_nonce_field('file_name', 'file_name_nonce'); ?>
 								<p style="font-style: italic; margin: 20px 0;"><?php esc_html_e('Max file size up to 10MB', 'sakolawp'); ?></p>
@@ -203,13 +224,15 @@ if (!empty($enroll)) :
 								<div class="skwp-row">
 									<div class="skwp-column skwp-column-80">
 										<div class="form-group">
-											<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="1"></textarea>
+											<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="1" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
 										</div>
 									</div>
 									<div class="skwp-column skwp-column-20">
-										<div class="form-buttons skwp-form-button">
-											<button class="btn btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Send', 'sakolawp'); ?></button>
-										</div>
+										<?php if (!$is_late) : ?>
+											<div class="form-buttons skwp-form-button">
+												<button class="btn btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Send', 'sakolawp'); ?></button>
+											</div>
+										<?php endif; ?>
 									</div>
 								</div>
 							</form>
@@ -220,7 +243,7 @@ if (!empty($enroll)) :
 						$tugas_ada = $query;
 						if (count($query) > 0) : ?>
 							<form class="update-delivery" id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
-								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10"><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
 								<?php if ($tugas_ada[0]["file_name"] != "") {
 									$url_file = site_url() . '/wp-content/uploads/sakolawp/deliveries/' . $tugas_ada[0]["file_name"];
 									$url_file = str_replace(' ', '-', $url_file); ?>
@@ -228,7 +251,7 @@ if (!empty($enroll)) :
 										<?php esc_html_e('Download File', 'sakolawp'); ?>
 									</a>
 								<?php } ?>
-								<input class="form-control" id="file-3" name="file_name" type="file" required="" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" />
+								<input class="form-control" id="file-3" name="file_name" type="file" required="" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" <?php echo ($is_late) ? 'readonly' : ''; ?> />
 								<input type="hidden" name="post_id" id="post_id" value="<?php echo esc_attr($homework_code); ?>" />
 								<?php wp_nonce_field('file_name', 'file_name_nonce'); ?>
 								<p style="font-style: italic; margin: 20px 0;"><?php esc_html_e('Max file size up to 10MB', 'sakolawp'); ?></p>
@@ -240,16 +263,18 @@ if (!empty($enroll)) :
 								<input type="hidden" name="section_id" value="<?php echo esc_attr($row['section_id']); ?>">
 								<input type="hidden" name="subject_id" value="<?php echo esc_attr($row['subject_id']); ?>">
 								<div class="skwp-row">
-									<div class="skwp-column skwp-column-80">
+									<div class="skwp-column skwp-column-60">
 										<div class="form-group">
-											<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="4"><?php echo esc_html($tugas_ada[0]["student_comment"]); ?></textarea>
+											<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="4" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo esc_html($tugas_ada[0]["student_comment"]); ?></textarea>
 										</div>
 									</div>
 									<?php if ($ada_nilai === NULL) { ?>
-										<div class="skwp-column skwp-column-20">
-											<div class="form-buttons skwp-form-button">
-												<button class="btn btn-rounded btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Update', 'sakolawp'); ?></button>
-											</div>
+										<div class="skwp-column skwp-column-40">
+											<?php if (!$is_late) : ?>
+												<div class="form-buttons skwp-form-button">
+													<button class="btn btn-rounded btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Update', 'sakolawp'); ?></button>
+												</div>
+											<?php endif; ?>
 										</div>
 									<?php } ?>
 								</div>

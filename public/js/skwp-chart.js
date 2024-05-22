@@ -24,8 +24,8 @@
 					const datasets = data.data.dataSets.map((dataPoints, index) => ({
 						label: `Review ${index + 1}`,
 						data: dataPoints,
-						backgroundColor: `rgba(54, 162, 235, 0.${index + 2})`,
-						borderColor: `rgba(54, 162, 235, 1)`,
+						// backgroundColor: `rgba(54, 162, 235, 0.${index + 2})`,
+						// borderColor: `rgba(54, 162, 235, 1)`,
 						borderWidth: 1
 					}));
 

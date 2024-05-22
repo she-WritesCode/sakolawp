@@ -164,24 +164,24 @@
 				days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
 				if (days > 0) {
-					timeLeft = days + ' days ago';
+					timeLeft = days + ' day(s) ago';
 				} else if (hours > 0) {
-					timeLeft = hours + ' hours ago';
+					timeLeft = hours + ' hour(s) ago';
 				} else if (minutes > 0) {
-					timeLeft = minutes + ' minutes ago';
+					timeLeft = minutes + ' minute(s) ago';
 				} else {
-					timeLeft = seconds + ' seconds ago';
+					timeLeft = seconds + ' second(s) ago';
 				}
 			} else {
 				// Future time
 				if (days > 0) {
-					timeLeft = days + ' days left';
+					timeLeft = days + ' day(s) left';
 				} else if (hours > 0) {
-					timeLeft = hours + ' hours left';
+					timeLeft = hours + ' hour(s) left';
 				} else if (minutes > 0) {
-					timeLeft = minutes + ' minutes left';
+					timeLeft = minutes + ' minute(s) left';
 				} else {
-					timeLeft = seconds + ' seconds left';
+					timeLeft = seconds + ' second(s) left';
 				}
 			}
 

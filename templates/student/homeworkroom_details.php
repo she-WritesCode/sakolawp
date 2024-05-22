@@ -50,8 +50,20 @@ foreach ($current_homework as $row) :
 			<a href="<?php echo site_url('homework'); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
 		</div>
 
-		<div class="homework-top">
+		<div class="homework-top flex flex-col gap-4">
 			<?php if (count($peer_reviews) > 0) : ?>
+				<div style="width: 100%;" id="">
+					<h4><?php echo esc_html__('Your Current score based on peer reviews', 'sakolawp'); ?></h4>
+					<div>
+						<span class="btn skwp-btn btn-small btn-primary">
+							<?php echo "X"; ?>
+						</span>
+					</div>
+					<br />
+					<div class="btn skwp-btn btn-small btn-warning">
+						<?php echo esc_html__('Please note that this score may change when other peers review your work and is only permanent when everyone in your parent group has reviewed your work', 'sakolawp'); ?>
+					</div>
+				</div>
 				<div style="width: 100%;" id="mean_review_summary"></div>
 				<div style="width: 100%;" id="peer_review_summary"></div>
 				<div>
