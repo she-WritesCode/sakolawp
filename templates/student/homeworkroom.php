@@ -135,7 +135,7 @@ if (!empty($enroll)) :
 		$date_end = $row['date_end'];
 		$time_end = $row['time_end'];
 		$time = $date_end . ' ' . $time_end;
-		$is_late = strtotime($query[0]['date']) <= strtotime($time);
+		$is_late = count($query) > 0 ? strtotime($query[0]['date']) <= strtotime($time) : false;
 		$has_been_marked = $mark  !== NULL;
 
 		?>
