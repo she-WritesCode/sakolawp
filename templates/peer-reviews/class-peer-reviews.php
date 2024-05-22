@@ -6,7 +6,7 @@ class SakolawpPeerReview
 
     private $peer_review_templates = [
         "prophetic_word" => SAKOLAWP_PLUGIN_DIR . '/templates/peer-reviews/prophetic_word_assessment.php',
-        "bible_teaching" => SAKOLAWP_PLUGIN_DIR . '/templates/peer-reviews/biblical_teaching_assessment.php',
+        "bible_teaching" => SAKOLAWP_PLUGIN_DIR . '/templates/peer-reviews/bible_teaching_assessment.php',
     ];
 
     public function __construct()
@@ -18,7 +18,7 @@ class SakolawpPeerReview
         add_action('wp_ajax_nopriv_sakolawp_peer_review_results', array($this, 'peer_review_results'));
 
         add_action('sakolawp_form_prophetic_word_assessment',  array($this, 'output_prophetic_word_assessment'));
-        add_action('sakolawp_form_biblical_teaching_assessment',  array($this, 'output_biblical_teaching_assessment'));
+        add_action('sakolawp_form_bible_teaching_assessment',  array($this, 'output_bible_teaching_assessment'));
     }
 
     function peer_review_templates_select_options()
@@ -163,9 +163,9 @@ class SakolawpPeerReview
     }
 
 
-    function output_biblical_teaching_assessment()
+    function output_bible_teaching_assessment()
     {
-        require_once plugin_dir_path(__FILE__) . 'biblical_teaching_assessment.php';
+        require_once plugin_dir_path(__FILE__) . 'bible_teaching_assessment.php';
         require_once plugin_dir_path(__FILE__) . 'assessment_form.php';
     }
 }
