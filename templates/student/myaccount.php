@@ -113,7 +113,7 @@ if (empty($first_name)) {
 						<?php endwhile; ?>
 
 					<?php else : ?>
-						<?php esc_html_e('There is no post yet.', 'sakolawp'); ?>
+						<?php esc_html_e('There are no posts yet.', 'sakolawp'); ?>
 					<?php endif; ?>
 				</div>
 
@@ -233,7 +233,7 @@ if (empty($first_name)) {
 						<?php endwhile; ?>
 
 					<?php else : ?>
-						<?php esc_html_e('There is no post yet.', 'sakolawp'); ?>
+						<?php esc_html_e('There are no posts yet.', 'sakolawp'); ?>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -331,7 +331,7 @@ if (empty($first_name)) {
 				</table>
 
 				<?php else : ?>
-					<?php esc_html_e('There is no exam yet.', 'sakolawp'); ?>
+					<?php esc_html_e('No exam has been created for your class', 'sakolawp'); ?>
 				<?php endif; ?>
 			</div>
 		</div>

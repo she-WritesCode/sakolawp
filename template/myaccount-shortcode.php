@@ -129,7 +129,7 @@ if (empty($first_name)) {
 										<?php endwhile; ?>
 
 									<?php else : ?>
-										<?php esc_html_e('There is no post yet.', 'sakolawp'); ?>
+										<?php esc_html_e('There are no posts yet.', 'sakolawp'); ?>
 									<?php endif; ?>
 								</div>
 
@@ -249,7 +249,7 @@ if (empty($first_name)) {
 										<?php endwhile; ?>
 
 									<?php else : ?>
-										<?php esc_html_e('There is no post yet.', 'sakolawp'); ?>
+										<?php esc_html_e('There are no posts yet.', 'sakolawp'); ?>
 									<?php endif; ?>
 								</div>
 							</div>

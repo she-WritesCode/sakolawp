@@ -62,7 +62,7 @@ if (!empty($enroll)) :
 	endforeach;
 
 else :
-	echo esc_html_e('You have not create a homework for your class yet', 'sakolawp'); ?>
+	echo esc_html_e('No exam has been created for your class yet', 'sakolawp'); ?>
 <?php
 endif;
 ?>

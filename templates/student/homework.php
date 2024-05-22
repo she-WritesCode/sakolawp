@@ -112,7 +112,7 @@ if (!empty($enroll)) :
 
 <?php
 else :
-	esc_html_e('You are not assign to  a class yet', 'sakolawp');
+	esc_html_e('You are not assigned to a class yet', 'sakolawp');
 endif;
 
 do_action('sakolawp_after_main_content');

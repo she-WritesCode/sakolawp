@@ -417,7 +417,7 @@ if (!empty($enroll)) :
 	endforeach;
 
 else :
-	esc_html_e('You have not create a homework for your class yet', 'sakolawp');
+	esc_html_e('No homework has been assigned for your class yet', 'sakolawp');
 endif;
 
 do_action('sakolawp_after_main_content');

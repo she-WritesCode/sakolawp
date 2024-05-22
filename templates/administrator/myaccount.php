@@ -1,8 +1,8 @@
 <?php
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 get_header();
-do_action( 'sakolawp_before_main_content' );
+do_action('sakolawp_before_main_content');
 
 $running_year = get_option('running_year');
 $current_id = get_current_user_id();
@@ -11,9 +11,9 @@ $user_info = get_user_meta($current_id);
 $first_name = $user_info["first_name"][0];
 $last_name = $user_info["last_name"][0];
 
-$user_name = $first_name .' '. $last_name;
+$user_name = $first_name . ' ' . $last_name;
 
-if(empty($first_name)) {
+if (empty($first_name)) {
 	$user_info = get_userdata($current_id);
 	$user_name = $user_info->display_name;
 } ?>
@@ -37,211 +37,209 @@ if(empty($first_name)) {
 			</div>
 			<div class="loop-news skwp-dash-loop skwp-row skwp-clearfix tab-content" id="nav-tabContent">
 				<div class="tab-pane fade show active" id="skwp-home-news">
-				<?php 
-				$sakolawp_news_args = array(
-					'post_type'			=> 'sakolawp-news',
-					'posts_per_page'	=> 3,
-					'ignore_sticky_posts' => true,
-				);
-				$sakolawp_news = new WP_Query($sakolawp_news_args);
-				if ($sakolawp_news->have_posts()) : ?>
-					<?php while($sakolawp_news->have_posts()) : $sakolawp_news->the_post(); 
-					$img_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full');
+					<?php
+					$sakolawp_news_args = array(
+						'post_type'			=> 'sakolawp-news',
+						'posts_per_page'	=> 3,
+						'ignore_sticky_posts' => true,
+					);
+					$sakolawp_news = new WP_Query($sakolawp_news_args);
+					if ($sakolawp_news->have_posts()) : ?>
+						<?php while ($sakolawp_news->have_posts()) : $sakolawp_news->the_post();
+							$img_url = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
 
-					$category_name = array();
-					$category_slugs = array();
-					$category_terms = get_the_terms($post->ID, 'news-category');
-					if(!empty($category_terms)){
-						if(!is_wp_error( $category_terms )){
-						$category_slugs = array();
-							foreach($category_terms as $term){
-								$category_name[] = $term->name;
-								$category_slugs[] = $term->slug;
-							}
-					$porto_comas =  join( ", ", $category_name );
-					$porto_space =  join( " ", $category_slugs );
-						}
-					}
-					else {
-						$porto_comas =  "";
-						$porto_space =  "";
-					} ?>
-					<div class="skwp-column skwp-column-3">
-						<div class="loop-wrapper">
-							<div class="image-news">
-								<?php if(has_post_thumbnail()) { ?>
-									<?php the_post_thumbnail(); ?>
-									<div class="sakolawp-overlay"></div>
-								<?php } ?>
-							 </div>
+							$category_name = array();
+							$category_slugs = array();
+							$category_terms = get_the_terms($post->ID, 'news-category');
+							if (!empty($category_terms)) {
+								if (!is_wp_error($category_terms)) {
+									$category_slugs = array();
+									foreach ($category_terms as $term) {
+										$category_name[] = $term->name;
+										$category_slugs[] = $term->slug;
+									}
+									$porto_comas =  join(", ", $category_name);
+									$porto_space =  join(" ", $category_slugs);
+								}
+							} else {
+								$porto_comas =  "";
+								$porto_space =  "";
+							} ?>
+							<div class="skwp-column skwp-column-3">
+								<div class="loop-wrapper">
+									<div class="image-news">
+										<?php if (has_post_thumbnail()) { ?>
+											<?php the_post_thumbnail(); ?>
+											<div class="sakolawp-overlay"></div>
+										<?php } ?>
+									</div>
 
-							<div class="wrapper-isi-loop">
-								<?php if(!empty($porto_comas)) { ?>
-								<div class="category-news skwp-news-meta">
-									<?php echo esc_html($porto_comas); ?>
-								</div>
-								<?php } ?>
+									<div class="wrapper-isi-loop">
+										<?php if (!empty($porto_comas)) { ?>
+											<div class="category-news skwp-news-meta">
+												<?php echo esc_html($porto_comas); ?>
+											</div>
+										<?php } ?>
 
-								<div class="date-excerpt skwp-news-meta">
-									<span class="thedate"><?php echo get_the_date('d'); ?></span>
-									<span class="month"><?php echo get_the_date('M'); ?></span>
-									<span class="year"><?php echo get_the_date('Y'); ?></span>
+										<div class="date-excerpt skwp-news-meta">
+											<span class="thedate"><?php echo get_the_date('d'); ?></span>
+											<span class="month"><?php echo get_the_date('M'); ?></span>
+											<span class="year"><?php echo get_the_date('Y'); ?></span>
+										</div>
+
+										<div class="title-news">
+											<h4 class="title-name">
+												<a href="<?php the_permalink(); ?>">
+													<?php the_title(); ?>
+												</a>
+											</h4>
+										</div>
+										<div class="news-excerpt">
+											<?php $excerpt = get_the_excerpt();
+											$excerpt = substr($excerpt, 0, 30);
+											$result = substr($excerpt, 0, strrpos($excerpt, ' '));
+											echo esc_html($result); ?>
+										</div>
+										<div class="read-article">
+											<a href="<?php the_permalink(); ?>">
+												<?php esc_html_e('Read More', 'sakolawp'); ?>
+											</a>
+										</div>
+
+									</div>
 								</div>
-								
-								<div class="title-news">
-									<h4 class="title-name">
-										<a href="<?php the_permalink(); ?>">
-											<?php the_title(); ?>
-										</a>
-									</h4>
-								</div>
-								<div class="news-excerpt">
-									<?php $excerpt = get_the_excerpt();
-									$excerpt = substr($excerpt, 0, 30);
-									$result = substr($excerpt, 0, strrpos($excerpt, ' '));
-									echo esc_html($result); ?>
-								</div>
-								<div class="read-article">
-									<a href="<?php the_permalink(); ?>">
-										<?php esc_html_e('Read More', 'sakolawp'); ?>
-									</a>
-								</div>
-								
 							</div>
-						</div>
-					</div>
-					<?php endwhile; ?>
+						<?php endwhile; ?>
 
 					<?php else : ?>
-						<?php esc_html_e('There is no post yet.', 'sakolawp' ); ?>
+						<?php esc_html_e('There are no posts yet.', 'sakolawp'); ?>
 					<?php endif; ?>
 				</div>
 
 				<div class="tab-pane fade" id="skwp-home-event">
-				<?php 
-				$sakolawp_event_args = array(
-					'post_type'			=> 'sakolawp-event',
-					'posts_per_page'	=> 3,
-					'ignore_sticky_posts' => true,
-				);
-				$sakolawp_event = new WP_Query($sakolawp_event_args);
-				if ($sakolawp_event->have_posts()) : ?>
-					
-					<?php while($sakolawp_event->have_posts()) : $sakolawp_event->the_post(); 
-					$img_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full');
+					<?php
+					$sakolawp_event_args = array(
+						'post_type'			=> 'sakolawp-event',
+						'posts_per_page'	=> 3,
+						'ignore_sticky_posts' => true,
+					);
+					$sakolawp_event = new WP_Query($sakolawp_event_args);
+					if ($sakolawp_event->have_posts()) : ?>
 
-					$category_name = array();
-					$category_slugs = array();
-					$category_terms = get_the_terms($post->ID, 'event-category');
-					if(!empty($category_terms)){
-						if(!is_wp_error( $category_terms )){
-						$category_slugs = array();
-							foreach($category_terms as $term){
-								$category_name[] = $term->name;
-								$category_slugs[] = $term->slug;
+						<?php while ($sakolawp_event->have_posts()) : $sakolawp_event->the_post();
+							$img_url = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+
+							$category_name = array();
+							$category_slugs = array();
+							$category_terms = get_the_terms($post->ID, 'event-category');
+							if (!empty($category_terms)) {
+								if (!is_wp_error($category_terms)) {
+									$category_slugs = array();
+									foreach ($category_terms as $term) {
+										$category_name[] = $term->name;
+										$category_slugs[] = $term->slug;
+									}
+									$porto_comas =  join(", ", $category_name);
+									$porto_space =  join(" ", $category_slugs);
+								}
+							} else {
+								$porto_comas =  "";
+								$porto_space =  "";
 							}
-					$porto_comas =  join( ", ", $category_name );
-					$porto_space =  join( " ", $category_slugs );
-						}
-					}
-					else {
-						$porto_comas =  "";
-						$porto_space =  "";
-					}
-					$sakolawp_date_event = esc_attr( get_post_meta( $post->ID, 'sakolawp_event_date', true ) );
-					$sakolawp_hour_event = esc_attr( get_post_meta( $post->ID, 'sakolawp_event_date_clock', true ) ); ?>
-					<div class="skwp-column skwp-column-3">
-						<div class="loop-wrapper">
-							<div class="image-news">
-								<?php if(has_post_thumbnail()) {
-									if(!empty($sakolawp_date_event)) { ?>
-										<div class="event-meta-time has-thumb skwp-clearfix">
-											<div class="skwp-row">
-												<div class="event-meta-txt skwp-column skwp-column-3">
-													<?php esc_html_e('Event Start', 'sakolawp' ); ?>
-												</div>
-												<div class="event-meta-detail skwp-column skwp-column-2of3">
-													<div class="event-meta-date">
-														<?php echo esc_html( $sakolawp_date_event ); ?>
-													</div>
-													<div class="event-meta-hour">
-														<?php echo esc_html( $sakolawp_hour_event ); ?>
+							$sakolawp_date_event = esc_attr(get_post_meta($post->ID, 'sakolawp_event_date', true));
+							$sakolawp_hour_event = esc_attr(get_post_meta($post->ID, 'sakolawp_event_date_clock', true)); ?>
+							<div class="skwp-column skwp-column-3">
+								<div class="loop-wrapper">
+									<div class="image-news">
+										<?php if (has_post_thumbnail()) {
+											if (!empty($sakolawp_date_event)) { ?>
+												<div class="event-meta-time has-thumb skwp-clearfix">
+													<div class="skwp-row">
+														<div class="event-meta-txt skwp-column skwp-column-3">
+															<?php esc_html_e('Event Start', 'sakolawp'); ?>
+														</div>
+														<div class="event-meta-detail skwp-column skwp-column-2of3">
+															<div class="event-meta-date">
+																<?php echo esc_html($sakolawp_date_event); ?>
+															</div>
+															<div class="event-meta-hour">
+																<?php echo esc_html($sakolawp_hour_event); ?>
+															</div>
+														</div>
 													</div>
 												</div>
-											</div>
-										</div>
-									<?php }
+											<?php }
 
-									the_post_thumbnail(); ?>
-									<div class="sakolawp-overlay"></div>
-								<?php } ?>
-							 </div>
+											the_post_thumbnail(); ?>
+											<div class="sakolawp-overlay"></div>
+										<?php } ?>
+									</div>
 
-							<div class="wrapper-isi-loop">
-								<?php if(!has_post_thumbnail()) {
-									if(!empty($sakolawp_date_event)) {  ?>
-										<div class="event-meta-time skwp-clearfix">
-											<div class="event-meta-txt">
-												<?php esc_html_e('Event Start', 'sakolawp' ); ?>
-											</div>
-											<div class="event-meta-detail">
-												<div class="event-meta-date">
-													<?php echo esc_html( $sakolawp_date_event ); ?>
+									<div class="wrapper-isi-loop">
+										<?php if (!has_post_thumbnail()) {
+											if (!empty($sakolawp_date_event)) {  ?>
+												<div class="event-meta-time skwp-clearfix">
+													<div class="event-meta-txt">
+														<?php esc_html_e('Event Start', 'sakolawp'); ?>
+													</div>
+													<div class="event-meta-detail">
+														<div class="event-meta-date">
+															<?php echo esc_html($sakolawp_date_event); ?>
+														</div>
+														<div class="event-meta-hour">
+															<?php echo esc_html($sakolawp_hour_event); ?>
+														</div>
+													</div>
 												</div>
-												<div class="event-meta-hour">
-													<?php echo esc_html( $sakolawp_hour_event ); ?>
-												</div>
+										<?php }
+										} ?>
+
+										<?php if (!empty($porto_comas)) { ?>
+											<div class="category-news skwp-news-meta">
+												<?php echo esc_html($porto_comas); ?>
 											</div>
+										<?php } ?>
+
+										<div class="date-excerpt skwp-news-meta">
+											<span class="thedate"><?php echo get_the_date('d'); ?></span>
+											<span class="month"><?php echo get_the_date('M'); ?></span>
+											<span class="year"><?php echo get_the_date('Y'); ?></span>
 										</div>
-								<?php }
-								} ?>
 
-								<?php if(!empty($porto_comas)) { ?>
-								<div class="category-news skwp-news-meta">
-									<?php echo esc_html($porto_comas); ?>
-								</div>
-								<?php } ?>
+										<div class="title-news">
+											<h4 class="title-name">
+												<a href="<?php the_permalink(); ?>">
+													<?php the_title(); ?>
+												</a>
+											</h4>
+										</div>
+										<div class="news-excerpt">
+											<?php $excerpt = get_the_excerpt();
+											$excerpt = substr($excerpt, 0, 30);
+											$result = substr($excerpt, 0, strrpos($excerpt, ' '));
+											echo esc_html($result); ?>
+										</div>
+										<div class="read-article">
+											<a href="<?php the_permalink(); ?>">
+												<?php esc_html_e('Read More', 'sakolawp'); ?>
+											</a>
+										</div>
 
-								<div class="date-excerpt skwp-news-meta">
-									<span class="thedate"><?php echo get_the_date('d'); ?></span>
-									<span class="month"><?php echo get_the_date('M'); ?></span>
-									<span class="year"><?php echo get_the_date('Y'); ?></span>
+									</div>
 								</div>
-								
-								<div class="title-news">
-									<h4 class="title-name">
-										<a href="<?php the_permalink(); ?>">
-											<?php the_title(); ?>
-										</a>
-									</h4>
-								</div>
-								<div class="news-excerpt">
-									<?php $excerpt = get_the_excerpt();
-									$excerpt = substr($excerpt, 0, 30);
-									$result = substr($excerpt, 0, strrpos($excerpt, ' '));
-									echo esc_html($result); ?>
-								</div>
-								<div class="read-article">
-									<a href="<?php the_permalink(); ?>">
-										<?php esc_html_e('Read More', 'sakolawp'); ?>
-									</a>
-								</div>
-								
 							</div>
-						</div>
-					</div>
 
-					<?php endwhile; ?>
+						<?php endwhile; ?>
 
 					<?php else : ?>
-						<?php esc_html_e('There is no post yet.', 'sakolawp' ); ?>
+						<?php esc_html_e('There are no posts yet.', 'sakolawp'); ?>
 					<?php endif; ?>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 </div>
 <?php
-do_action( 'sakolawp_after_main_content' );
+do_action('sakolawp_after_main_content');
 get_footer();
