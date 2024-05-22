@@ -154,7 +154,7 @@ if (!empty($enroll)) :
 					WHERE delivery_id = '$delivery_id'
 					AND reviewer_id = '$student_id';", ARRAY_A);
 
-				error_log("current_peer_review is " . $current_peer_review);
+				error_log("current_peer_review is " . json_encode($current_peer_review));
 
 				if (count($current_peer_review) == 0) :
 				?>
