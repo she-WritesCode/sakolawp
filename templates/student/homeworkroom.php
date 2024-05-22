@@ -124,7 +124,7 @@ if (!empty($enroll)) :
 				FROM $peer_reviews_table pr 
 				JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
 				JOIN $homework_table h ON pr.homework_id = h.homework_id 
-				WHERE pr.reviewer_id = %d AND pr.homework_id = %d",
+				WHERE pr.peer_id = %d AND pr.homework_id = %d",
 			$student_id,
 			$homework_id
 		));

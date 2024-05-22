@@ -26,7 +26,7 @@ foreach ($current_homework as $row) :
 			FROM $peer_reviews_table pr 
 			JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
 			JOIN $homework_table h ON pr.homework_id = h.homework_id 
-			WHERE pr.reviewer_id = %d AND pr.homework_id = %d",
+			WHERE pr.peer_id = %d AND pr.homework_id = %d",
 		$student_id,
 		$homework_id
 	));
@@ -52,8 +52,15 @@ foreach ($current_homework as $row) :
 
 		<div class="homework-top">
 			<?php if (count($peer_reviews) > 0) : ?>
-				<div style="width: 100%;"><canvas id="peer_review_chart2"></canvas></div>
-				<div style="width: 100%;"><canvas id="peer_review_chart"></canvas></div>
+				<div style="width: 100%;" id="mean_review_summary"></div>
+				<div style="width: 100%;" id="peer_review_summary"></div>
+				<div>
+					<h4><?php echo esc_html__('Peer Review Scores by Question', 'sakolawp'); ?></h4>
+					<div style="width: 100%;">
+						<canvas id="peer_review_chart2"></canvas>
+					</div>
+					<div style="width: 100%;"><canvas id="peer_review_chart"></canvas></div>
+				</div>
 			<?php else : ?>
 				<div> <?php echo '<div class="btn skwp-btn btn-small btn-primary">' . esc_html('No peer reviews yet') . '</div>'; ?> </div>
 			<?php endif; ?>

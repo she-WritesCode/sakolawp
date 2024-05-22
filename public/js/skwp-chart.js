@@ -61,6 +61,28 @@
 							}
 						}
 					});
+
+					jQuery(document).ready(function ($) {
+						// Display textual summary
+						// const summaryContainer = $('#peer_review_summary');
+						// data.data.summary.forEach((summaryItem, index) => {
+						// 	const summaryDiv = $('<div>').addClass('summary-item');
+						// 	summaryDiv.append(`<h4>Review ${index + 1}</h4>`);
+						// 	summaryItem.forEach(item => {
+						// 		summaryDiv.append(`<p>${item}</p>`);
+						// 	});
+						// 	summaryContainer.append(summaryDiv);
+						// });
+
+						// Display mean scores
+						const meanSummaryContainer = $('#mean_review_summary');
+						meanSummaryContainer.append('<h4>Average Scores per Question</h4>');
+						data.data.labels.forEach((label, index) => {
+							const questionId = `q${index + 1}`;
+							const meanScore = data.data.meanScores[questionId];
+							meanSummaryContainer.append(`<p>${label}: ${(meanScore * 10).toFixed(2)}%</p>`);
+						});
+					})
 				} else {
 					console.error(data.data);
 					// Handle the error here

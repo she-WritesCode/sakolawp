@@ -76,7 +76,7 @@ class SakolawpPeerReview
                 FROM $peer_reviews_table pr 
                 JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
                 JOIN $homework_table h ON pr.homework_id = h.homework_id 
-                WHERE pr.reviewer_id = %d AND pr.homework_id = %d",
+                WHERE pr.peer_id = %d AND pr.homework_id = %d",
             $current_user_id,
             $homework_id
         ));
@@ -95,36 +95,64 @@ class SakolawpPeerReview
 
             $dataSets = [];
             $labels = [];
+            $summary = [];
+            $totalScores = [];
+            $totalCounts = [];
 
             foreach ($form['questions'] as $question) {
                 $labels[] = $question['question'];
+                $totalScores[$question['question_id']] = 0;
+                $totalCounts[$question['question_id']] = 0;
             }
 
             foreach ($responses as $response) {
                 $dataPoints = [];
+                $summaryItem = [];
 
                 foreach ($form['questions'] as $question) {
                     $questionId = $question['question_id'];
                     $answer = $response[$questionId];
 
                     if ($question['type'] === 'linear-scale') {
-                        $points = (float)$answer / $question['expected_points'] * $question['score_percentage'];
+                        $points = (float)$answer / $question['expected_points'] * 100;
                         $dataPoints[] = $points;
+                        $summaryItem[] = $question['question'] . ": " . $answer;
+                        $totalScores[$questionId] += (float)$answer;
+                        $totalCounts[$questionId] += 1;
                     } else if ($question['type'] === 'radio') {
                         $option = array_filter($question['options'], function ($opt) use ($answer) {
                             return $opt['value'] === $answer;
                         });
                         $option = reset($option);
-                        $points = $option ? ($option['points'] / $question['expected_points'] * $question['score_percentage']) : 0;
+                        $points = $option ? ($option['points'] / $question['expected_points'] * 100) : 0;
                         $dataPoints[] = $points;
+                        $summaryItem[] = $question['question'] . ": " . $answer;
+                        if ($option) {
+                            $totalScores[$questionId] += $option['points'];
+                            $totalCounts[$questionId] += 1;
+                        }
                     }
                 }
 
                 $dataSets[] = $dataPoints;
+                $summary[] = $summaryItem;
             }
 
-            wp_send_json_success(['labels' => $labels, 'dataSets' => $dataSets]);
+            // Calculate the mean scores
+            $meanScores = [];
+            foreach ($totalScores as $questionId => $totalScore) {
+                $meanScore = $totalScore / $totalCounts[$questionId];
+                $meanScores[$questionId] = $meanScore;
+            }
+
+            wp_send_json_success([
+                'labels' => $labels,
+                'dataSets' => $dataSets,
+                'summary' => $summary,
+                'meanScores' => $meanScores
+            ]);
         } catch (Throwable $th) {
+            error_log($th->getMessage());
             wp_send_json_error('An error occurred while processing the peer reviews.');
         }
     }
