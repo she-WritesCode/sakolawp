@@ -1076,7 +1076,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 
 .skwp-dash-widget-area {
 	display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    /* grid-template-columns: repeat(12, 1fr); */
     grid-column-gap: 30px;
 	grid-row-gap: 30px;
 }

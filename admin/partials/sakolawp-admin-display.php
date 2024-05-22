@@ -68,7 +68,7 @@
 						?>
 						<div class="skwp-role-info">
 							<h2 class="user-item-count"><?php echo esc_html($teacher_count); ?></h2>
-							<h4 class="user-count-role"><?php esc_html_e('Facultys', 'sakolawp'); ?></h4>
+							<h4 class="user-count-role"><?php esc_html_e('Faculties', 'sakolawp'); ?></h4>
 						</div>
 					</div>
 					<div class="student-counter admin-dash-grid-item skwp-user-counter-item skwp-clearfix">
@@ -102,7 +102,7 @@
 							<h2 class="card-title"><?php esc_html_e('SakolaWP Stats', 'sakolawp'); ?></h2>
 							<!-- start of class table -->
 							<div class="table-responsive">
-								<table id="dataTable1" width="100%" class="table table-striped table-lightfont">
+								<table id="dataTable" width="100%" class="table table-striped table-lightfont">
 									<thead>
 										<tr>
 											<th>
@@ -114,7 +114,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
+										<!-- <tr>
 											<td>
 												<?php esc_html_e('Exams Created', 'sakolawp'); ?>
 											</td>
@@ -127,8 +127,8 @@
 												echo esc_html($total_total_exams);
 												?>
 											</td>
-										</tr>
-										<tr>
+										</tr> -->
+										<!-- <tr>
 											<td>
 												<?php esc_html_e('Exams Taken By Student', 'sakolawp'); ?>
 											</td>
@@ -141,7 +141,7 @@
 												echo esc_html($total_total_exams_done);
 												?>
 											</td>
-										</tr>
+										</tr> -->
 										<tr>
 											<td>
 												<?php esc_html_e('Homeworks Created', 'sakolawp'); ?>
@@ -158,12 +158,26 @@
 										</tr>
 										<tr>
 											<td>
-												<?php esc_html_e('Homeworks Taken By Student', 'sakolawp'); ?>
+												<?php esc_html_e('Homeworks Submitted By Student', 'sakolawp'); ?>
 											</td>
 											<td>
 												<?php
 												global $wpdb;
 												$homeworks_done = $wpdb->get_results("SELECT homework_code FROM {$wpdb->prefix}sakolawp_deliveries", ARRAY_A);
+												$total_homeworks_done = $wpdb->num_rows;
+
+												echo esc_html($total_homeworks_done);
+												?>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<?php esc_html_e('Peer Reviews By Student', 'sakolawp'); ?>
+											</td>
+											<td>
+												<?php
+												global $wpdb;
+												$homeworks_done = $wpdb->get_results("SELECT peer_review_id FROM {$wpdb->prefix}sakolawp_peer_reviews", ARRAY_A);
 												$total_homeworks_done = $wpdb->num_rows;
 
 												echo esc_html($total_homeworks_done);
@@ -177,10 +191,10 @@
 						</div>
 					</div>
 
-					<div class="skwp-info-card skwp-exam-card">
+					<!-- <div class="skwp-info-card skwp-exam-card">
 						<div class="skwp-card-inner">
 							<h2 class="card-title"><?php esc_html_e('Latest Exams', 'sakolawp'); ?></h2>
-							<!-- start of class table -->
+							<!-- start of class table 
 							<div class="table-responsive">
 								<table id="ujian-online" width="100%" class="table table-lightborder table-lightfont">
 									<thead>
@@ -242,9 +256,9 @@
 									</tbody>
 								</table>
 							</div>
-							<!-- end of class table -->
+							<!-- end of class table
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<!-- sakolawp card -->
