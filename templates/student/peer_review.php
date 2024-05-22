@@ -13,8 +13,9 @@ $student_id = get_current_user_id();
 $homework_table = $wpdb->prefix . 'sakolawp_homework';
 $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
+$enroll_table = $wpdb->prefix . 'sakolawp_enroll';
 
-$enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
+$enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$enroll_table} WHERE student_id = $student_id");
 
 if (!empty($enroll)) :
 
@@ -28,10 +29,11 @@ if (!empty($enroll)) :
 	$homework_deliveries = $wpdb->get_results("SELECT d.*, h.title, h.section_id
 		FROM $homework_table h
 		JOIN $deliveries_table d ON h.homework_code = d.homework_code
+		JOIN $enroll_table e ON d.student_id = e.student_id
 		WHERE h.allow_peer_review = 1  
 		AND d.student_id != '$student_id' 
-		AND ((h.class_id = '$enroll->class_id' AND h.section_id = '$enroll->section_id') 
-		OR (h.class_id = '$enroll->class_id' AND h.section_id = 0))", ARRAY_A);
+		AND d.class_id = '$enroll->class_id' 
+		AND e.section_id = '$enroll->section_id';", ARRAY_A);
 ?>
 
 	<div class="homework-inner skwp-content-inner skwp-clearfix">
@@ -73,7 +75,7 @@ if (!empty($enroll)) :
 					foreach ($homework_deliveries as $row) :
 						$delivery_id = $row['delivery_id'];
 						$peer_id = $row['student_id'];
-						$peer_enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
+						$peer_enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $peer_id");
 
 					?>
 						<tr>
