@@ -109,11 +109,11 @@ if (!empty($enroll)) :
 	$homework_code = $_GET['homework_code'];
 	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
-	$ada_nilai_main = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
+	$homework_deliveries = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
 	if ($wpdb->num_rows > 0) {
-		$ada_nilai = $ada_nilai_main[0]['mark'];
+		$mark = $homework_deliveries[0]['mark'];
 	} else {
-		$ada_nilai = NULL;
+		$mark = NULL;
 	}
 	foreach ($current_homework as $row) :
 		$homework_id = $row['homework_id'];
@@ -136,7 +136,7 @@ if (!empty($enroll)) :
 		$time_end = $row['time_end'];
 		$time = $date_end . ' ' . $time_end;
 		$is_late = strtotime($query[0]['date']) <= strtotime($time);
-
+		$has_been_marked = $mark  !== NULL;
 
 		?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
@@ -183,8 +183,9 @@ if (!empty($enroll)) :
 							</div>
 
 							<?php
-							if ($is_late) :
+							if ($is_late || $has_been_marked) :
 								$action = (count($query) > 0) ? 'update' : 'submit';
+								$action = ($has_been_marked) ? 'update' : $action;
 							?>
 								<div class="">
 									<div class="btn btn-danger skwp-btn">
@@ -268,7 +269,7 @@ if (!empty($enroll)) :
 											<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="4" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo esc_html($tugas_ada[0]["student_comment"]); ?></textarea>
 										</div>
 									</div>
-									<?php if ($ada_nilai === NULL) { ?>
+									<?php if ($mark === NULL) { ?>
 										<div class="skwp-column skwp-column-40">
 											<?php if (!$is_late) : ?>
 												<div class="form-buttons skwp-form-button">
@@ -385,8 +386,8 @@ if (!empty($enroll)) :
 											<a class="btn btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Marked', 'sakolawp'); ?></a>
 										<?php endif; ?>
 										<?php if (count($query) > 0) : ?>
-											<?php if ($ada_nilai != NULL) { ?>
-												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($ada_nilai); ?></a>
+											<?php if ($mark != NULL) { ?>
+												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($mark); ?></a>
 											<?php } else {
 												esc_html_e('On Review', 'sakolawp');
 											} ?>
@@ -394,13 +395,13 @@ if (!empty($enroll)) :
 									</td>
 								</tr>
 								<?php
-								if (isset($ada_nilai_main) && isset($ada_nilai_main[0]) && $ada_nilai_main[0]["teacher_comment"] != NULL) { ?>
+								if (isset($homework_deliveries) && isset($homework_deliveries[0]) && $homework_deliveries[0]["teacher_comment"] != NULL) { ?>
 									<tr>
 										<th>
 											<?php esc_html_e('Faculty Comment', 'sakolawp'); ?>
 										</th>
 										<td>
-											<?php echo esc_html($ada_nilai_main[0]["teacher_comment"]); ?>
+											<?php echo esc_html($homework_deliveries[0]["teacher_comment"]); ?>
 										</td>
 									</tr>
 								<?php } ?>

@@ -51,6 +51,7 @@ foreach ($current_homework as $row) :
 		</div>
 
 		<div class="homework-top flex flex-col gap-4">
+
 			<?php if (count($peer_reviews) > 0) : ?>
 				<div style="width: 100%;" id="">
 					<h4><?php echo esc_html__('Your Current score based on peer reviews', 'sakolawp'); ?></h4>
@@ -74,7 +75,11 @@ foreach ($current_homework as $row) :
 					<div style="width: 100%;"><canvas id="peer_review_chart"></canvas></div>
 				</div>
 			<?php else : ?>
-				<div> <?php echo '<div class="btn skwp-btn btn-small btn-primary">' . esc_html('No peer reviews yet') . '</div>'; ?> </div>
+
+				<div>
+					<?php echo '<div class="btn skwp-btn btn-small btn-primary">' . esc_html('No peer reviews yet. Please encourage your parent group members to complete your peer review') . '</div>'; ?>
+				</div>
+
 			<?php endif; ?>
 		</div>
 
