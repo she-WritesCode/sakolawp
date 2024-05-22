@@ -29,4 +29,7 @@ if (is_page('myaccount') || $wp->request === "myaccount") {
 } elseif ($wp->request === "view-user") {
 	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/administrator/view_user.php';
 	return $new_template;
+} elseif ($wp->request === "view_homework_student") {
+	$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/teacher/view_homework_student.php';
+	return $new_template;
 }
