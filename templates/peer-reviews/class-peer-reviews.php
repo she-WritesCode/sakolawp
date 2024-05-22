@@ -90,7 +90,8 @@ class SakolawpPeerReview
         }
 
         try {
-            require_once plugin_dir_path(__FILE__) . $peer_review->peer_review_template . '_assessment.php';
+            require_once $peer_review_templates[$peer_review->peer_review_template];
+            // require_once plugin_dir_path(__FILE__) . $peer_review->peer_review_template . '_assessment.php';
 
             $dataSets = [];
             $labels = [];
