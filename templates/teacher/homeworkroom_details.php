@@ -41,7 +41,7 @@ foreach ($current_homework as $row) :
 		</div>
 		<div class="homework-top">
 			<div class="tugas-wrap">
-				<table class="table table-lightborder">
+				<table id="dataTable1" class="table table-lightborder">
 					<thead>
 						<tr>
 							<th><?php echo esc_html__('Name', 'sakolawp'); ?></th>
