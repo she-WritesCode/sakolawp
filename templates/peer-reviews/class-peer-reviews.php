@@ -100,7 +100,7 @@ class SakolawpPeerReview
             $totalCounts = [];
 
             foreach ($form['questions'] as $question) {
-                $labels[] = $question['question'];
+                $labels[] = strip_tags($question['question']);
                 $totalScores[$question['question_id']] = 0;
                 $totalCounts[$question['question_id']] = 0;
             }
@@ -116,7 +116,7 @@ class SakolawpPeerReview
                     if ($question['type'] === 'linear-scale') {
                         $points = (float)$answer / $question['expected_points'] * 100;
                         $dataPoints[] = $points;
-                        $summaryItem[] = $question['question'] . ": " . $answer;
+                        $summaryItem[] = strip_tags($question['question']) . ": " . $answer;
                         $totalScores[$questionId] += (float)$answer;
                         $totalCounts[$questionId] += 1;
                     } else if ($question['type'] === 'radio') {
@@ -126,7 +126,7 @@ class SakolawpPeerReview
                         $option = reset($option);
                         $points = $option ? ($option['points'] / $question['expected_points'] * 100) : 0;
                         $dataPoints[] = $points;
-                        $summaryItem[] = $question['question'] . ": " . $answer;
+                        $summaryItem[] = strip_tags($question['question']) . ": " . $answer;
                         if ($option) {
                             $totalScores[$questionId] += $option['points'];
                             $totalCounts[$questionId] += 1;
