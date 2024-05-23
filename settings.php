@@ -300,10 +300,10 @@ function sakolawp_student_roles_custom_column_row($val, $column_name, $user_id)
 					if (!empty($class) && !empty($section)) {
 						$classes_name = esc_html($class->name) . esc_html__(' - ', 'sakolawp') . esc_html($section->name);
 					} else {
-						$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+						$classes_name = esc_html__('Not Assigned Yet.', 'sakolawp');
 					}
 				} else {
-					$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+					$classes_name = esc_html__('Not Assigned Yet.', 'sakolawp');
 				}
 			} // if student
 			if ($user_roles[0] == 'administrator') {
@@ -348,10 +348,10 @@ function sakolawp_student_roles_custom_column_row($val, $column_name, $user_id)
 					if (!empty($enroll_year)) {
 						$classes_name = esc_html($enroll_year);
 					} else {
-						$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+						$classes_name = esc_html__('Not Assigned Yet.', 'sakolawp');
 					}
 				} else {
-					$classes_name = esc_html__('Not Assign Yet.', 'sakolawp');
+					$classes_name = esc_html__('Not Assigned Yet.', 'sakolawp');
 				}
 			} // if student
 			if ($user_roles[0] == 'administrator') {

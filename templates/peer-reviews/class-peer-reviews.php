@@ -19,6 +19,10 @@ class SakolawpPeerReview
 
         add_action('sakolawp_form_prophetic_word_assessment',  array($this, 'output_prophetic_word_assessment'));
         add_action('sakolawp_form_bible_teaching_assessment',  array($this, 'output_bible_teaching_assessment'));
+
+
+        add_action('admin_post_nopriv_submit_peer_review', array($this, 'submit_peer_review'));
+        add_action('admin_post_submit_peer_review', array($this, 'submit_peer_review'));
     }
 
     function peer_review_templates_select_options()
@@ -163,10 +167,72 @@ class SakolawpPeerReview
         require_once plugin_dir_path(__FILE__) . 'assessment_form.php';
     }
 
-
     function output_bible_teaching_assessment()
     {
         require_once plugin_dir_path(__FILE__) . 'bible_teaching_assessment.php';
         require_once plugin_dir_path(__FILE__) . 'assessment_form.php';
+    }
+
+    function submit_peer_review()
+    {
+        global $wpdb;
+
+        $homework_table = $wpdb->prefix . 'sakolawp_homework';
+        $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
+        $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
+
+        if (isset($_POST['submit'])) {
+            error_log("We submitted " . json_encode($_POST));
+            $homework_act = $_POST['action'];
+
+            if ($homework_act == "add_peer_review") {
+                $_POST     = array_map('stripslashes_deep', $_POST);
+                $date   =  date("Y-m-d H:i:s");;
+                $delivery_id =  sakolawp_sanitize_html($_POST['delivery_id']);
+                $homework_id = sakolawp_sanitize_html($_POST['homework_id']);
+                $peer_id = sanitize_text_field($_POST['peer_id']);
+                $reviewer_id = sanitize_text_field($_POST['reviewer_id']);
+                $class_id = sanitize_text_field($_POST['class_id']);
+                $section_id    = sanitize_text_field($_POST['section_id']);
+                $accountability_id =  sakolawp_sanitize_html($_POST['accountability_id']);
+                $subject_id = sakolawp_sanitize_html($_POST['subject_id']);
+                $assessment = array_map('stripslashes_deep', $_POST['assessment']);
+                $reviewer_comment = sakolawp_sanitize_html($_POST['reviewer_comment']);
+                $reviewer_type = sanitize_text_field($_POST['reviewer_type']);
+
+                $current_delivery = $wpdb->get_row("SELECT * 
+                FROM $deliveries_table d
+                JOIN $homework_table h ON d.homework_code = h.homework_code
+                WHERE d.delivery_id = '$delivery_id';", ARRAY_A);
+
+                require_once plugin_dir_path(__FILE__) . '../peer-reviews/' . $current_delivery['peer_review_template'] . '_assessment.php';
+                $mark =  calculate_assessment_total_score($assessment, $form); // form is gotten from the require once file
+
+
+                skwp_insert_or_update_record(
+                    $peer_reviews_table,
+                    [
+                        'date' => $date,
+                        'delivery_id' => $delivery_id,
+                        'homework_id' => $homework_id,
+                        'peer_id' => $peer_id,
+                        'reviewer_id' => $reviewer_id,
+                        'class_id' => $class_id,
+                        'section_id' => $section_id,
+                        'accountability_id' => $accountability_id,
+                        'subject_id' => $subject_id,
+                        'assessment' => json_encode($assessment),
+                        'mark' => $mark,
+                        'reviewer_comment' => $reviewer_comment,
+                        'reviewer_type' => $reviewer_type,
+                    ],
+                    ['delivery_id', 'reviewer_id'],
+                    "peer_review_id"
+                );
+
+                wp_redirect(add_query_arg(array('delivery_id' => $delivery_id), home_url('peer_review_room')));
+                die;
+            }
+        }
     }
 }

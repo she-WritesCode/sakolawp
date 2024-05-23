@@ -1435,9 +1435,12 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
 			return "{$key} = %s";
 		}, $unique_columns)), $whereValues);
 
-		error_log("SQL Query: " . $findSql);
+		// error_log("SQL Query: " . $findSql);
 
 		$existing_record_id = $wpdb->get_var($findSql);
+		if ($existing_record_id === null) {
+			error_log("No existing record found, query returned null.");
+		}
 		return $existing_record_id !== null ? $existing_record_id : false;
 	}
 }

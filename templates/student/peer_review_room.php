@@ -7,62 +7,6 @@ $homework_table = $wpdb->prefix . 'sakolawp_homework';
 $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
 
-if (isset($_POST['submit'])) {
-	error_log("We submitted " . json_encode($_POST));
-	$homework_act = $_POST['action'];
-
-	if ($homework_act == "add_peer_review") {
-		error_log("We got past add_peer_review ");
-		$_POST 	= array_map('stripslashes_deep', $_POST);
-		$date   =  date("Y-m-d H:i:s");;
-		$delivery_id =  sakolawp_sanitize_html($_POST['delivery_id']);
-		$homework_id = sakolawp_sanitize_html($_POST['homework_id']);
-		$peer_id = sanitize_text_field($_POST['peer_id']);
-		$reviewer_id = sanitize_text_field($_POST['reviewer_id']);
-		$class_id = sanitize_text_field($_POST['class_id']);
-		$section_id    = sanitize_text_field($_POST['section_id']);
-		$accountability_id =  sakolawp_sanitize_html($_POST['accountability_id']);
-		$subject_id = sakolawp_sanitize_html($_POST['subject_id']);
-		$assessment = array_map('stripslashes_deep', $_POST['assessment']);
-		$reviewer_comment = sakolawp_sanitize_html($_POST['reviewer_comment']);
-		$reviewer_type = sanitize_text_field($_POST['reviewer_type']);
-
-		$current_delivery = $wpdb->get_row("SELECT * 
-		FROM $deliveries_table d
-		JOIN $homework_table h ON d.homework_code = h.homework_code
-		WHERE d.delivery_id = '$delivery_id';", ARRAY_A);
-
-		require_once plugin_dir_path(__FILE__) . '../peer-reviews/' . $current_delivery['peer_review_template'] . '_assessment.php';
-		$mark =  calculate_assessment_total_score($assessment, $form); // form is gotten from the require once file
-
-		error_log("We got past calculate_assessment_total_score, successfully ");
-
-		skwp_insert_or_update_record(
-			$peer_reviews_table,
-			[
-				'date' => $date,
-				'delivery_id' => $delivery_id,
-				'homework_id' => $homework_id,
-				'peer_id' => $peer_id,
-				'reviewer_id' => $reviewer_id,
-				'class_id' => $class_id,
-				'section_id' => $section_id,
-				'accountability_id' => $accountability_id,
-				'subject_id' => $subject_id,
-				'assessment' => json_encode($assessment),
-				'mark' => $mark,
-				'reviewer_comment' => $reviewer_comment,
-				'reviewer_type' => $reviewer_type,
-			],
-			['delivery_id', 'reviewer_id'],
-			"peer_review_id"
-		);
-		error_log("We got past skwp_insert_or_update_record, successfully ");
-
-		wp_redirect(add_query_arg(array('delivery_id' => $delivery_id), home_url('peer_review_room')));
-		die;
-	}
-}
 
 get_header();
 do_action('sakolawp_before_main_content');
@@ -160,7 +104,7 @@ if (!empty($enroll)) :
 				?>
 					<div class="skwp-column skwp-column-1">
 						<form id="<?php echo $row['peer_review_template'] . '_form'; ?>" method="POST">
-							<input type="hidden" name="action" value="add_peer_review" />
+							<input type="hidden" name="action" value="submit_peer_review" />
 
 							<input type="hidden" name="delivery_id" value="<?php echo esc_attr($delivery_id); ?>">
 							<input type="hidden" name="homework_id" value="<?php echo esc_attr($row['homework_id']); ?>">
