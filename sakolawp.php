@@ -1397,53 +1397,49 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
 	global $wpdb;
 
 	// Filter $data array with keys from $unique_columns and extract values
-	$whereValues =  array_map(function ($key) use ($data) {
+	$whereValues = array_map(function ($key) use ($data) {
 		return $data[$key] ?? null; // return null if key does not exist
 	}, $unique_columns);
-	// Prepare the SQL statement
-	$sql = $wpdb->prepare(
-		"INSERT IGNORE INTO {$table_name} (" . implode(', ', array_keys($data)) . ")
-         SELECT " . implode(', ', array_fill(0, count($data), '%s')) . "
-         FROM dual
-         WHERE NOT EXISTS (
-             SELECT COUNT(*)
-             FROM {$table_name}
-             WHERE " . implode(' AND ', array_map(function ($key) {
-			return "{$key} = %s";
-		}, $unique_columns)) . ")
-         LIMIT 1",
-		array_merge(array_values($data), $whereValues)
-	);
 
-	// Log the SQL query for debugging
-	error_log("`skwp_insert_or_update_record` SQL Query: " . $sql);
+	// Prepare the WHERE clause for checking existing records
+	$whereClause = implode(' AND ', array_map(function ($key) {
+		return "{$key} = %s";
+	}, $unique_columns));
 
-	// Execute the query
-	$result = $wpdb->query($sql);
+	// Prepare the SQL query to check for existing records
+	$findSql = $wpdb->prepare("SELECT {$id_column} FROM {$table_name} WHERE {$whereClause}", $whereValues);
 
-	// Log any MySQL error messages for debugging
-	if ($result === false) {
-		error_log("`skwp_insert_or_update_record` MySQL Error: " . $wpdb->last_error);
-	}
+	// Log the find query for debugging
+	error_log("Find SQL Query: " . $findSql);
 
-	// If the insert operation was successful, return the ID of the inserted record
-	if ($result !== 0) {
-		return $wpdb->insert_id;
-	} else {
-		// If the record already exists, return its ID
-		$findSql = $wpdb->prepare("SELECT " . $id_column . " FROM {$table_name} WHERE " . implode(' AND ', array_map(function ($key) {
-			return "{$key} = %s";
-		}, $unique_columns)), $whereValues);
+	// Execute the find query
+	$existing_record_id = $wpdb->get_var($findSql);
 
-		// error_log("SQL Query: " . $findSql);
+	if ($existing_record_id !== null) {
+		// If the record exists, update it
+		$update_result = $wpdb->update($table_name, $data, array($id_column => $existing_record_id));
 
-		$existing_record_id = $wpdb->get_var($findSql);
-		if ($existing_record_id === null) {
-			error_log("No existing record found, query returned null.");
+		// Log any MySQL error messages for debugging
+		if ($update_result === false) {
+			error_log("`skwp_insert_or_update_record` MySQL Error on Update: " . $wpdb->last_error);
+			return false;
 		}
-		return $existing_record_id !== null ? $existing_record_id : false;
+
+		return $existing_record_id;
+	} else {
+		// If the record does not exist, insert it
+		$insert_result = $wpdb->insert($table_name, $data);
+
+		// Log any MySQL error messages for debugging
+		if ($insert_result === false) {
+			error_log("`skwp_insert_or_update_record` MySQL Error on Insert: " . $wpdb->last_error);
+			return false;
+		}
+
+		return $wpdb->insert_id;
 	}
 }
+
 
 
 function calculate_assessment_total_score($responses, $form)
@@ -1756,4 +1752,4 @@ add_action('wp_ajax_nopriv_sakolawp_select_accountability', 'sakolawp_select_acc
 
 
 require_once plugin_dir_path(__FILE__) . 'templates/peer-reviews/class-peer-reviews.php';
-new SakolawpPeerReview();
+$sakolawp_peer_review = new SakolawpPeerReview();
