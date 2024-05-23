@@ -139,6 +139,7 @@ CREATE TABLE $peer_reviews_table (
 	section_id INT NOT NULL,
 	accountability_id INT NOT NULL,
 	subject_id INT NOT NULL,
+	homework_reply JSON NULL,
 	assessment JSON NOT NULL,
 	mark varchar(110) NULL,
 	reviewer_comment longtext NULL,
