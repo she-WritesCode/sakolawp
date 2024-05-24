@@ -43,7 +43,7 @@ class SakolawpPeerReview
         }
 
         // Get current user ID
-        $current_user_id = get_current_user_id();
+        $current_user_id = isset($_REQUEST['student_id']) ? (int)sanitize_text_field($_REQUEST['student_id']) : get_current_user_id();
 
         // Get homework_code from GET request
         $homework_code = isset($_REQUEST['homework_code']) ? sanitize_text_field($_REQUEST['homework_code']) : '';

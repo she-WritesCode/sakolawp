@@ -124,6 +124,9 @@ foreach ($homework_deliveries as $row) :
 						<div class="homework-peer-review">
 							<h5><?php echo esc_html__('Peer Reviews :', 'sakolawp'); ?></h5>
 
+							<div>
+								<div style="width: 100%;" id="mean_review_summary" data-homework_code="<?php echo $homework_code; ?>" data-student_id="<?php echo $studentId; ?>"></div>
+							</div>
 							<div class="tugas-wrap">
 								<table id="dataTable1" class="table table-lightborder">
 									<thead>
@@ -131,7 +134,7 @@ foreach ($homework_deliveries as $row) :
 											<th><?php echo esc_html__('Reviewer', 'sakolawp'); ?></th>
 											<th><?php echo esc_html__('Mark', 'sakolawp'); ?></th>
 											<th><?php echo esc_html__('Comment', 'sakolawp'); ?></th>
-											<th><?php echo esc_html__('Action', 'sakolawp'); ?></th>
+											<!-- <th><?php echo esc_html__('Action', 'sakolawp'); ?></th> -->
 										</tr>
 									</thead>
 									<tbody>
@@ -141,7 +144,7 @@ foreach ($homework_deliveries as $row) :
 											$total_mark += (int)$peer_review['mark'];
 											$response = json_decode($peer_review['assessment'], true); // Decode JSON as associative array
 										?>
-											<tr>
+											<tr class="toggle-review">
 												<td>
 													<?php
 													$reviewer_id = $peer_review["reviewer_id"];
@@ -156,11 +159,11 @@ foreach ($homework_deliveries as $row) :
 												<td>
 													<?php echo esc_attr($peer_review['reviewer_comment']); ?>
 												</td>
-												<td>
+												<!-- <td>
 													<a class="btn skwp-btn btn-small btn-primary"><?php echo esc_html__('Details', 'sakolawp'); ?></a>
-												</td>
+												</td> -->
 											</tr>
-											<tr>
+											<tr class="toggle-review-handle">
 												<td colspan="4">
 													<?php
 													foreach (array_keys($response) as $question_id) :
