@@ -1,16 +1,16 @@
-(function( $ ) {
+(function ($) {
 	'use strict';
 
 	if ($('#dataTable1').length) {
-		console.log("$('#dataTable1')",$('#dataTable1'))
-		$('#dataTable1').DataTable( {
+		console.log("$('#dataTable1')", $('#dataTable1'))
+		$('#dataTable1').DataTable({
 			order: [[0, 'asc']],
-			pageLength: 50,
-		} );
+			pageLength: 25,
+		});
 	}
 
 	if ($('#class_holder').length) {
-		$('#class_holder').on( 'change', function () {
+		$('#class_holder').on('change', function () {
 			var skwpClassVal = $('#class_holder').val();
 			var skwpSectionVal = $('#section_holder').attr("data-value");
 			$.ajax({
@@ -21,7 +21,7 @@
 					class_id: skwpClassVal,
 					selected: skwpSectionVal
 				},
-				success: function(response) {
+				success: function (response) {
 					$('#section_holder').html(response);
 				}
 			});
@@ -29,7 +29,7 @@
 	}
 
 	if ($('#section_holder').length) {
-		$('#section_holder').on( 'change', function () {
+		$('#section_holder').on('change', function () {
 			var skwpSectionVal = $('#section_holder').val();
 			var skwpClassVal = $('#class_holder').val();
 			$.ajax({
@@ -40,7 +40,7 @@
 					section_id: skwpSectionVal,
 					class_id: skwpClassVal
 				},
-				success: function(response) {
+				success: function (response) {
 					$('#subject_holder').html(response);
 				}
 			});
@@ -48,7 +48,7 @@
 	}
 
 	if ($('#section_holder').length && $('#accountability_holder').length) {
-		$('#section_holder').on( 'change', function () {
+		$('#section_holder').on('change', function () {
 			var skwpSectionVal = $('#section_holder').val();
 			$.ajax({
 				url: skwp_ajax_object.ajaxurl,
@@ -57,7 +57,7 @@
 					action: 'sakolawp_select_accountability',
 					section_id: skwpSectionVal,
 				},
-				success: function(response) {
+				success: function (response) {
 					$('#accountability_holder').html(response);
 				}
 			});
@@ -75,10 +75,10 @@
 				class_id: skwpClass,
 				subject_id: skwpSubject,
 			},
-			success: function(response) {
+			success: function (response) {
 				$('#section_holder').html(response);
 			}
 		});
 	}
 
-})( jQuery );
+})(jQuery);

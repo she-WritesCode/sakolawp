@@ -33,8 +33,8 @@ $running_year = get_option('running_year');
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 			<?php
-			if (!isset($_POST['submit'])) { ?>
-				<form id="myForm" name="save_student_attendance" action="" method="POST">
+			if (!isset($_GET['submit'])) { ?>
+				<form id="myForm" name="save_student_attendance" action="<?php echo admin_url() . 'admin.php?page=sakolawp-manage-attendance' ?>" method="GET">
 					<div class="skwp-row skwp-clearfix">
 						<div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Class :', 'sakolawp'); ?></label>
@@ -50,13 +50,13 @@ $running_year = get_option('running_year');
 								</select>
 							</div>
 						</div>
-						<div class="skwp-column skwp-column-5">
+						<!-- <div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group :', 'sakolawp'); ?></label>
-								<select class="skwp-form-control" name="section_id" id="section_holder" required="">
+								<select class="skwp-form-control" name="section_id" id="section_holder">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 								</select>
 							</div>
-						</div>
+						</div> -->
 						<div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Date :', 'sakolawp'); ?></label>
 								<input class="single-daterange skwp-form-control" placeholder="Date" required="" name="timestamp" type="text" value="">
@@ -67,28 +67,36 @@ $running_year = get_option('running_year');
 						</div>
 					</div>
 					<input type="hidden" name="year" value="<?php echo esc_attr($running_year); ?>">
+					<input type="hidden" name="page" value="sakolawp-manage-attendance">
 				</form>
 			<?php } ?>
 
 			<?php
 
-			if (isset($_POST['submit'])) {
+			if (isset($_GET['submit'])) {
 
-				$class_id = sanitize_text_field($_POST['class_id']);
-				$section_id = sanitize_text_field($_POST['section_id']);
-				$year = sanitize_text_field($_POST['year']);
-				$originalDate = sanitize_text_field($_POST['timestamp']);
+				$class_id = sanitize_text_field($_GET['class_id']);
+				$section_id = isset($_GET['section_id']) ? sanitize_text_field($_GET['section_id']) : NULL;
+				$year = sanitize_text_field($_GET['year']);
+				$originalDate = sanitize_text_field($_GET['timestamp']);
 				$newDate = sanitize_text_field(date("d-m-Y", strtotime($originalDate)));
 				$timestamp = sanitize_text_field(strtotime($newDate));
 
 				//var_dump($class_id);
 
-				$students = $wpdb->get_results("SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$year'", ARRAY_A);
+				$students_sql = $section_id
+					? "SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$year'"
+					: "SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = '$class_id' AND year = '$year'";
+				$students = $wpdb->get_results($students_sql, ARRAY_A);
 				foreach ($students as $row) {
 					$student_id = $row['student_id'];
 					$status = 0;
 
+					$exist_attendance_sql = $section_id
+						? "SELECT student_id FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$year' AND timestamp = '$timestamp' AND student_id = '$student_id'"
+						: "SELECT student_id FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND year = '$year' AND timestamp = '$timestamp' AND student_id = '$student_id'";
 					$exist_attendance = $wpdb->get_row("SELECT student_id FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$year' AND timestamp = '$timestamp' AND student_id = '$student_id'", ARRAY_A);
+
 					if (empty($exist_attendance)) {
 						$wpdb->insert(
 							$wpdb->prefix . 'sakolawp_attendance',
@@ -107,7 +115,7 @@ $running_year = get_option('running_year');
 				$tgl_y = date("Y", strtotime($originalDate));
 
 
-				$students2 = $wpdb->get_results("SELECT student_id FROM {$wpdb->prefix}sakolawp_enroll WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$year'", ARRAY_A);
+				$students2 = $wpdb->get_results($students_sql, ARRAY_A);
 
 				foreach ($students2 as $row2) {
 					$student_id = $row2['student_id'];
@@ -129,7 +137,7 @@ $running_year = get_option('running_year');
 						);
 					}
 				} ?>
-				<form id="myForm" name="save_student_attendance" action="" method="POST">
+				<form id="myForm" name="save_student_attendance" action="<?php echo admin_url() . 'admin.php?page=sakolawp-manage-attendance' ?>" method="GET">
 					<div class="skwp-row skwp-clearfix">
 						<div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Class:', 'sakolawp'); ?></label>
@@ -147,9 +155,9 @@ $running_year = get_option('running_year');
 								</select>
 							</div>
 						</div>
-						<div class="skwp-column skwp-column-5">
+						<!-- <div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Parent Group:', 'sakolawp'); ?></label>
-								<select class="skwp-form-control" name="section_id" id="section_holder" required="">
+								<select class="skwp-form-control" name="section_id" id="section_holder">
 									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 									<?php
 									$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
@@ -160,7 +168,7 @@ $running_year = get_option('running_year');
 									<?php } ?>
 								</select>
 							</div>
-						</div>
+						</div> -->
 						<div class="skwp-column skwp-column-5">
 							<div class="skwp-form-group"> <label class="gi" for=""><?php esc_html_e('Date:', 'sakolawp'); ?></label>
 								<input class="single-daterange skwp-form-control" placeholder="Date" required="" name="timestamp" type="text" value="">
@@ -171,12 +179,18 @@ $running_year = get_option('running_year');
 						</div>
 					</div>
 					<input type="hidden" name="year" value="<?php echo esc_attr($running_year); ?>">
+					<input type="hidden" name="page" value="sakolawp-manage-attendance">
 				</form>
 
 				<form id="myForm" name="save_student_attendance_status" action="" method="POST">
-					<h5 class="skwp-form-header" style="margin: 10px 0 30px;float: left;"><?php esc_html_e('Attendance', 'sakolawp'); ?></h5>
+					<div class="flex flex-col md:flex-row">
+						<h5 class="skwp-form-header" style="margin: 10px 0 30px;float: left;"><?php esc_html_e('Attendance', 'sakolawp'); ?></h5>
+						<div class="skwp-skwp-form-button">
+							<button class="btn skwp-btn btn-rounded btn-primary" type="submit" value="absensi" name="absensi"> <?php esc_html_e('Update Attendance', 'sakolawp'); ?></button>
+						</div>
+					</div>
 					<div class="table-responsive">
-						<table id="kehadiranSiswa" class="table table-lightborder">
+						<table id="dataTable1" class="table table-lightborder">
 							<thead>
 								<tr>
 									<th style="text-align: center;">
@@ -190,7 +204,10 @@ $running_year = get_option('running_year');
 							<tbody>
 								<?php
 								$count = 1;
-								$attendance_of_students = $wpdb->get_results("SELECT student_id, status, attendance_id FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = $class_id AND section_id = $section_id AND year = '$running_year' AND timestamp = '$timestamp'", ARRAY_A);
+								$attendance_sql = $section_id
+									? "SELECT student_id, status, attendance_id FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = $class_id AND section_id = $section_id AND year = '$running_year' AND timestamp = '$timestamp'"
+									: "SELECT student_id, status, attendance_id FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = $class_id AND year = '$running_year' AND timestamp = '$timestamp'";
+								$attendance_of_students = $wpdb->get_results($attendance_sql, ARRAY_A);
 								foreach ($attendance_of_students as $row) :
 								?>
 									<tr>
@@ -213,16 +230,23 @@ $running_year = get_option('running_year');
 							</tbody>
 						</table>
 						<input type="hidden" name="class_id" value="<?php echo esc_attr($class_id); ?>">
+						<?php
+						$student_id = $row['student_id'];
+						$enroll = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id", OBJECT);
+						$section_id = $enroll->section_id;
+						?>
 						<input type="hidden" name="section_id" value="<?php echo esc_attr($section_id); ?>">
 						<input type="hidden" name="timestamp" value="<?php echo esc_attr($timestamp); ?>">
 						<div class="skwp-skwp-form-button">
-							<button class="btn skwp-btn btn-rounded btn-primary" type="submit" value="absensi" name="absensi"> <?php esc_html_e('Update', 'sakolawp'); ?></button>
+							<button class="btn skwp-btn btn-rounded btn-primary" type="submit" value="absensi" name="absensi"> <?php esc_html_e('Update Attendance', 'sakolawp'); ?></button>
 						</div>
 					</div>
 				</form>
 			<?php } ?>
 
 			<?php if (isset($_POST['absensi'])) {
+
+				error_log(json_encode($_POST));
 
 				$class_id = $_POST['class_id'];
 				$section_id = $_POST['section_id'];

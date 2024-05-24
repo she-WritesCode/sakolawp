@@ -256,6 +256,30 @@ if (!empty($enroll)) :
 						if (count($query) > 0) : ?>
 
 							<form class="update-delivery" id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
+								<?php
+								// $content = $tugas_ada[0]["homework_reply"]; // current content
+
+								// // editor settings
+								// $editor_id = 'reply';
+								// $settings  = array(
+								// 	'readonly' => $is_late,
+								// 	'wpautop'          => true,   // Whether to use wpautop for adding in paragraphs. Note that the paragraphs are added automatically when wpautop is false.
+								// 	'media_buttons'    => true,   // Whether to display media insert/upload buttons
+								// 	'textarea_name'    => $editor_id,   // The name assigned to the generated textarea and passed parameter when the form is submitted.
+								// 	'textarea_rows'    => get_option('default_post_edit_rows', 10),  // The number of rows to display for the textarea
+								// 	'tabindex'         => '',     // The tabindex value used for the form field
+								// 	'editor_css'       => '',     // Additional CSS styling applied for both visual and HTML editors buttons, needs to include <style> tags, can use "scoped"
+								// 	'editor_class'     => '',     // Any extra CSS Classes to append to the Editor textarea
+								// 	'teeny'            => true,  // Whether to output the minimal editor configuration used in PressThis
+								// 	'dfw'              => false,  // Whether to replace the default fullscreen editor with DFW (needs specific DOM elements and CSS)
+								// 	'tinymce'          => true,   // Load TinyMCE, can be used to pass settings directly to TinyMCE using an array
+								// 	'quicktags'        => true,   // Load Quicktags, can be used to pass settings directly to Quicktags using an array. Set to false to remove your editor's Visual and Text tabs.
+								// 	'drag_drop_upload' => true    // Enable Drag & Drop Upload Support (since WordPress 3.9)
+								// );
+
+								// // display the editor
+								// wp_editor($content, $editor_id, $settings);
+								?>
 								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
 								<?php if ($tugas_ada[0]["file_name"] != "") {
 									$url_file = site_url() . '/wp-content/uploads/sakolawp/deliveries/' . $tugas_ada[0]["file_name"];
