@@ -121,7 +121,7 @@ if (!empty($enroll)) :
 
 		// Get peer reviews for the current user and the specific homework
 		$peer_reviews = $wpdb->get_results($wpdb->prepare(
-			"SELECT pr.*, d.*, h.title, h.peer_review_template
+			"SELECT pr.*, d.delivery_id, h.title, h.peer_review_template
 				FROM $peer_reviews_table pr 
 				JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
 				JOIN $homework_table h ON pr.homework_id = h.homework_id 
@@ -400,7 +400,15 @@ if (!empty($enroll)) :
 										<?php if (count($query) > 0) : ?>
 											<?php if ($mark != NULL) { ?>
 												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($mark); ?></a>
-											<?php } else {
+											<?php } elseif ($row['allow_peer_review']) {
+												$score = 0;
+												foreach ($peer_reviews as $review) {
+													$score += $review->mark;
+												}
+												$mean_score = $score / count($peer_reviews);
+												echo esc_attr(round($mean_score, 2));
+												echo esc_html_e(' (Peer Reviewed)', 'sakolawp');
+											} else {
 												esc_html_e('On Review', 'sakolawp');
 											} ?>
 										<?php endif; ?>

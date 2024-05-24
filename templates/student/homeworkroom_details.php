@@ -22,7 +22,7 @@ foreach ($current_homework as $row) :
 
 	// Get peer reviews for the current user and the specific homework
 	$peer_reviews = $wpdb->get_results($wpdb->prepare(
-		"SELECT pr.*, d.*, h.title, h.peer_review_template
+		"SELECT pr.*, d.delivery_id, h.title, h.peer_review_template
 			FROM $peer_reviews_table pr 
 			JOIN $deliveries_table d ON pr.delivery_id = d.delivery_id 
 			JOIN $homework_table h ON pr.homework_id = h.homework_id 
@@ -57,7 +57,14 @@ foreach ($current_homework as $row) :
 					<h4><?php echo esc_html__('Your Current score based on peer reviews', 'sakolawp'); ?></h4>
 					<div>
 						<span class="btn skwp-btn btn-small btn-primary">
-							<?php echo "X"; ?>
+							<?php
+							$score = 0;
+							foreach ($peer_reviews as $review) {
+								$score += $review->mark;
+							}
+							$mean_score = $score / count($peer_reviews);
+							echo esc_attr(round($mean_score, 2));
+							?>
 						</span>
 					</div>
 					<br />

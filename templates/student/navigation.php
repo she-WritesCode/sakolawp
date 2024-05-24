@@ -47,7 +47,7 @@
 		</a>
 
 	</div>
-	<div class="skwp-menu-item <?php if ($wp->request === "homework" || $wp->request === "homeworkroom") echo esc_attr('active'); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "homework" || $wp->request === "homeworkroom" || $wp->request === "homeworkroom_details") echo esc_attr('active'); ?>">
 		<a href="<?php echo esc_url(home_url('/homework')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-shopping-list"></i>
 			<?php echo esc_html__('Homeworks', 'sakolawp'); ?>
