@@ -296,7 +296,7 @@ $running_year = get_option('running_year');
 				wp_redirect(add_query_arg(array(
 					"page" => "sakolawp-manage-attendance",
 					'class_id' => $class_id,
-					"timestamp" => str_ireplace('/', '-', $originalDate),
+					"timestamp" =>  $originalDate,
 					"year" => $year,
 					'submit' => 'submit'
 				), admin_url('admin.php')));
