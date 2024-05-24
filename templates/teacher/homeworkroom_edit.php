@@ -46,7 +46,6 @@ $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
 $current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
-echo ($current_homework[0]['allow_peer_review']);
 foreach ($current_homework as $row) :
 
 ?>
@@ -139,8 +138,8 @@ foreach ($current_homework as $row) :
 							<td>
 								<?php
 								$subject_id = $row["subject_id"];
-								$subject_name = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
-								echo esc_html($subject_name['name']);
+								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
+								echo esc_html($subject['name']);
 								?>
 							</td>
 						</tr>

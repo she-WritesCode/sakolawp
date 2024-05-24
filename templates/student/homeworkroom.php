@@ -79,7 +79,8 @@ if (isset($_POST['submit'])) {
 			$wpdb->prefix . 'sakolawp_deliveries',
 			array(
 				'file_name' => $file_name,
-				'student_comment' => $student_comment
+				'student_comment' => $student_comment,
+				'homework_reply' => $homework_reply
 			),
 			array(
 				'homework_code' => $homework_code,
@@ -132,11 +133,10 @@ if (!empty($enroll)) :
 		<?php
 
 		$query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name, date FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
-		$date_end = $row['date_end'];
-		$time_end = $row['time_end'];
-		$time = $date_end . ' ' . $time_end;
-		$is_late = count($query) > 0 ? strtotime($query[0]['date']) <= strtotime($time) : false;
-		$has_been_marked = $mark  !== NULL;
+		$homework_due_date = $row['date_end'] . ' ' . $row['time_end'];
+		$today = date('d-m-Y', time());
+		$is_late =  strtotime($today) > strtotime($homework_due_date);
+		$has_been_marked = $mark !== NULL || count($peer_reviews) > 0;
 
 		?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
@@ -183,14 +183,23 @@ if (!empty($enroll)) :
 							</div>
 
 							<?php
-							if ($is_late || $has_been_marked) :
+							if ($is_late && !$has_been_marked) :
 								$action = (count($query) > 0) ? 'update' : 'submit';
-								$action = ($has_been_marked) ? 'update' : $action;
 							?>
 								<div class="">
 									<div class="btn btn-danger skwp-btn">
 										<?php esc_html_e('Sorry you cannot ' . $action . ' this homework any longer. The deadline was', 'sakolawp'); ?>
-										<span class="skwp-date" data-end-date="<?php echo esc_html($date_end); ?>" data-end-time="<?php echo esc_html($time_end); ?>"></span>
+										<span class="skwp-date" data-end-date="<?php echo esc_html($date_end); ?>" data-end-time="<?php echo esc_html($homework_due_date_end); ?>"></span>
+									</div>
+								</div>
+							<?php endif; ?>
+
+							<?php if ($has_been_marked) :
+								$reason = count($peer_reviews) > 0 ? "Your peers have started reviewing" : "Your assignment has been graded.";
+							?>
+								<div class="">
+									<div class="btn btn-warning skwp-btn">
+										<?php esc_html_e('Sorry you cannot update this homework any longer. ' . $reason, 'sakolawp'); ?>
 									</div>
 								</div>
 							<?php endif; ?>
@@ -243,6 +252,7 @@ if (!empty($enroll)) :
 						<?php
 						$tugas_ada = $query;
 						if (count($query) > 0) : ?>
+
 							<form class="update-delivery" id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
 								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
 								<?php if ($tugas_ada[0]["file_name"] != "") {
@@ -252,7 +262,7 @@ if (!empty($enroll)) :
 										<?php esc_html_e('Download File', 'sakolawp'); ?>
 									</a>
 								<?php } ?>
-								<input class="form-control" id="file-3" name="file_name" type="file" required="" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" <?php echo ($is_late) ? 'readonly' : ''; ?> />
+								<input class="form-control" id="file-3" name="file_name" type="file" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" <?php echo ($is_late) ? 'readonly' : ''; ?> />
 								<input type="hidden" name="post_id" id="post_id" value="<?php echo esc_attr($homework_code); ?>" />
 								<?php wp_nonce_field('file_name', 'file_name_nonce'); ?>
 								<p style="font-style: italic; margin: 20px 0;"><?php esc_html_e('Max file size up to 10MB', 'sakolawp'); ?></p>
