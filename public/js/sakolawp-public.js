@@ -1,4 +1,4 @@
-(function( $ ) {
+(function ($) {
 	'use strict';
 
 	/**
@@ -28,8 +28,8 @@
 	 * Although scripts in the WordPress core, Plugins and Themes may be
 	 * practising this, we should strive to set a better example in our own work.
 	 */
-	$(document).ready(function (){
-		if ($('#tableini').length) {
+	$(document).ready(function () {
+		if ($('#tableini').length && !$('table[class^="homework-table-"]').length) {
 			$('#tableini').DataTable({});
 		}
 
@@ -38,8 +38,18 @@
 				searching: false,
 				ordering: false,
 				paging: false,
-				"bInfo" : false
+				"bInfo": false
 			});
+		}
+		if ($('table[class^="homework-table-"]').length) {
+			$('table[class^="homework-table-"]').each(function () {
+				$(this).DataTable({
+					searching: false,
+					ordering: false,
+					paging: false,
+					"bInfo": false
+				});
+			})
 		}
 
 		if ($('.grid-masonry-wrap').length) {
@@ -79,9 +89,9 @@
 		if ($('#file-3').length) {
 			var sakolaUploadField = document.getElementById("file-3");
 
-			sakolaUploadField.onchange = function() {
+			sakolaUploadField.onchange = function () {
 				var FileSize = this.files[0].size / 1024 / 1024; // in MB
-				if(FileSize > 10){
+				if (FileSize > 10) {
 					alert("File is too big!");
 					this.value = "";
 				};
@@ -98,43 +108,43 @@
 		if ($('#skwp-table-questions').length) {
 			var table = $('#skwp-table-questions').DataTable({
 				'columnDefs': [
-				{
-					'targets': 0,
-					'checkboxes': {
-						'selectRow': true
+					{
+						'targets': 0,
+						'checkboxes': {
+							'selectRow': true
+						}
 					}
-				}
-			],
-			'select': {
-				'style': 'multi'
-			},
+				],
+				'select': {
+					'style': 'multi'
+				},
 				'order': [[0, 'asc']]
 			});
-			 
-			$('#skwp-table-questions tbody').on( 'click', 'tr', function () {
+
+			$('#skwp-table-questions tbody').on('click', 'tr', function () {
 				$(this).find('input[type="checkbox"]').trigger('click');
 			});
 
-			$('#skwp-table-questions tbody').on('click', 'input[type="checkbox"]', function(e){
+			$('#skwp-table-questions tbody').on('click', 'input[type="checkbox"]', function (e) {
 				var $row = $(this).closest('tr');
 			});
 
-			$('#frm-questions-delete').on('submit', function(e) {
+			$('#frm-questions-delete').on('submit', function (e) {
 				var form = this;
 
 				var rows_selected = table.column(0).checkboxes.selected();
 
-				$.each(rows_selected, function(index, rowId) {
-				// Create a hidden element
-				$(form).append(
-					$('<input>')
-						.attr('type', 'hidden')
-						.attr('name', 'id_question[]')
-						.val(rowId)
-				);
-			});
+				$.each(rows_selected, function (index, rowId) {
+					// Create a hidden element
+					$(form).append(
+						$('<input>')
+							.attr('type', 'hidden')
+							.attr('name', 'id_question[]')
+							.val(rowId)
+					);
+				});
 
-			$('input[name="id\[\]"]', form).remove();
+				$('input[name="id\[\]"]', form).remove();
 			});
 		} //skwp table questions end
 
@@ -155,20 +165,20 @@
 				'order': [[0, 'asc']]
 			});
 
-			jQuery('#skwp_questions_table tbody').on( 'click', 'tr', function () {
+			jQuery('#skwp_questions_table tbody').on('click', 'tr', function () {
 				jQuery(this).find('input[type="checkbox"]').trigger('click');
 			});
 
-			jQuery('#skwp_questions_table tbody').on('click', 'input[type="checkbox"]', function(e){
+			jQuery('#skwp_questions_table tbody').on('click', 'input[type="checkbox"]', function (e) {
 				var $row = jQuery(this).closest('tr');
 			});
 
-			jQuery('#frm-questions').on('submit', function(e) {
+			jQuery('#frm-questions').on('submit', function (e) {
 				var form = this;
 
 				var rows_selected = table.column(0).checkboxes.selected();
 
-				jQuery.each(rows_selected, function(index, rowId) {
+				jQuery.each(rows_selected, function (index, rowId) {
 					jQuery(form).append(
 						jQuery('<input>')
 							.attr('type', 'hidden')
@@ -180,6 +190,6 @@
 			});
 		} //skwp table questions 2 end
 	});
-	
 
-})( jQuery );
+
+})(jQuery);

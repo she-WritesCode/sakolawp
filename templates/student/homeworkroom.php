@@ -133,6 +133,8 @@ if (!empty($enroll)) :
 		<?php
 
 		$query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name, date FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
+		$time_end = $row['time_end'];
+		$date_end = $row['date_end'];
 		$homework_due_date = $row['date_end'] . ' ' . $row['time_end'];
 		$today = date('d-m-Y', time());
 		$is_late =  strtotime($today) > strtotime($homework_due_date);
@@ -189,7 +191,7 @@ if (!empty($enroll)) :
 								<div class="">
 									<div class="btn btn-danger skwp-btn">
 										<?php esc_html_e('Sorry you cannot ' . $action . ' this homework any longer. The deadline was', 'sakolawp'); ?>
-										<span class="skwp-date" data-end-date="<?php echo esc_html($date_end); ?>" data-end-time="<?php echo esc_html($homework_due_date_end); ?>"></span>
+										<span class="skwp-date" data-end-date="<?php echo esc_html($date_end); ?>" data-end-time="<?php echo esc_html($time_end); ?>"></span>
 									</div>
 								</div>
 							<?php endif; ?>

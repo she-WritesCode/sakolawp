@@ -2523,3 +2523,7 @@ fieldset {
 .w-1\/4 {
     width: 25% !important;
 }
+.my-8 {
+    margin-top: 2rem/* 32px */ !important;
+    margin-bottom: 2rem/* 32px */ !important;
+}

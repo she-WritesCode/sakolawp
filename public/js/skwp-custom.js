@@ -102,22 +102,26 @@
 	// When the page is ready, check if the checkbox is already checked
 	if ($('#allow_peer_review').is(':checked')) {
 		$('.peer-review-template-group').show();
-		$('.peer-review-template-group').prop('required', true);
+		$('select[name="peer_review_template"]').prop('hidden', false);
+		$('select[name="peer_review_template"]').prop('required', true);
 		fetchPeerReviewTemplates()
 	} else {
 		$('.peer-review-template-group').hide();
-		$('.peer-review-template-group').prop('required', false);
+		$('select[name="peer_review_template"]').prop('hidden', true);
+		$('select[name="peer_review_template"]').prop('required', false);
 	}
 
 	// Add a change event listener to the checkbox
 	$('#allow_peer_review').change(function () {
 		if ($(this).is(':checked')) {
 			$('.peer-review-template-group').show();
-			$('.peer-review-template-group').prop('required', true);
+			$('select[name="peer_review_template"]').prop('hidden', false);
+			$('select[name="peer_review_template"]').prop('required', true);
 			fetchPeerReviewTemplates()
 		} else {
 			$('.peer-review-template-group').hide();
-			$('.peer-review-template-group').prop('required', false);
+			$('select[name="peer_review_template"]').prop('required', true);
+			$('select[name="peer_review_template"]').prop('hidden', false);
 		}
 	});
 
