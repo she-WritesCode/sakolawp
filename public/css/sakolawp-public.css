@@ -1942,6 +1942,7 @@ table th.title-homework {
 .homeworkroom-page .homework-text p,
 .homeworkroom-page .homework-comment p  {
 	font-size: 14px;
+	white-space: pre-line;
 }
 
 .homeworkroom-page .homework-file a {

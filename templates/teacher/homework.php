@@ -82,15 +82,18 @@ $running_year = get_option('running_year');
 
 $teacher_id = get_current_user_id();
 
-$my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id"); ?>
+$user_info = get_userdata($teacher_id);
+$teacher_name = $user_info->display_name;
+$user_is_admin = in_array('administrator',  $user_info->roles);
+
+$homework_sql = $user_is_admin
+	? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;"
+	: "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id OR subject_id IN (SELECT subject_id FROM {$wpdb->prefix}sakolawp_subject WHERE teacher_id = $teacher_id) OR section_id IN (SELECT section_id FROM {$wpdb->prefix}sakolawp_section WHERE teacher_id = $teacher_id) ORDER BY created_at desc;";
+$my_homework = $wpdb->get_row($homework_sql); ?>
 
 <input id="teacher_id_sel" type="hidden" name="teacher_id_target" value="<?php echo esc_attr($teacher_id); ?>">
 
 <?php if (!empty($my_homework)) :
-
-	$user_info = get_userdata($teacher_id);
-	$teacher_name = $user_info->display_name;
-	$user_is_admin = in_array('administrator',  $user_info->roles);
 
 ?>
 	<div class="homework-inner skwp-content-inner">
@@ -120,10 +123,8 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 				<tbody>
 					<?php
 					$counter = 1;
-					$homework_sql = $user_is_admin
-						? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;"
-						: "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id ORDER BY created_at desc;";
 					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
+					error_log($wpdb->last_error . json_encode($homeworks));
 					foreach ($homeworks as $row) :
 					?>
 						<tr>

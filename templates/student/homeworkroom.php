@@ -433,7 +433,7 @@ if (!empty($enroll)) :
 												foreach ($peer_reviews as $review) {
 													$score += $review->mark;
 												}
-												$mean_score = $score / count($peer_reviews);
+												$mean_score = count($peer_reviews) > 0 ? $score / count($peer_reviews) : 0;
 												echo esc_attr(round($mean_score, 2));
 												echo esc_html_e(' (Peer Reviewed)', 'sakolawp');
 											} else {
