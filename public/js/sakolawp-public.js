@@ -189,6 +189,36 @@
 				jQuery('input[name="id\[\]"]', form).remove();
 			});
 		} //skwp table questions 2 end
+
+
+		const $textarea = $('#editordatamurid.word-count');
+		const $wordCount = $('#word-count');
+		if ($textarea && $wordCount) {
+			function truncateToWords(text, maxWords) {
+				const words = text.trim().split(/\s+/);
+				if (words.length > maxWords) {
+					return words.slice(0, maxWords).join(' ') + '...'; // Truncate and add ellipsis
+				}
+				return text;
+			}
+			$textarea.on('keyup keypress blur', function () {
+				let minWordCount = $(this).data('min-word-count');
+				let maxWordCount = $(this).data('max-word-count');
+				const words = $.trim($(this).val()).split(/\s+/).filter(Boolean).length;
+				$wordCount.text(`Word Count: ${words}`);
+
+				if (words < minWordCount) {
+					$wordCount.css('color', 'red');
+				} else if (words > maxWordCount) {
+					$wordCount.css('color', 'red');
+					// Optional: Disable further typing or truncate text
+					$(this).val(truncateToWords($(this).val(), maxWordCount)); // Truncate to max words
+				} else {
+					$wordCount.css('color', 'black');
+				}
+			});
+
+		}
 	});
 
 

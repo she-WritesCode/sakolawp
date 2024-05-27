@@ -108,7 +108,7 @@ if (!empty($enroll)) :
 	$student_name = $user_info->display_name;
 
 	$homework_code = $_GET['homework_code'];
-	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review,word_count_min,word_count_max FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 	$homework_deliveries = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
 	if ($wpdb->num_rows > 0) {
@@ -139,6 +139,9 @@ if (!empty($enroll)) :
 		$today = date('d-m-Y', time());
 		$is_late =  strtotime($today) > strtotime($homework_due_date);
 		$has_been_marked = $mark !== NULL || count($peer_reviews) > 0;
+		$word_count_min = $row['word_count_min'];
+		$word_count_max = $row['word_count_max'];
+		$should_calculate_word_count = $word_count_min && $word_count_max;
 
 		?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
@@ -218,7 +221,14 @@ if (!empty($enroll)) :
 						<?php endif; ?>
 						<?php if (count($query) <= 0) : ?>
 							<form id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
-								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
+								<?php if (!$should_calculate_word_count) : ?>
+									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
+								<?php else : ?>
+									<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
+									<div>
+										<p id="word-count">Word Count: 0</p>
+									</div>
+								<?php endif; ?>
 								<br>
 								<br>
 
@@ -256,31 +266,14 @@ if (!empty($enroll)) :
 						if (count($query) > 0) : ?>
 
 							<form class="update-delivery" id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
-								<?php
-								// $content = $tugas_ada[0]["homework_reply"]; // current content
-
-								// // editor settings
-								// $editor_id = 'reply';
-								// $settings  = array(
-								// 	'readonly' => $is_late,
-								// 	'wpautop'          => true,   // Whether to use wpautop for adding in paragraphs. Note that the paragraphs are added automatically when wpautop is false.
-								// 	'media_buttons'    => true,   // Whether to display media insert/upload buttons
-								// 	'textarea_name'    => $editor_id,   // The name assigned to the generated textarea and passed parameter when the form is submitted.
-								// 	'textarea_rows'    => get_option('default_post_edit_rows', 10),  // The number of rows to display for the textarea
-								// 	'tabindex'         => '',     // The tabindex value used for the form field
-								// 	'editor_css'       => '',     // Additional CSS styling applied for both visual and HTML editors buttons, needs to include <style> tags, can use "scoped"
-								// 	'editor_class'     => '',     // Any extra CSS Classes to append to the Editor textarea
-								// 	'teeny'            => true,  // Whether to output the minimal editor configuration used in PressThis
-								// 	'dfw'              => false,  // Whether to replace the default fullscreen editor with DFW (needs specific DOM elements and CSS)
-								// 	'tinymce'          => true,   // Load TinyMCE, can be used to pass settings directly to TinyMCE using an array
-								// 	'quicktags'        => true,   // Load Quicktags, can be used to pass settings directly to Quicktags using an array. Set to false to remove your editor's Visual and Text tabs.
-								// 	'drag_drop_upload' => true    // Enable Drag & Drop Upload Support (since WordPress 3.9)
-								// );
-
-								// // display the editor
-								// wp_editor($content, $editor_id, $settings);
-								?>
-								<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+								<?php if (!$should_calculate_word_count) : ?>
+									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+								<?php else : ?>
+									<textarea class="word-count" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+									<div>
+										<p id="word-count">Word Count: 0</p>
+									</div>
+								<?php endif; ?>
 								<?php if ($tugas_ada[0]["file_name"] != "") {
 									$url_file = site_url() . '/wp-content/uploads/sakolawp/deliveries/' . $tugas_ada[0]["file_name"];
 									$url_file = str_replace(' ', '-', $url_file); ?>

@@ -146,7 +146,7 @@ $my_exams = $wpdb->get_row("SELECT teacher_id FROM {$wpdb->prefix}sakolawp_exams
 								<a class="btn btn-rounded btn-sm btn-primary skwp-btn" href="<?php echo add_query_arg('exam_code', $row['exam_code'], home_url('examroom')); ?>">
 									<i class="picons-thin-icon-thin-0071_document_file_paper"></i><span><?php esc_html_e('View', 'sakolawp'); ?></span>
 								</a>
-								<a class="btn btn-rounded btn-sm btn-danger skwp-btn" href="<?php echo add_query_arg(array('exam_code' => $row['exam_code'], 'action' => 'delete'), home_url('online_exams')); ?>" onClick="return confirm('Konfirmasi Hapus')">
+								<a class="btn btn-rounded btn-sm btn-danger skwp-btn" href="<?php echo add_query_arg(array('exam_code' => $row['exam_code'], 'action' => 'delete'), home_url('online_exams')); ?>" onClick="return confirm('Confirm Delete?')">
 									<span><?php esc_html_e('Delete', 'sakolawp'); ?></span>
 								</a>
 							</td>

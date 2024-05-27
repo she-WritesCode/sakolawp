@@ -24,7 +24,7 @@ class SakolawpPeerReview
     function peer_review_templates_select_options()
     {
         $peer_review_templates_select_options = array_keys($this->peer_review_templates);
-        $selected = $_REQUEST['selected'];
+        $selected = isset($_REQUEST['selected']) ? $_REQUEST['selected'] : NULL;
 
         echo '<option value="">Select</option>';
         foreach ($peer_review_templates_select_options as $row) {

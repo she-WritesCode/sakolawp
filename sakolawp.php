@@ -856,7 +856,7 @@ function sakolawp_select_section_f()
 	// Implement ajax function here
 	global $wpdb;
 	$class_id = $_REQUEST['class_id'];
-	$selected = $_REQUEST['selected'];
+	$selected = isset($_REQUEST['selected']) ? $_REQUEST['selected'] : NULL;
 	$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
 	echo '<option value="">Select</option>';
 	foreach ($sections as $row) {
@@ -880,7 +880,7 @@ function sakolawp_select_section2_f()
 	// Implement ajax function here
 	global $wpdb;
 	$class_id = $_REQUEST['class_id'];
-	$selected = $_REQUEST['selected'];
+	$selected = isset($_REQUEST['selected']) ? $_REQUEST['selected'] : NULL;
 	$sections = $wpdb->get_results("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE class_id = '$class_id'", ARRAY_A);
 	echo '<option value="">All</option>';
 	foreach ($sections as $row) {

@@ -100,6 +100,38 @@
 	}
 
 	// When the page is ready, check if the checkbox is already checked
+	if ($('#limit_word_count').is(':checked')) {
+		$('.word-count-template-group').show();
+		$('input[name="word_count_min"]').prop('hidden', false);
+		$('input[name="word_count_max"]').prop('hidden', false);
+		$('input[name="word_count_min"]').prop('required', true);
+		$('input[name="word_count_max"]').prop('required', true);
+	} else {
+		$('.word-count-template-group').hide();
+		$('input[name="word_count_min"]').prop('hidden', true);
+		$('input[name="word_count_max"]').prop('hidden', true);
+		$('input[name="word_count_min"]').prop('required', false);
+		$('input[name="word_count_max"]').prop('required', false);
+	}
+
+	// Add a change event listener to the checkbox
+	$('#limit_word_count').change(function () {
+		if ($(this).is(':checked')) {
+			$('.word-count-template-group').show();
+			$('input[name="word_count_min"]').prop('hidden', false);
+			$('input[name="word_count_max"]').prop('hidden', false);
+			$('input[name="word_count_min"]').prop('required', true);
+			$('input[name="word_count_max"]').prop('required', true);
+		} else {
+			$('.word-count-template-group').hide();
+			$('input[name="word_count_min"]').prop('required', true);
+			$('input[name="word_count_max"]').prop('required', true);
+			$('input[name="word_count_min"]').prop('hidden', false);
+			$('input[name="word_count_max"]').prop('hidden', false);
+		}
+	});
+
+	// When the page is ready, check if the checkbox is already checked
 	if ($('#allow_peer_review').is(':checked')) {
 		$('.peer-review-template-group').show();
 		$('select[name="peer_review_template"]').prop('hidden', false);

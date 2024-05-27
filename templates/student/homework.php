@@ -47,7 +47,7 @@ if (!empty($enroll)) :
 					$counter = 1;
 					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework 
 					WHERE (class_id = '$enroll->class_id'
-					AND section_id = '$enroll->section_id') OR (class_id = '$enroll->class_id' AND section_id = 0)", ARRAY_A);
+					AND section_id = '$enroll->section_id') OR (class_id = '$enroll->class_id' AND section_id = 0) ORDER BY created_at desc;", ARRAY_A);
 
 					foreach ($homeworks as $row) :
 					?>

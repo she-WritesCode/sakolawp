@@ -119,6 +119,8 @@ CREATE TABLE $homework_table (
 	file_date longtext NULL,
 	allow_peer_review BOOLEAN DEFAULT 0,
 	peer_review_template VARCHAR(255) NULL,
+	word_count_min int(11) NULL,
+	word_count_max int(11) NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (homework_id)

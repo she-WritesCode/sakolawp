@@ -21,6 +21,8 @@ if (isset($_POST['submit'])) {
 	$subject_id = sanitize_text_field($_POST['subject_id']);
 	$allow_peer_review = isset($_POST['allow_peer_review']);
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
+	$word_count_min = sanitize_text_field($_POST['word_count_min']);
+	$word_count_max = sanitize_text_field($_POST['word_count_max']);
 	$uploader_type  = 'teacher';
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
@@ -41,6 +43,8 @@ if (isset($_POST['submit'])) {
 			'file_name' => $file_name,
 			'allow_peer_review' => $allow_peer_review,
 			'peer_review_template' => $peer_review_template,
+			'word_count_min' => (int)$word_count_min,
+			'word_count_max' => (int)$word_count_max,
 		)
 	);
 
@@ -171,7 +175,7 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
 									<?php echo esc_html__('View', 'sakolawp'); ?>
 								</a>
-								<a class="btn btn-danger btn-rounded btn-sm skwp-btn" onClick="return confirm('Konfirmasi Hapus')" href="<?php echo add_query_arg(array('homework_code' => $row['homework_code'], 'action' => 'delete'), home_url('homework')); ?>">
+								<a class="btn btn-danger btn-rounded btn-sm skwp-btn" onClick="return confirm('Confirm Delete?')" href="<?php echo add_query_arg(array('homework_code' => $row['homework_code'], 'action' => 'delete'), home_url('homework')); ?>">
 									<?php echo esc_html__('Delete', 'sakolawp'); ?>
 								</a>
 							</td>
@@ -202,7 +206,7 @@ endif;
 				<button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true"> &times;</span></button>
 			</div>
 			<div class="modal-body">
-				<form id="myForm" name="save_create_homework" action="" method="POST" enctype="multipart/form-data">
+				<form id="myForm" class="flex flex-col gap-2" name="save_create_homework" action="" method="POST" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="save_create_homework" />
 					<input type="hidden" name="uploader_id" value="<?php echo esc_attr($teacher_id); ?>" />
 					<input type="hidden" class="skwp-form-control" name="post_id" value="<?php echo $homework_code; ?>" />
@@ -252,27 +256,55 @@ endif;
 					<div class="skwp-form-group">
 						<label> <?php esc_html_e('Description', 'sakolawp'); ?></label><textarea id="editordatateacher" name="description"></textarea>
 					</div>
-
-					<div class="skwp-form-group">
-						<input value="yes" type="checkbox" name="allow_peer_review" id="allow_peer_review" />
-						<label class="row-form-label" for=""><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
+					<div>
+						<div class="skwp-form-group">
+							<input value="yes" type="checkbox" name="allow_peer_review" id="allow_peer_review" />
+							<label class="row-form-label" for="allow_peer_review"><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
+						</div>
+						<div class="skwp-form-group peer-review-template-group">
+							<label class="col-form-label" for=""><?php esc_html_e('Peer Review Template', 'sakolawp'); ?></label>
+							<div class="input-group">
+								<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
+									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+								</select>
+							</div>
+						</div>
 					</div>
-					<div class="skwp-form-group peer-review-template-group">
-						<label class="col-form-label" for=""><?php esc_html_e('Peer Review Template', 'sakolawp'); ?></label>
-						<div class="input-group">
-							<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
-								<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
-							</select>
+					<div>
+						<div class="skwp-form-group">
+							<input value="yes" type="checkbox" name="limit_word_count" id="limit_word_count" />
+							<label class="row-form-label" for="limit_word_count"><?php esc_html_e('Limit word count', 'sakolawp') ?></label>
+						</div>
+						<div class="skwp-clearfix skwp-row word-count-template-group">
+							<div class="skwp-column skwp-column-2">
+								<div class="skwp-form-group">
+									<label for=""> <?php esc_html_e('Minimum Word Count', 'sakolawp'); ?></label>
+									<input class="skwp-form-control" type="number" min="0" name="word_count_min">
+								</div>
+							</div>
+							<div class="skwp-column skwp-column-2">
+								<div class="skwp-form-group">
+									<label for=""> <?php esc_html_e('Maximum Word Count', 'sakolawp'); ?></label>
+									<input type="number" name="word_count_max" min="0" class="skwp-form-control">
+
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div class="skwp-form-group">
-						<label for=""> <?php esc_html_e('Due End', 'sakolawp'); ?></label><input class="single-daterange skwp-form-control" required="" type="text" name="date_end" value="">
-					</div>
-					<div class="skwp-form-group">
-						<label for=""> <?php esc_html_e('Time Limit', 'sakolawp'); ?></label>
-						<div class="input-group clockpicker" data-align="top" data-autoclose="true">
-							<input type="text" required="" name="time_end" class="skwp-form-control" value="09:30">
+					<div class="skwp-clearfix skwp-row">
+						<div class="skwp-column skwp-column-2">
+							<div class="skwp-form-group">
+								<label for=""> <?php esc_html_e('Due Date', 'sakolawp'); ?></label><input class="single-daterange skwp-form-control" required="" type="text" name="date_end" value="">
+							</div>
+						</div>
+						<div class="skwp-column skwp-column-2">
+							<div class="skwp-form-group">
+								<label for=""> <?php esc_html_e('Due Time', 'sakolawp'); ?></label>
+								<div class="input-group clockpicker" data-align="top" data-autoclose="true">
+									<input type="text" required="" name="time_end" class="skwp-form-control" value="23:59">
+								</div>
+							</div>
 						</div>
 					</div>
 
