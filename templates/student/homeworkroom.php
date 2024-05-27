@@ -220,7 +220,7 @@ if (!empty($enroll)) :
 									<?php echo esc_html($row['description']); ?>
 								</div>
 							</div>
-						<? endif; ?>
+						<?php endif; ?>
 						<?php if ($row['file_name'] != "") :
 							$url_file = site_url() . '/wp-content/uploads/sakolawp/homework/' . $row['file_name'];
 							$url_file = str_replace(' ', '-', $url_file); ?>

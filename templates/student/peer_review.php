@@ -34,7 +34,7 @@ if (!empty($enroll)) :
 		AND d.student_id != '$student_id' 
 		AND d.class_id = '$enroll->class_id' 
 		AND e.section_id = '$enroll->section_id'
-		ORDER BY h.date_end DESC, d.date DESC ;", ARRAY_A);
+		ORDER BY h.created_at DESC, d.date DESC;", ARRAY_A);
 ?>
 
 	<div class="homework-inner skwp-content-inner skwp-clearfix">
