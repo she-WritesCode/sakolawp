@@ -151,7 +151,7 @@ input {
 	float: right;
 }
 .skwp-container {
-	max-width: 1200px;
+	/* max-width: 1200px; */
 	margin: auto;
 }
 .skwp-column {
@@ -270,7 +270,7 @@ input {
 
 /* Sakola Main Wrap */
 .main-sakolawp-wrap {
-	padding: 50px 0;
+	padding: 0px 0;
 }
 .skwp-inner-content {
 	box-shadow:0px 0px 10px -2px #ddd;

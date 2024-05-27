@@ -2,7 +2,7 @@
 
 global $wpdb;
 $charset_collate = $wpdb->get_charset_collate();
-$sakolawp_db_version = '1.0.0';
+$sakolawp_db_version = '2.0.0';
 $table_name = $wpdb->prefix . 'sakolawp_settings';
 $class_table = $wpdb->prefix . 'sakolawp_class';
 $section_table = $wpdb->prefix . 'sakolawp_section';
@@ -34,6 +34,8 @@ CREATE TABLE $class_table (
 	name text NULL,
 	name_numeric text NULL,
 	teacher_id text NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (class_id)
 ) $charset_collate;
 
@@ -42,6 +44,8 @@ CREATE TABLE $section_table (
 	name longtext NOT NULL,
 	class_id int(11) NOT NULL,
 	teacher_id text NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (section_id)
 ) $charset_collate;
 
@@ -50,6 +54,8 @@ CREATE TABLE $accountability_table (
 	name longtext NOT NULL,
 	class_id int(11) NOT NULL,
 	section_id int(11) NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (accountability_id)
 ) $charset_collate;
 
@@ -60,6 +66,8 @@ CREATE TABLE $subject_table (
 	section_id int(11) NOT NULL,
 	teacher_id text NOT NULL,
 	total_lab int(11) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (subject_id)
 ) $charset_collate;
 
@@ -75,6 +83,8 @@ CREATE TABLE $routine_table (
 	day text NULL,
 	year text NULL,
 	teacher_id text NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (class_routine_id)
 ) $charset_collate;
 
@@ -88,6 +98,8 @@ CREATE TABLE $enroll_table (
 	roll varchar(110) NOT NULL,
 	date_added text NULL,
 	year text NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (enroll_id)
 ) $charset_collate;
 
@@ -107,6 +119,8 @@ CREATE TABLE $homework_table (
 	file_date longtext NULL,
 	allow_peer_review BOOLEAN DEFAULT 0,
 	peer_review_template VARCHAR(255) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (homework_id)
 ) $charset_collate;
 
@@ -125,6 +139,8 @@ CREATE TABLE $deliveries_table (
 	status int(11) NOT NULL,
 	homework_reply longtext NULL,
 	mark varchar(110) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (delivery_id)
 ) $charset_collate;
 
@@ -144,6 +160,8 @@ CREATE TABLE $peer_reviews_table (
 	mark varchar(110) NULL,
 	reviewer_comment longtext NULL,
 	reviewer_type varchar(110) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (peer_review_id)
 ) $charset_collate;
 
@@ -164,6 +182,8 @@ CREATE TABLE $questions_bank_table (
 	subject_id int(11) NULL,
 	added varchar(110) NULL,
 	question_code varchar(110) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (question_id)
 ) $charset_collate;
 
@@ -190,6 +210,8 @@ CREATE TABLE $exams_table (
 	participant longtext NULL,
 	availfromtime longtext NULL,
 	availtotime longtext NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (exam_id)
 ) $charset_collate;
 
@@ -230,6 +252,8 @@ CREATE TABLE $mark_table (
 	lab_total int(11) NULL,
 	year longtext NOT NULL,
 	final varchar(200) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (mark_id)
 ) $charset_collate;
 
@@ -239,6 +263,8 @@ CREATE TABLE $exam_table (
 	year longtext NOT NULL,
 	start_exam longtext NULL,
 	end_exam longtext NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (exam_id)
 ) $charset_collate;
 
@@ -257,6 +283,8 @@ CREATE TABLE $questions_table (
 	marks longtext NULL,
 	question_code longtext NOT NULL,
 	exam_code longtext NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (question_id)
 ) $charset_collate;
 
@@ -269,6 +297,8 @@ CREATE TABLE $attendance_table (
 	section_id varchar(20) NULL,
 	student_id varchar(110) NULL,
 	status varchar(20) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (attendance_id)
 ) $charset_collate;
 
@@ -343,6 +373,8 @@ CREATE TABLE $attendance_log_table (
 	time_30 varchar(110) NULL,
 	day_31 varchar(11) NULL,
 	time_31 varchar(110) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (id)
 ) $charset_collate;
 
@@ -362,3 +394,10 @@ CREATE TABLE $student_answer_table (
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 dbDelta($sql);
 add_option('sakolawp_db_version', $sakolawp_db_version);
+
+// if (get_option('sakolawp_db_version') != '2.0.0') { // Replace 2.0.0 with your upgrade script version
+// 	include_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+// 	$upgrade_script = file_get_contents(plugin_dir_path(__FILE__) . 'upgrade/upgrade-2.0.0.php'); // Replace paths accordingly
+// 	dbDelta($upgrade_script);
+// 	update_option('sakolawp_db_version', '2.0.0'); // Update version number
+// }

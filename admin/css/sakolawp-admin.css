@@ -1493,8 +1493,8 @@ td .status-pilli:first-child {
 	}
 }
 
-.inline {
-    display: inline !important;
+#skwp .inline {
+    display: inline;
 }
 :root {
 	--bs-blue: #0d6efd;

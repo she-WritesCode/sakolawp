@@ -105,6 +105,7 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 			<table id="tableini" class="table dataTable homework-table">
 				<thead>
 					<tr>
+						<th hidden class="title-homework"><?php esc_html_e('Date Added', 'sakolawp'); ?></th>
 						<th class="title-homework"><?php esc_html_e('Title', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
@@ -115,11 +116,14 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 				<tbody>
 					<?php
 					$counter = 1;
-					$homework_sql = $user_is_admin ? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template FROM {$wpdb->prefix}sakolawp_homework" : "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id";
+					$homework_sql = $user_is_admin
+						? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;"
+						: "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id ORDER BY created_at desc;";
 					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
 					foreach ($homeworks as $row) :
 					?>
 						<tr>
+							<td hidden><?php echo $row['created_at']; ?></td>
 							<td>
 								<?php
 								echo esc_html($row['title']);
@@ -153,11 +157,11 @@ $my_homework = $wpdb->get_row("SELECT uploader_id FROM {$wpdb->prefix}sakolawp_h
 								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
 								echo esc_html($subject->name);
 								$allow_peer_review = $row['allow_peer_review'];
-								echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-sm btn-success skwp-btn">peer reviewable</span>' : "";
+								echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-small btn-success skwp-btn">peer reviewable</span>' : "";
 								?>
 							</td>
 							<td>
-								<a class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
+								<a class="">
 									<?php echo esc_html($row['date_end']) . ' ' . esc_html($row['time_end']); ?>
 								</a>
 								<br />

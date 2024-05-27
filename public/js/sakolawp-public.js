@@ -30,7 +30,7 @@
 	 */
 	$(document).ready(function () {
 		if ($('#tableini').length && !$('table[class^="homework-table-"]').length) {
-			$('#tableini').DataTable({});
+			$('#tableini').DataTable({ ordering: false });
 		}
 
 		if ($('#dataTableNot2').length) {

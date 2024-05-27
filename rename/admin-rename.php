@@ -9,6 +9,14 @@ if (is_page('myaccount') || $wp->request === "myaccount") {
     $title_parts['title'] = 'Event Posts';
 } elseif ($wp->request === "view-user") {
     $title_parts['title'] = 'Student Profile';
+} elseif ($wp->request === "homework") {
+    $title_parts['title'] = 'Class Homework';
+} elseif ($wp->request === "homeworkroom") {
+    $title_parts['title'] = 'Class Homework Room';
+} elseif ($wp->request === "homeworkroom_edit") {
+    $title_parts['title'] = 'Homework Room Edit';
+} elseif ($wp->request === "homeworkroom_details") {
+    $title_parts['title'] = 'Homework Room Details';
 } elseif ($wp->request === "view_homework_student") {
     $title_parts['title'] = 'View Homework Student';
 }
