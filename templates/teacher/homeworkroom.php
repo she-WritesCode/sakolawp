@@ -9,7 +9,7 @@ global $wpdb;
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
-$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review, created_at FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 foreach ($current_homework as $row) :
 
@@ -27,11 +27,11 @@ foreach ($current_homework as $row) :
 						<span><?php echo esc_html__('Homework Reports', 'sakolawp'); ?></span>
 					</a>
 				</li>
-				<li class="skwp-tab-items">
+				<!-- <li class="skwp-tab-items">
 					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_edit')); ?>">
 						<span><?php echo esc_html__('Edit', 'sakolawp'); ?></span>
 					</a>
-				</li>
+				</li> -->
 			</ul>
 		</div>
 		<div class="back skwp-back hidden-sm-down">
@@ -44,18 +44,29 @@ foreach ($current_homework as $row) :
 						<div class="pipeline-header">
 							<h5 class="pipeline-name">
 								<?php echo $row['title']; ?>
+
+								<a class="skwp-tab-item ml-2 btn btn-small btn-primary skwp-btn" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_edit')); ?>">
+									<span><?php echo esc_html__('Edit Homework', 'sakolawp'); ?></span>
+								</a>
 							</h5>
 							<div class="pipeline-header-numbers">
 								<div class="pipeline-count">
-									<i class="os-icon picons-thin-icon-thin-0024_calendar_month_day_planner_events"></i> <?php echo $row['date_end']; ?> <br>
-									<i class="os-icon picons-thin-icon-thin-0025_alarm_clock_ringer_time_morning"></i> <?php echo $row['time_end']; ?>
+									Due Date:
+									<span class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
+										<?php echo $row['date_end']; ?>
+										<?php echo $row['time_end']; ?>
+									</span> <br>
 								</div>
 							</div>
 						</div>
-						<p>
-							<?php echo $row['description']; ?>
-						</p>
-
+						<?php if (isset($row['description'])) : ?>
+							<div class="my-4">
+								<h6 class="mb-0">Instructions:</h6>
+								<div>
+									<?php echo esc_html($row['description']); ?>
+								</div>
+							</div>
+						<?php endif; ?>
 						<?php if ($row['file_name'] != "") :
 							$url_file = site_url() . '/wp-content/uploads/sakolawp/homework/' . $row['file_name']; ?>
 							<div class="b-t padded-v-big homework-attachment">
@@ -63,7 +74,7 @@ foreach ($current_homework as $row) :
 							</div>
 						<?php endif; ?>
 						<div class="b-t padded-v-big homework-attachment">
-							<?php echo esc_html__('Delivered Date', 'sakolawp'); ?>: <a class="btn nc btn-rounded btn-sm btn-success skwp-btn"><?php echo $row['date_end']; ?></a>
+							<?php echo esc_html__('Created On', 'sakolawp'); ?>: <a><?php echo date("d/m/Y H:i", strtotime($row['created_at'])); ?></a>
 						</div>
 					</div>
 				</div>

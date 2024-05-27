@@ -29,15 +29,15 @@ foreach ($current_homework as $row) :
 						<span><?php echo esc_html__('Homework Reports', 'sakolawp'); ?></span>
 					</a>
 				</li>
-				<li class="skwp-tab-items">
+				<!-- <li class="skwp-tab-items">
 					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_edit')); ?>">
 						<span><?php echo esc_html__('Edit', 'sakolawp'); ?></span>
 					</a>
-				</li>
+				</li> -->
 			</ul>
 		</div>
 		<div class="back skwp-back hidden-sm-down">
-			<a href="<?php echo site_url('homework'); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
+			<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
 		</div>
 		<div class="homework-top">
 			<div class="tugas-wrap">
