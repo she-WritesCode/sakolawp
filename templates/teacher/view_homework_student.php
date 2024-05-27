@@ -200,15 +200,14 @@ foreach ($homework_deliveries as $row) :
 							</div>
 							<div class="add-mark">
 								<h4><?php echo esc_html__('Mark :', 'sakolawp'); ?></h4>
-								<? if ($current_homework['peer_review_template']) :
+								<? if ($current_homework['peer_review_template']) {
 									$mark = count($peer_reviews) > 0 ? $total_mark / count($peer_reviews) : 0;
 								?>
-									<input type="number" name="mark" min="1" max="100" maxlength="3" required value="<?php echo esc_attr($mark); ?>" hidden>
+									<input type="number" name="mark" min="1" max="100" maxlength="3" required value="<?php echo esc_attr($mark); ?>" hidden />
 									<p><?php echo esc_attr($mark); ?></p>
-
-								<?php else : ?>
+								<?php } else { ?>
 									<input type="number" name="mark" min="1" max="100" maxlength="3" required value="0">
-								<?php endif; ?>
+								<?php } ?>
 							</div>
 							<button id="submit-tugas" class="btn btn-rounded btn-primary skwp-btn" name="submit" type="submit" value="submit"> <?php echo esc_html__('Save', 'sakolawp'); ?></button>
 						</form>
