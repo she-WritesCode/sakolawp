@@ -180,10 +180,11 @@ if (!empty($enroll)) :
 							</h5>
 							<div class="pipeline-header-numbers">
 								<div class="pipeline-count">
-									<i class="os-icon picons-thin-icon-thin-0024_calendar_month_day_planner_events"></i>
-									<?php echo esc_html($row['date_end']); ?> <br>
-									<i class="os-icon picons-thin-icon-thin-0025_alarm_clock_ringer_time_morning"></i>
-									<?php echo esc_html($row['time_end']); ?>
+									<b>
+										<i class="os-icon picons-thin-icon-thin-0024_calendar_month_day_planner_events"></i>
+										Due Date:
+										<?php echo esc_html($row['date_end']); ?> <?php echo esc_html($row['time_end']); ?></b><br>
+
 								</div>
 							</div>
 
@@ -209,9 +210,14 @@ if (!empty($enroll)) :
 								</div>
 							<?php endif; ?>
 						</div>
-						<p>
-							<?php echo esc_html($row['description']); ?>
-						</p>
+						<?php if (isset($row['description'])) : ?>
+							<div class="my-4">
+								<h6 class="mb-0">Instructions:</h6>
+								<div>
+									<?php echo esc_html($row['description']); ?>
+								</div>
+							</div>
+						<? endif; ?>
 						<?php if ($row['file_name'] != "") :
 							$url_file = site_url() . '/wp-content/uploads/sakolawp/homework/' . $row['file_name'];
 							$url_file = str_replace(' ', '-', $url_file); ?>
@@ -225,8 +231,9 @@ if (!empty($enroll)) :
 									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
 								<?php else : ?>
 									<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
-									<div>
+									<div class="flex justify-between">
 										<p id="word-count">Word Count: 0</p>
+										<p>Min: <?php echo $word_count_min; ?> | Max: <?php echo $word_count_max; ?> </p>
 									</div>
 								<?php endif; ?>
 								<br>
@@ -269,9 +276,10 @@ if (!empty($enroll)) :
 								<?php if (!$should_calculate_word_count) : ?>
 									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
 								<?php else : ?>
-									<textarea class="word-count" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
-									<div>
+									<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+									<div class="flex justify-between">
 										<p id="word-count">Word Count: 0</p>
+										<p>Min: <?php echo $word_count_min; ?> | Max: <?php echo $word_count_max; ?> </p>
 									</div>
 								<?php endif; ?>
 								<?php if ($tugas_ada[0]["file_name"] != "") {

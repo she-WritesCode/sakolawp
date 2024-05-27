@@ -78,11 +78,11 @@ if (!empty($enroll)) :
 								?>
 							</td>
 							<td>
-								<a class="btn nc btn-rounded btn-sm btn-danger skwp-btn">
+								<a class="">
 									<?php echo esc_html($row['date_end']) . ' ' . esc_html($row['time_end']); ?>
 								</a>
 								<br />
-								<span class="skwp-date" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
+								<span class="skwp-date italic" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
 							</td>
 							<td>
 								<?php

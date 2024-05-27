@@ -195,13 +195,28 @@
 		const $wordCount = $('#word-count');
 		if ($textarea && $wordCount) {
 			function truncateToWords(text, maxWords) {
-				const words = text.trim().split(/\s+/);
-				if (words.length > maxWords) {
-					return words.slice(0, maxWords).join(' ') + '...'; // Truncate and add ellipsis
+				const words = text.match(/(\S+\s*|\n+)/g); // Split by words and include new lines
+				let wordCount = 0;
+				let truncatedText = '';
+
+				for (let i = 0; i < words.length; i++) {
+					const word = words[i];
+					if (word.trim() === '') {
+						truncatedText += word; // Add new lines and spaces as is
+					} else {
+						if (wordCount < maxWords) {
+							truncatedText += word;
+							wordCount++;
+						} else {
+							truncatedText += '';
+							break;
+						}
+					}
 				}
-				return text;
+
+				return truncatedText.trim();
 			}
-			$textarea.on('keyup keypress blur', function () {
+			$textarea.on('keyup keypress blur load', function () {
 				let minWordCount = $(this).data('min-word-count');
 				let maxWordCount = $(this).data('max-word-count');
 				const words = $.trim($(this).val()).split(/\s+/).filter(Boolean).length;
@@ -209,14 +224,18 @@
 
 				if (words < minWordCount) {
 					$wordCount.css('color', 'red');
+					$('button[type="submit"]').hide()
 				} else if (words > maxWordCount) {
 					$wordCount.css('color', 'red');
+					$('button[type="submit"]').hide()
 					// Optional: Disable further typing or truncate text
 					$(this).val(truncateToWords($(this).val(), maxWordCount)); // Truncate to max words
 				} else {
 					$wordCount.css('color', 'black');
+					$('button[type="submit"]').show()
 				}
 			});
+			$textarea.trigger('keyup');
 
 		}
 	});

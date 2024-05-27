@@ -1897,7 +1897,7 @@ table th.title-homework {
 }
 
 .update-delivery #editordatamurid {
-	margin-bottom: 20px;
+	margin-bottom: 0px;
 }
 .download-delivery-attachment {
 	display: inline-block;
@@ -2526,4 +2526,17 @@ fieldset {
 .my-8 {
     margin-top: 2rem/* 32px */ !important;
     margin-bottom: 2rem/* 32px */ !important;
+}
+.justify-between {
+    justify-content: space-between !important;
+}
+.italic {
+    font-style: italic !important;
+}
+.mb-0 {
+    margin-bottom: 0px !important;
+}
+.my-4 {
+    margin-top: 1rem/* 16px */ !important;
+    margin-bottom: 1rem/* 16px */ !important;
 }
