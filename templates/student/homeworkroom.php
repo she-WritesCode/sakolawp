@@ -52,7 +52,8 @@ if (isset($_POST['submit'])) {
 		remove_filter('upload_dir', 'sakolawp_custom_dir_deliveries');
 
 		wp_redirect(add_query_arg(array('homework_code' => $homework_code), home_url('homeworkroom')));
-		die;
+		$message = " Successful";
+		die('<div class="alert ' . $alert_class . '" role="alert">' . $message . '</div>');
 	}
 
 	if ($homework_act == "update_homework") {
@@ -89,7 +90,9 @@ if (isset($_POST['submit'])) {
 		);
 
 		wp_redirect(add_query_arg(array('homework_code' => $homework_code), home_url('homeworkroom')));
-		die;
+		$message = " Successful";
+		$alert_class = "success";
+		die('<div class="alert ' . $alert_class . '" role="alert">' . $message . '</div>');
 	}
 }
 

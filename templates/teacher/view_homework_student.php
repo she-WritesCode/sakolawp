@@ -56,9 +56,9 @@ foreach ($homework_deliveries as $row) :
 	$delivery_id = $row['delivery_id'];
 	$peer_reviews = $wpdb->get_results("SELECT * FROM $peer_reviews_table WHERE delivery_id = '$delivery_id';", ARRAY_A);
 
-
-	require_once plugin_dir_path(__FILE__) . '../peer-reviews/' . $current_homework['peer_review_template'] . '_assessment.php';
-
+	if ($current_homework['peer_review_template']) {
+		require_once plugin_dir_path(__FILE__) . '../peer-reviews/' . $current_homework['peer_review_template'] . '_assessment.php';
+	}
 
 ?>
 	<div class="homeworkroom-page skwp-content-inner">
