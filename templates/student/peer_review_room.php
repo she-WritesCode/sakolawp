@@ -156,7 +156,6 @@ if (!empty($enroll)) :
 				error_log("current_peer_review is " . json_encode($peer_reviews));
 
 				if (count($peer_reviews) == 0) :
-					$current_peer_review = $peer_reviews
 				?>
 					<div class="skwp-column skwp-column-1">
 						<form id="<?php echo $row['peer_review_template'] . '_form'; ?>" method="POST" action="">
@@ -185,7 +184,8 @@ if (!empty($enroll)) :
 						</form>
 					</div>
 
-				<?php else : ?>
+				<?php else :
+					$current_peer_review = $peer_reviews[0] ?>
 					<div class="skwp-column skwp-column-1">
 						<div class="skwp-sidebar-title">
 							<h5 class="skwp-title btn btn-rounded btn-sm skwp-btn btn-primary">
@@ -278,10 +278,10 @@ if (!empty($enroll)) :
 										<?php esc_html_e('Status:', 'sakolawp'); ?>
 									</th>
 									<td>
-										<?php if (empty($current_peer_review)) : ?>
+										<?php if (count($peer_reviews) <= 0) : ?>
 											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Reviewed', 'sakolawp'); ?></a>
 										<?php endif; ?>
-										<?php if (!empty($current_peer_review)) : ?>
+										<?php if (count($peer_reviews) > 0) : ?>
 											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Reviewed', 'sakolawp'); ?></a>
 										<?php endif; ?>
 									</td>
@@ -291,11 +291,11 @@ if (!empty($enroll)) :
 										<?php esc_html_e('Mark:', 'sakolawp'); ?>
 									</th>
 									<td>
-										<?php if (empty($current_peer_review)) : ?>
+										<?php if (count($peer_reviews) <= 0) : ?>
 											<a class="btn btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Marked', 'sakolawp'); ?></a>
 										<?php endif; ?>
-										<?php if (!empty($current_peer_review)) : ?>
-											<?php if ($current_peer_review['mark'] != NULL) { ?>
+										<?php if (count($peer_reviews) > 0) : ?>
+											<?php if ($row['allow_peer_review']) { ?>
 												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($current_peer_review['mark']); ?></a>
 											<?php } else {
 												esc_html_e('In Review', 'sakolawp');

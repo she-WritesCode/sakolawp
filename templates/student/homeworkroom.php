@@ -110,7 +110,7 @@ if (!empty($enroll)) :
 	$student_name = $user_info->display_name;
 
 	$homework_code = $_GET['homework_code'];
-	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review,word_count_min,word_count_max FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review,word_count_min,word_count_max,peer_review_who FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 	$homework_deliveries = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
 	if ($wpdb->num_rows > 0) {
@@ -151,7 +151,8 @@ if (!empty($enroll)) :
 			<?php
 			// Only display menu for peer reviewable homeworks
 			$allow_peer_review = $row['allow_peer_review'];
-			if ($allow_peer_review) :
+			$is_student_reviewed = $row['peer_review_who'] == "student";
+			if ($allow_peer_review && $is_student_reviewed) :
 			?>
 				<div class="skwp-tab-menu">
 					<ul class="skwp-tab-wrap">
@@ -207,6 +208,7 @@ if (!empty($enroll)) :
 
 							<?php if ($has_been_marked) :
 								$reason = count($peer_reviews) > 0 ? "Your peers have started reviewing" : "Your assignment has been graded.";
+								$reason = !$is_student_reviewed ?  "Your assignment has been graded." : $reason;
 							?>
 								<div class="">
 									<div class="btn btn-warning skwp-btn">
@@ -214,6 +216,7 @@ if (!empty($enroll)) :
 									</div>
 								</div>
 							<?php endif; ?>
+
 						</div>
 						<?php if (isset($row['description'])) : ?>
 							<div class="my-4">
@@ -233,9 +236,9 @@ if (!empty($enroll)) :
 						<?php if (count($query) <= 0) : ?>
 							<form id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
 								<?php if (!$should_calculate_word_count) : ?>
-									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
+									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late || $has_been_marked) ? 'readonly' : ''; ?>></textarea>
 								<?php else : ?>
-									<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>></textarea>
+									<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late || $has_been_marked) ? 'readonly' : ''; ?>></textarea>
 									<div class="flex justify-between">
 										<p id="word-count">Word Count: 0</p>
 										<p>Min: <?php echo $word_count_min; ?> | Max: <?php echo $word_count_max; ?> </p>
@@ -264,7 +267,7 @@ if (!empty($enroll)) :
 									<div class="skwp-column skwp-column-20">
 										<?php if (!$is_late) : ?>
 											<div class="form-buttons skwp-form-button">
-												<button class="btn btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Send', 'sakolawp'); ?></button>
+												<button class="btn btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Submit Homework', 'sakolawp'); ?></button>
 											</div>
 										<?php endif; ?>
 									</div>
@@ -437,7 +440,9 @@ if (!empty($enroll)) :
 												}
 												$mean_score = count($peer_reviews) > 0 ? $score / count($peer_reviews) : 0;
 												echo esc_attr(round($mean_score, 2));
-												echo esc_html_e(' (Peer Reviewed)', 'sakolawp');
+												if ($row['peer_review_who'] == 'student') {
+													echo esc_html_e(' (Peer Reviewed)', 'sakolawp');
+												}
 											} else {
 												esc_html_e('On Review', 'sakolawp');
 											} ?>

@@ -31,6 +31,7 @@ if (!empty($enroll)) :
 		JOIN $deliveries_table d ON h.homework_code = d.homework_code
 		JOIN $enroll_table e ON d.student_id = e.student_id
 		WHERE h.allow_peer_review = 1  
+		AND h.peer_review_who = 'student'  
 		AND d.student_id != '$student_id' 
 		AND d.class_id = '$enroll->class_id' 
 		AND e.section_id = '$enroll->section_id'

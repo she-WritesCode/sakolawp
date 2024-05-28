@@ -45,7 +45,7 @@ if (!empty($enroll)) :
 				<tbody>
 					<?php
 					$counter = 1;
-					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework 
+					$homeworks = $wpdb->get_results("SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id, allow_peer_review,peer_review_who FROM {$wpdb->prefix}sakolawp_homework 
 					WHERE (class_id = '$enroll->class_id'
 					AND section_id = '$enroll->section_id') OR (class_id = '$enroll->class_id' AND section_id = 0) ORDER BY created_at desc;", ARRAY_A);
 
@@ -74,7 +74,8 @@ if (!empty($enroll)) :
 								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
 								echo esc_html($subject->name);
 								$allow_peer_review = $row['allow_peer_review'];
-								echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-sm btn-success skwp-btn">peer reviewable</span>' : "";
+								$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
+								echo $allow_peer_review ? '<br/> <span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>' : "";
 								?>
 							</td>
 							<td>
