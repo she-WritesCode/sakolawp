@@ -47,7 +47,7 @@ if (!empty($_POST['action']) && $_POST['action'] == 'update-user') {
 	if (count($error) == 0) {
 		//action hook for plugins and extra fields saving
 		//do_action('edit_user_profile_update', $current_user->ID);
-		wp_safe_redirect(home_url('myaccount'));
+		wp_safe_redirect(add_query_arg(['form_submitted' => 'true'], home_url('edit_profile')));
 		exit;
 	}
 }
@@ -65,6 +65,7 @@ do_action('sakolawp_before_main_content');
 			</p><!-- .warning -->
 		<?php else : ?>
 			<?php if (count($error) > 0) echo '<p class="error">' . implode("<br />", $error) . '</p>'; ?>
+			<?php do_action('sakolawp_show_alert_dialog') ?>
 			<form method="post" name="update_profile" action="" method="POST" enctype="multipart/form-data">
 				<p class="form-username">
 					<label for="first-name"><?php esc_html_e('First Name', 'sakolawp'); ?></label>
