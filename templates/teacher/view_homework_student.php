@@ -11,6 +11,7 @@ $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
 global $wpdb;
 
 
+
 if (isset($_POST['submit'])) {
 	$homework_code = sanitize_text_field($_POST['homework_code']);
 	$delivery_id = sanitize_text_field($_POST['answer_id']);
@@ -27,7 +28,7 @@ if (isset($_POST['submit'])) {
 		)
 	);
 
-	wp_redirect(add_query_arg(array('homework_code' => $homework_code, 'student_id' => $studentId), home_url('view_homework_student')));
+	wp_redirect(add_query_arg(array('homework_code' => $homework_code, 'student_id' => $studentId, 'form_submitted' => 'true'), home_url('view_homework_student')));
 
 	die;
 }
@@ -87,6 +88,10 @@ foreach ($homework_deliveries as $row) :
 					<div class="back skwp-back hidden-sm-down">
 						<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_details')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
 					</div>
+
+
+					<?php do_action('sakolawp_show_alert_dialog') ?>
+
 					<div class="student-info">
 						<?php
 						$user_img = wp_get_attachment_image_src(get_user_meta($studentId, '_user_img', array('80', '80'), true, true));

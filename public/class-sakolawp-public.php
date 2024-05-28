@@ -59,6 +59,7 @@ class Sakolawp_Public
 
 		add_action('wp_ajax_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');    // If called from admin panel
 		add_action('wp_ajax_nopriv_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');
+		add_action('sakolawp_show_alert_dialog', [$this, 'sakolawp_show_alert_dialog']);
 
 
 		add_filter('script_loader_tag', [$this, 'add_type_attribute'], 10, 3);
@@ -166,6 +167,53 @@ class Sakolawp_Public
 		}
 
 		exit();
+	}
+
+	function sakolawp_show_alert_dialog()
+	{
+		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'true') : ?>
+			<!-- Success Alert -->
+			<div id="formSuccessAlert" class="alert alert-success">
+				<div class="flex gap-2 items-center">
+					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+					</svg>
+					Form submitted successfully!
+				</div>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					&times;
+				</button>
+			</div>
+		<?php endif;
+
+		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'false' && !isset($_GET['message'])) : ?>
+			<!-- Danger Alert -->
+			<div id="formDangerAlert" class="alert alert-danger">
+				<div class="flex gap-2 items-center">
+					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+					Error occurred during form submission.
+				</div>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					&times;
+				</button>
+			</div>
+		<?php endif;
+		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'false' && isset($_GET['message'])) : ?>
+			<!-- Warning Alert -->
+			<div id="formWarningAlert" class="alert alert-warning">
+				<div class="flex gap-2 items-center">
+					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m0-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+					</svg>
+					Warning: <?= $_GET['message'] ?>
+				</div>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					&times;
+				</button>
+			</div>
+<?php endif;
 	}
 
 

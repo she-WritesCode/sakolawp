@@ -7,7 +7,8 @@ if (isset($_POST['submit'])) {
 	$year_sel = sanitize_text_field($_POST['year_sel']);
 	$month = sanitize_text_field($_POST['month']);
 
-	wp_redirect(add_query_arg(array('class_id' => $class_id, 'section_id' => $section_id, 'month' => $month, 'year_sel' => $year_sel), home_url('report_attendance_view')));
+	$form_submitted = true;
+	wp_redirect(add_query_arg(array('class_id' => $class_id, 'section_id' => $section_id, 'month' => $month, 'year_sel' => $year_sel, 'form_submitted' => 'true'), home_url('report_attendance_view')));
 	die;
 }
 
@@ -31,6 +32,10 @@ if (!empty($enroll)) : ?>
 		<div class="skwp-page-title no-border">
 			<h5><?php esc_html_e('Attendance', 'sakolawp'); ?></h5>
 		</div>
+
+
+		<?php do_action('sakolawp_show_alert_dialog') ?>
+
 
 		<form id="myForm" name="save_student_attendance" action="" method="POST">
 			<div class="skwp-row">

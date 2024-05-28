@@ -85,6 +85,18 @@
 		});
 	}
 
+	// Ensure the event listener is correctly attached
+	if ($('#formSuccessAlert')) {
+		$('#formSuccessAlert > button').on('click', function () {
+			console.log('Close button clicked');
+
+			// Remove the 'form_submitted' query parameter from the URL
+			var url = new URL(window.location.href);
+			url.searchParams.delete('form_submitted');
+			window.history.replaceState({}, document.title, url.toString());
+		});
+	}
+
 	$('.skwp-menu-btn').click(function () {
 		$(this).toggleClass("active");
 		$('.sakolawp-navigation').toggleClass("open");

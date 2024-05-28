@@ -51,9 +51,10 @@ if (isset($_POST['submit'])) {
 		}
 		remove_filter('upload_dir', 'sakolawp_custom_dir_deliveries');
 
-		wp_redirect(add_query_arg(array('homework_code' => $homework_code), home_url('homeworkroom')));
-		$message = " Successful";
-		die('<div class="alert ' . $alert_class . '" role="alert">' . $message . '</div>');
+		$form_submitted = true;
+		wp_redirect(add_query_arg(array('homework_code' => $homework_code, 'form_submitted' => 'true'), home_url('homeworkroom')));
+
+		die();
 	}
 
 	if ($homework_act == "update_homework") {
@@ -88,11 +89,9 @@ if (isset($_POST['submit'])) {
 				'student_id' => $student_id,
 			)
 		);
+		wp_redirect(add_query_arg(array('homework_code' => $homework_code, 'form_submitted' => 'true'), home_url('homeworkroom')));
 
-		wp_redirect(add_query_arg(array('homework_code' => $homework_code), home_url('homeworkroom')));
-		$message = " Successful";
-		$alert_class = "success";
-		die('<div class="alert ' . $alert_class . '" role="alert">' . $message . '</div>');
+		die();
 	}
 }
 
@@ -173,6 +172,9 @@ if (!empty($enroll)) :
 			<div class="back skwp-back hidden-sm-down">
 				<a href="<?php echo esc_url(site_url('homework')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php esc_html_e('Back', 'sakolawp'); ?></a>
 			</div>
+
+			<?php do_action('sakolawp_show_alert_dialog') ?>
+
 
 			<div class="skwp-row">
 				<div class="skwp-column skwp-column-1">

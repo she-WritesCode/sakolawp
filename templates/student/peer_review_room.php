@@ -56,7 +56,7 @@ if (isset($_POST['submit'])) {
 			"peer_review_id"
 		);
 
-		wp_redirect(add_query_arg(array('delivery_id' => $delivery_id), home_url('peer_review_room')));
+		wp_redirect(add_query_arg(array('delivery_id' => $delivery_id, 'form_submitted' => 'true'), home_url('peer_review_room')));
 		die;
 	}
 }
@@ -98,6 +98,8 @@ if (!empty($enroll)) :
 			<div class="back skwp-back hidden-sm-down">
 				<a href="<?php echo esc_url(site_url('peer_review')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php esc_html_e('Back', 'sakolawp'); ?></a>
 			</div>
+
+			<?php do_action('sakolawp_show_alert_dialog') ?>
 
 			<div class="skwp-row gap-4">
 				<div class="skwp-column skwp-column-1">

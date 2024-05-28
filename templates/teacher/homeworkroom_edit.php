@@ -34,7 +34,7 @@ if (isset($_POST['submit'])) {
 		)
 	);
 
-	wp_redirect(home_url('homework'));
+	wp_redirect(add_query_arg(['form_submitted' => 'true'], home_url('homework')));
 }
 
 get_header();
@@ -72,6 +72,9 @@ foreach ($current_homework as $row) :
 		<div class="back skwp-back hidden-sm-down">
 			<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
 		</div>
+
+		<?php do_action('sakolawp_show_alert_dialog') ?>
+
 		<div class="skwp-clearfix skwp-row skwp-mt-10">
 			<div class="skwp-column skwp-column-1">
 				<div class="tugas-wrap">

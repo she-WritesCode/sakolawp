@@ -4,6 +4,7 @@ defined('ABSPATH') || exit;
 global $wpdb;
 
 $homework_code = "";
+
 if (isset($_POST['submit'])) {
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sanitize_text_field($_POST['title']);
@@ -60,7 +61,7 @@ if (isset($_POST['submit'])) {
 	}
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
-	wp_redirect(home_url('homework'));
+	wp_redirect(add_query_arg(['form_submitted' => 'true'], home_url('homework')));
 }
 
 if (isset($_GET['action']) == 'delete') {
@@ -108,6 +109,10 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 				<a class="btn btn-primary btn-rounded btn-upper skwp-btn" data-target="#exampleModal1" data-toggle="modal"><?php esc_html_e('Add New', 'sakolawp'); ?></a>
 			</div>
 		</div>
+
+
+		<?php do_action('sakolawp_show_alert_dialog') ?>
+
 		<div class="skwp-table table-responsive skwp-mt-20">
 			<table id="tableini" class="table dataTable homework-table">
 				<thead>
