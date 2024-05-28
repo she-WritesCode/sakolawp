@@ -270,7 +270,7 @@ input {
 
 /* Sakola Main Wrap */
 .main-sakolawp-wrap {
-	padding: 0px 0;
+	padding: 0px 1rem;
 }
 .skwp-inner-content {
 	box-shadow:0px 0px 10px -2px #ddd;
@@ -2596,4 +2596,17 @@ fieldset {
 .alert-icon {
     width: 1.5rem;
     height: 1.5rem;
+}
+
+.skwp-profile-img {
+	/* float: left;
+	width: 40%; */
+}
+.skwp-profile-img img {
+	width: 70px;
+	height: 70px;
+	object-fit: cover;
+	border-radius: 100%;
+	margin-right: 10px;
+	border: 3px solid #8bdbad;
 }
