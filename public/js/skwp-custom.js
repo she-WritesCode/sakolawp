@@ -111,62 +111,25 @@
 		updateCountdown();
 	}
 
-	// When the page is ready, check if the checkbox is already checked
-	if ($('#limit_word_count').is(':checked')) {
-		$('.word-count-template-group').show();
-		$('input[name="word_count_min"]').prop('hidden', false);
-		$('input[name="word_count_max"]').prop('hidden', false);
-		$('input[name="word_count_min"]').prop('required', true);
-		$('input[name="word_count_max"]').prop('required', true);
-	} else {
-		$('.word-count-template-group').hide();
-		$('input[name="word_count_min"]').prop('hidden', true);
-		$('input[name="word_count_max"]').prop('hidden', true);
-		$('input[name="word_count_min"]').prop('required', false);
-		$('input[name="word_count_max"]').prop('required', false);
-	}
 
-	// Add a change event listener to the checkbox
-	$('#limit_word_count').change(function () {
-		if ($(this).is(':checked')) {
-			$('.word-count-template-group').show();
-			$('input[name="word_count_min"]').prop('hidden', false);
-			$('input[name="word_count_max"]').prop('hidden', false);
-			$('input[name="word_count_min"]').prop('required', true);
-			$('input[name="word_count_max"]').prop('required', true);
-		} else {
-			$('.word-count-template-group').hide();
-			$('input[name="word_count_min"]').prop('required', true);
-			$('input[name="word_count_max"]').prop('required', true);
-			$('input[name="word_count_min"]').prop('hidden', false);
-			$('input[name="word_count_max"]').prop('hidden', false);
+	// Handle allow peer review checkbox
+	const $allowPeerReviewCheckbox = $('#allow_peer_review');
+	handleCheckboxChange($allowPeerReviewCheckbox[0], '.peer-review-template-group', 'peer_review_template', true);
+	fetchPeerReviewTemplates();
+	$allowPeerReviewCheckbox.change(function () {
+		handleCheckboxChange(this, '.peer-review-template-group', 'peer_review_template', true);
+		if (this.checked) {
+			fetchPeerReviewTemplates();
 		}
 	});
 
-	// When the page is ready, check if the checkbox is already checked
-	if ($('#allow_peer_review').is(':checked')) {
-		$('.peer-review-template-group').show();
-		$('select[name="peer_review_template"]').prop('hidden', false);
-		$('select[name="peer_review_template"]').prop('required', true);
-		fetchPeerReviewTemplates()
-	} else {
-		$('.peer-review-template-group').hide();
-		$('select[name="peer_review_template"]').prop('hidden', true);
-		$('select[name="peer_review_template"]').prop('required', false);
-	}
-
-	// Add a change event listener to the checkbox
-	$('#allow_peer_review').change(function () {
-		if ($(this).is(':checked')) {
-			$('.peer-review-template-group').show();
-			$('select[name="peer_review_template"]').prop('hidden', false);
-			$('select[name="peer_review_template"]').prop('required', true);
-			fetchPeerReviewTemplates()
-		} else {
-			$('.peer-review-template-group').hide();
-			$('select[name="peer_review_template"]').prop('required', true);
-			$('select[name="peer_review_template"]').prop('hidden', false);
-		}
+	// Handle limit word count checkbox
+	const $limitWordCountCheckbox = $('#limit_word_count');
+	handleCheckboxChange($limitWordCountCheckbox[0], '.word-count-template-group', 'word_count_min', true);
+	handleCheckboxChange($limitWordCountCheckbox[0], '.word-count-template-group', 'word_count_max', true);
+	$limitWordCountCheckbox.change(function () {
+		handleCheckboxChange(this, '.word-count-template-group', 'word_count_min', true);
+		handleCheckboxChange(this, '.word-count-template-group', 'word_count_max', true);
 	});
 
 	// Function to fetch peer review templates options via AJAX
@@ -186,6 +149,22 @@
 				console.error(error);
 			}
 		});
+	}
+
+	// Function to handle checkbox change event
+	function handleCheckboxChange(checkbox, targetGroup, inputName, isRequired) {
+		const $targetGroup = $(targetGroup);
+		const $inputs = $(`input[name="${inputName}"]`);
+
+		if (checkbox.checked) {
+			$targetGroup.show();
+			$inputs.prop('hidden', false);
+			$inputs.prop('required', isRequired);
+		} else {
+			$targetGroup.hide();
+			$inputs.prop('hidden', true);
+			$inputs.prop('required', false);
+		}
 	}
 
 	function updateCountdown() {
@@ -236,4 +215,5 @@
 			$(this).text(timeLeft);
 		});
 	}
+
 })(jQuery);

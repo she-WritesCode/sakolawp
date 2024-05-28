@@ -88,8 +88,8 @@ $teacher_name = $user_info->display_name;
 $user_is_admin = in_array('administrator',  $user_info->roles);
 
 $homework_sql = $user_is_admin
-	? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;"
-	: "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template,created_at FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id OR subject_id IN (SELECT subject_id FROM {$wpdb->prefix}sakolawp_subject WHERE teacher_id = $teacher_id) OR section_id IN (SELECT section_id FROM {$wpdb->prefix}sakolawp_section WHERE teacher_id = $teacher_id) ORDER BY created_at desc;";
+	? "SELECT title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template,peer_review_who,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;"
+	: "SELECT title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template,peer_review_who,created_at FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id OR subject_id IN (SELECT subject_id FROM {$wpdb->prefix}sakolawp_subject WHERE teacher_id = $teacher_id) OR section_id IN (SELECT section_id FROM {$wpdb->prefix}sakolawp_section WHERE teacher_id = $teacher_id) ORDER BY created_at desc;";
 $my_homework = $wpdb->get_row($homework_sql); ?>
 
 <input id="teacher_id_sel" type="hidden" name="teacher_id_target" value="<?php echo esc_attr($teacher_id); ?>">
@@ -167,7 +167,8 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
 								echo esc_html($subject->name);
 								$allow_peer_review = $row['allow_peer_review'];
-								echo $allow_peer_review ? '<br/> <span class="btn nc btn-rounded btn-small btn-success skwp-btn">peer reviewable</span>' : "";
+								$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
+								echo $allow_peer_review ? '<br/> <span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>' : "";
 								?>
 							</td>
 							<td>
@@ -262,17 +263,33 @@ endif;
 					<div class="skwp-form-group">
 						<label> <?php esc_html_e('Description', 'sakolawp'); ?></label><textarea id="editordatateacher" name="description"></textarea>
 					</div>
+
 					<div>
 						<div class="skwp-form-group">
 							<input value="yes" type="checkbox" name="allow_peer_review" id="allow_peer_review" />
-							<label class="row-form-label" for="allow_peer_review"><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
+							<label class="row-form-label" for="allow_peer_review"><?php esc_html_e('Use assessment based review', 'sakolawp') ?></label>
 						</div>
-						<div class="skwp-form-group peer-review-template-group">
-							<label class="col-form-label" for=""><?php esc_html_e('Peer Review Template', 'sakolawp'); ?></label>
-							<div class="input-group">
-								<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
-									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
-								</select>
+						<div class="peer-review-template-group skwp-clearfix skwp-row">
+							<div class=" skwp-column skwp-column-2 skwp-form-group">
+								<label class="col-form-label" for=""><?php esc_html_e('Who would be reviewing?', 'sakolawp'); ?></label>
+								<div class="input-group">
+									<label>
+										<input type="radio" name="peer_review_who" value="student" checked>
+										<?php esc_html_e('Student', 'sakolawp'); ?>
+									</label>
+									<label>
+										<input type="radio" name="peer_review_who" value="teacher">
+										<?php esc_html_e('Faculty', 'sakolawp'); ?>
+									</label>
+								</div>
+							</div>
+							<div class="skwp-column skwp-column-2 skwp-form-group">
+								<label class="col-form-label" for=""><?php esc_html_e('Assessment Template', 'sakolawp'); ?></label>
+								<div class="input-group">
+									<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
+										<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+									</select>
+								</div>
 							</div>
 						</div>
 					</div>

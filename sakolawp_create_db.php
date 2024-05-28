@@ -118,6 +118,7 @@ CREATE TABLE $homework_table (
 	file_name longtext NULL,
 	file_date longtext NULL,
 	allow_peer_review BOOLEAN DEFAULT 0,
+	peer_review_who VARCHAR(100) NOT NULL DEFAULT 'student',
 	peer_review_template VARCHAR(255) NULL,
 	word_count_min int(11) NULL,
 	word_count_max int(11) NULL,

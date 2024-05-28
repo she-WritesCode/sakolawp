@@ -9,7 +9,7 @@ global $wpdb;
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
-$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review, created_at FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, peer_review_who, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review, created_at FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 foreach ($current_homework as $row) :
 
@@ -129,16 +129,20 @@ foreach ($current_homework as $row) :
 						<?php } ?>
 						<?php
 						$peer_review_template = $row["peer_review_template"];
+						$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
 
 						if (isset($peer_review_template)) {
 						?>
 							<tr>
 								<th>
-									<?php echo esc_html__('Peer Review Template', 'sakolawp'); ?>
+									<?php echo esc_html__('Review Template', 'sakolawp'); ?>
 								</th>
 								<td>
 									<?php
 									echo $peer_review_template;
+									?>
+									<?php
+									echo '<span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>';
 									?>
 								</td>
 							</tr>

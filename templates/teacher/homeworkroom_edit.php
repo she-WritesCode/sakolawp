@@ -8,7 +8,11 @@ if (isset($_POST['submit'])) {
 	$title = sakolawp_sanitize_html($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
 	$allow_peer_review = isset($_POST['allow_peer_review']);
+	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
+	$limit_word_count = isset($_POST['limit_word_count']);
+	$word_count_min = $limit_word_count ? sanitize_text_field($_POST['word_count_min']) : NULL;
+	$word_count_max = $limit_word_count ? sanitize_text_field($_POST['word_count_max']) : NULL;
 	$time_end = sanitize_text_field($_POST['time_end']);
 	$date_end = sanitize_text_field($_POST['date_end']);
 
@@ -27,14 +31,17 @@ if (isset($_POST['submit'])) {
 			'time_end' => $time_end,
 			'date_end' => $date_end,
 			'allow_peer_review' => $allow_peer_review,
+			'peer_review_who' => $peer_review_who,
 			'peer_review_template' => $peer_review_template,
+			'word_count_min' => $word_count_min,
+			'word_count_max' => $word_count_max,
 		),
 		array(
 			'homework_code' => $homework_code
 		)
 	);
 
-	wp_redirect(add_query_arg(['form_submitted' => 'true'], home_url('homework')));
+	wp_redirect(add_query_arg(['form_submitted' => 'true', 'homework_code' => $homework_code], home_url('homeworkroom_edit')));
 }
 
 get_header();
@@ -45,7 +52,7 @@ $teacher_id = get_current_user_id();
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
-$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review, peer_review_who, word_count_min, word_count_max FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 foreach ($current_homework as $row) :
 
 ?>
@@ -93,19 +100,60 @@ foreach ($current_homework as $row) :
 						</div>
 
 
-						<div class="skwp-form-group">
-							<input value="yes" <?php echo $row['allow_peer_review'] === '1' ? 'checked' : ""; ?> type="checkbox" name="allow_peer_review" id="allow_peer_review" />
-							<label class="row-form-label" for=""><?php esc_html_e('Allow peer review', 'sakolawp') ?></label>
-						</div>
-						<div class="skwp-form-group peer-review-template-group">
-							<label class="col-form-label" for=""><?php esc_html_e('Peer Review Template', 'sakolawp'); ?></label>
-							<div class="input-group">
-								<select data-value="<?php echo esc_attr($row['peer_review_template']); ?>" class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
-									<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
-								</select>
+						<div>
+							<div class="skwp-form-group">
+								<input value="yes" <?php echo $row['allow_peer_review'] === '1' ? 'checked' : ""; ?> type="checkbox" name="allow_peer_review" id="allow_peer_review" />
+								<label class="row-form-label" for="allow_peer_review"><?php esc_html_e('Use assessment based review', 'sakolawp') ?></label>
+							</div>
+							<div class="peer-review-template-group skwp-clearfix skwp-row">
+								<div class="skwp-column skwp-column-2">
+									<div class="skwp-form-group">
+										<label class="col-form-label" for=""><?php esc_html_e('Who would be reviewing?', 'sakolawp'); ?></label>
+										<div class="input-group">
+											<label>
+												<input type="radio" name="peer_review_who" value="student" <?php echo $row['peer_review_who'] === 'student' ? 'checked' : ""; ?>>
+												<?php esc_html_e('Student', 'sakolawp'); ?>
+											</label>
+											<label>
+												<input type="radio" name="peer_review_who" value="teacher" <?php echo $row['peer_review_who'] === 'teacher' ? 'checked' : ""; ?>>
+												<?php esc_html_e('Faculty', 'sakolawp'); ?>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="skwp-column skwp-column-2">
+									<div class="skwp-form-group">
+										<label class="col-form-label" for=""><?php esc_html_e('Assessment Template', 'sakolawp'); ?></label>
+										<div class="input-group">
+											<select data-value="<?php echo esc_attr($row['peer_review_template']); ?>" class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
+												<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+											</select>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 
+						<div>
+							<div class="skwp-form-group">
+								<input value="yes" <?php echo $row['word_count_min'] && $row['word_count_max']  ? 'checked' : ""; ?> type="checkbox" name="limit_word_count" id="limit_word_count" />
+								<label class="row-form-label" for="limit_word_count"><?php esc_html_e('Limit word count', 'sakolawp') ?></label>
+							</div>
+							<div class="skwp-clearfix skwp-row word-count-template-group">
+								<div class="skwp-column skwp-column-2">
+									<div class="skwp-form-group">
+										<label for=""> <?php esc_html_e('Minimum Word Count', 'sakolawp'); ?></label>
+										<input value="<?php echo esc_attr($row['word_count_min']); ?>" class="skwp-form-control" type="number" min="0" name="word_count_min">
+									</div>
+								</div>
+								<div class="skwp-column skwp-column-2">
+									<div class="skwp-form-group">
+										<label for=""> <?php esc_html_e('Maximum Word Count', 'sakolawp'); ?></label>
+										<input value="<?php echo esc_attr($row['word_count_max']); ?>" type="number" name="word_count_max" min="0" class="skwp-form-control">
+									</div>
+								</div>
+							</div>
+						</div>
 
 						<div class="skwp-form-group">
 							<label for=""> <?php echo esc_html__('Due Date', 'sakolawp'); ?></label>
@@ -177,16 +225,20 @@ foreach ($current_homework as $row) :
 						<?php } ?>
 						<?php
 						$peer_review_template = $row["peer_review_template"];
+						$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
 
 						if (isset($peer_review_template)) {
 						?>
 							<tr>
 								<th>
-									<?php echo esc_html__('Peer Review Template', 'sakolawp'); ?>
+									<?php echo esc_html__('Review Template', 'sakolawp'); ?>
 								</th>
 								<td>
 									<?php
 									echo $peer_review_template;
+									?>
+									<?php
+									echo '<span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>';
 									?>
 								</td>
 							</tr>
