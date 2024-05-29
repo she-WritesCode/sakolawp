@@ -2749,3 +2749,9 @@ fieldset {
 .rounded-full {
     border-radius: 9999px !important;
 }
+
+.sakolawp-navigation {
+
+    position: sticky;
+    top: 30px;
+}
