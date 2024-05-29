@@ -2676,6 +2676,36 @@ fieldset {
 }
 
 
+/* Plain Badge */
+.badge.badge-plain {
+	padding: 0;
+}
+
+/* Plain Shade Success Badge */
+.badge-success.badge-plain {
+    background-color: transparent; /* plain green */
+    color: #8bdbad; /* Dark green text */
+}
+
+/* Plain Shade Danger Badge */
+.badge-danger.badge-plain {
+    background-color: transparent; /* plain red */
+    color: #721c24; /* Dark red text */
+}
+
+/* Plain Shade Warning Badge */
+.badge-warning.badge-plain {
+    background-color: transparent; /* plain yellow */
+    color: #856404; /* Dark yellow text */
+}
+
+/* Plain Shade Info Badge */
+.badge-info.badge-plain {
+    background-color: transparent; /* plain blue */
+    color: #7ba1eb; /* Dark blue text */
+}
+
+
 .skwp-form-group{
 	/* background: #f9f9f9;
 	border-radius: 8px;

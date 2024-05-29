@@ -61,17 +61,18 @@ if (!empty($enroll)) :
 								<a class="">
 									<?php echo esc_html($row['date_end']) . ' ' . esc_html($row['time_end']); ?>
 								</a>
-								<?php if (!empty($current_user_has_submitted)) : ?>
-									<div class="badge badge-info flex gap-2 justify-center items-center  h-8 rounded-ful">
-										<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-										</svg>
-										<span>Submitted</span>
-									</div>
-								<?php else : ?>
-									<br />
-									<span class="skwp-date italic" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
-								<?php endif; ?>
+								<div>
+									<?php if (!empty($current_user_has_submitted)) : ?>
+										<div class="badge badge-info badge-plain flex gap-2 justify-center items-center">
+											<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+											</svg>
+											<span>Submitted</span>
+										</div>
+									<?php else : ?>
+										<span class="skwp-date italic" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
+									<?php endif; ?>
+								</div>
 							</td>
 							<td>
 								<?php $subject_id = $row['subject_id'];
