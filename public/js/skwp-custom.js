@@ -214,7 +214,7 @@
 				} else {
 					timeLeft = seconds + ' second(s) ago';
 				}
-				timeLeft = 'Deadline missed';
+				// timeLeft = 'Deadline missed';
 			} else {
 				// Future time
 				if (days > 0) {
