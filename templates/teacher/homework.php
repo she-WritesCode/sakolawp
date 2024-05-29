@@ -134,27 +134,20 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 					error_log($wpdb->last_error . json_encode($homeworks));
 					foreach ($homeworks as $row) :
 					?>
-						<tr>
+						<tr class="clickable-row" data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
 							<td hidden><?php echo $row['created_at']; ?></td>
 							<td>
-								<div class="flex items-center gap-2">
-									<div>
-										<?php ?>
-									</div>
-									<div>
-										<?php
-										echo esc_html($row['title']);
-										if ($user_is_admin) {
-											$uploader = get_user_by('id', $row['uploader_id']);
-											if ($uploader) {
-												echo '<br/><i class="text-gray-500">Uploaded by: ' . $uploader->display_name, '</i>';
-											}
-										}
-										$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
-										echo '<br/><i class="text-gray-500">' . $count . ' submission(s)</i>';
-										?>
-									</div>
-								</div>
+								<?php
+								echo esc_html($row['title']);
+								if ($user_is_admin) {
+									$uploader = get_user_by('id', $row['uploader_id']);
+									if ($uploader) {
+										echo '<br/><i class="text-gray-500">Uploaded by: ' . $uploader->display_name, '</i>';
+									}
+								}
+								$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
+								echo '<br/><i class="text-gray-500">' . $count . ' submission(s)</i>';
+								?>
 							</td>
 							<td>
 								<?php

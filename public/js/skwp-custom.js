@@ -111,6 +111,19 @@
 		updateCountdown();
 	}
 
+	$("tr.clickable-row").each(function () {
+		$(this).css("cursor", "pointer");
+
+		$(this).on("mousedown", function (e) {
+			e.preventDefault();
+
+			var href = $(this).data('href');
+
+			window.location = href;
+
+		});
+	});
+
 
 	// Handle allow peer review checkbox
 	const $allowPeerReviewCheckbox = $('#allow_peer_review');
@@ -201,16 +214,27 @@
 				} else {
 					timeLeft = seconds + ' second(s) ago';
 				}
+				timeLeft = 'Deadline missed';
 			} else {
 				// Future time
 				if (days > 0) {
 					timeLeft = days + ' day(s) left';
+					if (days === 1) {
+						// style should be red
+						$(this).css('color', 'red');
+					} else {
+						// style should be black
+						$(this).css('color', 'green');
+					}
 				} else if (hours > 0) {
 					timeLeft = hours + ' hour(s) left';
+					$(this).css('color', 'red');
 				} else if (minutes > 0) {
 					timeLeft = minutes + ' minute(s) left';
+					$(this).css('color', 'red');
 				} else {
 					timeLeft = seconds + ' second(s) left';
+					$(this).css('color', 'red');
 				}
 			}
 

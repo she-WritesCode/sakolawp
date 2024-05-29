@@ -55,6 +55,7 @@ foreach ($current_homework as $row) :
 						$time1 = $row['date_end'];
 						$time2 = $row['time_end'];
 						$time = $time1 . " " . $time2;
+						// in current teachers parent group.
 						$homework_details = $wpdb->get_results("SELECT student_id, student_comment, date, file_name, teacher_comment, mark, delivery_id FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code'", ARRAY_A);
 						foreach ($homework_details as $row2) :
 						?>
@@ -138,10 +139,11 @@ foreach ($current_homework as $row) :
 						</tr>
 					<?php } ?>
 					<?php
+					$allow_peer_review = $row["allow_peer_review"];
 					$peer_review_template = $row["peer_review_template"];
 					$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
 
-					if (isset($peer_review_template)) {
+					if (isset($allow_peer_review)) {
 					?>
 						<tr>
 							<th>
