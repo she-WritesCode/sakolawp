@@ -22,6 +22,7 @@ if (isset($_POST['submit'])) {
 	$subject_id = sanitize_text_field($_POST['subject_id']);
 	$allow_peer_review = isset($_POST['allow_peer_review']);
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
+	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
 	$word_count_min = sanitize_text_field($_POST['word_count_min']);
 	$word_count_max = sanitize_text_field($_POST['word_count_max']);
 	$uploader_type  = 'teacher';
@@ -44,6 +45,7 @@ if (isset($_POST['submit'])) {
 			'file_name' => $file_name,
 			'allow_peer_review' => $allow_peer_review,
 			'peer_review_template' => $peer_review_template,
+			'peer_review_who' => $peer_review_who,
 			'word_count_min' => (int)$word_count_min,
 			'word_count_max' => (int)$word_count_max,
 		)
