@@ -31,7 +31,7 @@ if (!empty($enroll)) :
 		</div>
 
 		<div class="skwp-table table-responsive">
-			<table id="tableini" class="table dataTable homework-table">
+			<table id="tableini" class="table dataTable responsive homework-table">
 				<thead>
 					<tr>
 						<th class="title-homework"><?php esc_html_e('Title', 'sakolawp'); ?></th>

@@ -128,10 +128,11 @@ foreach ($current_homework as $row) :
 							</tr>
 						<?php } ?>
 						<?php
+						$allow_peer_review = $row["allow_peer_review"];
 						$peer_review_template = $row["peer_review_template"];
 						$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
 
-						if (isset($peer_review_template)) {
+						if ($allow_peer_review) {
 						?>
 							<tr>
 								<th>

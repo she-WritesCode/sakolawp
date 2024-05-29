@@ -1,15 +1,19 @@
 jQuery(document).ready(function ($) {
 	(async function () {
-		if (!$('.toggle-review-handle').is(':hidden')) {
-			$('.toggle-review-handle').hide();
-		}
-		$('.toggle-review').click(() => {
-			if ($('.toggle-review-handle').is(':hidden')) {
-				$('.toggle-review-handle').show();
-			} else {
-				$('.toggle-review-handle').hide();
+		$('.toggle-review').each(function () {
+			const toggleReview = $(this);
+			const toggleReviewHandle = toggleReview.next('.toggle-review-handle');
+			if (!toggleReviewHandle.is(':hidden')) {
+				toggleReviewHandle.hide();
 			}
-		})
+			toggleReview.click(function () {
+				if (toggleReviewHandle.is(':hidden')) {
+					toggleReviewHandle.show();
+				} else {
+					toggleReviewHandle.hide();
+				}
+			});
+		});
 		if (document.getElementById('peer_review_chart') || document.getElementById('mean_review_summary') || document.getElementById('peer_review_chart2')) {
 			const urlParams = new URLSearchParams(window.location.search);
 			const homework_code = urlParams.get('homework_code') || $('#mean_review_summary').data('student_id');

@@ -116,14 +116,14 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 		<?php do_action('sakolawp_show_alert_dialog') ?>
 
 		<div class="skwp-table table-responsive skwp-mt-20">
-			<table id="tableini" class="table dataTable homework-table">
+			<table id="tableini" class="table dataTable responsive homework-table">
 				<thead>
 					<tr>
 						<th hidden class="title-homework"><?php esc_html_e('Date Added', 'sakolawp'); ?></th>
 						<th class="title-homework"><?php esc_html_e('Title', 'sakolawp'); ?></th>
-						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Due Date', 'sakolawp'); ?></th>
+						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
 					</tr>
 				</thead>
@@ -134,7 +134,7 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 					error_log($wpdb->last_error . json_encode($homeworks));
 					foreach ($homeworks as $row) :
 					?>
-						<tr class="clickable-row" data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
+						<tr data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
 							<td hidden><?php echo $row['created_at']; ?></td>
 							<td>
 								<?php
@@ -147,20 +147,6 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 								}
 								$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
 								echo '<br/><i class="text-gray-500">' . $count . ' submission(s)</i>';
-								?>
-							</td>
-							<td>
-								<?php
-								$class_id = $row['class_id'];
-								$section_id = $row['section_id'];
-								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
-								echo esc_html($class->name);
-
-								$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
-								if (isset($section)) {
-									echo esc_html__(' - ', 'sakolawp');
-									echo esc_html($section->name);
-								}
 								?>
 							</td>
 							<td>
@@ -178,6 +164,19 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 								</a>
 								<br />
 								<span class="skwp-date" data-end-date="<?php echo esc_html($row['date_end']); ?>" data-end-time="<?php echo esc_html($row['time_end']); ?>"></span>
+							</td>
+							<td>
+								<?php
+								$class_id = $row['class_id'];
+								$section_id = $row['section_id'];
+								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
+								echo esc_html($class->name);
+
+								$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $section_id");
+								if (isset($section)) {
+									echo '<br/><i>' . esc_html($section->name) . '<i>';
+								}
+								?>
 							</td>
 							<td>
 								<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">

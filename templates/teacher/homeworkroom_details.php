@@ -143,7 +143,7 @@ foreach ($current_homework as $row) :
 					$peer_review_template = $row["peer_review_template"];
 					$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
 
-					if (isset($allow_peer_review)) {
+					if ($allow_peer_review) {
 					?>
 						<tr>
 							<th>
