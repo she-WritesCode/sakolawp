@@ -115,9 +115,11 @@
 	// Handle allow peer review checkbox
 	const $allowPeerReviewCheckbox = $('#allow_peer_review');
 	handleCheckboxChange($allowPeerReviewCheckbox[0], '.peer-review-template-group', 'peer_review_template', true);
+	handleCheckboxChange($allowPeerReviewCheckbox[0], '.peer-review-template-group', 'peer_review_who', true);
 	fetchPeerReviewTemplates();
 	$allowPeerReviewCheckbox.change(function () {
 		handleCheckboxChange(this, '.peer-review-template-group', 'peer_review_template', true);
+		handleCheckboxChange(this, '.peer-review-template-group', 'peer_review_who', true);
 		if (this.checked) {
 			fetchPeerReviewTemplates();
 		}

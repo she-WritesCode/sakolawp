@@ -288,7 +288,7 @@ endif;
 							<div class="skwp-column skwp-column-2 skwp-form-group">
 								<label class="col-form-label" for=""><?php esc_html_e('Assessment Template', 'sakolawp'); ?></label>
 								<div class="input-group">
-									<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template" required="">
+									<select class="skwp-form-control teacher-section" name="peer_review_template" id="peer_review_template">
 										<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
 									</select>
 								</div>
