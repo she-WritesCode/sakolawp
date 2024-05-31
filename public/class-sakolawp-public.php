@@ -92,6 +92,7 @@ class Sakolawp_Public
 		wp_enqueue_style($this->plugin_name . '-rtl', plugin_dir_url(__FILE__) . 'css/sakolawp-public-rtl.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/sakolawp-public.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-responsive', plugin_dir_url(__FILE__) . 'css/sakolawp-responsive.css', array(), $this->version, 'all');
+		wp_enqueue_style('rig-university', plugin_dir_url(__FILE__) . 'css/index.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -134,6 +135,9 @@ class Sakolawp_Public
 
 		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', [], '1.0.0', true);
 		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', 'datatables')));
+
+		wp_enqueue_script('rig-university', plugin_dir_url(__FILE__) . 'js/index.js', [], '1.0.0', true);
+		wp_localize_script('rig-university', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
 
 		if ($wp->request === "exam") {
 			wp_enqueue_script('cookie-js', plugin_dir_url(__FILE__) . 'js/js.cookie.js', array('jquery'), false);
@@ -220,7 +224,7 @@ class Sakolawp_Public
 	function add_type_attribute($tag, $handle, $src)
 	{
 		// if not your script, do nothing and return original $tag
-		$typeMoudelScripts = ['chartjs', 'skwp-chart'];
+		$typeMoudelScripts = ['chartjs', 'skwp-chart', 'rig-university'];
 		if (!in_array($handle, $typeMoudelScripts)) {
 			return $tag;
 		}

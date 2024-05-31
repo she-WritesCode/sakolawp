@@ -2,17 +2,36 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import AdminApp from './admin-views/App.vue'
-import PublicApp from './public-views/App.vue'
 
-const adminApp = createApp(AdminApp)
+// Define the type for the imported modules
+type ImportedModule = Record<string, { default: any }>
 
-adminApp.use(createPinia())
+// Dynamically import all components from the public-views folder
+const publicViews: ImportedModule = import.meta.glob('./public-views/*.vue', { eager: true })
+// Dynamically import all components from the admin-views folder
+const adminViews: ImportedModule = import.meta.glob('./admin-views/*.vue', { eager: true })
 
-adminApp.mount('#skwp-admin-app')
+// Mount each public view component
+Object.entries(publicViews).forEach(([path, module]) => {
+  const componentName = path
+    .split('/')
+    .pop()
+    ?.replace(/\.\w+$/, '')
 
-const publicApp = createApp(PublicApp)
+  const mountElement = document.getElementById(`run-${componentName?.toLowerCase()}`)
+  if (mountElement) {
+    createApp(module.default).use(createPinia()).mount(`#run-${componentName?.toLowerCase()}`)
+  }
+})
 
-publicApp.use(createPinia())
-
-publicApp.mount('#skwp-public-app')
+// Mount each admin view component
+Object.entries(adminViews).forEach(([path, module]) => {
+  const componentName = path
+    .split('/')
+    .pop()
+    ?.replace(/\.\w+$/, '')
+  const mountElement = document.getElementById(`run-${componentName?.toLowerCase()}`)
+  if (mountElement) {
+    createApp(module.default).use(createPinia()).mount(`#run-${componentName?.toLowerCase()}`)
+  }
+})

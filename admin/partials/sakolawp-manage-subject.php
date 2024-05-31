@@ -27,7 +27,7 @@
 	</nav>
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-
+			<div id="run-listsubject"></div>
 			<!-- start of class table -->
 			<div class="table-responsive">
 				<table id="dataTable1" width="100%" class="table table-striped table-lightfont">
@@ -93,7 +93,7 @@
 
 		</div>
 		<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-
+			<div id="run-addsubject"></div>
 			<?php
 			$args = array(
 				'role'    => 'teacher',

@@ -213,6 +213,7 @@ endif;
 				<button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true"> &times;</span></button>
 			</div>
 			<div class="modal-body">
+				<div id="run-addhomework"></div>
 				<form id="myForm" class="flex flex-col gap-2" name="save_create_homework" action="" method="POST" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="save_create_homework" />
 					<input type="hidden" name="uploader_id" value="<?php echo esc_attr($teacher_id); ?>" />
