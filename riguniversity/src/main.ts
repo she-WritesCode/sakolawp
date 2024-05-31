@@ -2,6 +2,9 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
+// @ts-ignore
+import Rig from '@/presets/rig' //import preset
 
 // Define the type for the imported modules
 type ImportedModule = Record<string, { default: any }>
@@ -20,7 +23,10 @@ Object.entries(publicViews).forEach(([path, module]) => {
 
   const mountElement = document.getElementById(`run-${componentName?.toLowerCase()}`)
   if (mountElement) {
-    createApp(module.default).use(createPinia()).mount(`#run-${componentName?.toLowerCase()}`)
+    createApp(module.default)
+      .use(createPinia())
+      .use(PrimeVue, { unstyled: true, pt: Rig })
+      .mount(`#run-${componentName?.toLowerCase()}`)
   }
 })
 
@@ -32,6 +38,9 @@ Object.entries(adminViews).forEach(([path, module]) => {
     ?.replace(/\.\w+$/, '')
   const mountElement = document.getElementById(`run-${componentName?.toLowerCase()}`)
   if (mountElement) {
-    createApp(module.default).use(createPinia()).mount(`#run-${componentName?.toLowerCase()}`)
+    createApp(module.default)
+      .use(createPinia())
+      .use(PrimeVue, { unstyled: true, pt: Rig })
+      .mount(`#run-${componentName?.toLowerCase()}`)
   }
 })
