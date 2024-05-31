@@ -131,10 +131,10 @@ class Sakolawp_Public
 		wp_enqueue_script('datatables-checkbox', plugin_dir_url(__FILE__) . 'js/dataTables.checkboxes.min.js', array('jquery'), false, true);
 
 		wp_enqueue_script('skwp-chart', plugin_dir_url(__FILE__) . 'js/skwp-chart.js', ['chartjs'], '1.0.0', true);
-		wp_localize_script('skwp-chart', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', 'datatables')));
+		wp_localize_script('skwp-chart', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php',)));
 
-		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', [], '1.0.0', true);
-		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', 'datatables')));
+		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', ['datatables'], '1.0.0', true);
+		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
 
 		wp_enqueue_script('rig-university', plugin_dir_url(__FILE__) . 'js/index.js', [], '1.0.0', true);
 		wp_localize_script('rig-university', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));

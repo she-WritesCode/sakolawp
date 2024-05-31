@@ -18,11 +18,15 @@ function run_list_subjects()
 function run_single_subject()
 {
 	$repo = new RunSubjectRepo();
-	$_POST = array_map('stripslashes_deep', $_POST);
+	// $_POST = array_map('stripslashes_deep', $_POST);
 
 	$subject_id = $_POST['subject_id'];
 	$result = $repo->single($subject_id);
 
+	if (!$result) {
+		wp_send_json_error('Subject not found', 404);
+		die();
+	}
 	wp_send_json_success($result, 200);
 	die();
 }

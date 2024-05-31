@@ -62,6 +62,7 @@ CREATE TABLE $accountability_table (
 CREATE TABLE $subject_table (
 	subject_id mediumint(11) NOT NULL AUTO_INCREMENT,
 	name longtext NOT NULL,
+	description longtext NULL,
 	class_id int(11) NOT NULL,
 	section_id int(11) NOT NULL,
 	teacher_id text NOT NULL,

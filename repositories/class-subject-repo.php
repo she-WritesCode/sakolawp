@@ -25,8 +25,19 @@ class RunSubjectRepo
     function single($subject_id)
     {
         global $wpdb;
-        $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}sakolawp_subjects WHERE id = %d", $subject_id);
+
+        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, t.display_name as teacher_name 
+        FROM {$wpdb->prefix}{$this->subject_table} s
+        JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
+        JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
+        WHERE s.subject_id = '$subject_id'
+        GROUP BY s.subject_id";
+
         $result = $wpdb->get_row($sql);
+
+        if (!$result) {
+            error_log($wpdb->last_error);
+        }
 
         return $result;
     }

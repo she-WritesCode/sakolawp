@@ -1,16 +1,16 @@
-(function( $ ) {
+(function ($) {
 	'use strict';
 
 	var windowHeight = $(window).width();
 
-	$(document).ready(function() {
+	$(document).ready(function () {
 		if ($('.tab-pane').length) {
 			$(".nav-item:first-child .nav-link").addClass("active");
 			$(".tab-pane:first-child").addClass("active");
 		}
 
 		if ($('#mySelect').length) {
-			$('#mySelect').on('change', function(e) {
+			$('#mySelect').on('change', function (e) {
 				var $optionSelected = $("option:selected", this);
 				$optionSelected.tab('show')
 			});
@@ -30,10 +30,10 @@
 
 		if ($('input.multi-daterange').length) {
 			$('input.multi-daterange').daterangepicker({
-				"startDate": "03/28/2017",
-				"endDate": "04/06/2017"
+				"startDate": "03/28/2024",
+				"endDate": "04/06/2024"
 			});
 		}
 	});
-	
-})( jQuery );
+
+})(jQuery);
