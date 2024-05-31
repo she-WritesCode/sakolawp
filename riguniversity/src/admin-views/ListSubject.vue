@@ -47,7 +47,6 @@ const { subjects, fetchSubjects, search, goToViewSubject, subjectId, currentSubj
 onMounted(() => {
     if (subjectId) {
         getOneSubject(subjectId)
-        fetchSubjects();
     } else {
         fetchSubjects();
     }
@@ -112,7 +111,7 @@ onMounted(() => {
         </div>
         <!-- Single Subject -->
         <div v-else>
-            <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2">
+            <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
 
                 <div class="flex items-center gap-2">
                     <h3 class="text-xl md:text-2xl text-white mb-2">{{ currentSubject?.name }}</h3>
@@ -125,7 +124,7 @@ onMounted(() => {
                 <div><b>Faculty:</b> {{ currentSubject?.teacher_name }}</div>
 
             </div>
-            <TabMenu size="large" class="w-full border-0" :model="items" />
+            <TabMenu size="large" class="w-full border-0 mb-4" :model="items" />
             <div class="border-0">
                 <component :is="tabs[currentTab]" />
             </div>
