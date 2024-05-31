@@ -36,11 +36,11 @@ onMounted(() => {
             </div>
         </template>
         <Column field="title" header="Title"></Column>
-        <Column header="Release Date">
+        <!-- <Column header="Release Date">
             <template #body="slotProps">
                 <div>{{ slotProps.data.date_end }} {{ slotProps.data.time_end }}</div>
             </template>
-        </Column>
+        </Column> -->
         <Column header="Deadline">
             <template #body="slotProps">
                 <div>{{ slotProps.data.date_end }} {{ slotProps.data.time_end }}</div>

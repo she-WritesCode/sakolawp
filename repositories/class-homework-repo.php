@@ -46,12 +46,12 @@ class RunHomeworkRepo
     {
         global $wpdb;
 
-        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, t.display_name as teacher_name 
-        FROM {$wpdb->prefix}{$this->homework_table} s
-        JOIN {$wpdb->prefix}{$this->homework_table} h ON s.homework_id = h.homework_id
-        JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
-        WHERE s.homework_id = '$homework_id'
-        GROUP BY s.homework_id";
+        $sql = "SELECT h.*,  COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name 
+            FROM {$wpdb->prefix}{$this->homework_table} h
+            JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+            JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
+            WHERE s.homework_id = '$homework_id'
+            GROUP BY s.homework_id";
 
         $result = $wpdb->get_row($sql);
 
@@ -67,7 +67,7 @@ class RunHomeworkRepo
     {
         global $wpdb;
         $result = $wpdb->insert(
-            "{$wpdb->prefix}sakolawp_homeworks",
+            "{$wpdb->prefix}{$this->homework_table}",
             $homework_data
         );
         return $result;
@@ -78,9 +78,9 @@ class RunHomeworkRepo
     {
         global $wpdb;
         $result = $wpdb->update(
-            "{$wpdb->prefix}sakolawp_homeworks",
+            "{$wpdb->prefix}{$this->homework_table}",
             $homework_data,
-            array('id' => $homework_id)
+            array('homework_id' => $homework_id)
         );
         return $result;
     }
@@ -89,7 +89,7 @@ class RunHomeworkRepo
     function delete($homework_id)
     {
         global $wpdb;
-        $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}sakolawp_homeworks WHERE id = %d", $homework_id);
+        $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}{$this->homework_table} WHERE homework_id = %d", $homework_id);
         $result = $wpdb->query($sql);
 
         return $result;

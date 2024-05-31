@@ -47,7 +47,7 @@ class RunSubjectRepo
     {
         global $wpdb;
         $result = $wpdb->insert(
-            "{$wpdb->prefix}sakolawp_subjects",
+            "{$wpdb->prefix}{$this->subject_table}",
             $subject_data
         );
         return $result;
@@ -58,9 +58,9 @@ class RunSubjectRepo
     {
         global $wpdb;
         $result = $wpdb->update(
-            "{$wpdb->prefix}sakolawp_subjects",
+            "{$wpdb->prefix}{$this->subject_table}",
             $subject_data,
-            array('id' => $subject_id)
+            array('subject_id' => $subject_id)
         );
         return $result;
     }
@@ -69,7 +69,7 @@ class RunSubjectRepo
     function delete($subject_id)
     {
         global $wpdb;
-        $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}sakolawp_subjects WHERE id = %d", $subject_id);
+        $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}{$this->subject_table} WHERE subject_id = %d", $subject_id);
         $result = $wpdb->query($sql);
 
         return $result;

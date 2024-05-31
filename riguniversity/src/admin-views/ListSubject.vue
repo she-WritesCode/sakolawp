@@ -51,6 +51,14 @@ onMounted(() => {
         fetchSubjects();
     }
 });
+
+
+const goBack = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('subject_id')
+    url.searchParams.delete('homework_id')
+    window.location.href = url.toString()
+}
 </script>
 
 <template>
@@ -111,6 +119,7 @@ onMounted(() => {
         </div>
         <!-- Single Subject -->
         <div v-else>
+            <div class="mb-4"><Button @click="goBack" label="Back" outline severity="secondary"></Button></div>
             <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
 
                 <div class="flex items-center gap-2">

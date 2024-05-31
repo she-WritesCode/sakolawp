@@ -1,29 +1,29 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 
-export interface Homework {
+export interface Lesson {
   name: string
-  homework_id: number
+  lesson_id: number
 }
 
-export const useHomeworkStore = defineStore('homework', () => {
-  const homeworks = ref<Homework[]>([])
-  const currentHomework = ref<Homework | null>(null)
+export const useLessonStore = defineStore('lesson', () => {
+  const lessons = ref<Lesson[]>([])
+  const currentLesson = ref<Lesson | null>(null)
   const filter = reactive({
     search: '',
     subject_id: ''
   })
   const loading = ref(false)
-  const homeworkId = computed(() => {
+  const lessonId = computed(() => {
     const url = new URL(window.location.href)
-    return url.searchParams.get('homework_id')
+    return url.searchParams.get('lesson_id')
   })
 
   watch(filter, () => {
-    fetchHomeworks()
+    fetchLessons()
   })
 
-  const fetchHomeworks = () => {
+  const fetchLessons = () => {
     loading.value = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -32,13 +32,13 @@ export const useHomeworkStore = defineStore('homework', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_list_homeworks',
+        action: 'run_list_lessons',
         ...filter
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        homeworks.value = response.data
+        lessons.value = response.data
         loading.value = false
       })
       .catch((error) => {
@@ -46,13 +46,13 @@ export const useHomeworkStore = defineStore('homework', () => {
       })
   }
 
-  const goToViewHomework = (homeworkId: string) => {
+  const goToViewLesson = (lessonId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('homework_id', homeworkId)
+    url.searchParams.set('lesson_id', lessonId)
     window.location.href = url.toString()
   }
 
-  const getOneHomework = (id: string) => {
+  const getOneLesson = (id: string) => {
     loading.value = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -61,13 +61,13 @@ export const useHomeworkStore = defineStore('homework', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_single_homework',
-        homework_id: id
+        action: 'run_single_lesson',
+        lesson_id: id
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        currentHomework.value = response.data
+        currentLesson.value = response.data
         loading.value = false
       })
       .catch((error) => {
@@ -76,13 +76,13 @@ export const useHomeworkStore = defineStore('homework', () => {
   }
 
   return {
-    homeworks: computed(() => homeworks),
-    fetchHomeworks,
+    lessons: computed(() => lessons),
+    fetchLessons,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentHomework: computed(() => currentHomework),
-    goToViewHomework,
-    homeworkId,
-    getOneHomework
+    currentLesson: computed(() => currentLesson),
+    goToViewLesson,
+    lessonId,
+    getOneLesson
   }
 })

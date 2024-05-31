@@ -2,6 +2,7 @@
 
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
 
 /** List Subjects */
 function run_list_subjects()
@@ -150,3 +151,77 @@ add_action('wp_ajax_run_single_homework', 'run_single_homework');
 add_action('wp_ajax_run_create_homework', 'run_create_homework');
 add_action('wp_ajax_run_update_homework', 'run_update_homework');
 add_action('wp_ajax_run_delete_homework', 'run_delete_homework');
+
+
+/** List Lessons */
+function run_list_lessons()
+{
+	$repo = new RunLessonRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single lesson */
+function run_single_lesson()
+{
+	$repo = new RunLessonRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$lesson_id = sanitize_text_field($_POST['lesson_id']);
+	$result = $repo->single($lesson_id);
+
+	if (!$result) {
+		wp_send_json_error('Lesson not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new lesson */
+function run_create_lesson()
+{
+	$repo = new RunLessonRepo();
+	$lesson_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($lesson_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing lesson */
+function run_update_lesson()
+{
+	$repo = new RunLessonRepo();
+	$lesson_id = sanitize_text_field($_POST['lesson_id']);
+	$lesson_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($lesson_id, $lesson_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a lesson */
+function run_delete_lesson($lesson_id)
+{
+	$repo = new RunLessonRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$lesson_id = sanitize_text_field($_POST['lesson_id']);
+	$result = $repo->delete($lesson_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_lessons', 'run_list_lessons');
+add_action('wp_ajax_run_single_lesson', 'run_single_lesson');
+add_action('wp_ajax_run_create_lesson', 'run_create_lesson');
+add_action('wp_ajax_run_update_lesson', 'run_update_lesson');
+add_action('wp_ajax_run_delete_lesson', 'run_delete_lesson');

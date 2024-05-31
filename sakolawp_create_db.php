@@ -10,6 +10,7 @@ $accountability_table = $wpdb->prefix . 'sakolawp_accountability';
 $subject_table = $wpdb->prefix . 'sakolawp_subject';
 $routine_table = $wpdb->prefix . 'sakolawp_class_routine';
 $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
+$lessons_table = $wpdb->prefix . 'sakolawp_lessons';
 $homework_table = $wpdb->prefix . 'sakolawp_homework';
 $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
@@ -102,6 +103,21 @@ CREATE TABLE $enroll_table (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (enroll_id)
+) $charset_collate;
+
+CREATE TABLE $lessons_table (
+	lesson_id int(11) NOT NULL AUTO_INCREMENT,
+	lesson_code varchar(110) NOT NULL,
+	title longtext NOT NULL,
+	description longtext NULL,
+	subject_id int(11) NOT NULL,
+	uploader_id int(11) NOT NULL,
+	uploader_type varchar(100) NOT NULL,
+	file_name longtext NULL,
+	file_date longtext NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	UNIQUE KEY id (lesson_id)
 ) $charset_collate;
 
 CREATE TABLE $homework_table (
