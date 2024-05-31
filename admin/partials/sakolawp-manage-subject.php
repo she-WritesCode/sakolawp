@@ -29,7 +29,7 @@
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 			<div id="run-listsubject"></div>
 			<!-- start of class table -->
-			<div class="table-responsive">
+			<!-- <div class="table-responsive">
 				<table id="dataTable1" width="100%" class="table table-striped table-lightfont">
 					<thead>
 						<tr>
@@ -88,7 +88,7 @@
 						<?php endforeach; ?>
 					</tbody>
 				</table>
-			</div>
+			</div> -->
 			<!-- end of class table -->
 
 		</div>
