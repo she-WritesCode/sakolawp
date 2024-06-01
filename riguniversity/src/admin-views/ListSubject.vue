@@ -97,7 +97,7 @@ const goBack = () => {
                 <Column field="name" header="Name"></Column>
                 <Column header="Lessons" class="text-center">
                     <template #body="slotProps">
-                        <Tag :value="slotProps.data.homework_count" severity="secondary" />
+                        <Tag :value="slotProps.data.lesson_count" severity="secondary" />
                     </template>
                 </Column>
                 <Column header="Homeworks" class="text-center">
@@ -108,7 +108,7 @@ const goBack = () => {
                 <Column field="teacher_name" header="Faculty"></Column>
                 <Column header="">
                     <template #body="slotProps">
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 text-sm">
                             <Button size="small" @click="goToViewSubject(slotProps.data.subject_id)"
                                 label="View"></Button>
                             <Button size="small" text severity="danger" label="Delete"></Button>
@@ -127,8 +127,8 @@ const goBack = () => {
                     <Button text class=" bg-white hover:bg-primary-50" label="Edit Subject"></Button>
                 </div>
                 <div class="flex gap-2">
-                    <span>{{ currentSubject?.homework_count }} Homework(s)</span> |
-                    <span>{{ currentSubject?.homework_count }} Student(s) Enrolled</span>
+                    <span>{{ currentSubject?.lesson_count }} Lesson(s)</span> |
+                    <span>{{ currentSubject?.homework_count }} Homework(s)</span>
                 </div>
                 <div><b>Faculty:</b> {{ currentSubject?.teacher_name }}</div>
 

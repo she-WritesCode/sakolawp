@@ -15,7 +15,7 @@ class RunLessonRepo
 
         $sql = "SELECT l.*, t.display_name as teacher_name
             FROM {$wpdb->prefix}{$this->lesson_table} l
-            JOIN {$wpdb->prefix}{$this->users_table} t ON l.uploader_id = t.ID
+            LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON l.uploader_id = t.ID
             WHERE 1=1"; // Start with a tautology
 
         // Add search condition
@@ -46,7 +46,7 @@ class RunLessonRepo
 
         $sql = "SELECT l.*, COUNT(l.lesson_id) AS lesson_count, t.display_name as teacher_name 
         FROM {$wpdb->prefix}{$this->lesson_table} l
-        JOIN {$wpdb->prefix}{$this->users_table} t ON l.teacher_id = t.ID
+        LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON l.teacher_id = t.ID
         WHERE l.lesson_id = '$lesson_id'
         GROUP BY l.lesson_id";
 

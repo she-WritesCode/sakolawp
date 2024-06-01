@@ -16,8 +16,8 @@ class RunHomeworkRepo
 
         $sql = "SELECT h.*, COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name
             FROM {$wpdb->prefix}{$this->homework_table} h
-            JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
-            JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
+            LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+            LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
             WHERE 1=1"; // Start with a tautology
 
         // Add search condition
@@ -48,8 +48,8 @@ class RunHomeworkRepo
 
         $sql = "SELECT h.*,  COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name 
             FROM {$wpdb->prefix}{$this->homework_table} h
-            JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
-            JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
+            LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+            LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
             WHERE s.homework_id = '$homework_id'
             GROUP BY s.homework_id";
 

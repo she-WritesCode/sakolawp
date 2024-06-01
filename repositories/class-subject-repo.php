@@ -3,6 +3,7 @@ class RunSubjectRepo
 {
     protected $subject_table = 'sakolawp_subject';
     protected $homework_table = 'sakolawp_homework';
+    protected $lesson_table = 'sakolawp_lessons';
     protected $users_table = 'users';
 
     /** List Subjects */
@@ -10,14 +11,20 @@ class RunSubjectRepo
     {
         global $wpdb;
 
-        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, t.display_name as teacher_name
+        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, COUNT(l.lesson_id) AS lesson_count, t.display_name as teacher_name
         FROM {$wpdb->prefix}{$this->subject_table} s
-        JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
-        JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
+        LEFT JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->lesson_table} l ON s.subject_id = l.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
         WHERE s.name LIKE '%$search%'
         GROUP BY s.subject_id";
 
         $result = $wpdb->get_results($sql);
+
+        if (!$result) {
+            error_log($wpdb->last_error);
+        }
+
         return $result;
     }
 
@@ -26,10 +33,11 @@ class RunSubjectRepo
     {
         global $wpdb;
 
-        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, t.display_name as teacher_name 
+        $sql = "SELECT s.*, COUNT(h.homework_code) AS homework_count, COUNT(l.lesson_id) AS lesson_count, t.display_name as teacher_name 
         FROM {$wpdb->prefix}{$this->subject_table} s
-        JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
-        JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
+        LEFT JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->lesson_table} l ON s.subject_id = l.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
         WHERE s.subject_id = '$subject_id'
         GROUP BY s.subject_id";
 
