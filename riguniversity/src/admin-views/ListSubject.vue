@@ -12,36 +12,41 @@ import { ref } from "vue";
 import Homeworks from '../components/subjects/Homeworks.vue'
 import Lessons from '../components/subjects/Lessons.vue'
 import Students from '../components/subjects/Students.vue'
+import EditSubject from '../components/subjects/EditSubject.vue'
 import AddSubject from '../components/subjects/AddSubject.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 const tabs = {
     homeworks: Homeworks,
     lessons: Lessons,
     students: Students,
+    editSubject: EditSubject,
 }
 const currentTab = ref<keyof typeof tabs>("lessons")
 const items = ref([
-    {
-        label: 'Lessons',
-        command: () => {
-            currentTab.value = 'lessons'
-            console.log(currentTab.value)
-        }
-    },
+    // {
+    //     label: 'Lessons',
+    //     command: () => {
+    //         currentTab.value = 'lessons'
+    //     }
+    // },
     {
         label: 'Homeworks',
         command: () => {
             currentTab.value = 'homeworks'
-            console.log(currentTab.value)
         }
     },
     {
-        label: 'Students',
+        label: 'Edit Subject',
         command: () => {
-            currentTab.value = 'students'
-            console.log(currentTab.value)
+            currentTab.value = 'editSubject'
         }
     },
+    // {
+    //     label: 'Students',
+    //     command: () => {
+    //         currentTab.value = 'students'
+    //     }
+    // },
 ]);
 
 const {
@@ -68,6 +73,21 @@ onMounted(() => {
 const goBack = () => {
     window.history.back()
 }
+
+const showDeleteDialog = ref(false)
+const toBeDeleted = ref<string | null>(null)
+function initDelete(id: string) {
+    showDeleteDialog.value = true
+    toBeDeleted.value = id
+}
+function closeDelete() {
+    showDeleteDialog.value = false
+    toBeDeleted.value = null
+}
+function deleteASubject(id: string) {
+    deleteSubject(id)
+    closeDelete()
+}
 </script>
 
 <template>
@@ -83,13 +103,13 @@ const goBack = () => {
             </div>
             <DataTable :value="subjects" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
-                <template #header class="border-t-0">
+                <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
                             <InputText v-model="search" placeholder="Search Subjects" class="font-normal" />
                         </div>
                         <div class="">
-                            <Button @click="goToAddForm" size="small" label="Add Homework"></Button>
+                            <Button @click="goToAddForm" size="small" label="Add Subject"></Button>
                         </div>
                     </div>
                 </template>
@@ -110,8 +130,8 @@ const goBack = () => {
                         <div class="flex gap-2 text-sm">
                             <Button size="small" @click="goToViewSubject(slotProps.data.subject_id)"
                                 label="View"></Button>
-                            <Button size="small" @click="deleteSubject(slotProps.data.subject_id)" text
-                                severity="danger" label="Delete"></Button>
+                            <Button size="small" @click="initDelete(slotProps.data.subject_id)" text severity="danger"
+                                label="Delete"></Button>
                         </div>
                     </template>
                 </Column>
@@ -119,9 +139,17 @@ const goBack = () => {
 
             <Dialog v-model:visible="showAddForm" modal header="Add Subject" :style="{ width: '30rem' }"
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+                <AddSubject></AddSubject>
+            </Dialog>
+            <Dialog v-model:visible="showDeleteDialog" modal header="Delete Subject" :style="{ width: '30rem' }"
+                :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="mb-5">
-                    <AddSubject></AddSubject>
+                    Are you sure you want to delete?
                 </p>
+                <div class="flex gap-2 justify-end">
+                    <Button @click="closeDelete">No</Button>
+                    <Button @click="deleteASubject(toBeDeleted as string)" outlined severity="danger">Yes</Button>
+                </div>
             </Dialog>
         </div>
         <!-- Single Subject -->
@@ -131,17 +159,18 @@ const goBack = () => {
 
                 <div class="flex items-center gap-2">
                     <h3 class="text-xl md:text-2xl text-white mb-2">{{ currentSubject?.name }}</h3>
-                    <Button text class=" bg-white hover:bg-primary-50" label="Edit Subject"></Button>
+                    <Button text class=" bg-white hover:bg-primary-50" @click="currentTab = 'editSubject'"
+                        label="Edit Subject"></Button>
                 </div>
                 <div class="flex gap-2">
-                    <span>{{ currentSubject?.lesson_count }} Lesson(s)</span> |
+                    <!-- <span>{{ currentSubject?.lesson_count }} Lesson(s)</span> | -->
                     <span>{{ currentSubject?.homework_count }} Homework(s)</span>
                 </div>
                 <div><b>Faculty:</b> {{ currentSubject?.teacher_name }}</div>
 
             </div>
             <TabMenu size="large" class="w-full border-0 mb-4" :model="items" />
-            <div class="border-0">
+            <div class="border-0 mb-8">
                 <component :is="tabs[currentTab]" />
             </div>
         </div>

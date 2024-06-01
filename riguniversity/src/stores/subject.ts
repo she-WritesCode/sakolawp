@@ -5,7 +5,10 @@ import * as yup from 'yup'
 export interface Subject {
   name: string
   subject_id?: string
-  teacher_id?: string
+  teacher_id: string
+  teacher_name: string
+  lesson_count: number
+  homework_count: number
 }
 
 export const createSubjectSchema = yup.object({
@@ -114,7 +117,7 @@ export const useSubjectStore = defineStore('subject', () => {
       },
       body: new URLSearchParams({
         action: 'run_create_subject',
-        ...args
+        ...(args as any)
       })
     })
       .then((response) => response.json())
@@ -143,16 +146,11 @@ export const useSubjectStore = defineStore('subject', () => {
         subject_id: id
       })
     })
-      .then((response) => response.json())
-      .then((response) => {
-        currentSubject.value = response.data
-        showAddForm.value = false
-      })
       .catch((error) => {
         console.error('Error:', error)
       })
       .finally(() => {
-        loading.value = false
+        fetchSubjects()
       })
   }
   return {
