@@ -27,7 +27,7 @@ class RunHomeworkRepo
 
         // Add subject_id condition
         if (!empty($subject_id)) {
-            $sql .= " AND h.subject_id = $subject_id";
+            $sql .= " AND h.subject_id = '$subject_id'";
         }
 
         // Add uploader_id condition

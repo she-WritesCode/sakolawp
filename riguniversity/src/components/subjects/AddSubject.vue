@@ -9,7 +9,7 @@ import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
 import { computed } from 'vue';
 
-const { values, errors, defineField, handleSubmit } = useForm({
+const { errors, defineField, handleSubmit } = useForm({
     initialValues: {
         name: "",
         teacher_id: "",

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export interface Homework {
   name: string
-  homework_id: number
+  subject_id: number
 }
 
 export const useHomeworkStore = defineStore('homework', () => {
@@ -18,6 +18,12 @@ export const useHomeworkStore = defineStore('homework', () => {
     const url = new URL(window.location.href)
     return url.searchParams.get('homework_id')
   })
+  const action = computed(() => {
+    const url = new URL(window.location.href)
+    return url.searchParams.get('action')
+  })
+
+  const showAddForm = ref(action.value === 'add_homework')
 
   watch(filter, () => {
     fetchHomeworks()
@@ -75,6 +81,90 @@ export const useHomeworkStore = defineStore('homework', () => {
       })
   }
 
+  const goToAddForm = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('action', 'add_homework')
+    window.location.href = url.toString()
+  }
+
+  const closeAddForm = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('action')
+    window.location.href = url.toString()
+  }
+
+  const createHomework = (args: Partial<Homework>) => {
+    loading.value = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_create_homework',
+        ...(args as any)
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        currentHomework.value = response.data
+        showAddForm.value = false
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  const updateHomework = (args: Partial<Homework>) => {
+    // loading.value = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_update_homework',
+        ...(args as any)
+      })
+    })
+      .then((response) => response.json())
+      .then(() => {
+        getOneHomework(homeworkId.value as string)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  const deleteHomework = (id: string) => {
+    loading.value = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_delete_homework',
+        homework_id: id
+      })
+    })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+      .finally(() => {
+        fetchHomeworks()
+      })
+  }
+
   return {
     homeworks: computed(() => homeworks),
     fetchHomeworks,
@@ -83,6 +173,12 @@ export const useHomeworkStore = defineStore('homework', () => {
     currentHomework: computed(() => currentHomework),
     goToViewHomework,
     homeworkId,
-    getOneHomework
+    getOneHomework,
+    showAddForm,
+    goToAddForm,
+    closeAddForm,
+    createHomework,
+    updateHomework,
+    deleteHomework
   }
 })

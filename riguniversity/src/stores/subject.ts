@@ -133,6 +133,31 @@ export const useSubjectStore = defineStore('subject', () => {
       })
   }
 
+  const updateSubject = (args: Partial<Subject>) => {
+    // loading.value = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_update_subject',
+        ...(args as any)
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        getOneSubject(subjectId.value as string)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
   const deleteSubject = (id: string) => {
     loading.value = true
     // @ts-ignore
@@ -167,6 +192,7 @@ export const useSubjectStore = defineStore('subject', () => {
     action: computed(() => action),
     createSubject,
     closeAddForm,
-    deleteSubject
+    deleteSubject,
+    updateSubject
   }
 })

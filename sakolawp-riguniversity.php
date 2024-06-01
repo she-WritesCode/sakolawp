@@ -55,8 +55,11 @@ function run_update_subject()
 {
 	$repo = new RunSubjectRepo();
 	$subject_id = sanitize_text_field($_POST['subject_id']);
-	$subject_data = array_map('stripslashes_deep', $_POST);
-
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$subject_data = [
+		'name' => sanitize_text_field($_POST['name']),
+		'teacher_id' => sanitize_text_field($_POST['teacher_id']),
+	];
 	$result = $repo->update($subject_id, $subject_data);
 
 	wp_send_json_success($result, 200);

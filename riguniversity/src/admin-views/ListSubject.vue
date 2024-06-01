@@ -9,32 +9,32 @@ import InputText from 'primevue/inputtext';
 import TabMenu from 'primevue/tabmenu';
 import Dialog from 'primevue/dialog';
 import { ref } from "vue";
-import Homeworks from '../components/subjects/Homeworks.vue'
+import HomeworkList from '../components/subjects/HomeworkList.vue'
 import Lessons from '../components/subjects/Lessons.vue'
 import Students from '../components/subjects/Students.vue'
 import EditSubject from '../components/subjects/EditSubject.vue'
 import AddSubject from '../components/subjects/AddSubject.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 const tabs = {
-    homeworks: Homeworks,
+    homeworks: HomeworkList,
     lessons: Lessons,
     students: Students,
     editSubject: EditSubject,
 }
-const currentTab = ref<keyof typeof tabs>("lessons")
+const currentTab = ref<keyof typeof tabs>("homeworks")
 const items = ref([
-    // {
-    //     label: 'Lessons',
-    //     command: () => {
-    //         currentTab.value = 'lessons'
-    //     }
-    // },
     {
         label: 'Homeworks',
         command: () => {
             currentTab.value = 'homeworks'
         }
     },
+    // {
+    //     label: 'Lessons',
+    //     command: () => {
+    //         currentTab.value = 'lessons'
+    //     }
+    // },
     {
         label: 'Edit Subject',
         command: () => {

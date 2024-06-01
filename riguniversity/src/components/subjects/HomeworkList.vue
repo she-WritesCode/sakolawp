@@ -7,8 +7,10 @@ import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useSubjectStore } from '../../stores/subject';
+import AddHomework from '../homeworks/AddHomework.vue';
+import Dialog from 'primevue/dialog';
 
-const { homeworks, fetchHomeworks, filter, goToViewHomework, homeworkId, currentHomework, getOneHomework, loading } = useHomeworkStore();
+const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, getOneHomework } = useHomeworkStore();
 const { subjectId } = useSubjectStore();
 
 onMounted(() => {
@@ -31,16 +33,11 @@ onMounted(() => {
                     <InputText v-model="filter.search" placeholder="Search Homeworks" class="font-normal" />
                 </div>
                 <div class="">
-                    <Button size="small" label="Add Homework"></Button>
+                    <Button @click="goToAddForm" size="small" label="Add Homework"></Button>
                 </div>
             </div>
         </template>
         <Column field="title" header="Title"></Column>
-        <!-- <Column header="Release Date">
-            <template #body="slotProps">
-                <div>{{ slotProps.data.date_end }} {{ slotProps.data.time_end }}</div>
-            </template>
-        </Column> -->
         <Column header="Deadline">
             <template #body="slotProps">
                 <div>{{ slotProps.data.date_end }} {{ slotProps.data.time_end }}</div>
@@ -62,6 +59,11 @@ onMounted(() => {
             </template>
         </Column>
     </DataTable>
+
+    <Dialog v-model:visible="showAddForm" modal header="Add Homework" :style="{ width: '30rem' }"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <AddHomework></AddHomework>
+    </Dialog>
 </template>
 
 <style scoped></style>
