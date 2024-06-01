@@ -16,7 +16,7 @@ onMounted(() => {
         getOneHomework(homeworkId)
     } else {
         filter.subject_id = subjectId ?? ""
-        fetchHomeworks();
+        // fetchHomeworks();
     }
 });
 
@@ -28,7 +28,7 @@ onMounted(() => {
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                    <InputText v-model="filter.search" placeholder="Search Homeworks" class="pl-10 font-normal" />
+                    <InputText v-model="filter.search" placeholder="Search Homeworks" class="font-normal" />
                 </div>
                 <div class="">
                     <Button size="small" label="Add Homework"></Button>

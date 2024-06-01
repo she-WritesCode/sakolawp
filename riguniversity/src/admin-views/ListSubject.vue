@@ -8,10 +8,12 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import TabMenu from 'primevue/tabmenu';
 import Skeleton from 'primevue/skeleton';
+import Dialog from 'primevue/dialog';
 import { ref } from "vue";
 import Homeworks from '../components/subjects/Homeworks.vue'
 import Lessons from '../components/subjects/Lessons.vue'
 import Students from '../components/subjects/Students.vue'
+import AddSubject from '../components/subjects/AddSubject.vue'
 const tabs = {
     homeworks: Homeworks,
     lessons: Lessons,
@@ -42,7 +44,7 @@ const items = ref([
     },
 ]);
 
-const { subjects, fetchSubjects, search, goToViewSubject, subjectId, currentSubject, getOneSubject, loading } = useSubjectStore();
+const { subjects, fetchSubjects, search, goToViewSubject, subjectId, currentSubject, getOneSubject, loading, showAddFrom, goToAddForm } = useSubjectStore();
 
 onMounted(() => {
     if (subjectId) {
@@ -51,7 +53,6 @@ onMounted(() => {
         fetchSubjects();
     }
 });
-
 
 const goBack = () => {
     const url = new URL(window.location.href)
@@ -62,6 +63,7 @@ const goBack = () => {
 </script>
 
 <template>
+    <!-- Loading Indicator -->
     <div v-if="loading">
         <div class="rounded-lg dark:border-surface-700 bg-surface-0 dark:bg-surface-800 mb-4 p-4">
             <div class="flex mb-4">
@@ -82,15 +84,18 @@ const goBack = () => {
     <template v-else>
         <!-- Subject List -->
         <div v-if="!subjectId" class="border-0">
+            <div class="px-2 pb-4">
+                <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Subjects</h3>
+            </div>
             <DataTable :value="subjects" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
                 <template #header class="border-t-0">
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span class="text-xl text-surface-900 dark:text-surface-0 font-bold">Subjects</span>
                         <div>
-                            <i
-                                class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"></i>
-                            <InputText v-model="search" placeholder="Search Subjects" class="pl-10 font-normal" />
+                            <InputText v-model="search" placeholder="Search Subjects" class="font-normal" />
+                        </div>
+                        <div class="">
+                            <Button @click="goToAddForm" size="small" label="Add Homework"></Button>
                         </div>
                     </div>
                 </template>
@@ -116,6 +121,13 @@ const goBack = () => {
                     </template>
                 </Column>
             </DataTable>
+
+            <Dialog v-model:visible="showAddFrom" modal header="Add Subject" :style="{ width: '30rem' }"
+                :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+                <p class="mb-5">
+                    <AddSubject></AddSubject>
+                </p>
+            </Dialog>
         </div>
         <!-- Single Subject -->
         <div v-else>

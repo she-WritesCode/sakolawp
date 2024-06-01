@@ -14,7 +14,7 @@ import InputText from 'primevue/inputtext';
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                    <InputText v-model="search" placeholder="Search Students" class="pl-10 font-normal" />
+                    <InputText v-model="search" placeholder="Search Students" class="font-normal" />
                 </div>
             </div>
         </template>

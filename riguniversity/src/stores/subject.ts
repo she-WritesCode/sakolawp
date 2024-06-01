@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export interface Subject {
   name: string
-  subject_id: number
+  subject_id: string
 }
 
 export const useSubjectStore = defineStore('subject', () => {
@@ -14,6 +14,23 @@ export const useSubjectStore = defineStore('subject', () => {
   const subjectId = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('subject_id')
+  })
+  const action = computed(() => {
+    const url = new URL(window.location.href)
+    return url.searchParams.get('action')
+  })
+
+  const showAddFrom = computed({
+    get: () => {
+      return action.value === 'add_subject'
+    },
+    set: (value) => {
+      if (value) {
+        goToAddForm()
+      } else {
+        window.history.back()
+      }
+    }
   })
 
   watch(search, () => {
@@ -50,6 +67,12 @@ export const useSubjectStore = defineStore('subject', () => {
     window.location.href = url.toString()
   }
 
+  const goToAddForm = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('action', 'add_subject')
+    window.history.pushState({}, document.title, url.toString())
+  }
+
   const getOneSubject = (id: string) => {
     loading.value = true
     // @ts-ignore
@@ -73,6 +96,30 @@ export const useSubjectStore = defineStore('subject', () => {
       })
   }
 
+  const createSubject = (args: Partial<Subject>) => {
+    loading.value = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_create_subject',
+        ...args
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        currentSubject.value = response.data
+        loading.value = false
+        showAddFrom.value = false
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+  }
+
   return {
     subjects: computed(() => subjects),
     fetchSubjects,
@@ -81,6 +128,10 @@ export const useSubjectStore = defineStore('subject', () => {
     currentSubject: computed(() => currentSubject),
     goToViewSubject,
     subjectId,
-    getOneSubject
+    getOneSubject,
+    goToAddForm,
+    showAddFrom,
+    action: computed(() => action),
+    createSubject
   }
 })
