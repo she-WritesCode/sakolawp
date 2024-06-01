@@ -1,10 +1,16 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
+import * as yup from 'yup'
 
 export interface Subject {
   name: string
   subject_id: string
 }
+
+export const createSubjectSchema = yup.object({
+  name: yup.string().min(3).required(),
+  teacher_id: yup.number().optional()
+})
 
 export const useSubjectStore = defineStore('subject', () => {
   const subjects = ref<Subject[]>([])
@@ -119,7 +125,6 @@ export const useSubjectStore = defineStore('subject', () => {
         console.error('Error:', error)
       })
   }
-
   return {
     subjects: computed(() => subjects),
     fetchSubjects,

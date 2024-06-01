@@ -1,37 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
-import { reactive } from 'vue';
+import { useForm } from 'vee-validate';
+import { createSubjectSchema } from '../../stores/subject';
+import { toTypedSchema } from '@vee-validate/yup';
 
-const formValues = reactive({
-    name: "",
-    class: "",
-    section: "",
-    teacher: "",
-    labs: 0
-})
+const { values, errors, defineField, handleSubmit } = useForm({
+    initialValues: {
+        name: "",
+        // class_id: "",
+        // section_id: "",
+        teacher_id: "",
+    },
+    validationSchema: toTypedSchema(createSubjectSchema),
+    // submi
+});
 
-const classOptions = [
-    { id: '', name: 'Select' },
-    { id: 1, name: 'RUN LAGOS 2024' }
-];
+const [name, nameProps] = defineField('name');
+const [teacher_id, teacher_idProps] = defineField('teacher_id');
+const [labs, labsProps] = defineField('labs');
 
-const sectionOptions = [
-    { id: '', name: 'Select' }
-];
 
 const teacherOptions = [
     { id: '', name: 'Select' },
     { id: 175, name: 'Teacher Pangolo' }
 ];
 
-const submitForm = () => {
-    // Handle form submission logic here
-    console.log(formValues);
-};
+const submitForm = handleSubmit((values) => {
+    if (Object.keys(errors).length) {
+        console.log("validation errors", errors)
+        return
+    }
+    console.log(values);
+});
 </script>
 
 <template>
@@ -39,35 +42,28 @@ const submitForm = () => {
         <div class="flex flex-col gap-4 mb-4">
             <div class="form-group">
                 <label for=""> Subject Name</label>
-                <InputText placeholder="Subject Name" name="name" :required="true" v-model="formValues.name"
-                    class="w-full" />
-
+                <InputText placeholder="Subject Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
+                <div>{{ errors.name }}</div>
             </div>
 
             <!-- <div class="form-group">
                 <label for=""> Class</label>
                 <Dropdown name="class_id" :options="classOptions" optionLabel="name" optionValue="id"
-                    placeholder="Select" v-model="formValues.class_id" class="w-full" />
+                    placeholder="Select" v-model="values.class_id" class="w-full" />
 
             </div>
 
             <div class="form-group">
                 <label for=""> Parent Group</label>
                 <Dropdown name="section_id" :options="sectionOptions" optionLabel="name" optionValue="id"
-                    placeholder="Select" v-model="formValues.section" class="w-full" />
-
+                    placeholder="Select" v-model="values.section_id" class="w-full" />
             </div> -->
 
             <div class="form-group">
                 <label for=""> Faculty</label>
                 <Dropdown name="teacher_id" :options="teacherOptions" optionLabel="name" optionValue="id"
-                    placeholder="Select" v-model="formValues.teacher" class="w-full" />
-            </div>
-
-            <div class="form-group">
-                <label for=""> Total Lab</label>
-                <InputNumber placeholder="Total Lab" name="total_lab" :min="1" :max="24" v-model="formValues.labs"
-                    class="w-full" />
+                    placeholder="Select" v-model="teacher_id" class="w-full" v-bind="teacher_idProps" />
+                <div>{{ errors.teacher_id }}</div>
             </div>
         </div>
         <div class="">

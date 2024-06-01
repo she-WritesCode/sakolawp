@@ -7,13 +7,13 @@ import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import TabMenu from 'primevue/tabmenu';
-import Skeleton from 'primevue/skeleton';
 import Dialog from 'primevue/dialog';
 import { ref } from "vue";
 import Homeworks from '../components/subjects/Homeworks.vue'
 import Lessons from '../components/subjects/Lessons.vue'
 import Students from '../components/subjects/Students.vue'
 import AddSubject from '../components/subjects/AddSubject.vue'
+import LoadingIndicator from "../components/LoadingIndicator.vue";
 const tabs = {
     homeworks: Homeworks,
     lessons: Lessons,
@@ -65,21 +65,7 @@ const goBack = () => {
 <template>
     <!-- Loading Indicator -->
     <div v-if="loading">
-        <div class="rounded-lg dark:border-surface-700 bg-surface-0 dark:bg-surface-800 mb-4 p-4">
-            <div class="flex mb-4">
-                <Skeleton shape="circle" size="4rem" class="mr-2"></Skeleton>
-                <div>
-                    <Skeleton width="10rem" class="mb-2"></Skeleton>
-                    <Skeleton width="5rem" class="mb-2"></Skeleton>
-                    <Skeleton height=".5rem"></Skeleton>
-                </div>
-            </div>
-            <Skeleton width="100%" height="150px"></Skeleton>
-            <div class="flex justify-between mt-4">
-                <Skeleton width="4rem" height="2rem"></Skeleton>
-                <Skeleton width="4rem" height="2rem"></Skeleton>
-            </div>
-        </div>
+        <LoadingIndicator></LoadingIndicator>
     </div>
     <template v-else>
         <!-- Subject List -->
