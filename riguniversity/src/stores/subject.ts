@@ -4,12 +4,13 @@ import * as yup from 'yup'
 
 export interface Subject {
   name: string
-  subject_id: string
+  subject_id?: string
+  teacher_id?: string
 }
 
 export const createSubjectSchema = yup.object({
   name: yup.string().min(3).required(),
-  teacher_id: yup.number().optional()
+  teacher_id: yup.string().optional()
 })
 
 export const useSubjectStore = defineStore('subject', () => {
@@ -26,16 +27,10 @@ export const useSubjectStore = defineStore('subject', () => {
     return url.searchParams.get('action')
   })
 
-  const showAddFrom = computed({
-    get: () => {
-      return action.value === 'add_subject'
-    },
-    set: (value) => {
-      if (value) {
-        goToAddForm()
-      } else {
-        window.history.back()
-      }
+  const showAddForm = ref(action.value === 'add_subject')
+  watch(showAddForm, (value) => {
+    if (!value) {
+      window.history.back()
     }
   })
 
@@ -44,7 +39,9 @@ export const useSubjectStore = defineStore('subject', () => {
   })
 
   const fetchSubjects = () => {
-    loading.value = true
+    if (!search.value) {
+      loading.value = true
+    }
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -69,14 +66,19 @@ export const useSubjectStore = defineStore('subject', () => {
   const goToViewSubject = (subjectId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('subject_id', subjectId)
-    // window.history.replaceState({}, document.title, url.toString())
     window.location.href = url.toString()
   }
 
   const goToAddForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_subject')
-    window.history.pushState({}, document.title, url.toString())
+    window.location.href = url.toString()
+  }
+
+  const closeAddForm = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('action')
+    window.location.href = url.toString()
   }
 
   const getOneSubject = (id: string) => {
@@ -118,11 +120,39 @@ export const useSubjectStore = defineStore('subject', () => {
       .then((response) => response.json())
       .then((response) => {
         currentSubject.value = response.data
-        loading.value = false
-        showAddFrom.value = false
+        showAddForm.value = false
       })
       .catch((error) => {
         console.error('Error:', error)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
+
+  const deleteSubject = (id: string) => {
+    loading.value = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_delete_subject',
+        subject_id: id
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        currentSubject.value = response.data
+        showAddForm.value = false
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+      .finally(() => {
+        loading.value = false
       })
   }
   return {
@@ -135,8 +165,10 @@ export const useSubjectStore = defineStore('subject', () => {
     subjectId,
     getOneSubject,
     goToAddForm,
-    showAddFrom,
+    showAddForm,
     action: computed(() => action),
-    createSubject
+    createSubject,
+    closeAddForm,
+    deleteSubject
   }
 })

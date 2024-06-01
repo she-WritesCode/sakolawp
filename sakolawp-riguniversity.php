@@ -3,6 +3,7 @@
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 
 /** List Subjects */
 function run_list_subjects()
@@ -37,7 +38,11 @@ function run_single_subject()
 function run_create_subject()
 {
 	$repo = new RunSubjectRepo();
-	$subject_data = array_map('stripslashes_deep', $_POST);
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$subject_data = [
+		'name' => sanitize_text_field($_POST['name']),
+		'teacher_id' => sanitize_text_field($_POST['teacher_id']),
+	];
 
 	$result = $repo->create($subject_data);
 
@@ -225,3 +230,76 @@ add_action('wp_ajax_run_single_lesson', 'run_single_lesson');
 add_action('wp_ajax_run_create_lesson', 'run_create_lesson');
 add_action('wp_ajax_run_update_lesson', 'run_update_lesson');
 add_action('wp_ajax_run_delete_lesson', 'run_delete_lesson');
+
+/** List Users */
+function run_list_users()
+{
+	$repo = new RunUserRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single user */
+function run_single_user()
+{
+	$repo = new RunUserRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$user_id = sanitize_text_field($_POST['user_id']);
+	$result = $repo->single($user_id);
+
+	if (!$result) {
+		wp_send_json_error('User not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new user */
+function run_create_user()
+{
+	$repo = new RunUserRepo();
+	$user_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($user_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing user */
+function run_update_user()
+{
+	$repo = new RunUserRepo();
+	$user_id = sanitize_text_field($_POST['user_id']);
+	$user_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($user_id, $user_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a user */
+function run_delete_user($user_id)
+{
+	$repo = new RunUserRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$user_id = sanitize_text_field($_POST['user_id']);
+	$result = $repo->delete($user_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_users', 'run_list_users');
+add_action('wp_ajax_run_single_user', 'run_single_user');
+add_action('wp_ajax_run_create_user', 'run_create_user');
+add_action('wp_ajax_run_update_user', 'run_update_user');
+add_action('wp_ajax_run_delete_user', 'run_delete_user');

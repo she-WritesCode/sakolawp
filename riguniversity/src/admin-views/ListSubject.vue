@@ -44,7 +44,18 @@ const items = ref([
     },
 ]);
 
-const { subjects, fetchSubjects, search, goToViewSubject, subjectId, currentSubject, getOneSubject, loading, showAddFrom, goToAddForm } = useSubjectStore();
+const {
+    subjects,
+    fetchSubjects,
+    search,
+    goToViewSubject,
+    subjectId,
+    currentSubject,
+    getOneSubject,
+    loading,
+    showAddForm,
+    goToAddForm, deleteSubject,
+} = useSubjectStore();
 
 onMounted(() => {
     if (subjectId) {
@@ -55,10 +66,7 @@ onMounted(() => {
 });
 
 const goBack = () => {
-    const url = new URL(window.location.href)
-    url.searchParams.delete('subject_id')
-    url.searchParams.delete('homework_id')
-    window.location.href = url.toString()
+    window.history.back()
 }
 </script>
 
@@ -102,13 +110,14 @@ const goBack = () => {
                         <div class="flex gap-2 text-sm">
                             <Button size="small" @click="goToViewSubject(slotProps.data.subject_id)"
                                 label="View"></Button>
-                            <Button size="small" text severity="danger" label="Delete"></Button>
+                            <Button size="small" @click="deleteSubject(slotProps.data.subject_id)" text
+                                severity="danger" label="Delete"></Button>
                         </div>
                     </template>
                 </Column>
             </DataTable>
 
-            <Dialog v-model:visible="showAddFrom" modal header="Add Subject" :style="{ width: '30rem' }"
+            <Dialog v-model:visible="showAddForm" modal header="Add Subject" :style="{ width: '30rem' }"
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="mb-5">
                     <AddSubject></AddSubject>
