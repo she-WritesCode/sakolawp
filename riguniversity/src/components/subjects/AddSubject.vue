@@ -41,14 +41,14 @@ onMounted(() => {
             <div class="form-group">
                 <label for="name">Subject Name</label>
                 <InputText placeholder="Subject Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
-                <div>{{ errors.name }}</div>
+                <div class="p-error text-red-500">{{ errors.name }}</div>
             </div>
 
             <div class="form-group">
                 <label for="teacher_id"> Faculty</label>
                 <Dropdown name="teacher_id" :options="teacherOptions" optionLabel="display_name" optionValue="ID"
                     placeholder="Select" v-model="teacher_id" class="w-full" v-bind="teacher_idProps" />
-                <div>{{ errors.teacher_id }}</div>
+                <div class="p-error text-red-500">{{ errors.teacher_id }}</div>
             </div>
         </div>
         <div class="flex gap-2 justify-between">
