@@ -4,14 +4,12 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
 import FileUpload from 'primevue/fileupload';
-import Checkbox from 'primevue/checkbox';
-import InputNumber from 'primevue/inputnumber';
 import Dropdown from 'primevue/dropdown';
 import SelectButton from 'primevue/selectbutton';
 import Calendar from 'primevue/calendar';
 import QuestionBuilder from './QuestionBuilder.vue';
-import { string, number, object } from 'yup';
-import Stepper from 'primevue/stepper';
+import { string, object } from 'yup';
+import Stepper, { type StepperChangeEvent } from 'primevue/stepper';
 import StepperPanel from 'primevue/stepperpanel';
 
 const { handleSubmit, errors, defineField } = useForm({
@@ -63,19 +61,24 @@ const peerReviewTemplateOptions = [
     { label: 'bible_teaching', value: 'bible_teaching' },
 ];
 
-const checkStep = (step: number, callback: () => void) => {
+const checkStep = (event: StepperChangeEvent) => {
+    const step = event.index
     if (step == 1) {
-        if (errors.name || errors.description || errors.file_name) {
-            return
+        if (errors.value.title || errors.value.description || errors.value.file_name) {
+            throw new Error()
         }
     }
-    callback();
+    return;
+}
+
+const goBack = () => {
+    window.history.back();
 }
 </script>
 <template>
     <form id="myFor" class="flex flex-col gap-2" name="Add homework" @submit="submitForm">
 
-        <Stepper linear orientation="horizontal">
+        <Stepper @step-change="checkStep" linear orientation="horizontal">
             <StepperPanel header="Details">
                 <template #content="{ nextCallback }">
                     <div class="flex flex-col gap-2">
@@ -121,8 +124,9 @@ const checkStep = (step: number, callback: () => void) => {
                             <span class="warning">Max file size up to 10MB</span>
                         </div>
                     </div>
-                    <div class="flex py-4">
-                        <Button label="Next" @click="checkStep(1, nextCallback)" />
+                    <div class="flex justify-between py-4">
+                        <Button severity="secondary" label="Cancel" @click="goBack" />
+                        <Button label="Next" @click="nextCallback" />
                     </div>
                 </template>
             </StepperPanel>
@@ -144,7 +148,7 @@ const checkStep = (step: number, callback: () => void) => {
 
                             </div>
                             <Transition name="slide-fade">
-                                <div v-if="allow_peer_review" class="flex gap-2">
+                                <div v-if="allow_peer_review" class="flex flex-col gap-2">
                                     <div class="form-group w-full">
                                         <label for="peer_review_who">Who would be reviewing?</label>
                                         <SelectButton v-model="peer_review_who" v-bind="peer_review_whoProps"
@@ -165,7 +169,7 @@ const checkStep = (step: number, callback: () => void) => {
                             </Transition>
                         </div>
                     </div>
-                    <div class="flex py-4 gap-2">
+                    <div class="flex py-4 gap-2 justify-between">
                         <Button label="Back" severity="secondary" @click="prevCallback" />
                         <Button label="Next" @click="nextCallback" />
                     </div>
@@ -186,7 +190,7 @@ const checkStep = (step: number, callback: () => void) => {
                         </div>
 
                     </div>
-                    <div class="flex gap-4 py-4">
+                    <div class="flex gap-4 py-4 justify-between">
                         <Button label="Back" severity="secondary" @click="prevCallback" />
                         <Button class="w-1/2" type="submit" name="submit" label="Add Homework"></Button>
                     </div>
