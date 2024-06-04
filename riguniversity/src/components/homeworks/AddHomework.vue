@@ -63,7 +63,7 @@ const peerReviewTemplateOptions = [
 
 const checkStep = (event: StepperChangeEvent) => {
     const step = event.index
-    if (step == 1) {
+    if (step == 0) {
         if (errors.value.title || errors.value.description || errors.value.file_name) {
             throw new Error()
         }
