@@ -24,33 +24,60 @@ class SakolawpAttendancePublic
         // Check if attendance already marked
         global $wpdb;
         $table_name = $wpdb->prefix . 'sakolawp_attendance';
-        $already_marked = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table_name WHERE student_id = %d AND event_id = %d",
-            $student_id,
-            $event_id
-        ));
+        // $already_marked = $wpdb->get_var($wpdb->prepare(
+        //     "SELECT COUNT(*) FROM $table_name WHERE student_id = %d AND event_id = %d",
+        //     $student_id,
+        //     $event_id
+        // ));
 
-        if ($already_marked) {
-            $result["message"] = 'Attendance already marked';
-            wp_send_json_success($result, 200);
-        }
+        // if ($already_marked) {
+        //     $result["message"] = 'Attendance already marked';
+        //     wp_send_json_success($result, 200);
+        // }
+
+        // Get event date and time
+        $event_date = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date', true));
+        $event_time = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date_clock', true));
+        $event_starts_at = strtotime("$event_date $event_time");
+
+        var_dump($event_date, $event_time);
+
+        // Current time
+        $current_time = current_time('timestamp');
+
+        // Calculate status
+        $late_threshold = 15 * 60; // 15 minutes in seconds
+        $status = ($current_time > $event_starts_at + $late_threshold) ? 'Late' : 'Present';
+
+        // Get running year and enrollment details
+        $running_year = get_option('running_year');
+        $enroll = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = %d",
+            $student_id
+        ), OBJECT);
 
         // Mark attendance
-        $wpdb->insert($table_name, [
-            'student_id' => $student_id,
+        skwp_insert_or_update_record($table_name, [
             'event_id' => $event_id,
-            'time' => current_time('mysql')
-        ]);
+            'student_id' => $student_id,
+            'section_id' => $enroll->section_id,
+            'class_id' => $enroll->class_id,
+            'status' => $status,
+            'year' => $running_year,
+            'timestamp' => $event_date,
+            'time' => $event_time,
+        ], ["student_id", "event_id", "timestamp"], 'attendance_id');
 
         $result["message"] = 'Attendance marked successfully';
         wp_send_json_success($result, 201);
     }
 
+
     function display_qr_scanner()
     {
         ob_start();
 ?>
-        <div id="reader" style="width:100%;background:#ffeded;min-height:300px;"></div>
+        <div id="reader" style="width:100%;min-height:300px;"></div>
 <?php
         return ob_get_clean();
     }

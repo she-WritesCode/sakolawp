@@ -146,8 +146,8 @@ if (empty($first_name)) {
 								$porto_comas =  "";
 								$porto_space =  "";
 							}
-							$sakolawp_date_event = esc_attr(get_post_meta($post->ID, 'sakolawp_event_date', true));
-							$sakolawp_hour_event = esc_attr(get_post_meta($post->ID, 'sakolawp_event_date_clock', true)); ?>
+							$sakolawp_date_event = esc_attr(get_post_meta($post->ID, '_sakolawp_event_date', true));
+							$sakolawp_hour_event = esc_attr(get_post_meta($post->ID, '_sakolawp_event_date_clock', true)); ?>
 							<div class="skwp-column skwp-column-3">
 								<div class="loop-wrapper">
 									<div class="image-news">
