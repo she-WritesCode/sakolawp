@@ -6,6 +6,8 @@ class SakolawpAttendancePublic
     public function __construct()
     {
         add_shortcode('qr_scanner', [$this, 'display_qr_scanner']);
+        add_action('wp_ajax_sakolawp_mark_attendance', [$this, 'mark_attendance']);
+        add_action('wp_ajax_nopriv_sakolawp_mark_attendance', [$this, 'mark_attendance']);
     }
 
     function mark_attendance()
@@ -14,7 +16,7 @@ class SakolawpAttendancePublic
         $student_id = get_current_user_id();
         $result = [];
 
-        if (empty($event_id) || $student_id) {
+        if (empty($event_id) || empty($student_id)) {
             $result["message"] = 'Invalid details';
             wp_send_json_error($result, 400);
         }

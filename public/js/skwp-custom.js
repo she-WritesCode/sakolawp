@@ -126,16 +126,18 @@
 
 
 	function onScanSuccess(qrCodeMessage) {
-		fetch('/wp-json/attendance/v1/mark_attendance', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
+		$.ajax({
+			url: skwp_ajax_object.ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'sakolawp_mark_attendance',
 				event_id: qrCodeMessage,
-			})
-		}).then(response => response.json())
-			.then(data => alert(data.message));
+			},
+			success: function (response) {
+				const data = JSON.parse(response)
+				alert(response)
+			}
+		});
 	}
 
 	const html5QrCode = new Html5QrcodeScanner("reader", {
@@ -145,8 +147,7 @@
 			height: 250
 		}
 	},
-		/* verbose= */
-		false);
+	/* verbose= */ true);
 	html5QrCode.render(onScanSuccess);
 
 
