@@ -20,6 +20,8 @@
  * @subpackage Sakolawp/public
  * @author     Themes Awesome <themesawesome@gmail.com>
  */
+
+
 class Sakolawp_Public
 {
 
@@ -63,6 +65,9 @@ class Sakolawp_Public
 
 
 		add_filter('script_loader_tag', [$this, 'add_type_attribute'], 10, 3);
+
+		require_once 'class-sakolawp-attendance-public.php';
+		new SakolawpAttendancePublic();
 	}
 
 	/**
@@ -123,6 +128,13 @@ class Sakolawp_Public
 			wp_enqueue_script('daterange', plugin_dir_url(__FILE__) . 'js/daterange.js', array('jquery'), false);
 			wp_enqueue_script('modal', plugin_dir_url(__FILE__) . 'js/modal.js', array('jquery'), false);
 		}
+		wp_enqueue_script(
+			'html5-qrcode',
+			plugin_dir_url(__FILE__) . 'js/html5-qrcode.min.js',
+			array(),
+			null,
+			true
+		);
 		wp_register_script('chartjs', plugin_dir_url(__FILE__) . 'js/chart.umd.min.js', [], false);
 		wp_enqueue_script('chartjs');
 		wp_enqueue_script('clockpicker', plugin_dir_url(__FILE__) . 'js/clockpicker.min.js', array('jquery'), false);

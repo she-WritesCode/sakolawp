@@ -29,7 +29,9 @@ if (!empty($enroll)) : ?>
 
 	<div class="attendance-page skwp-content-inner skwp-clearfix">
 
-		<div class="skwp-page-title no-border">
+		<?php echo do_shortcode('[qr_scanner]'); ?>
+
+		<div class="skwp-page-title no-border mt-4">
 			<h5><?php esc_html_e('Attendance', 'sakolawp'); ?></h5>
 		</div>
 

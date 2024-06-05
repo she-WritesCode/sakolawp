@@ -316,6 +316,7 @@ CREATE TABLE $attendance_table (
 	class_id varchar(20) NULL,
 	section_id varchar(20) NULL,
 	student_id varchar(110) NULL,
+	event_id varchar(110) NULL,
 	status varchar(20) NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

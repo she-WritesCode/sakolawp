@@ -125,6 +125,31 @@
 	});
 
 
+	function onScanSuccess(qrCodeMessage) {
+		fetch('/wp-json/attendance/v1/mark_attendance', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				event_id: qrCodeMessage,
+			})
+		}).then(response => response.json())
+			.then(data => alert(data.message));
+	}
+
+	const html5QrCode = new Html5QrcodeScanner("reader", {
+		fps: 10,
+		qrbox: {
+			width: 250,
+			height: 250
+		}
+	},
+		/* verbose= */
+		false);
+	html5QrCode.render(onScanSuccess);
+
+
 	// Handle allow peer review checkbox
 	const $allowPeerReviewCheckbox = $('#allow_peer_review');
 	handleCheckboxChange($allowPeerReviewCheckbox[0], '.peer-review-template-group', 'peer_review_template', true);

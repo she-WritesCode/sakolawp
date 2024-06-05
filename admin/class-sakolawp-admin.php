@@ -66,6 +66,9 @@ class Sakolawp_Admin
 
 		add_action('wp_ajax_sakolawp_select_section_first', 'sakolawp_select_section_first_f');
 		add_action('wp_ajax_nopriv_sakolawp_select_section_first', 'sakolawp_select_section_first_f');
+
+		require_once 'class-sakolawp-attendance-admin.php';
+		new SakolawpAttendanceAdmin();
 	}
 
 	/**
@@ -142,6 +145,7 @@ class Sakolawp_Admin
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Homeworks', 'sakolawp'), esc_html__('Homeworks', 'sakolawp'), 'administrator', $this->plugin_name . '-homework', array($this, 'homeworkAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Routine', 'sakolawp'), esc_html__('Manage Routines', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-routine', array($this, 'manageRoutineAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Attendance', 'sakolawp'), esc_html__('Manage Attendance', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-attendance', array($this, 'manageAttendanceAdminSettings'));
+			add_submenu_page($this->plugin_name . '-settings', esc_html__('Attendance Records', 'sakolawp'), esc_html__('Attendance Records', 'sakolawp'), 'administrator', $this->plugin_name . '-attendance-records', array($this, 'manageAttendanceRecordsAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Report Attendance', 'sakolawp'), esc_html__('Manage Report Attendance', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-report-attendance', array($this, 'manageReportAttendanceAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Students Area', 'sakolawp'), esc_html__('Students Area', 'sakolawp'), 'administrator', $this->plugin_name . '-student-area', array($this, 'studentAreaAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Assign Student', 'sakolawp'), esc_html__('Assign Student', 'sakolawp'), 'administrator', $this->plugin_name . '-assign-student', array($this, 'assignStudentAdminSettings'));
@@ -403,6 +407,14 @@ class Sakolawp_Admin
 	{
 
 		require_once 'partials/' . $this->plugin_name . '-admin-display2.php';
+	}
+
+
+
+	function manageAttendanceRecordsAdminSettings()
+	{
+		// set this var to be used in the settings-display view
+		require_once 'partials/' . $this->plugin_name . '-manage-attendance-records.php';
 	}
 
 	public function manageClassAdminSettings()
