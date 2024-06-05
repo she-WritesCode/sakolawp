@@ -24,20 +24,13 @@ class SakolawpAttendancePublic
         // Check if attendance already marked
         global $wpdb;
         $table_name = $wpdb->prefix . 'sakolawp_attendance';
-        // $already_marked = $wpdb->get_var($wpdb->prepare(
-        //     "SELECT COUNT(*) FROM $table_name WHERE student_id = %d AND event_id = %d",
-        //     $student_id,
-        //     $event_id
-        // ));
-
-        // if ($already_marked) {
-        //     $result["message"] = 'Attendance already marked';
-        //     wp_send_json_success($result, 200);
-        // }
 
         // Get event date and time
         $event_date = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date', true));
         $event_time = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date_clock', true));
+        $event_class_id = sanitize_text_field($_POST['sakolawp_event_class_id']);
+        $event_late_deadline = isset($_POST['sakolawp_event_late_deadline']) ? sanitize_text_field($_POST['sakolawp_event_late_deadline']) : NULL;
+
         $event_starts_at = strtotime("$event_date $event_time");
 
         var_dump($event_date, $event_time);
@@ -46,7 +39,7 @@ class SakolawpAttendancePublic
         $current_time = current_time('timestamp');
 
         // Calculate status
-        $late_threshold = 15 * 60; // 15 minutes in seconds
+        $late_threshold = (int)$event_late_deadline * 60; // 15 minutes in seconds
         $status = ($current_time > $event_starts_at + $late_threshold) ? 'Late' : 'Present';
 
         // Get running year and enrollment details

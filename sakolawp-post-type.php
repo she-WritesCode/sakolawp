@@ -137,7 +137,7 @@ function sakolawp_event_date_meta_box()
 {
 	add_meta_box(
 		'sakolawp-event-metabox',
-		esc_html__('Event Date', 'sakolawp'),
+		esc_html__('Event Date & Attendance', 'sakolawp'),
 		'sakolawp_event_date_meta_box_callback'
 	);
 }
@@ -145,18 +145,68 @@ add_action('add_meta_boxes_sakolawp-event', 'sakolawp_event_date_meta_box');
 
 function sakolawp_event_date_meta_box_callback($post)
 {
+	global $wpdb;
 	// sakola date event field
 	wp_nonce_field('sakolawp_event_date_nonce', 'sakolawp_event_date_nonce');
-	$value = get_post_meta($post->ID, '_sakolawp_event_date', true);
-	echo '<input type="date" id="sakolawp_event_date" name="sakolawp_event_date" value="' . esc_attr($value) . '">';
-
+	$date_value = get_post_meta($post->ID, '_sakolawp_event_date', true);
 	// sakola time event field
 	wp_nonce_field('sakolawp_event_date_clock_nonce', 'sakolawp_event_date_clock_nonce');
-	$value = get_post_meta($post->ID, '_sakolawp_event_date_clock', true);
-	echo '<input type="text" id="sakolawp_event_date_clock" name="sakolawp_event_date_clock" placeholder="HH:MM" value="' . esc_attr($value) . '">';
+	$time_value = get_post_meta($post->ID, '_sakolawp_event_date_clock', true);
+	// sakola time event field
+	$deadline_value = get_post_meta($post->ID, '_sakolawp_event_late_deadline', true);
+?>
+	<div class="my-4">
+		<h4 class="text-lg font-medium"><?= esc_html__('Event Date', 'sakolawp') ?></h4>
+		<div class="mb-2">
+			<input type="date" id="sakolawp_event_date" name="sakolawp_event_date" value="<?php echo esc_attr($date_value); ?>">
 
+			<input type="time" id="sakolawp_event_date_clock" name="sakolawp_event_date_clock" placeholder="HH:MM" value="<?php echo esc_attr($time_value); ?>">
+		</div>
+		<div class="my-2">
+			<label for="sakolawp_event_late_deadline">Students are late after?</label>
+			<select id="sakolawp_event_late_deadline" name="sakolawp_event_late_deadline">
+				<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '1' ? 'selected' : '' ?> value="1"><?php esc_html_e('1 min', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '5' ? 'selected' : '' ?> value="5"><?php esc_html_e('5 mins', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '10' ? 'selected' : '' ?> value="10"><?php esc_html_e('10 mins', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '15' ? 'selected' : '' ?> value="15"><?php esc_html_e('15 mins', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '20' ? 'selected' : '' ?> value="20"><?php esc_html_e('20 mins', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '30' ? 'selected' : '' ?> value="30"><?php esc_html_e('30 mins', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '45' ? 'selected' : '' ?> value="45"><?php esc_html_e('45 mins', 'sakolawp'); ?></option>
+				<option <?= $deadline_value == '60' ? 'selected' : '' ?> value="60"><?php esc_html_e('1 hr', 'sakolawp'); ?></option>
+			</select>
+		</div>
+	</div>
+	<div class="my-4">
+		<h4 class="text-lg font-medium"><?= esc_html__('Class', 'sakolawp') ?></h4>
+		<?php
+		// sakola class field
+		$class_value = esc_attr(get_post_meta($post->ID, '_sakolawp_event_class_id', true));
+		?>
+		<select type="text" id="sakolawp_event_class_id" name="sakolawp_event_class_id" placeholder="HH:MM">
+			<option value=""><?php esc_html_e('Select', 'sakolawp'); ?></option>
+			<?php
+			$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
+			foreach ($classes as $class) :
+			?>
+				<option <?= $class_value == $class->class_id ? 'selected' : '' ?> value="<?php echo esc_attr($class->class_id); ?>"><?php echo esc_html($class->name); ?></option>
+			<?php endforeach; ?>
+		</select>
+	</div>
+	<?php
 	if ($post->ID) {
-		echo '<br/><br/><a class="btn skwp-btn btn-primary btn-large" id="generate_qr_code" data-event_id="' . $post->ID . '">Download QR Code</a><br/><br/><div id="qr_code_holder"></div>';
+	?>
+		<div class="my-4">
+			<h4 class="text-lg font-medium">QR Code For Attendance CODE</h4>
+			<div id="qr_code_holder">
+				<img src="<?php echo esc_attr(get_post_meta($post->ID, 'attendance_qr_code', true)); ?>" />
+			</div>
+			<br />
+			<div>
+				<a class="btn skwp-btn btn-primary btn-large" id="generate_qr_code" data-event_id="<?php echo $post->ID; ?>">Download QR Code</a>
+			</div>
+		</div>
+<?php
 	}
 }
 
@@ -197,12 +247,16 @@ function sakolawp_save_event_date_meta_box_data($post_id)
 	}
 
 	// Sanitize user input.
-	$my_data = sanitize_text_field($_POST['sakolawp_event_date']);
-	$my_data2 = sanitize_text_field($_POST['sakolawp_event_date_clock']);
+	$event_date = sanitize_text_field($_POST['sakolawp_event_date']);
+	$event_time = sanitize_text_field($_POST['sakolawp_event_date_clock']);
+	$event_class_id = sanitize_text_field($_POST['sakolawp_event_class_id']);
+	$event_late_deadline = isset($_POST['sakolawp_event_late_deadline']) ? sanitize_text_field($_POST['sakolawp_event_late_deadline']) : NULL;
 
 	// Update the meta field in the database.
-	update_post_meta($post_id, '_sakolawp_event_date', $my_data);
-	update_post_meta($post_id, '_sakolawp_event_date_clock', $my_data2);
+	update_post_meta($post_id, '_sakolawp_event_date', $event_date);
+	update_post_meta($post_id, '_sakolawp_event_date_clock', $event_time);
+	update_post_meta($post_id, '_sakolawp_event_class_id', $event_class_id);
+	update_post_meta($post_id, '_sakolawp_event_late_deadline', $event_late_deadline);
 }
 
 add_action('save_post', 'sakolawp_save_event_date_meta_box_data');

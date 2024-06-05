@@ -16,6 +16,11 @@ class SakolawpAttendanceAdmin
 
     function generate_qr_code($event_id)
     {
+        $file_url = get_post_meta($event_id, 'attendance_qr_code', true);
+        if (!empty($file_url)) {
+            return $file_url;
+        }
+
         // Get the upload directory
         $upload_dir = wp_upload_dir();
         $upload_path = $upload_dir['basedir'] . '/qr_codes';
@@ -40,6 +45,8 @@ class SakolawpAttendanceAdmin
 
         // Save the QR code to the file
         $qrCode->saveToFile($file_path);
+
+        update_post_meta($event_id, 'attendance_qr_code', $file_url);
 
         // Return the URL to the QR code image
         return $file_url;
