@@ -92,9 +92,6 @@ if (!empty($enroll)) :
 						</thead>
 						<tbody>
 							<?php
-							$year = explode('-', $running_year);
-							// $attendances = $wpdb->get_results("SELECT timestamp, status FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$running_year' AND timestamp = '$timestamps' AND student_id = '$student_id'", ARRAY_A);
-
 							$from_date = DateTime::createFromFormat('Y-m-d', $from_date)->setTime(0, 0)->format('Y-m-d H:i:s');
 							$to_date = DateTime::createFromFormat('Y-m-d', $to_date)->setTime(23, 59, 59, 999999)->format('Y-m-d H:i:s');
 							$attendances = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND section_id = '$section_id' AND created_at BETWEEN '$from_date' AND '$to_date' AND student_id = '$student_id'", ARRAY_A);

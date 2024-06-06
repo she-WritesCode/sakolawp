@@ -33,8 +33,6 @@ class SakolawpAttendancePublic
 
         $event_starts_at = strtotime("$event_date $event_time");
 
-        var_dump($event_date, $event_time);
-
         // Current time
         $current_time = current_time('timestamp');
 
@@ -59,6 +57,7 @@ class SakolawpAttendancePublic
             'year' => $running_year,
             'timestamp' => $event_date,
             'time' => $event_time,
+            'updated_by' => $student_id,
         ], ["student_id", "event_id", "timestamp"], 'attendance_id');
 
         $result["message"] = 'Attendance marked successfully';

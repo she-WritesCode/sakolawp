@@ -2,12 +2,20 @@
 	'use strict';
 
 	if ($('#dataTable1').length) {
-		console.log("$('#dataTable1')", $('#dataTable1'))
 		$('#dataTable1').DataTable({
-			order: [[0, 'asc']],
+			// order: [[0, 'asc']],
+			ordering: false,
 			pageLength: 25,
 		});
 	}
+
+	$('#from_date').prop('max', function () {
+		return new Date().toJSON().split('T')[0];
+	});
+	$('#to_date').prop('max', function () {
+		return new Date().toJSON().split('T')[0];
+	});
+
 
 	if ($('#class_holder').length) {
 		$('#class_holder').on('change', function () {

@@ -26,8 +26,8 @@ $running_year = get_option('running_year');
 			<div class="skwp-logo">
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
-			<a class="nav-item nav-link active" href="#"><?php esc_html_e('Student', 'sakolawp'); ?></a>
-			<a class="nav-item nav-link" href="admin.php?page=sakolawp-manage-report-attendance"><?php esc_html_e('Attendance Report', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link active" href="admin.php?page=sakolawp-manage-attendance"><?php esc_html_e('Student', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link" href="admin.php?page=sakolawp-attendance-records"><?php esc_html_e('Attendance Report', 'sakolawp'); ?></a>
 		</div>
 	</nav>
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">

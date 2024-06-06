@@ -141,8 +141,7 @@
 				event_id: qrCodeMessage,
 			},
 			success: function (response) {
-				const data = JSON.parse(response)
-				alert(response)
+				alert(response.data.message)
 			}
 		});
 	}
