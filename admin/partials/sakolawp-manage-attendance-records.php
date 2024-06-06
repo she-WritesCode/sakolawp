@@ -208,8 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 										<thead>
 											<tr>
 												<th>Student</th>
-												<th>Event started at</th>
-												<th>Arrived at</th>
 												<th>Status</th>
 											</tr>
 										</thead>
@@ -235,14 +233,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 														?>
 															<br /><i class="skwp-subtitle"> <?php echo  esc_html($student_section->name) . ' - ' . $student_accountability->name; ?> </i>
 														<?php } ?>
-													</td>
-													<td>
-														<?php
-														echo  date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time));
-														?>
-													</td>
-													<td>
-														<?php esc_attr_e(date("F j, Y, g:i a", strtotime($attendance['created_at']))); ?>
 													</td>
 													<td>
 														<?php
@@ -279,41 +269,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 													$student_id = $student['student_id'];
 													$user_info = get_userdata($student_id);
 													$student_enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
-
-													$student_section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $student_enroll->section_id");
-													$student_accountability = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $student_enroll->accountability_id");
+													if ($student_enroll) :
+														$student_section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $student_enroll->section_id");
+														$student_accountability = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $student_enroll->accountability_id");
 												?>
-													<tr>
-														<td>
-															<?php
-															echo esc_html($user_info->display_name);
-															if (isset($student_section) && isset($student_accountability)) {
-															?>
-																<br /><i class="skwp-subtitle"> <?php echo  esc_html($student_section->name) . ' - ' . $student_accountability->name; ?> </i>
-															<?php } ?>
-														</td>
-														<td>
-															<?php
-															echo  date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time));
-															?>
-														</td>
-														<td>
-															<?php esc_attr_e('N/A'); ?>
-														</td>
-														<td>
-															<div>
-																<input hidden name="attendance[<?php echo esc_attr($student_id); ?>][event_id]" value="<?= $current_event_id ?>">
-																<select class="badge badge-light badge-<?= $status_class; ?>" name="attendance[<?php echo esc_attr($student_id); ?>][status]">
-																	<option value="Absent" selected><?php esc_attr_e('Absent'); ?></option>
-																	<option value="Present"><?php esc_attr_e('Present'); ?></option>
-																	<option value="Late"><?php esc_attr_e('Late'); ?></option>
-																	<option value="Permitted"><?php esc_attr_e('Permitted'); ?></option>
-																</select>
-																<button class="btn btn-primary skwp-btn btn-sm ml-2" style="padding:5px;" type="submit" value="submit">save</button>
-															</div>
-														</td>
-													</tr>
+														<tr>
+															<td>
+																<?php
+																echo esc_html($user_info->display_name);
+																if (isset($student_section) && isset($student_accountability)) {
+																?>
+																	<br /><i class="skwp-subtitle"> <?php echo  esc_html($student_section->name) . ' - ' . $student_accountability->name; ?> </i>
+																<?php } ?>
+															</td>
+															<td>
+																<?php
+																echo  date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time));
+																?>
+															</td>
+															<td>
+																<?php esc_attr_e('N/A'); ?>
+															</td>
+															<td>
+																<div>
+																	<input hidden name="attendance[<?php echo esc_attr($student_id); ?>][event_id]" value="<?= $current_event_id ?>">
+																	<select class="badge badge-light badge-<?= $status_class; ?>" name="attendance[<?php echo esc_attr($student_id); ?>][status]">
+																		<option value="Absent" selected><?php esc_attr_e('Absent'); ?></option>
+																		<option value="Present"><?php esc_attr_e('Present'); ?></option>
+																		<option value="Late"><?php esc_attr_e('Late'); ?></option>
+																		<option value="Permitted"><?php esc_attr_e('Permitted'); ?></option>
+																	</select>
+																	<button class="btn btn-primary skwp-btn btn-sm ml-2" style="padding:5px;" type="submit" value="submit">save</button>
+																</div>
+															</td>
+														</tr>
 											<?php
+													endif;
 												}
 											}
 											?>
