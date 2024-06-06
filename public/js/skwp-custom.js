@@ -49,6 +49,13 @@
 		});
 	}
 
+	$('#from_date').prop('max', function () {
+		return new Date().toJSON().split('T')[0];
+	});
+	$('#to_date').prop('max', function () {
+		return new Date().toJSON().split('T')[0];
+	});
+
 	if ($('#section_holder.teacher-section').length) {
 		$('#section_holder.teacher-section').on('change', function () {
 			var skwpSectionVal = $('#section_holder').val(),

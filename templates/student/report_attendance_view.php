@@ -86,8 +86,8 @@ if (!empty($enroll)) :
 						<thead>
 							<tr class="text-center" height="50px">
 								<th class="text-left"><?php echo esc_html__('Event', 'sakolawp'); ?></th>
-								<th class="text-left"><?php echo esc_html__('Arrived At', 'sakolawp'); ?></th>
 								<th class="text-left"><?php echo esc_html__('Status', 'sakolawp'); ?></th>
+								<th class="text-left"><?php echo esc_html__('Arrived At', 'sakolawp'); ?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -95,7 +95,8 @@ if (!empty($enroll)) :
 							$year = explode('-', $running_year);
 							// $attendances = $wpdb->get_results("SELECT timestamp, status FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND section_id = '$section_id' AND year = '$running_year' AND timestamp = '$timestamps' AND student_id = '$student_id'", ARRAY_A);
 
-
+							$from_date = DateTime::createFromFormat('Y-m-d', $from_date)->setTime(0, 0)->format('Y-m-d H:i:s');
+							$to_date = DateTime::createFromFormat('Y-m-d', $to_date)->setTime(23, 59, 59, 999999)->format('Y-m-d H:i:s');
 							$attendances = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sakolawp_attendance WHERE class_id = '$class_id' AND section_id = '$section_id' AND created_at BETWEEN '$from_date' AND '$to_date' AND student_id = '$student_id'", ARRAY_A);
 
 							$status = 0;
@@ -114,10 +115,23 @@ if (!empty($enroll)) :
 										?>
 									</td>
 									<td>
-										<?php esc_attr_e(date("F j, Y, g:i a", strtotime($attendance['created_at']))); ?>
+										<?php
+										$attendance_status = $attendance['status'];
+										$status_class = 'danger';
+										if ($attendance_status == "Late") {
+											$status_class = 'warning';
+										} elseif ($attendance_status == "Present") {
+											$status_class = 'success';
+										} elseif ($attendance_status == "Absent") {
+											$status_class = 'danger';
+										} elseif ($attendance_status == "Permitted") {
+											$status_class = 'info';
+										}
+										?>
+										<span class="badge badge-light badge-<?= $status_class; ?>"><?php esc_attr_e($attendance_status); ?></span>
 									</td>
 									<td>
-										<?php esc_attr_e($attendance['status']); ?>
+										<?php esc_attr_e(date("F j, Y, g:i a", strtotime($attendance['created_at']))); ?>
 									</td>
 								</tr>
 							<?php } ?>
