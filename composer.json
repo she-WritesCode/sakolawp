@@ -1,5 +1,8 @@
 {
-    "require": {
-        "endroid/qr-code": "^4.6"
-    }
+  "name": "she_writescode/sakolawp",
+  "description": "none",
+  "license": "proprietary",
+  "require": {
+    "endroid/qr-code": "^4.6"
+  }
 }
