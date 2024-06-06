@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 	foreach ($updated_attendance as $student_id => $row) {
 		$event_id = $row['event_id'];
 		$status = $row['status'];
+		error_log(json_encode([$student_id, $row]));
 		// Get the event details
 		$event_date = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date', true));
 		$event_time = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date_clock', true));
@@ -71,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 
 	// Redirect to the same page to avoid form resubmission
 	// wp_redirect(add_query_arg(['class_id' => $class_id, 'event_id' => $event_id, 'from_date' => $from_date, 'to_date' => $to_date], 'admin.php?page=sakolawp-attendance-records'));
-	exit;
+	// exit;
 }
 ?>
 
@@ -193,12 +194,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 						?>
 							<div class="tab-pane" id="rombel-<?php echo esc_attr($current_event_id); ?>">
 								<div class="my-">
-									<h4 class="text-lg mb-2">
-										<?php
-										esc_attr_e($event->post_title);
-										echo ' <i>(' . date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time)) . ')</i>';
-										?>
-									</h4>
+
+									<div class="flex justify-between">
+										<h4 class="text-lg mb-2">
+											<?php
+											esc_attr_e($event->post_title);
+											echo ' <i>(' . date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time)) . ')</i>';
+											?>
+										</h4>
+										<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Save All</button>
+									</div>
 									<table id="dataTable" class="table table-responsive">
 										<thead>
 											<tr>
@@ -254,14 +259,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 														}
 														?>
 														<div>
-															<input hidden name="attendance[<?php echo esc_attr($student_id); ?>][event_id]" value="<?= $current_event_id ?>">
-															<select class="badge badge-light badge-<?= $status_class; ?>" name="attendance[<?php echo esc_attr($student_id); ?>][status]">
-																<option value="Absent" <?= $attendance_status == 'Absent' ? 'selected' : '' ?>><?php esc_attr_e('Absent'); ?></option>
-																<option value="Present" <?= $attendance_status == 'Present' ? 'selected' : '' ?>><?php esc_attr_e('Present'); ?></option>
-																<option value="Late" <?= $attendance_status == 'Late' ? 'selected' : '' ?>><?php esc_attr_e('Late'); ?></option>
-																<option value="Permitted" <?= $attendance_status == 'Permitted' ? 'selected' : '' ?>><?php esc_attr_e('Permitted'); ?></option>
+															<input type="hidden" name="attendance[<?= $student_id; ?>][event_id]" value="<?= htmlspecialchars($current_event_id); ?>">
+															<select class="badge badge-light badge-<?= htmlspecialchars($status_class); ?>" name="attendance[<?= $student_id; ?>][status]">
+																<option value="Absent" <?= $attendance_status == 'Absent' ? 'selected' : ''; ?>><?= esc_attr_e('Absent'); ?></option>
+																<option value="Present" <?= $attendance_status == 'Present' ? 'selected' : ''; ?>><?= esc_attr_e('Present'); ?></option>
+																<option value="Late" <?= $attendance_status == 'Late' ? 'selected' : ''; ?>><?= esc_attr_e('Late'); ?></option>
+																<option value="Permitted" <?= $attendance_status == 'Permitted' ? 'selected' : ''; ?>><?= esc_attr_e('Permitted'); ?></option>
 															</select>
-															<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Save</button>
+															<button class="btn btn-primary btn-sm ml-2" style="padding:5px;" type="submit" name="submit" value="submit">Save</button>
 														</div>
 													</td>
 												</tr>
@@ -304,7 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 																	<option value="Late"><?php esc_attr_e('Late'); ?></option>
 																	<option value="Permitted"><?php esc_attr_e('Permitted'); ?></option>
 																</select>
-																<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit">Update</button>
+																<button class="btn btn-primary skwp-btn btn-sm ml-2" style="padding:5px;" type="submit" value="submit">save</button>
 															</div>
 														</td>
 													</tr>
