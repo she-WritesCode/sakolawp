@@ -14,11 +14,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step to checkout the repository
       - uses: actions/checkout@v4
 
+      # Step to validate composer.json and composer.lock files
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
 
+      # Step to cache Composer packages to speed up subsequent builds
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v3
@@ -28,33 +31,38 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
+      # Step to install dependencies using Composer
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Generate zip archive ${{ github.action_path }}/build-zip.sh
+      # Step to generate a zip archive using a script in the action's directory
+      - name: Generate zip archive
         id: archive
         run: ${{ github.action_path }}/build-zip.sh
         shell: bash
 
+      # Step to create a directory for unzipping the archive
       - name: Create directory for unzip
         run: mkdir -p zipfile
         shell: bash
 
+      # Step to unzip the generated archive to prevent double zip problem
       - name: Unzip the archive (prevents double zip problem)
         id: unzip
-        run: unzip -o ${{ github.event.repository.name }}.zip -d zipfile
+        run: unzip ${{ github.event.repository.name }}.zip -d zipfile
         shell: bash
 
+      # Step to upload the unzipped archive as an artifact
       - name: Upload the archive as an artifact
         id: upload-plugin-artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}
           path: zipfile
-          retention-days: ${{ inputs.retention-days }}
+          retention-days: 5 # Default to 5 days retention as per the original example
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
 
+    # Uncomment and configure the following step to run your test suite
+    # Ensure you have a test script defined in your composer.json, e.g., "test": "vendor/bin/phpunit"
     # - name: Run test suite
     #   run: composer run-script test
