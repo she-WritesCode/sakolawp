@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the plugin slug and the zip file name
-PLUGIN_SLUG="sakolawp"
+PLUGIN_SLUG="sakolawp-main"
 ZIP_FILE="${PLUGIN_SLUG}.zip"
 
 # Remove any existing zip file
