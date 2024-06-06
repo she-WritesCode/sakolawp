@@ -1,7 +1,15 @@
 #!/bin/bash
 
 # Define the plugin slug and the zip file name
-PLUGIN_SLUG="sakolawp-main"
+set -eo
+
+# Allow some ENV variables to be customized
+if [[ -z "$SLUG" ]]; then
+	SLUG=${GITHUB_REPOSITORY#*/}
+fi
+echo "ℹ︎ SLUG is $SLUG"
+
+PLUGIN_SLUG=$SLUG
 ZIP_FILE="${PLUGIN_SLUG}.zip"
 
 # Remove any existing zip file
