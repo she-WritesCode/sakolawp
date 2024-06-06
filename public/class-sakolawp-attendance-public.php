@@ -28,7 +28,7 @@ class SakolawpAttendancePublic
         // Get event date and time
         $event_date = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date', true));
         $event_time = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date_clock', true));
-        $event_class_id = sanitize_text_field($_POST['sakolawp_event_class_id']);
+        // $event_class_id = sanitize_text_field($_POST['sakolawp_event_class_id']);
         $event_late_deadline = isset($_POST['sakolawp_event_late_deadline']) ? sanitize_text_field($_POST['sakolawp_event_late_deadline']) : NULL;
 
         $event_starts_at = strtotime("$event_date $event_time");
