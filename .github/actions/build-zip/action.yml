@@ -12,6 +12,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # Ensure build-zip.sh has execute permissions
+    - name: Make build-zip.sh executable
+      run: chmod +x ./.github/actions/build-zip/build-zip.sh
+      shell: bash
+
     - name: Generate zip archive
       id: archive
       run: ${{ github.action_path }}/build-zip.sh
