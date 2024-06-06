@@ -24,6 +24,9 @@
  * Text Domain:       sakolawp
  * Domain Path:       /languages
  */
+require plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-checker.php';
+
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
@@ -75,12 +78,19 @@ function deactivate_sakolawp()
 	require_once plugin_dir_path(__FILE__) . 'includes/class-sakolawp-deactivator.php';
 	Sakolawp_Deactivator::deactivate();
 }
+/**
+ * The code that runs during plugin deactivation.
+ * This action is documented in includes/class-sakolawp-deactivator.php
+ */
+function update_sakolawp()
+{
+}
 
 register_activation_hook(__FILE__, 'activate_sakolawp');
 register_activation_hook(__FILE__, 'sakolawp_add_roles');
 register_activation_hook(__FILE__, 'sakolawp_create_db');
 register_deactivation_hook(__FILE__, 'deactivate_sakolawp');
-
+update_sakolawp();
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
