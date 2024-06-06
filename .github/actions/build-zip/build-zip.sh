@@ -16,6 +16,6 @@ ZIP_FILE="${PLUGIN_SLUG}.zip"
 rm -f $ZIP_FILE
 
 # Create a zip archive of the plugin directory
-zip -r $ZIP_FILE . -x "*.git*" -x "*.github*" -x "*tests*" -x "vendor*" -x "*.DS_Store" -x "*.gitignore" -x "*.gitattributes" -x "build-zip.sh"
+zip -r $ZIP_FILE . -x "*.git*" -x "*.github*" -x "*tests*" -x "*.DS_Store" -x "*.gitignore" -x "*.gitattributes" -x "build-zip.sh"
 
 echo "Zip archive ${ZIP_FILE} created successfully."
