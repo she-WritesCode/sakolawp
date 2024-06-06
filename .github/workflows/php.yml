@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Generate zip archive
+      - name: Generate zip archive ${{ github.action_path }}/build-zip.sh
         id: archive
         run: ${{ github.action_path }}/build-zip.sh
         shell: bash
