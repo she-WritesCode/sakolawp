@@ -4,11 +4,10 @@ defined('ABSPATH') || exit;
 if (isset($_POST['submit'])) {
 	$class_id = sanitize_text_field($_POST['class_id']);
 	$section_id = sanitize_text_field($_POST['section_id']);
-	$year_sel = sanitize_text_field($_POST['year_sel']);
-	$month = sanitize_text_field($_POST['month']);
+	$from_date = sanitize_text_field($_POST['from_date']);
+	$to_date = sanitize_text_field($_POST['to_date']);
 
-	$form_submitted = true;
-	wp_redirect(add_query_arg(array('class_id' => $class_id, 'section_id' => $section_id, 'month' => $month, 'year_sel' => $year_sel, 'form_submitted' => 'true'), home_url('report_attendance_view')));
+	wp_redirect(add_query_arg(array('class_id' => $class_id, 'section_id' => $section_id, 'from' => $from_date, 'to' => $to_date, 'form_submitted' => 'true'), home_url('report_attendance_view')));
 	die;
 }
 
@@ -29,10 +28,14 @@ if (!empty($enroll)) : ?>
 
 	<div class="attendance-page skwp-content-inner skwp-clearfix">
 
+		<div class="skwp-page-title no-border mt-4">
+			<h5><?php esc_html_e('Take Attendance', 'sakolawp'); ?></h5>
+		</div>
+
 		<?php echo do_shortcode('[qr_scanner]'); ?>
 
 		<div class="skwp-page-title no-border mt-4">
-			<h5><?php esc_html_e('Attendance', 'sakolawp'); ?></h5>
+			<h5><?php esc_html_e('Attendance Report', 'sakolawp'); ?></h5>
 		</div>
 
 
@@ -40,6 +43,31 @@ if (!empty($enroll)) : ?>
 
 
 		<form id="myForm" name="save_student_attendance" action="" method="POST">
+			<div class="skwp-row">
+				<input type="hidden" name="class_id" value="<?php echo esc_attr($enroll->class_id); ?>">
+				<input type="hidden" name="section_id" value="<?php echo esc_attr($enroll->section_id); ?>">
+				<div class="skwp-column skwp-column-3">
+					<div class="form-group">
+						<label class="gi" for=""><?php echo esc_html__('From', 'sakolawp'); ?></label>
+						<input name="from_date" id="from_date" type="date" />
+					</div>
+				</div>
+				<div class="skwp-column skwp-column-3">
+					<div class="form-group">
+						<label><?php echo esc_html__('To', 'sakolawp'); ?></label>
+						<input name="to_date" id="to_date" type="date" />
+					</div>
+				</div>
+				<div class="skwp-column skwp-column-3">
+					<div class="form-group skwp-mt-20">
+						<button class="btn btn-rounded btn-success btn-upper skwp-btn" type="submit" name="submit" value="submit">
+							<span><?php echo esc_html__('Search Attendance', 'sakolawp'); ?></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		<!-- <form id="myForm" name="save_student_attendance" action="" method="POST">
 			<div class="skwp-row">
 				<input type="hidden" name="class_id" value="<?php echo esc_attr($enroll->class_id); ?>">
 				<input type="hidden" name="section_id" value="<?php echo esc_attr($enroll->section_id); ?>">
@@ -97,7 +125,7 @@ if (!empty($enroll)) : ?>
 					</div>
 				</div>
 			</div>
-		</form>
+		</form> -->
 	</div>
 
 <?php
