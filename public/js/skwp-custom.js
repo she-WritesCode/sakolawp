@@ -141,7 +141,11 @@
 				event_id: qrCodeMessage,
 			},
 			success: function (response) {
-				alert(response.data.message)
+				// Hide the camera element
+				document.getElementById('reader').style.display = 'none';
+				// Display the success message
+				document.getElementById('success-message').style.display = 'block';
+				document.getElementById('event-name').innerHTML = response.data.event_title;
 			}
 		});
 	}

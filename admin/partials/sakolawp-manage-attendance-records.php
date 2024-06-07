@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 											echo ' <i>(' . date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time)) . ')</i>';
 											?>
 										</h4>
-										<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Save All</button>
+										<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Update Attendance</button>
 									</div>
 									<table id="dataTable-<?= $current_event_id; ?>" class="table table-responsive" style="width:100%">
 										<thead>

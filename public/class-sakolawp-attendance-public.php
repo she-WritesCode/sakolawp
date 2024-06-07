@@ -47,6 +47,8 @@ class SakolawpAttendancePublic
             $student_id
         ), OBJECT);
 
+        $event = get_post((int)$event_id);
+
         // Mark attendance
         skwp_insert_or_update_record($table_name, [
             'event_id' => $event_id,
@@ -61,6 +63,7 @@ class SakolawpAttendancePublic
         ], ["student_id", "event_id", "timestamp"], 'attendance_id');
 
         $result["message"] = 'Attendance marked successfully';
+        $result["event_title"] = $event->post_title;
         wp_send_json_success($result, 201);
     }
 
@@ -70,6 +73,9 @@ class SakolawpAttendancePublic
         ob_start();
 ?>
         <div id="reader" style="width:100%;min-height:300px;"></div>
+        <div id="success-message" class="alert alert-success text-center" style="width:100%;display:none;">
+            <span>Attendance for <span id="event-name"></span> marked successfully</span>
+        </div>
 <?php
         return ob_get_clean();
     }
