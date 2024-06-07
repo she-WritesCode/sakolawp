@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 										</h4>
 										<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Save All</button>
 									</div>
-									<table id="dataTable" class="table table-responsive">
+									<table id="dataTable-<?= $current_event_id; ?>" class="table table-responsive" style="width:100%">
 										<thead>
 											<tr>
 												<th>Student</th>
@@ -235,28 +235,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 														<?php } ?>
 													</td>
 													<td>
-														<?php
-														$attendance_status = $attendance['status'];
-														$status_class = 'danger';
-														if ($attendance_status == "Late") {
-															$status_class = 'warning';
-														} elseif ($attendance_status == "Present") {
-															$status_class = 'success';
-														} elseif ($attendance_status == "Absent") {
-															$status_class = 'danger';
-														} elseif ($attendance_status == "Permitted") {
-															$status_class = 'info';
-														}
-														?>
-														<div>
+														<?php $attendance_status = htmlspecialchars($attendance['status']); ?>
+														<div class="flex gap-2 items-center">
 															<input type="hidden" name="attendance[<?= $student_id; ?>][event_id]" value="<?= htmlspecialchars($current_event_id); ?>">
-															<select class="badge badge-light badge-<?= htmlspecialchars($status_class); ?>" name="attendance[<?= $student_id; ?>][status]">
-																<option value="Absent" <?= $attendance_status == 'Absent' ? 'selected' : ''; ?>><?= esc_attr_e('Absent'); ?></option>
-																<option value="Present" <?= $attendance_status == 'Present' ? 'selected' : ''; ?>><?= esc_attr_e('Present'); ?></option>
-																<option value="Late" <?= $attendance_status == 'Late' ? 'selected' : ''; ?>><?= esc_attr_e('Late'); ?></option>
-																<option value="Permitted" <?= $attendance_status == 'Permitted' ? 'selected' : ''; ?>><?= esc_attr_e('Permitted'); ?></option>
-															</select>
-															<button class="btn btn-primary btn-sm ml-2" style="padding:5px;" type="submit" name="submit" value="submit">Save</button>
+															<fieldset class="skwp-form-group flex gap-4 items-center">
+																<div class="form-check flex gap-2 items-center">
+																	<input class="form-check-input" <?= $attendance_status == 'Present' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPresent-<?= $student_id; ?>" value="Present" />
+																	<label class="form-check-label badge badge-ligh badge-success mb-0" for="statusPresent-<?= $student_id; ?>"><?= esc_attr_e('Present'); ?></label>
+																</div>
+																<div class="form-check flex gap-2 items-center">
+																	<input class="form-check-input" <?= $attendance_status == 'Late' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusLate-<?= $student_id; ?>" value="Late" />
+																	<label class="form-check-label badge badge-light badge-warning mb-0" for="statusLate-<?= $student_id; ?>"><?= esc_attr_e('Late'); ?></label>
+																</div>
+																<div class="form-check flex gap-2 items-center">
+																	<input class="form-check-input" <?= $attendance_status == 'Absent' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusAbsent-<?= $student_id; ?>" value="Absent" />
+																	<label class="form-check-label badge badge-light badge-danger mb-0" for="statusAbsent-<?= $student_id; ?>"><?= esc_attr_e('Absent'); ?></label>
+																</div>
+																<div class="form-check flex gap-2 items-center">
+																	<input class="form-check-input" <?= $attendance_status == 'Permitted' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPermitted-<?= $student_id; ?>" value="Permitted" />
+																	<label class="form-check-label badge badge-light badge-info mb-0" for="statusPermitted-<?= $student_id; ?>"><?= esc_attr_e('Permitted'); ?></label>
+																</div>
+															</fieldset>
+															<!-- <button class="btn btn-primary btn-sm ml-2" style="padding:5px;" type="submit" name="submit" value="submit">Save</button> -->
 														</div>
 													</td>
 												</tr>
@@ -283,23 +283,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 																<?php } ?>
 															</td>
 															<td>
-																<?php
-																echo  date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time));
-																?>
-															</td>
-															<td>
-																<?php esc_attr_e('N/A'); ?>
-															</td>
-															<td>
 																<div>
 																	<input hidden name="attendance[<?php echo esc_attr($student_id); ?>][event_id]" value="<?= $current_event_id ?>">
-																	<select class="badge badge-light badge-<?= $status_class; ?>" name="attendance[<?php echo esc_attr($student_id); ?>][status]">
-																		<option value="Absent" selected><?php esc_attr_e('Absent'); ?></option>
-																		<option value="Present"><?php esc_attr_e('Present'); ?></option>
-																		<option value="Late"><?php esc_attr_e('Late'); ?></option>
-																		<option value="Permitted"><?php esc_attr_e('Permitted'); ?></option>
-																	</select>
-																	<button class="btn btn-primary skwp-btn btn-sm ml-2" style="padding:5px;" type="submit" value="submit">save</button>
+																	<fieldset class="skwp-form-group flex gap-4 items-center">
+																		<div class="form-check flex gap-2 items-center">
+																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPresent-<?= $student_id; ?>" value="Present" />
+																			<label class="form-check-label badge badge-ligh badge-success mb-0" for="statusPresent-<?= $student_id; ?>"><?= esc_attr_e('Present'); ?></label>
+																		</div>
+																		<div class="form-check flex gap-2 items-center">
+																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusLate-<?= $student_id; ?>" value="Late" />
+																			<label class="form-check-label badge badge-light badge-warning mb-0" for="statusLate-<?= $student_id; ?>"><?= esc_attr_e('Late'); ?></label>
+																		</div>
+																		<div class="form-check flex gap-2 items-center">
+																			<input class="form-check-input" checked type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusAbsent-<?= $student_id; ?>" value="Absent" />
+																			<label class="form-check-label badge badge-light badge-danger mb-0" for="statusAbsent-<?= $student_id; ?>"><?= esc_attr_e('Absent'); ?></label>
+																		</div>
+																		<div class="form-check flex gap-2 items-center">
+																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPermitted-<?= $student_id; ?>" value="Permitted" />
+																			<label class="form-check-label badge badge-light badge-info mb-0" for="statusPermitted-<?= $student_id; ?>"><?= esc_attr_e('Permitted'); ?></label>
+																		</div>
+																	</fieldset>
+																	<!-- <button class="btn btn-primary skwp-btn btn-sm ml-2" style="padding:5px;" type="submit" value="submit">save</button> -->
 																</div>
 															</td>
 														</tr>

@@ -3,10 +3,19 @@
 
 	if ($('#dataTable1').length) {
 		$('#dataTable1').DataTable({
-			// order: [[0, 'asc']],
-			ordering: false,
+			order: [[0, 'asc']],
 			pageLength: 25,
 		});
+	}
+	if ($('table[id^="dataTable-"]').length) {
+		$('table[id^="dataTable-"]').each(function () {
+			$(this).DataTable({
+				order: [[0, 'asc']],
+				pageLength: 25,
+				responsive: true,
+			});
+
+		})
 	}
 
 	$('#from_date').prop('max', function () {
