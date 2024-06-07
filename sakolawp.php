@@ -16,7 +16,7 @@
  * Plugin Name:       SakolaWP (Modified For RUN)
  * Plugin URI:        demosakolawp.themesawesome.com
  * Description:       School Management System to manage the school activity like school routine, attendance, exam, homework, etc.
- * Version:           2.0.0
+ * Version:           2.0.1
  * Author:            Themes Awesome, Busola Okeowo
  * Author URI:        https://themesawesome.com/
  * License:           GPL-2.0+
@@ -91,6 +91,7 @@ require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-post-type.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-shortcodes.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/includes/element-helper.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-riguniversity.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/plugin-update-checker.php';
 
 function sakolawp_new_elements()
 {

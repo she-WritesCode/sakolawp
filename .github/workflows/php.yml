@@ -7,7 +7,8 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: read
+  contents: write
+  actions: write
 
 jobs:
   build:
@@ -35,7 +36,33 @@ jobs:
         uses: ./.github/actions/build-zip
         with:
           retention-days: 5
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          release_id=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" \
+            | jq -r .id)
+          if [[ $release_id == "null" ]]; then
+            echo "release_exists=false" >> $GITHUB_ENV
+          else
+            echo "release_exists=true" >> $GITHUB_ENV
+            echo "release_id=$release_id" >> $GITHUB_ENV
+            upload_url=$(curl -s \
+              -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
+              -H 'Accept: application/vnd.github.v3+json' \
+              "https://api.github.com/repos/${{ github.repository }}/releases/$release_id" \
+              | jq -r .upload_url)
+            upload_url="${upload_url%\{*}" # Remove the {?name,label} part
+            echo "upload_url=$upload_url" >> $GITHUB_ENV
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create GitHub Release
+        if: env.release_exists == 'false'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -46,12 +73,28 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Update existing GitHub Release
+        if: env.release_exists == 'true'
+        id: update_release
+        run: |
+          response=$(curl -s \
+            -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/${{ env.release_id }}" \
+            -d "{\"tag_name\":\"${{ github.ref_name }}\",\"name\":\"Release ${{ github.ref_name }}\",\"draft\":false,\"prerelease\":false}")
+          upload_url=$(echo $response | jq -r .upload_url)
+          upload_url="${upload_url%\{*}" # Remove the {?name,label} part
+          echo "upload_url=$upload_url" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ env.upload_url }}
           asset_path: ./sakolawp.zip
           asset_name: sakolawp.zip
           asset_content_type: application/zip
