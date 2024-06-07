@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 					</div>
 					<div class="skwp-column skwp-column-4">
 						<div class="form-group skwp-mt-20">
-							<button class="btn btn-rounded btn-success btn-upper skwp-btn" type="submit" name="submit" value="submit">
+							<button class="btn btn-rounded btn-primary btn-upper skwp-btn" type="submit" name="submit" value="submit">
 								<span><?php echo esc_html__('Search', 'sakolawp'); ?></span>
 							</button>
 						</div>
@@ -196,13 +196,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 								<div class="my-">
 
 									<div class="flex justify-between">
-										<h4 class="text-lg mb-2">
-											<?php
-											esc_attr_e($event->post_title);
-											echo ' <i>(' . date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time)) . ')</i>';
-											?>
-										</h4>
-										<button class="btn btn-primary skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Update Attendance</button>
+										<div>
+											<h4 class="text-lg mb-2">
+												<?php
+												esc_attr_e($event->post_title);
+												echo ' <i>(' . date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time)) . ')</i>';
+												?>
+												<small>
+													<a class="btn btn-info skwp-btn btn-small" id="generate_qr_code" data-event_id="<?php echo $current_event_id; ?>">Download QR Code</a>
+												</small>
+											</h4>
+											<div id="qr_code_holder">
+												<!-- <img src="<?php echo esc_attr(get_post_meta($current_event_id, 'attendance_qr_code', true)); ?>" /> -->
+											</div>
+										</div>
+										<div>
+											<button class="btn btn-primary text-sm skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Update Attendance</button>
+										</div>
 									</div>
 									<table id="dataTable-<?= $current_event_id; ?>" class="table table-responsive" style="width:100%">
 										<thead>
