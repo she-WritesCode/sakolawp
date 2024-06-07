@@ -90,45 +90,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 			<form id="myForm" name="save_student_attendance" action="" method="GET">
-				<div class="skwp-row flex">
+				<div class="flex gap-4 items-center my-4">
 					<input type="hidden" name="page" value="sakolawp-attendance-records">
-					<div class="skwp-column skwp-column-4">
-						<div class="skwp-form-group">
-							<label class="gi" for=""><?php echo esc_html__('Class', 'sakolawp'); ?></label>
-							<select class="skwp-form-control" name="class_id" value="<?php echo esc_attr($class_id); ?>" required>
-								<option value=""><?php echo esc_html__('Select', 'sakolawp'); ?></option>
-								<?php
-								$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
-								foreach ($classes as $class) :
-								?>
-									<option <?= $class->class_id == $class_id ? 'selected' : '' ?> value="<?php echo esc_attr($class->class_id); ?>"><?php echo esc_html($class->name); ?></option>
-								<?php endforeach; ?>
-							</select>
-						</div>
+					<div class="flex gap-4 items-center">
+						<label class="g" style="display: inline;" for=""><?php echo esc_html__('Class', 'sakolawp'); ?></label>
+						<select id="class_id" class="skwp-form-contro" name="class_id" value="<?php echo esc_attr($class_id); ?>" required>
+							<option value=""><?php echo esc_html__('Select', 'sakolawp'); ?></option>
+							<?php
+							$classes = $wpdb->get_results("SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class", OBJECT);
+							foreach ($classes as $class) :
+							?>
+								<option <?= $class->class_id == $class_id ? 'selected' : '' ?> value="<?php echo esc_attr($class->class_id); ?>"><?php echo esc_html($class->name); ?></option>
+							<?php endforeach; ?>
+						</select>
 					</div>
-					<div class="skwp-column skwp-column-4">
-						<div class="skwp-form-group">
-							<label class="gi" for=""><?php echo esc_html__('Event', 'sakolawp'); ?></label>
-							<select class="skwp-form-control" name="event_id" value="<?php echo esc_attr($event_id); ?>">
-								<option value=""><?php echo esc_html__('Select', 'sakolawp'); ?></option>
-								<?php
-								$events = get_posts([
-									'post_type' => 'sakolawp-event',
-									'posts_per_page' => -1,
-									'ignore_sticky_posts' => true,
-									'meta_key' => '_sakolawp_event_class_id',
-									'meta_value' => $class_id,
-								]);
-								foreach ($events as $event) :
-								?>
-									<option <?= $event->ID == $event_id ? 'selected' : '' ?> value="<?php echo esc_attr($event->ID); ?>"><?php echo esc_html($event->post_title); ?></option>
-								<?php endforeach; ?>
-							</select>
-						</div>
+					<div class="flex gap-4 items-center">
+						<label class="g" style="display: inline;" for=""><?php echo esc_html__('Event', 'sakolawp'); ?></label>
+						<select id="event_id" class="skwp-form-contro" name="event_id" value="<?php echo esc_attr($event_id); ?>">
+							<option value=""><?php echo esc_html__('Select', 'sakolawp'); ?></option>
+							<?php
+							$events = get_posts([
+								'post_type' => 'sakolawp-event',
+								'posts_per_page' => -1,
+								'ignore_sticky_posts' => true,
+								'meta_key' => '_sakolawp_event_class_id',
+								'meta_value' => $class_id,
+							]);
+							foreach ($events as $event) :
+							?>
+								<option <?= $event->ID == $event_id ? 'selected' : '' ?> value="<?php echo esc_attr($event->ID); ?>"><?php echo esc_html($event->post_title); ?></option>
+							<?php endforeach; ?>
+						</select>
 					</div>
-					<div class="skwp-column skwp-column-4">
+					<div class="flex gap-4 items-center">
 						<div class="form-group skwp-mt-20">
-							<button class="btn btn-rounded btn-primary btn-upper skwp-btn" type="submit" name="submit" value="submit">
+							<button class="btn btn-rounded btn-info btn-upper skwp-btn" type="submit" name="submit" value="submit">
 								<span><?php echo esc_html__('Search', 'sakolawp'); ?></span>
 							</button>
 						</div>
@@ -173,27 +169,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 				$group_attendances_by_event = array_group_by($attendances, 'event_id');
 			?>
 
-				<form method="POST" action="">
-					<input type="hidden" name="update_attendance" value="1">
-					<div class="skwp-tabs-menu">
-						<ul class="nav nav-tabs">
-							<?php foreach (array_keys($group_attendances_by_event) as $current_event_id) :
-								$event = get_post((int)$current_event_id); ?>
-								<li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#rombel-<?= esc_attr($current_event_id); ?>"><?php esc_attr_e($event->post_title); ?></a>
-								</li>
-							<?php endforeach; ?>
-						</ul>
-					</div>
-					<div class="skwp-tab-content tab-content">
-						<?php
-						foreach ($group_attendances_by_event as $current_event_id => $event_attendance) {
-							$event = get_post($current_event_id);
-							$event_date = esc_attr(get_post_meta((int)$current_event_id, '_sakolawp_event_date', true));
-							$event_time = esc_attr(get_post_meta((int)$current_event_id, '_sakolawp_event_date_clock', true));
-						?>
-							<div class="tab-pane" id="rombel-<?php echo esc_attr($current_event_id); ?>">
-								<div class="my-">
+				<div class="skwp-tabs-menu">
+					<ul class="nav nav-tabs">
+						<?php foreach (array_keys($group_attendances_by_event) as $current_event_id) :
+							$event = get_post((int)$current_event_id); ?>
+							<li class="nav-item">
+								<a class="nav-link nav-light" data-toggle="tab" href="#rombel-<?= esc_attr($current_event_id); ?>"><?php esc_attr_e($event->post_title); ?></a>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+				<div class="skwp-tab-content tab-content">
+					<?php
+					foreach ($group_attendances_by_event as $current_event_id => $event_attendance) {
+						$event = get_post($current_event_id);
+						$event_date = esc_attr(get_post_meta((int)$current_event_id, '_sakolawp_event_date', true));
+						$event_time = esc_attr(get_post_meta((int)$current_event_id, '_sakolawp_event_date_clock', true));
+					?>
+						<div class="tab-pane" id="rombel-<?php echo esc_attr($current_event_id); ?>">
+							<div class="my-">
+								<form method="POST" id="event-attendance-<?= $current_event_id; ?>" action="">
 
 									<div class="flex justify-between">
 										<div>
@@ -203,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 												echo ' <i>(' . date("F j, Y, g:i a", strtotime($event_date . ' ' . $event_time)) . ')</i>';
 												?>
 												<small>
-													<a class="btn btn-info skwp-btn btn-small" id="generate_qr_code" data-event_id="<?php echo $current_event_id; ?>">Download QR Code</a>
+													<a class="btn btn-info skwp-btn btn-sm" id="generate_qr_code" data-event_id="<?php echo $current_event_id; ?>">Download QR Code</a>
 												</small>
 											</h4>
 											<div id="qr_code_holder">
@@ -211,9 +206,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 											</div>
 										</div>
 										<div>
-											<button class="btn btn-primary text-sm skwp-btn btn-sm ml-2" type="submit" name="submit" value="submit">Update Attendance</button>
+											<button class="btn btn-primary text-sm skwp-btn ml-2" type="submit" name="submit" value="submit">Update Attendance</button>
 										</div>
 									</div>
+									<input type="hidden" name="update_attendance" value="1">
 									<table id="dataTable-<?= $current_event_id; ?>" class="table table-responsive" style="width:100%">
 										<thead>
 											<tr>
@@ -245,25 +241,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 														<?php } ?>
 													</td>
 													<td>
-														<?php $attendance_status = htmlspecialchars($attendance['status']); ?>
+														<?php $attendance_status = htmlspecialchars($attendance['status']);
+														$radio_id = $current_event_id . '-' . $student_id;
+														?>
 														<div class="flex gap-2 items-center">
 															<input type="hidden" name="attendance[<?= $student_id; ?>][event_id]" value="<?= htmlspecialchars($current_event_id); ?>">
 															<fieldset class="skwp-form-group flex gap-4 items-center">
 																<div class="form-check flex gap-2 items-center">
-																	<input class="form-check-input" <?= $attendance_status == 'Present' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPresent-<?= $student_id; ?>" value="Present" />
-																	<label class="form-check-label badge badge-ligh badge-success mb-0" for="statusPresent-<?= $student_id; ?>"><?= esc_attr_e('Present'); ?></label>
+																	<input class="form-check-input" <?= $attendance_status == 'Present' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPresent-<?= $radio_id; ?>" value="Present" />
+																	<label class="form-check-label badge badge-ligh badge-success mb-0" for="statusPresent-<?= $radio_id; ?>"><?= esc_attr_e('Present'); ?></label>
 																</div>
 																<div class="form-check flex gap-2 items-center">
-																	<input class="form-check-input" <?= $attendance_status == 'Late' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusLate-<?= $student_id; ?>" value="Late" />
-																	<label class="form-check-label badge badge-light badge-warning mb-0" for="statusLate-<?= $student_id; ?>"><?= esc_attr_e('Late'); ?></label>
+																	<input class="form-check-input" <?= $attendance_status == 'Late' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusLate-<?= $radio_id; ?>" value="Late" />
+																	<label class="form-check-label badge badge-light badge-warning mb-0" for="statusLate-<?= $radio_id; ?>"><?= esc_attr_e('Late'); ?></label>
 																</div>
 																<div class="form-check flex gap-2 items-center">
-																	<input class="form-check-input" <?= $attendance_status == 'Absent' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusAbsent-<?= $student_id; ?>" value="Absent" />
-																	<label class="form-check-label badge badge-light badge-danger mb-0" for="statusAbsent-<?= $student_id; ?>"><?= esc_attr_e('Absent'); ?></label>
+																	<input class="form-check-input" <?= $attendance_status == 'Absent' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusAbsent-<?= $radio_id; ?>" value="Absent" />
+																	<label class="form-check-label badge badge-light badge-danger mb-0" for="statusAbsent-<?= $radio_id; ?>"><?= esc_attr_e('Absent'); ?></label>
 																</div>
 																<div class="form-check flex gap-2 items-center">
-																	<input class="form-check-input" <?= $attendance_status == 'Permitted' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPermitted-<?= $student_id; ?>" value="Permitted" />
-																	<label class="form-check-label badge badge-light badge-info mb-0" for="statusPermitted-<?= $student_id; ?>"><?= esc_attr_e('Permitted'); ?></label>
+																	<input class="form-check-input" <?= $attendance_status == 'Permitted' ? 'checked' : ''; ?> type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPermitted-<?= $radio_id; ?>" value="Permitted" />
+																	<label class="form-check-label badge badge-light badge-info mb-0" for="statusPermitted-<?= $radio_id; ?>"><?= esc_attr_e('Permitted'); ?></label>
 																</div>
 															</fieldset>
 															<!-- <button class="btn btn-primary btn-sm ml-2" style="padding:5px;" type="submit" name="submit" value="submit">Save</button> -->
@@ -297,20 +295,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 																	<input hidden name="attendance[<?php echo esc_attr($student_id); ?>][event_id]" value="<?= $current_event_id ?>">
 																	<fieldset class="skwp-form-group flex gap-4 items-center">
 																		<div class="form-check flex gap-2 items-center">
-																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPresent-<?= $student_id; ?>" value="Present" />
-																			<label class="form-check-label badge badge-ligh badge-success mb-0" for="statusPresent-<?= $student_id; ?>"><?= esc_attr_e('Present'); ?></label>
+																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPresent-<?= $radio_id; ?>" value="Present" />
+																			<label class="form-check-label badge badge-ligh badge-success mb-0" for="statusPresent-<?= $radio_id; ?>"><?= esc_attr_e('Present'); ?></label>
 																		</div>
 																		<div class="form-check flex gap-2 items-center">
-																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusLate-<?= $student_id; ?>" value="Late" />
-																			<label class="form-check-label badge badge-light badge-warning mb-0" for="statusLate-<?= $student_id; ?>"><?= esc_attr_e('Late'); ?></label>
+																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusLate-<?= $radio_id; ?>" value="Late" />
+																			<label class="form-check-label badge badge-light badge-warning mb-0" for="statusLate-<?= $radio_id; ?>"><?= esc_attr_e('Late'); ?></label>
 																		</div>
 																		<div class="form-check flex gap-2 items-center">
-																			<input class="form-check-input" checked type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusAbsent-<?= $student_id; ?>" value="Absent" />
-																			<label class="form-check-label badge badge-light badge-danger mb-0" for="statusAbsent-<?= $student_id; ?>"><?= esc_attr_e('Absent'); ?></label>
+																			<input class="form-check-input" checked type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusAbsent-<?= $radio_id; ?>" value="Absent" />
+																			<label class="form-check-label badge badge-light badge-danger mb-0" for="statusAbsent-<?= $radio_id; ?>"><?= esc_attr_e('Absent'); ?></label>
 																		</div>
 																		<div class="form-check flex gap-2 items-center">
-																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPermitted-<?= $student_id; ?>" value="Permitted" />
-																			<label class="form-check-label badge badge-light badge-info mb-0" for="statusPermitted-<?= $student_id; ?>"><?= esc_attr_e('Permitted'); ?></label>
+																			<input class="form-check-input" type="radio" name="attendance[<?= htmlspecialchars($student_id); ?>][status]" id="statusPermitted-<?= $radio_id; ?>" value="Permitted" />
+																			<label class="form-check-label badge badge-light badge-info mb-0" for="statusPermitted-<?= $radio_id; ?>"><?= esc_attr_e('Permitted'); ?></label>
 																		</div>
 																	</fieldset>
 																	<!-- <button class="btn btn-primary skwp-btn btn-sm ml-2" style="padding:5px;" type="submit" value="submit">save</button> -->
@@ -324,16 +322,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 											?>
 										</tbody>
 									</table>
-								</div>
+								</form>
 							</div>
-						<?php
-						}
-						if (count($attendances) == 0) {
-						?>
-							<div class="flex items-center justify-center text-lg p-4">No attendance recorded yet</div>
-						<?php } ?>
-					</div>
-				</form>
+						</div>
+					<?php
+					}
+					if (count($attendances) == 0) {
+					?>
+						<div class="flex items-center justify-center text-lg p-4">No attendance recorded yet</div>
+					<?php } ?>
+				</div>
 			<?php endif; ?>
 		</div>
 		<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">

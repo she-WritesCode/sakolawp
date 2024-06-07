@@ -4,7 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class SakolawpAttendanceAdmin
 {
@@ -38,9 +38,9 @@ class SakolawpAttendanceAdmin
             ->writer(new PngWriter())
             ->data($event_id)
             ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelLow())
-            ->size(300)
-            ->margin(10)
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(800)
+            ->margin(20)
             ->build();
 
         // Save the QR code to the file

@@ -14,7 +14,7 @@
 /*
 Sakolawp Palletes:
 Sakolawp Green : #8bdbad
-Sakolawp Blue : #7BA1EA
+Sakolawp Blue : #4e80df
 Sakolawp Red :
 */
 
@@ -187,7 +187,7 @@ Sakolawp Red :
 	margin-top: 20px;
 	margin-right: 20px;
 	font-family: 'Poppins';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .skwp-form-header {
@@ -224,7 +224,7 @@ Sakolawp Red :
 }
 
 .nav-tabs {
-	border-bottom: 2px solid #7ba1ea;
+	border-bottom: 2px solid #4e80df;
 }
 
 .nav-tabs .nav-item {
@@ -232,20 +232,22 @@ Sakolawp Red :
 }
 
 .nav-tabs .nav-link {
-	color: #000000;
+	color: #72777c;
 	text-decoration: unset;
 	border: 1px solid transparent;
 	border-top-left-radius: 0.25rem;
 	border-top-right-radius: 0.25rem;
 	margin-right: 10px;
-	padding: 20px 25px;
-	font-size: 12px;
-	font-weight: 700;
+	padding: 0.75rem 1rem;
+	font-size: 14px;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
 }
 
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
-	border-color: #7ba1ea;
+	border-color: #4e80df;
 	outline: none;
 }
 
@@ -258,9 +260,17 @@ Sakolawp Red :
 .nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
 	color: #ffffff;
-	background-color: #7ba1ea;
+	background-color: #4e80df;
 	text-decoration: unset;
 	outline: none;
+}
+.nav-tabs .nav-item.show.nav-light .nav-link,
+.nav-tabs .nav-link.nav-light.active {
+	background-color: #f0f5ff;
+	color: #4e80df;
+	text-decoration: unset;
+	outline: none;
+	border-bottom: 1px solid #4e80df;
 }
 
 .nav-tabs .dropdown-menu {
@@ -302,7 +312,7 @@ Sakolawp Red :
 	font-weight: bold;
 	outline: none;
 	padding: 10px 15px;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 button.btn.skwp-btn {
@@ -331,7 +341,7 @@ button.btn.skwp-btn {
 
 .btn-sm.btn-primary,
 .btn.btn-primary.skwp-btn {
-	background-color: #7BA1EA;
+	background-color: #4e80df;
 	color: #ffffff;
 	border-width: 0;
 }
@@ -350,8 +360,8 @@ button.btn.skwp-btn {
 
 .btn-sm.btn-info,
 .btn.btn-info.skwp-btn {
-	background-color: #E7FCFD;
-	color: #7BA1EA;
+	background-color: #ebf2ff;
+	color: #4e80df;
 }
 
 /* ==========Table============ */
@@ -568,7 +578,7 @@ button.btn.skwp-btn {
 	width: 100%;
 	max-width: 100% !important;
 	padding: 5px 15px !important;
-	font-size: 12px;
+	font-size: 14px;
 	line-height: 1.25;
 	color: #464a4c;
 	background-color: #fff;
@@ -652,7 +662,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 }
 
 .skwp-btn {
-	font-size: 11px;
+	font-size: 14px;
 	outline: none;
 	border: 0;
 	padding: 10px 15px;
@@ -924,7 +934,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 	color: #dddddd;
 }
 .dropdown-menu .calendar-table table td.active {
-	background-color: #7BA1EA;
+	background-color: #4e80df;
 	color: #ffffff;
 }
 
@@ -949,8 +959,8 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 
 .add-new-semes {
 	display: inline-block;
-	color: #7ba1ea;
-	border: 1px solid #7ba1ea;
+	color: #4e80df;
+	border: 1px solid #4e80df;
 	border-radius: 5px;
 	padding: 5px 10px;
 	background-color: #ffffff;
@@ -961,8 +971,8 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 .add-new-semes:hover {
 	display: inline-block;
 	color: #ffffff;
-	border: 1px solid #7ba1ea;
-	background-color: #7ba1ea;
+	border: 1px solid #4e80df;
+	background-color: #4e80df;
 }
 
 .back a {
@@ -1006,7 +1016,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 .admin-welcome-inner {
 	padding: 30px;
 	background-color: #edf2fb;
-	border-bottom: 3px solid #7ba1ea;
+	border-bottom: 3px solid #4e80df;
 }
 .admin-welcome-inner .skwp-user-img {
 	float: left;
@@ -1208,7 +1218,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
     margin-left: auto;
 }
 .pi-link a {
-    color: #7BA1EA;
+    color: #4e80df;
     outline: none;
     border: 0;
     text-decoration: none;
@@ -1222,7 +1232,7 @@ skwp-form-control select.skwp-form-control:focus::-ms-value {
 }
 .pi-link a:hover {
     color: #ffffff;
-    background-color: #7BA1EA;
+    background-color: #4e80df;
 }
 .pi-link .sakolawp-icon {
 	align-self: center;
@@ -1621,7 +1631,7 @@ td .status-pilli:first-child {
 }
 /* Info Badge */
 .badge-info {
-    background-color: #7ba1eb; /* Blue */
+    background-color: #4e80df; /* Blue */
 }
 
 /* Danger Badge */

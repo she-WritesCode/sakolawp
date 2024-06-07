@@ -47,7 +47,8 @@
 					},
 					success: function (response) {
 						$('#qr_code_holder').html(`<img src="${response.data.image}" />`);
-						downloadImage(response.data.image, `event-${skwpEventId}-qrcode`);
+						// downloadImage(response.data.image, `event-${skwpEventId}-qrcode`);
+						printImage(response.data.image);
 					}
 				});
 			})
@@ -58,6 +59,7 @@
 			// Create a temporary link element
 			const link = document.createElement('a');
 			link.href = imageUrl;
+			link.target = '_blank';
 			link.download = fileName;
 
 			// Append the link to the document body
@@ -68,6 +70,26 @@
 
 			// Remove the link from the document
 			document.body.removeChild(link);
+		}
+
+		/**
+ * Prints an image by temporarily opening a popup
+ * @param {string} src - image source to load
+ * @returns {void}
+ */
+		function printImage(src) {
+			var win = window.open('about:blank', "_new");
+			win.document.open();
+			win.document.write([
+				'<html>',
+				'   <head>',
+				'   </head>',
+				'   <body onload="window.print()" onafterprint="window.close()">',
+				'       <img style="width:100%" src="' + src + '"/>',
+				'   </body>',
+				'</html>'
+			].join(''));
+			win.document.close();
 		}
 	});
 
