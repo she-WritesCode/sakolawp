@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 			<div class="skwp-logo">
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
-			<a class="nav-item nav-link" href="admin.php?page=sakolawp-manage-attendance"><?php esc_html_e('Student', 'sakolawp'); ?></a>
+			<!-- <a class="nav-item nav-link" href="admin.php?page=sakolawp-manage-attendance"><?php esc_html_e('Student', 'sakolawp'); ?></a> -->
 			<a class="nav-item nav-link active" href="admin.php?page=sakolawp-attendance-records"><?php esc_html_e('Attendance Report', 'sakolawp'); ?></a>
 		</div>
 	</nav>
