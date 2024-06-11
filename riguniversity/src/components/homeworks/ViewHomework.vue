@@ -4,19 +4,32 @@ import { useHomeworkStore } from '../../stores/homework';
 import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Button from 'primevue/button';
+import { onMounted } from 'vue';
 
 
-const { currentHomework } = useHomeworkStore()
+const { currentHomework, homeworkId, getOneHomework, goToEditHomework } = useHomeworkStore()
+
+onMounted(() => {
+    if (homeworkId && !currentHomework.value) {
+        getOneHomework(homeworkId)
+    }
+})
 
 </script>
 <template>
-    <div class="border border-primary-50 p-4 rounded-lg w-full mb-8">
+    <div v-if="!homeworkId && !currentHomework">
+        <h1 class="text-3xl mb-4">Homework Not Found</h1>
+        <p class="mb-4">Please go back and choose a different homework</p>
+        <Button label="Back to Homework List"></Button>
+    </div>
+    <div v-else class="border border-primary-50 p-4 rounded-lg w-full mb-8">
         <div class="w-full flex gap-2 mb-4">
             <h3 class="text-2xl font-semibold text-primary-900">{{ currentHomework?.title }}</h3>
-            <Button size="small" class="text-sm" label="Edit Homework"></Button>
+            <Button size="small" @click="goToEditHomework(homeworkId as string)" class="!text-xs"
+                label="Edit Homework"></Button>
         </div>
 
-        <div v-if="currentHomework?.description" class="mb-4"> {{ currentHomework?.description }}</div>
+        <div class="mb-4"> {{ currentHomework?.description }}</div>
 
         <div class="flex flex-wrap gap-2 capitalize">
             <div class="">

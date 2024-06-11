@@ -182,9 +182,35 @@ function run_update_homework()
 {
 	$repo = new RunHomeworkRepo();
 	$homework_id = sanitize_text_field($_POST['homework_id']);
-	$homework_data = array_map('stripslashes_deep', $_POST);
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$title = sakolawp_sanitize_html($_POST['title']);
+	$description = sakolawp_sanitize_html($_POST['description']);
+	$allow_peer_review = isset($_POST['allow_peer_review']);
+	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
+	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
+	$limit_word_count = isset($_POST['limit_word_count']);
+	$word_count_min = $limit_word_count ? sanitize_text_field($_POST['word_count_min']) : NULL;
+	$word_count_max = $limit_word_count ? sanitize_text_field($_POST['word_count_max']) : NULL;
+	$time_end = sanitize_text_field($_POST['time_end']);
+	$date_end = sanitize_text_field($_POST['date_end']);
 
-	$result = $repo->update($homework_id, $homework_data);
+	$datetime = strtotime(date('d-m-Y', strtotime(sanitize_text_field($_POST['date_end']))));
+	$uploader_type  = 'teacher';
+	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
+
+	$result = $repo->update($homework_id, [
+		'title' => $title,
+		'description' => $description,
+		'uploader_id' => $uploader_id,
+		'uploader_type' => $uploader_type,
+		'time_end' => $time_end,
+		'date_end' => $date_end,
+		'allow_peer_review' => $allow_peer_review,
+		'peer_review_who' => $peer_review_who,
+		'peer_review_template' => $peer_review_template,
+		'word_count_min' => $word_count_min,
+		'word_count_max' => $word_count_max,
+	]);
 
 	wp_send_json_success($result, 200);
 	die();

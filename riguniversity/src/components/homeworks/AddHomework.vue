@@ -17,7 +17,7 @@ const props = defineProps<{
     initialValues?: Homework
 }>();
 
-const { createHomework, updateHomework, loading } = useHomeworkStore()
+const { createHomework, updateHomework, loading, homeworkId } = useHomeworkStore()
 const { subjectId } = useSubjectStore();
 
 const { handleSubmit, errors, defineField } = useForm({
@@ -173,7 +173,8 @@ const peerReviewTemplateOptions = [
 
         </div>
         <div class="flex gap-4 py-4 justify-between">
-            <Button :loading="loading.create" class="w-1/2" type="submit" name="submit" label="Add Homework"></Button>
+            <Button :loading="loading.create" class="w-1/2" type="submit" name="submit" :label="`${homeworkId ? 'Update'
+        : 'Add'} Homework`"></Button>
         </div>
     </form>
 </template>

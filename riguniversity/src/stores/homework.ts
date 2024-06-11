@@ -75,7 +75,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     url.searchParams.set('action', 'view_homework')
     url.searchParams.set('homework_id', homeworkId)
     showViewScreen.value = true
-    // window.location.href = url.toString()
+    window.location.href = url.toString()
   }
 
   const closeViewHomework = () => {
@@ -83,22 +83,37 @@ export const useHomeworkStore = defineStore('homework', () => {
     url.searchParams.delete('action')
     url.searchParams.delete('homework_id')
     showViewScreen.value = false
-    // window.location.href = url.toString()
+    window.location.href = url.toString()
   }
   const goToEditHomework = (homeworkId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_homework')
     url.searchParams.set('homework_id', homeworkId)
     showViewScreen.value = true
-    // window.location.href = url.toString()
+    window.location.href = url.toString()
   }
 
   const closeEditHomework = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.delete('homework_id')
+    url.searchParams.set('homework_id', homeworkId.value as string)
+    url.searchParams.set('action', 'view_homework')
     showViewScreen.value = false
-    // window.location.href = url.toString()
+    window.location.href = url.toString()
+  }
+
+  const goToAddForm = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('action', 'add_homework')
+    showAddForm.value = true
+    window.location.href = url.toString()
+  }
+
+  const closeAddForm = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('action')
+    showAddForm.value = false
+    window.location.href = url.toString()
   }
 
   const getOneHomework = (id: string) => {
@@ -122,20 +137,6 @@ export const useHomeworkStore = defineStore('homework', () => {
       .catch((error) => {
         console.error('Error:', error)
       })
-  }
-
-  const goToAddForm = () => {
-    const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_homework')
-    showAddForm.value = true
-    // window.location.href = url.toString()
-  }
-
-  const closeAddForm = () => {
-    const url = new URL(window.location.href)
-    url.searchParams.delete('action')
-    showAddForm.value = false
-    // window.location.href = url.toString()
   }
 
   const createHomework = (args: Partial<Homework>) => {
