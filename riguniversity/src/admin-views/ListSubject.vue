@@ -62,7 +62,7 @@ const {
     showAddForm,
     goToAddForm, deleteSubject,
 } = useSubjectStore();
-const { showAddForm: showHomeworkAddForm } = useHomeworkStore();
+const { showAddForm: showHomeworkAddForm, showViewScreen: showViewHomeworkScreen } = useHomeworkStore();
 
 onMounted(() => {
     if (subjectId) {
@@ -157,8 +157,8 @@ function deleteASubject(id: string) {
         </div>
         <!-- Single Subject -->
         <div v-else>
-            <div v-if="showHomeworkAddForm">
-
+            <div v-if="showHomeworkAddForm || showViewHomeworkScreen">
+                <!-- <div class="mb-4"><Button @click="goBack" label="Back" outline severity="secondary"></Button></div> -->
             </div>
             <template v-else>
                 <div class="mb-4"><Button @click="goBack" label="Back" outline severity="secondary"></Button></div>

@@ -10,6 +10,15 @@ import Calendar from 'primevue/calendar';
 import QuestionBuilder from './QuestionBuilder.vue';
 import { string, object } from 'yup';
 import Divider from 'primevue/divider';
+import { useHomeworkStore, type Homework } from '../../stores/homework';
+import { useSubjectStore } from '../../stores/subject';
+
+const props = defineProps<{
+    initialValues?: Homework
+}>();
+
+const { createHomework, updateHomework, loading } = useHomeworkStore()
+const { subjectId } = useSubjectStore();
 
 const { handleSubmit, errors, defineField } = useForm({
     initialValues: {
@@ -24,7 +33,8 @@ const { handleSubmit, errors, defineField } = useForm({
         limit_word_count: false,
         date_end: new Date(),
         time_end: "23:59",
-        responses: []
+        responses: [],
+        ...props.initialValues,
     },
     validationSchema: object({
         title: string().required(),
@@ -45,7 +55,11 @@ const [time_end, time_endProps] = defineField('time_end')
 const [responses, responsesProps] = defineField('responses')
 
 const submitForm = handleSubmit(async (values) => {
-    // Submit form logic here
+    if (props.initialValues?.homework_id) {
+        updateHomework({ ...values, subject_id: subjectId })
+    } else {
+        createHomework({ ...values, subject_id: subjectId })
+    }
     console.log('Form submitted:', values)
 })
 const reviewModeOptions = [
@@ -159,7 +173,7 @@ const peerReviewTemplateOptions = [
 
         </div>
         <div class="flex gap-4 py-4 justify-between">
-            <Button class="w-1/2" type="submit" name="submit" label="Add Homework"></Button>
+            <Button :loading="loading.create" class="w-1/2" type="submit" name="submit" label="Add Homework"></Button>
         </div>
     </form>
 </template>

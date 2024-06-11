@@ -1,19 +1,35 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
+import type { Question } from './form'
+import useToast from 'primevue/toast'
 
 export interface Homework {
-  name: string
-  subject_id: number
+  homework_id?: string
+  homework_code?: string
+  title: string
+  subject_id: string
+  description: string
+  file_name: string
+  allow_peer_review: boolean
+  peer_review_template: string
+  peer_review_who: string
+  word_count_min: null
+  word_count_max: null
+  limit_word_count: boolean
+  date_end: Date
+  time_end: string
+  responses: Question[]
 }
 
 export const useHomeworkStore = defineStore('homework', () => {
+  // const toast = useToast()
   const homeworks = ref<Homework[]>([])
-  const currentHomework = ref<Homework | null>(null)
+  const currentHomework = ref<Homework | undefined>(undefined)
   const filter = reactive({
     search: '',
     subject_id: ''
   })
-  const loading = ref(false)
+  const loading = reactive({ list: false, get: false, create: false, update: false, delete: false })
   const homeworkId = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('homework_id')
@@ -24,13 +40,14 @@ export const useHomeworkStore = defineStore('homework', () => {
   })
 
   const showAddForm = ref(action.value === 'add_homework')
+  const showViewScreen = ref(action.value === 'view_homework' && !!homeworkId.value)
 
   watch(filter, () => {
     fetchHomeworks()
   })
 
   const fetchHomeworks = () => {
-    loading.value = true
+    loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -45,7 +62,7 @@ export const useHomeworkStore = defineStore('homework', () => {
       .then((response) => response.json())
       .then((response) => {
         homeworks.value = response.data
-        loading.value = false
+        loading.list = false
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -54,12 +71,14 @@ export const useHomeworkStore = defineStore('homework', () => {
 
   const goToViewHomework = (homeworkId: string) => {
     const url = new URL(window.location.href)
+    url.searchParams.set('action', 'view_homework')
     url.searchParams.set('homework_id', homeworkId)
-    window.location.href = url.toString()
+    showViewScreen.value = true
+    // window.location.href = url.toString()
   }
 
   const getOneHomework = (id: string) => {
-    loading.value = true
+    loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -74,7 +93,7 @@ export const useHomeworkStore = defineStore('homework', () => {
       .then((response) => response.json())
       .then((response) => {
         currentHomework.value = response.data
-        loading.value = false
+        loading.get = false
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -84,18 +103,19 @@ export const useHomeworkStore = defineStore('homework', () => {
   const goToAddForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_homework')
-    window.location.href = url.toString()
+    showAddForm.value = true
+    // window.location.href = url.toString()
   }
 
   const closeAddForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    // window.location.href = url.toString()
     showAddForm.value = false
+    // window.location.href = url.toString()
   }
 
   const createHomework = (args: Partial<Homework>) => {
-    loading.value = true
+    loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -114,14 +134,16 @@ export const useHomeworkStore = defineStore('homework', () => {
       })
       .catch((error) => {
         console.error('Error:', error)
+        // TODO Toast
       })
       .finally(() => {
-        loading.value = false
+        closeAddForm()
+        loading.create = false
       })
   }
 
   const updateHomework = (args: Partial<Homework>) => {
-    // loading.value = true
+    loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -141,12 +163,12 @@ export const useHomeworkStore = defineStore('homework', () => {
         console.error('Error:', error)
       })
       .finally(() => {
-        loading.value = false
+        loading.update = false
       })
   }
 
   const deleteHomework = (id: string) => {
-    loading.value = true
+    loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -162,6 +184,7 @@ export const useHomeworkStore = defineStore('homework', () => {
         console.error('Error:', error)
       })
       .finally(() => {
+        loading.delete = false
         fetchHomeworks()
       })
   }
@@ -175,7 +198,8 @@ export const useHomeworkStore = defineStore('homework', () => {
     goToViewHomework,
     homeworkId,
     getOneHomework,
-    showAddForm,
+    showAddForm: computed(() => showAddForm),
+    showViewScreen: computed(() => showViewScreen),
     goToAddForm,
     closeAddForm,
     createHomework,

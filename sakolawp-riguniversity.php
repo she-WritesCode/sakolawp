@@ -105,7 +105,7 @@ function run_single_homework()
 	$repo = new RunHomeworkRepo();
 	// $_POST = array_map('stripslashes_deep', $_POST);
 
-	$homework_id = sanitize_text_field($_POST['homework_id']);
+	$homework_id = (int)($_POST['homework_id']);
 	$result = $repo->single($homework_id);
 
 	if (!$result) {
@@ -125,7 +125,7 @@ function run_create_homework()
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sanitize_text_field($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
-	$date_end = sanitize_text_field($_POST['date_end']);
+	$date_end = date("Y-m-d", strtotime(sanitize_text_field($_POST['date_end'])));
 	$time_end = sanitize_text_field($_POST['time_end']);
 	$class_id = sanitize_text_field($_POST['class_id']);
 	$file_name = $_FILES["file_name"]["name"];
@@ -137,7 +137,7 @@ function run_create_homework()
 	$word_count_min = sanitize_text_field($_POST['word_count_min']);
 	$word_count_max = sanitize_text_field($_POST['word_count_max']);
 	$uploader_type  = 'teacher';
-	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
+	$uploader_id  = get_current_user_id();
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
 
 	$post_id = $homework_code;

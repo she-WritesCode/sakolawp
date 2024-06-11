@@ -23,7 +23,7 @@ export const useSubjectStore = defineStore('subject', () => {
   const loading = ref(false)
   const subjectId = computed(() => {
     const url = new URL(window.location.href)
-    return url.searchParams.get('subject_id')
+    return url.searchParams.get('subject_id') || undefined
   })
   const action = computed(() => {
     const url = new URL(window.location.href)

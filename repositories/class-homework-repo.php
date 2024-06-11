@@ -56,8 +56,8 @@ class RunHomeworkRepo
             FROM {$wpdb->prefix}{$this->homework_table} h
             LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
             LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
-            WHERE s.homework_id = '$homework_id'
-            GROUP BY s.homework_id";
+            WHERE h.homework_id = '$homework_id'
+            GROUP BY h.homework_id";
 
         $result = $wpdb->get_row($sql);
 

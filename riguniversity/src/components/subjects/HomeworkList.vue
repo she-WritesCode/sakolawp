@@ -8,9 +8,9 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useSubjectStore } from '../../stores/subject';
 import AddHomework from '../homeworks/AddHomework.vue';
-import Dialog from 'primevue/dialog';
+import ViewHomework from '../homeworks/ViewHomework.vue';
 
-const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, closeAddForm, getOneHomework } = useHomeworkStore();
+const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, closeAddForm, getOneHomework, currentHomework, showViewScreen, loading } = useHomeworkStore();
 const { subjectId } = useSubjectStore();
 
 onMounted(() => {
@@ -32,10 +32,24 @@ onMounted(() => {
                     <Button @click="closeAddForm" label="Back" size="small" outline severity="secondary"></Button>
                 </div>
                 <div class="md:text-center w-full">
-                    <h3 class="px-2 text-xl font-semibold">Add Homework</h3>
+                    <h3 class="px-2 text-xl font-semibold">{{ homeworkId ? "Edit" : "Add" }} Homework</h3>
                 </div>
             </div>
-            <AddHomework></AddHomework>
+            <AddHomework :initialValues="currentHomework"></AddHomework>
+        </div>
+    </div>
+    <div v-else-if="showViewScreen">
+        <div class="md:px-2 max-w-2xl mx-auto">
+            <div class="flex gap-2 mb-8 items-center">
+                <div>
+                    <Button @click="closeAddForm" label="Back" size="small" outline severity="secondary"></Button>
+                </div>
+                <div class="md:text-center w-full">
+                    <h2 class="px-2 text-xl font-semibold">Homework</h2>
+                </div>
+            </div>
+            <ViewHomework>
+            </ViewHomework>
         </div>
     </div>
     <DataTable v-else :value="homeworks" tableStyle="min-width: 10rem" paginator :rows="10"
@@ -53,7 +67,7 @@ onMounted(() => {
         <Column field="title" header="Title"></Column>
         <Column header="Deadline">
             <template #body="slotProps">
-                <div>{{ slotProps.data.date_end }} {{ slotProps.data.time_end }}</div>
+                <div>{{ new Date(slotProps.data.date_end).toDateString() }} {{ slotProps.data.time_end }}</div>
             </template>
         </Column>
         <Column header="Submissions" class="text-center">
@@ -72,15 +86,6 @@ onMounted(() => {
             </template>
         </Column>
     </DataTable>
-
-    <!-- <Dialog @close-modal="closeAddForm" v-model:visible="showAddForm" modal class="w-full md:w8/12">
-        <template #container="{ closeCallback }">
-            <div class="px-2 pt-8">
-                <h3 class="px-2 text-xl">Add Homework</h3>
-                <AddHomework></AddHomework>
-            </div>
-        </template>
-    </Dialog> -->
 </template>
 
 <style scoped></style>
