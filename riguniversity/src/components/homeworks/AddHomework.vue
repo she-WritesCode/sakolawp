@@ -9,8 +9,7 @@ import SelectButton from 'primevue/selectbutton';
 import Calendar from 'primevue/calendar';
 import QuestionBuilder from './QuestionBuilder.vue';
 import { string, object } from 'yup';
-import Stepper, { type StepperChangeEvent } from 'primevue/stepper';
-import StepperPanel from 'primevue/stepperpanel';
+import Divider from 'primevue/divider';
 
 const { handleSubmit, errors, defineField } = useForm({
     initialValues: {
@@ -61,143 +60,107 @@ const peerReviewTemplateOptions = [
     { label: 'bible_teaching', value: 'bible_teaching' },
 ];
 
-const checkStep = (event: StepperChangeEvent) => {
-    const step = event.index
-    if (step == 0) {
-        if (errors.value.title || errors.value.description || errors.value.file_name) {
-            throw new Error("No title selected")
-        }
-    }
-    return;
-}
-
-const goBack = () => {
-    window.history.back();
-}
 </script>
 <template>
-    <form id="myFor" class="flex flex-col gap-2" name="Add homework" @submit="submitForm">
+    <form id="myFor" class="flex flex-col gap-8" name="Add homework" @submit="submitForm">
+        <div class="flex flex-col gap-2">
 
-        <Stepper @step-change="checkStep" linear orientation="horizontal">
-            <StepperPanel header="Details">
-                <template #content="{ nextCallback }">
-                    <div class="flex flex-col gap-2">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <InputText v-model="title" v-bind="titleProps" name="title" class="w-full" />
+                <div class="p-error text-red-500">{{ errors.title }}</div>
+            </div>
 
-                        <div class="form-group">
-                            <label for="title">Title</label>
-                            <InputText v-model="title" v-bind="titleProps" name="title" class="w-full" />
-                            <div class="p-error text-red-500">{{ errors.title }}</div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <Textarea v-model="description" v-bind="descriptionProps" name="description" class="w-full"></Textarea>
+                <div class="p-error text-red-500">{{ errors.description }}</div>
+            </div>
+            <div class="flex gap-2">
+                <div class="">
+                    <div class="form-group">
+                        <label for=""> Due Date</label>
+                        <Calendar v-model="date_end" v-bind="date_endProps" class="w-full" name="date_end" />
+                        <div class="p-error text-red-500">{{ errors.date_end }}</div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="form-group">
+                        <label for=""> Due Time</label>
+                        <Calendar id="calendar-timeonly" v-model="time_end as unknown as Date" v-bind="time_endProps"
+                            timeOnly name="time_end" hourFormat="24" />
+                        <div class="p-error text-red-500">{{ errors.time_end }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-form-label" for="file-3">Upload homework file (optional)</label>
+                <div class="input-group mb-2">
+                    <FileUpload outlined mode="basic" name="file_name" id="file-3" class=""
+                        accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" />
+                    <div class="p-error text-red-500">{{ errors.file_name }}</div>
+                </div>
+                <span class="warning">Max file size up to 10MB</span>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2">
+
+            <div class="mb-4">
+                <h4 class="text-lg font-semibold text-black">Homework Grading</h4>
+                <p>How would you like this assessment to be graded?</p>
+                <Divider class="mb-4" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <div class="form-group">
+                    <label>How would you like this homework to be of assessed?</label>
+                    <SelectButton v-model="allow_peer_review" v-bind="allow_peer_reviewProps" name="allow_peer_review"
+                        :options="reviewModeOptions" aria-labelledby="basic" option-label="label" option-value="value"
+                        size="large" class="" />
+                    <div class="p-error text-red-500">{{ errors.allow_peer_review }}</div>
+
+                </div>
+                <Transition name="slide-fade">
+                    <div v-if="allow_peer_review" class="flex flex-col gap-2">
+                        <div class="form-group w-full">
+                            <label for="peer_review_who">Who would be reviewing?</label>
+                            <SelectButton v-model="peer_review_who" v-bind="peer_review_whoProps" name="peer_review_who"
+                                :options="peerReviewWhoOptions" aria-labelledby="basic" option-label="label"
+                                option-value="value" size="large" />
+                            <div class="p-error text-red-500">{{ errors.peer_review_who }}</div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <Textarea v-model="description" v-bind="descriptionProps" name="description"
-                                class="w-full"></Textarea>
-                            <div class="p-error text-red-500">{{ errors.description }}</div>
-                        </div>
-                        <div class="flex gap-2">
-                            <div class="">
-                                <div class="form-group">
-                                    <label for=""> Due Date</label>
-                                    <Calendar v-model="date_end" v-bind="date_endProps" class="w-full"
-                                        name="date_end" />
-                                    <div class="p-error text-red-500">{{ errors.date_end }}</div>
-                                </div>
-                            </div>
-                            <div class="">
-                                <div class="form-group">
-                                    <label for=""> Due Time</label>
-                                    <Calendar id="calendar-timeonly" v-model="time_end" v-bind="time_endProps" timeOnly
-                                        name="time_end" hourFormat="24" />
-                                    <div class="p-error text-red-500">{{ errors.time_end }}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-form-label" for="file-3">Upload homework file (optional)</label>
-                            <div class="input-group mb-2">
-                                <FileUpload outlined mode="basic" name="file_name" id="file-3" class=""
-                                    accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" />
-                                <div class="p-error text-red-500">{{ errors.file_name }}</div>
-                            </div>
-                            <span class="warning">Max file size up to 10MB</span>
+                        <div class="form-group w-full">
+                            <label for="peer_review_template">Choose a rubric</label>
+                            <Dropdown name="peer_review_template" id="peer_review_template"
+                                :options="peerReviewTemplateOptions" v-model="peer_review_template"
+                                v-bind="peer_review_templateProps" class="w-full" option-label="label"
+                                option-value="value" />
+                            <div class="p-error text-red-500">{{ errors.peer_review_template }}</div>
                         </div>
                     </div>
-                    <div class="flex justify-between py-4">
-                        <Button severity="secondary" label="Cancel" @click="goBack" />
-                        <Button label="Next" @click="nextCallback" />
-                    </div>
-                </template>
-            </StepperPanel>
-            <StepperPanel header="Assessment">
-                <template #content="{ prevCallback, nextCallback }">
-                    <div class="flex flex-col gap-2">
+                </Transition>
+            </div>
+        </div>
+        <div class="flex flex-col gap-2">
 
-                        <div>
-                            <h4 class="text-lg font-medium">Homework Assessment</h4>
-                        </div>
+            <div class="mb-4">
+                <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
+                <p>How would you like your students to respond to this homework. For example: if you want them to submit
+                    a url you can use short text, or if you can add file upload if you want the student to respond with
+                    a file instead </p>
+                <Divider class="mb-4" />
+            </div>
 
-                        <div class="flex flex-col gap-2">
-                            <div class="form-group">
-                                <label>How would you like this homework to be of assessed?</label>
-                                <SelectButton v-model="allow_peer_review" v-bind="allow_peer_reviewProps"
-                                    name="allow_peer_review" :options="reviewModeOptions" aria-labelledby="basic"
-                                    option-label="label" option-value="value" size="large" class="" />
-                                <div class="p-error text-red-500">{{ errors.allow_peer_review }}</div>
+            <div>
+                <QuestionBuilder v-model="responses" v-bind="responsesProps"></QuestionBuilder>
+                <div class="p-error text-red-500">{{ errors.responses }}</div>
+            </div>
 
-                            </div>
-                            <Transition name="slide-fade">
-                                <div v-if="allow_peer_review" class="flex flex-col gap-2">
-                                    <div class="form-group w-full">
-                                        <label for="peer_review_who">Who would be reviewing?</label>
-                                        <SelectButton v-model="peer_review_who" v-bind="peer_review_whoProps"
-                                            name="peer_review_who" :options="peerReviewWhoOptions"
-                                            aria-labelledby="basic" option-label="label" option-value="value"
-                                            size="large" />
-                                        <div class="p-error text-red-500">{{ errors.peer_review_who }}</div>
-                                    </div>
-                                    <div class="form-group w-full">
-                                        <label for="peer_review_template">Choose a rubric</label>
-                                        <Dropdown name="peer_review_template" id="peer_review_template"
-                                            :options="peerReviewTemplateOptions" v-model="peer_review_template"
-                                            v-bind="peer_review_templateProps" class="w-full" option-label="label"
-                                            option-value="value" />
-                                        <div class="p-error text-red-500">{{ errors.peer_review_template }}</div>
-                                    </div>
-                                </div>
-                            </Transition>
-                        </div>
-                    </div>
-                    <div class="flex py-4 gap-2 justify-between">
-                        <Button label="Back" severity="secondary" @click="prevCallback" />
-                        <Button label="Next" @click="nextCallback" />
-                    </div>
-                </template>
-            </StepperPanel>
-            <StepperPanel header="Responses">
-                <template #content="{ prevCallback }">
-                    <div class="flex flex-col gap-2">
-
-                        <div>
-                            <h4 class="text-lg font-medium">Homework Responses</h4>
-                            <p>How would you like your students to respond to this homework</p>
-                        </div>
-
-                        <div>
-                            <QuestionBuilder v-model="responses" v-bind="responsesProps"></QuestionBuilder>
-                            <div class="p-error text-red-500">{{ errors.responses }}</div>
-                        </div>
-
-                    </div>
-                    <div class="flex gap-4 py-4 justify-between">
-                        <Button label="Back" severity="secondary" @click="prevCallback" />
-                        <Button class="w-1/2" type="submit" name="submit" label="Add Homework"></Button>
-                    </div>
-                </template>
-            </StepperPanel>
-        </Stepper>
-
+        </div>
+        <div class="flex gap-4 py-4 justify-between">
+            <Button class="w-1/2" type="submit" name="submit" label="Add Homework"></Button>
+        </div>
     </form>
 </template>
 

@@ -7,6 +7,10 @@ export default {
             'relative',
             // Font
             'leading-none',
+            {
+                'font-medium': !context.active,
+                'font-semibold': context.active
+            },
 
             // Flex Alignment
             'inline-flex items-center align-bottom text-center',
@@ -26,7 +30,7 @@ export default {
             'bg-surface-100 dark:bg-surface-950',
             {
                 'text-surface-600 dark:text-white/60 before:bg-transparent': !context.active,
-                'text-surface-800 dark:text-white/80 before:bg-surface-0 dark:before:bg-surface-800': context.active
+                'text-primary-800 dark:text-white/80 before:bg-surface-0 dark:before:bg-surface-800': context.active
             },
 
             // Invalid State

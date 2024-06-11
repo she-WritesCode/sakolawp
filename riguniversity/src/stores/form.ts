@@ -21,12 +21,21 @@ export interface Option {
   points?: number
 }
 
-export type QuestionType = 'linear-scale' | 'radio' | 'text' | 'textarea' | 'checkbox' | 'dropdown'
+export type QuestionType =
+  | 'linear-scale'
+  | 'radio'
+  | 'text'
+  | 'textarea'
+  | 'checkbox'
+  | 'dropdown'
+  | 'file'
 
 export interface Question {
   question_id: string
   question: string
   type: QuestionType
+  accepts?: string
+  multiple?: boolean
   linear_scale_options?: LinearScaleOptions
   text_options: TextOptions
   options?: Option[]
@@ -53,14 +62,15 @@ export const useFormStore = defineStore('formStore', {
         question_id: `q${this.form.questions.length + 1}`,
         question: '',
         type,
+        accepts: '*',
         options:
           type === 'radio' || type === 'checkbox' || type === 'dropdown'
             ? [{ label: '', value: '' }]
-            : undefined,
+            : [],
         text_options:
           type === 'text' || type === 'textarea'
             ? { add_word_count: false, min: 250, max: 300 }
-            : {},
+            : { add_word_count: false, min: 0, max: 0 },
         linear_scale_options:
           type === 'linear-scale'
             ? {
@@ -72,7 +82,16 @@ export const useFormStore = defineStore('formStore', {
                   10: 'Expert - demonstrates a deep understanding and mastery'
                 }
               }
-            : undefined
+            : {
+                min: 1,
+                max: 10,
+                step: 1,
+                labels: {
+                  1: 'Did not meet expectations',
+                  10: 'Expert - demonstrates a deep understanding and mastery'
+                }
+              },
+        required: true
       }
       this.form.questions.push(newQuestion)
     },
@@ -85,6 +104,15 @@ export const useFormStore = defineStore('formStore', {
     },
     removeOption(questionIndex: number, optionIndex: number) {
       this.form.questions[questionIndex].options?.splice(optionIndex, 1)
+    },
+    getFileTypeOptions() {
+      return [
+        { label: 'All Files', value: '*' },
+        { label: 'Images', value: 'image/*' },
+        { label: 'Word Documents', value: '.docs|.docx' },
+        { label: 'PDF File', value: '.pdf' },
+        { label: 'CSV File', value: '.csv' }
+      ]
     },
     generateForm() {
       console.log(this.form)

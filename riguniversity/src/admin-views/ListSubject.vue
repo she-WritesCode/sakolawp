@@ -15,6 +15,7 @@ import Students from '../components/subjects/Students.vue'
 import EditSubject from '../components/subjects/EditSubject.vue'
 import AddSubject from '../components/subjects/AddSubject.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
+import { useHomeworkStore } from "../stores/homework";
 const tabs = {
     homeworks: HomeworkList,
     lessons: Lessons,
@@ -61,6 +62,7 @@ const {
     showAddForm,
     goToAddForm, deleteSubject,
 } = useSubjectStore();
+const { showAddForm: showHomeworkAddForm } = useHomeworkStore();
 
 onMounted(() => {
     if (subjectId) {
@@ -91,6 +93,7 @@ function deleteASubject(id: string) {
 </script>
 
 <template>
+
     <!-- Loading Indicator -->
     <div v-if="loading">
         <LoadingIndicator></LoadingIndicator>
@@ -154,22 +157,27 @@ function deleteASubject(id: string) {
         </div>
         <!-- Single Subject -->
         <div v-else>
-            <div class="mb-4"><Button @click="goBack" label="Back" outline severity="secondary"></Button></div>
-            <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
-
-                <div class="flex items-center gap-2">
-                    <h3 class="text-xl md:text-2xl text-white mb-2">{{ currentSubject?.name }}</h3>
-                    <Button text class=" bg-white hover:bg-primary-50" @click="currentTab = 'editSubject'"
-                        label="Edit Subject"></Button>
-                </div>
-                <div class="flex gap-2">
-                    <!-- <span>{{ currentSubject?.lesson_count }} Lesson(s)</span> | -->
-                    <span>{{ currentSubject?.homework_count }} Homework(s)</span>
-                </div>
-                <div><b>Faculty:</b> {{ currentSubject?.teacher_name }}</div>
+            <div v-if="showHomeworkAddForm">
 
             </div>
-            <TabMenu size="large" class="w-full border-0 mb-4" :model="items" />
+            <template v-else>
+                <div class="mb-4"><Button @click="goBack" label="Back" outline severity="secondary"></Button></div>
+                <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
+
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-xl md:text-2xl text-white mb-2">{{ currentSubject?.name }}</h3>
+                        <Button text class=" bg-white hover:bg-primary-50" @click="currentTab = 'editSubject'"
+                            label="Edit Subject"></Button>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- <span>{{ currentSubject?.lesson_count }} Lesson(s)</span> | -->
+                        <span>{{ currentSubject?.homework_count }} Homework(s)</span>
+                    </div>
+                    <div><b>Faculty:</b> {{ currentSubject?.teacher_name }}</div>
+
+                </div>
+                <TabMenu size="large" class="w-full border-0 mb-4" :model="items" />
+            </template>
             <div class="border-0 mb-8">
                 <component :is="tabs[currentTab]" />
             </div>

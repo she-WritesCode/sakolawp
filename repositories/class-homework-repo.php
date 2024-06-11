@@ -13,6 +13,7 @@ class RunHomeworkRepo
         $search = isset($args['search']) ? $args['search'] : '';
         $subject_id = isset($args['subject_id']) ? $args['subject_id'] : '';
         $uploader_id = isset($args['uploader_id']) ? $args['uploader_id'] : '';
+        $homework_code = isset($args['homework_code']) ? $args['homework_code'] : '';
 
         $sql = "SELECT h.*, COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name
             FROM {$wpdb->prefix}{$this->homework_table} h
@@ -33,6 +34,11 @@ class RunHomeworkRepo
         // Add uploader_id condition
         if (!empty($uploader_id)) {
             $sql .= " AND h.uploader_id = $uploader_id";
+        }
+
+        // Add homework_code condition
+        if (!empty($homework_code)) {
+            $sql .= " AND h.homework_code = $homework_code";
         }
 
         $sql .= " GROUP BY h.homework_id";

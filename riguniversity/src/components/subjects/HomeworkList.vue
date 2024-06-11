@@ -10,7 +10,7 @@ import { useSubjectStore } from '../../stores/subject';
 import AddHomework from '../homeworks/AddHomework.vue';
 import Dialog from 'primevue/dialog';
 
-const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, getOneHomework } = useHomeworkStore();
+const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, closeAddForm, getOneHomework } = useHomeworkStore();
 const { subjectId } = useSubjectStore();
 
 onMounted(() => {
@@ -22,10 +22,23 @@ onMounted(() => {
     }
 });
 
+
 </script>
 <template>
-
-    <DataTable :value="homeworks" tableStyle="min-width: 10rem" paginator :rows="10"
+    <div v-if="showAddForm">
+        <div class="md:px-2 max-w-2xl mx-auto">
+            <div class="flex gap-2 mb-8 items-center">
+                <div>
+                    <Button @click="closeAddForm" label="Back" size="small" outline severity="secondary"></Button>
+                </div>
+                <div class="md:text-center w-full">
+                    <h3 class="px-2 text-xl font-semibold">Add Homework</h3>
+                </div>
+            </div>
+            <AddHomework></AddHomework>
+        </div>
+    </div>
+    <DataTable v-else :value="homeworks" tableStyle="min-width: 10rem" paginator :rows="10"
         :rowsPerPageOptions="[5, 10, 20, 50]">
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
@@ -60,10 +73,14 @@ onMounted(() => {
         </Column>
     </DataTable>
 
-    <Dialog v-model:visible="showAddForm" modal header="Add Homework" :style="{ width: '30rem' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <AddHomework></AddHomework>
-    </Dialog>
+    <!-- <Dialog @close-modal="closeAddForm" v-model:visible="showAddForm" modal class="w-full md:w8/12">
+        <template #container="{ closeCallback }">
+            <div class="px-2 pt-8">
+                <h3 class="px-2 text-xl">Add Homework</h3>
+                <AddHomework></AddHomework>
+            </div>
+        </template>
+    </Dialog> -->
 </template>
 
 <style scoped></style>

@@ -120,9 +120,58 @@ function run_single_homework()
 function run_create_homework()
 {
 	$repo = new RunHomeworkRepo();
-	$homework_data = array_map('stripslashes_deep', $_POST);
+	$_POST = array_map('stripslashes_deep', $_POST);
 
-	$result = $repo->create($homework_data);
+	//$_POST = array_map( 'stripslashes_deep', $_POST );
+	$title = sanitize_text_field($_POST['title']);
+	$description = sakolawp_sanitize_html($_POST['description']);
+	$date_end = sanitize_text_field($_POST['date_end']);
+	$time_end = sanitize_text_field($_POST['time_end']);
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$file_name = $_FILES["file_name"]["name"];
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$subject_id = sanitize_text_field($_POST['subject_id']);
+	$allow_peer_review = isset($_POST['allow_peer_review']);
+	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
+	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
+	$word_count_min = sanitize_text_field($_POST['word_count_min']);
+	$word_count_max = sanitize_text_field($_POST['word_count_max']);
+	$uploader_type  = 'teacher';
+	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
+	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
+
+	$post_id = $homework_code;
+
+	$result = $repo->create([
+		'homework_code' => $homework_code,
+		'title' => $title,
+		'description' => $description,
+		'class_id' => $class_id,
+		'section_id' => $section_id,
+		'subject_id' => $subject_id,
+		'uploader_id' => $uploader_id,
+		'uploader_type' => $uploader_type,
+		'time_end' => $time_end,
+		'date_end' => $date_end,
+		'file_name' => $file_name,
+		'allow_peer_review' => $allow_peer_review,
+		'peer_review_template' => $peer_review_template,
+		'peer_review_who' => $peer_review_who,
+		'word_count_min' => (int)$word_count_min,
+		'word_count_max' => (int)$word_count_max,
+	]);
+
+	require_once(ABSPATH . 'wp-admin/includes/image.php');
+	require_once(ABSPATH . 'wp-admin/includes/file.php');
+	require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+	add_filter('upload_dir', 'sakolawp_custom_dir_homework');
+	$attach_id = media_handle_upload('file_name', $post_id);
+	if (is_numeric($attach_id)) {
+		update_option('homework_file_name', $attach_id);
+		update_post_meta($post_id, '_file_name', $attach_id);
+	}
+	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
 	wp_send_json_success($result, 201);
 	die();

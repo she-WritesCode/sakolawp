@@ -90,7 +90,8 @@ export const useHomeworkStore = defineStore('homework', () => {
   const closeAddForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    window.location.href = url.toString()
+    // window.location.href = url.toString()
+    showAddForm.value = false
   }
 
   const createHomework = (args: Partial<Homework>) => {
