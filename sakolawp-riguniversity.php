@@ -2,6 +2,7 @@
 
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-questions-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 
@@ -136,6 +137,7 @@ function run_create_homework()
 	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
 	$word_count_min = sanitize_text_field($_POST['word_count_min']);
 	$word_count_max = sanitize_text_field($_POST['word_count_max']);
+	$questions = $_POST['questions'];
 	$uploader_type  = 'teacher';
 	$uploader_id  = get_current_user_id();
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
@@ -159,6 +161,7 @@ function run_create_homework()
 		'peer_review_who' => $peer_review_who,
 		'word_count_min' => (int)$word_count_min,
 		'word_count_max' => (int)$word_count_max,
+		'questions' => $questions,
 	]);
 
 	require_once(ABSPATH . 'wp-admin/includes/image.php');
@@ -193,6 +196,7 @@ function run_update_homework()
 	$word_count_max = $limit_word_count ? sanitize_text_field($_POST['word_count_max']) : NULL;
 	$time_end = sanitize_text_field($_POST['time_end']);
 	$date_end = sanitize_text_field($_POST['date_end']);
+	$questions = $_POST['questions'];
 
 	$datetime = strtotime(date('d-m-Y', strtotime(sanitize_text_field($_POST['date_end']))));
 	$uploader_type  = 'teacher';
@@ -210,6 +214,7 @@ function run_update_homework()
 		'peer_review_template' => $peer_review_template,
 		'word_count_min' => $word_count_min,
 		'word_count_max' => $word_count_max,
+		'questions' => $questions,
 	]);
 
 	wp_send_json_success($result, 200);

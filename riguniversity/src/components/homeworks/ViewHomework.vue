@@ -10,7 +10,7 @@ import { onMounted } from 'vue';
 const { currentHomework, homeworkId, getOneHomework, goToEditHomework } = useHomeworkStore()
 
 onMounted(() => {
-    if (homeworkId && !currentHomework.value) {
+    if (homeworkId) {
         getOneHomework(homeworkId)
     }
 })
@@ -33,7 +33,7 @@ onMounted(() => {
 
         <div class="flex flex-wrap gap-2 capitalize">
             <div class="">
-                <Tag outlined :value="`${currentHomework?.responses?.length || '0'} Questions`" severity="info" />
+                <Tag outlined :value="`${currentHomework?.questions?.length || '0'} Questions`" severity="info" />
             </div>
             <template v-if="currentHomework?.allow_peer_review">
                 <div class="">

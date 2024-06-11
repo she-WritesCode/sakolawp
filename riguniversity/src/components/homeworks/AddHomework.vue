@@ -12,12 +12,13 @@ import { string, object } from 'yup';
 import Divider from 'primevue/divider';
 import { useHomeworkStore, type Homework } from '../../stores/homework';
 import { useSubjectStore } from '../../stores/subject';
+import { onMounted } from 'vue';
 
 const props = defineProps<{
     initialValues?: Homework
 }>();
 
-const { createHomework, updateHomework, loading, homeworkId } = useHomeworkStore()
+const { createHomework, updateHomework, loading, homeworkId, getOneHomework } = useHomeworkStore()
 const { subjectId } = useSubjectStore();
 
 const { handleSubmit, errors, defineField } = useForm({
@@ -33,7 +34,7 @@ const { handleSubmit, errors, defineField } = useForm({
         limit_word_count: false,
         date_end: new Date(),
         time_end: "23:59",
-        responses: [],
+        questions: [],
         ...props.initialValues,
     },
     validationSchema: object({
@@ -52,7 +53,7 @@ const [word_count_max, word_count_maxProps] = defineField('word_count_max')
 const [limit_word_count, limit_word_countProps] = defineField('limit_word_count')
 const [date_end, date_endProps] = defineField('date_end')
 const [time_end, time_endProps] = defineField('time_end')
-const [responses, responsesProps] = defineField('responses')
+const [questions, questionsProps] = defineField('questions')
 
 const submitForm = handleSubmit(async (values) => {
     if (props.initialValues?.homework_id) {
@@ -73,6 +74,12 @@ const peerReviewTemplateOptions = [
     { label: 'prophetic_word', value: 'prophetic_word' },
     { label: 'bible_teaching', value: 'bible_teaching' },
 ];
+
+onMounted(() => {
+    if (homeworkId) {
+        getOneHomework(homeworkId)
+    }
+});
 
 </script>
 <template>
@@ -167,8 +174,8 @@ const peerReviewTemplateOptions = [
             </div>
 
             <div>
-                <QuestionBuilder v-model="responses" v-bind="responsesProps"></QuestionBuilder>
-                <div class="p-error text-red-500">{{ errors.responses }}</div>
+                <QuestionBuilder v-model="questions" v-bind="questionsProps"></QuestionBuilder>
+                <div class="p-error text-red-500">{{ errors.questions }}</div>
             </div>
 
         </div>

@@ -1,7 +1,7 @@
 <?php
 class RunQuestionsRepo
 {
-    protected $questions_table = 'sakolawp_questions';
+    protected $questions_table = 'sakolawp_homework_questions';
     protected $linear_scale_options_table = 'sakolawp_linear_scale_options';
     protected $linear_scale_labels_table = 'sakolawp_linear_scale_labels';
     protected $options_table = 'sakolawp_question_options';
@@ -10,6 +10,12 @@ class RunQuestionsRepo
     function create($question_data)
     {
         global $wpdb;
+
+        // Convert arrays to JSON strings
+        if (isset($question_data['text_options'])) {
+            $question_data['text_options'] = json_encode($question_data['text_options']);
+        }
+
 
         // Extract linear scale options and labels
         $linear_scale_options = isset($question_data['linear_scale_options']) ? $question_data['linear_scale_options'] : null;
@@ -76,6 +82,11 @@ class RunQuestionsRepo
     {
         global $wpdb;
 
+        // Convert arrays to JSON strings
+        if (isset($question_data['text_options'])) {
+            $question_data['text_options'] = json_encode($question_data['text_options']);
+        }
+
         // Extract linear scale options and labels
         $linear_scale_options = isset($question_data['linear_scale_options']) ? $question_data['linear_scale_options'] : null;
         unset($question_data['linear_scale_options']);
@@ -102,11 +113,13 @@ class RunQuestionsRepo
                     $linear_scale_data,
                     array('question_id' => $question_id)
                 );
+                error_log($wpdb->last_error);
 
                 $wpdb->delete(
                     "{$wpdb->prefix}{$this->linear_scale_labels_table}",
                     array('question_id' => $question_id)
                 );
+                error_log($wpdb->last_error);
 
                 foreach ($linear_scale_options['labels'] as $scale_value => $label) {
                     $label_data = [
@@ -118,6 +131,7 @@ class RunQuestionsRepo
                         "{$wpdb->prefix}{$this->linear_scale_labels_table}",
                         $label_data
                     );
+                    error_log($wpdb->last_error);
                 }
             }
 
@@ -126,6 +140,7 @@ class RunQuestionsRepo
                     "{$wpdb->prefix}{$this->options_table}",
                     array('question_id' => $question_id)
                 );
+                error_log($wpdb->last_error);
 
                 foreach ($options as $option) {
                     $option_data = [
@@ -138,8 +153,11 @@ class RunQuestionsRepo
                         "{$wpdb->prefix}{$this->options_table}",
                         $option_data
                     );
+                    error_log($wpdb->last_error);
                 }
             }
+        } else {
+            error_log($wpdb->last_error);
         }
 
         return $result;

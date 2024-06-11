@@ -22,10 +22,10 @@ class RunHomeworkRepo
         $homework_code = isset($args['homework_code']) ? $args['homework_code'] : '';
 
         $sql = "SELECT h.*, COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name
-            FROM {$wpdb->prefix}{$this->homework_table} h
-            LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
-            LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
-            WHERE 1=1"; // Start with a tautology
+         FROM {$wpdb->prefix}{$this->homework_table} h
+         LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+         LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
+         WHERE 1=1"; // Start with a tautology
 
         // Add search condition
         if (!empty($search)) {
@@ -50,6 +50,12 @@ class RunHomeworkRepo
         $sql .= " GROUP BY h.homework_id";
 
         $result = $wpdb->get_results($sql);
+
+        // Fetch questions for each homework and append to the result
+        foreach ($result as &$homework) {
+            $homework->questions = $this->questions_repo->get_by_homework($homework->homework_id);
+        }
+
         return $result;
     }
 
@@ -59,11 +65,11 @@ class RunHomeworkRepo
         global $wpdb;
 
         $sql = "SELECT h.*,  COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name 
-            FROM {$wpdb->prefix}{$this->homework_table} h
-            LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
-            LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
-            WHERE h.homework_id = '$homework_id'
-            GROUP BY h.homework_id";
+         FROM {$wpdb->prefix}{$this->homework_table} h
+         LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+         LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
+         WHERE h.homework_id = '$homework_id'
+         GROUP BY h.homework_id";
 
         $result = $wpdb->get_row($sql);
 
@@ -84,6 +90,8 @@ class RunHomeworkRepo
         // Extract questions from homework data
         $questions = isset($homework_data['questions']) ? $homework_data['questions'] : [];
         unset($homework_data['questions']);
+
+        error_log(print_r($questions, true));
 
         $result = $wpdb->insert(
             "{$wpdb->prefix}{$this->homework_table}",
@@ -117,15 +125,21 @@ class RunHomeworkRepo
             array('homework_id' => $homework_id)
         );
 
-        if ($result) {
+        if (isset($result)) {
             foreach ($questions as $question) {
-                if (isset($question['question_id'])) {
+                if (strlen($question['question_id']) !== 2) {
+                    error_log("Existing ===>");
+                    error_log(print_r($question, true));
                     $this->questions_repo->update($question['question_id'], $question);
                 } else {
+                    error_log("New ===>");
+                    error_log(print_r($question, true));
                     $question['homework_id'] = $homework_id;
                     $this->questions_repo->create($question);
                 }
             }
+        } else {
+            error_log($wpdb->last_error);
         }
 
         return $result;

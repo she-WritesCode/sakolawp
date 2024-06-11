@@ -2,6 +2,7 @@ import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import type { Question } from './form'
 import useToast from 'primevue/toast'
+import { convertObjectToSearchParams } from '@/utils/search'
 
 export interface Homework {
   homework_id?: string
@@ -18,7 +19,7 @@ export interface Homework {
   limit_word_count: boolean
   date_end: Date
   time_end: string
-  responses: Question[]
+  questions: Question[]
 }
 
 export const useHomeworkStore = defineStore('homework', () => {
@@ -147,7 +148,7 @@ export const useHomeworkStore = defineStore('homework', () => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams({
+      body: convertObjectToSearchParams({
         action: 'run_create_homework',
         ...(args as any)
       })
@@ -175,7 +176,7 @@ export const useHomeworkStore = defineStore('homework', () => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams({
+      body: convertObjectToSearchParams({
         action: 'run_update_homework',
         ...(args as any)
       })
