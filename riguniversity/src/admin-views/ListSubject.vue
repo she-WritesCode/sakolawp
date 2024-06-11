@@ -53,7 +53,7 @@ const items = ref([
 const {
     subjects,
     fetchSubjects,
-    search,
+    filter,
     goToViewSubject,
     subjectId,
     currentSubject,
@@ -109,7 +109,7 @@ function deleteASubject(id: string) {
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                            <InputText v-model="search" placeholder="Search Subjects" class="font-normal" />
+                            <InputText v-model="filter.search" placeholder="Search Subjects" class="font-normal" />
                         </div>
                         <div class="">
                             <Button @click="goToAddForm" size="small" label="Add Subject"></Button>

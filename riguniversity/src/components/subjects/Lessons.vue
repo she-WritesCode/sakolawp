@@ -27,7 +27,7 @@ onMounted(() => {
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                    <InputText v-model="search" placeholder="Search Lessons" class="font-normal" />
+                    <InputText v-model="filter.search" placeholder="Search Lessons" class="font-normal" />
                 </div>
                 <div class="">
                     <Button size="small" label="Add Lesson"></Button>

@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useSubjectStore } from '../../stores/subject';
+import { ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
-import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
-
+const search = ref('')
 </script>
 <template>
     <DataTable :value="[]" tableStyle="min-width: 10rem" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">

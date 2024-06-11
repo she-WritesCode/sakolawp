@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import * as yup from 'yup'
 
@@ -19,7 +19,7 @@ export const createSubjectSchema = yup.object({
 export const useSubjectStore = defineStore('subject', () => {
   const subjects = ref<Subject[]>([])
   const currentSubject = ref<Subject | null>(null)
-  const search = ref('')
+  const filter = reactive({ search: '' })
   const loading = ref(false)
   const subjectId = computed(() => {
     const url = new URL(window.location.href)
@@ -37,12 +37,12 @@ export const useSubjectStore = defineStore('subject', () => {
     }
   })
 
-  watch(search, () => {
+  watch(filter, () => {
     fetchSubjects()
   })
 
   const fetchSubjects = () => {
-    if (!search.value) {
+    if (!filter.search) {
       loading.value = true
     }
     // @ts-ignore
@@ -53,7 +53,7 @@ export const useSubjectStore = defineStore('subject', () => {
       },
       body: new URLSearchParams({
         action: 'run_list_subjects',
-        search: search.value
+        search: filter.search
       })
     })
       .then((response) => response.json())
@@ -181,7 +181,7 @@ export const useSubjectStore = defineStore('subject', () => {
   return {
     subjects: computed(() => subjects),
     fetchSubjects,
-    search: computed(() => search),
+    filter: computed(() => filter),
     loading: computed(() => loading),
     currentSubject: computed(() => currentSubject),
     goToViewSubject,
