@@ -10,7 +10,7 @@ import { useSubjectStore } from '../../stores/subject';
 import AddHomework from '../homeworks/AddHomework.vue';
 import ViewHomework from '../homeworks/ViewHomework.vue';
 
-const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, closeAddForm, getOneHomework, currentHomework, showViewScreen, loading } = useHomeworkStore();
+const { homeworks, goToAddForm, filter, goToViewHomework, homeworkId, showAddForm, closeViewHomework, closeAddForm, getOneHomework, currentHomework, showViewScreen, loading } = useHomeworkStore();
 const { subjectId } = useSubjectStore();
 
 onMounted(() => {
@@ -42,7 +42,7 @@ onMounted(() => {
         <div class="md:px-2 max-w-2xl mx-auto">
             <div class="flex gap-2 mb-8 items-center">
                 <div>
-                    <Button @click="closeAddForm" label="Back" size="small" outline severity="secondary"></Button>
+                    <Button @click="closeViewHomework" label="Back" size="small" outline severity="secondary"></Button>
                 </div>
                 <div class="md:text-center w-full">
                     <h2 class="px-2 text-xl font-semibold">Homework</h2>

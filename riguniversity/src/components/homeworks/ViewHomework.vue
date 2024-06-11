@@ -3,39 +3,40 @@ import Tag from 'primevue/tag';
 import { useHomeworkStore } from '../../stores/homework';
 import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
+import Button from 'primevue/button';
 
 
-const { loading, currentHomework } = useHomeworkStore()
+const { currentHomework } = useHomeworkStore()
 
 </script>
 <template>
-    <div class="bg-primary-600 text-primary-inverse p-4 rounded-lg w-full mb-8">
-        <div class="w-full mb-4">
-            <h3 class="text-lg font-semibold text-primary-inverse">{{ currentHomework?.title }}</h3>
+    <div class="border border-primary-50 p-4 rounded-lg w-full mb-8">
+        <div class="w-full flex gap-2 mb-4">
+            <h3 class="text-2xl font-semibold text-primary-900">{{ currentHomework?.title }}</h3>
+            <Button size="small" class="text-sm" label="Edit Homework"></Button>
         </div>
-        <div> {{ currentHomework?.description }}</div>
-        <div class="flex flex-wrap gap-4 capitalize">
-            <div>
-                <Tag :value="currentHomework?.responses?.length || '0'" severity="secondary" />
-                Questions
+
+        <div v-if="currentHomework?.description" class="mb-4"> {{ currentHomework?.description }}</div>
+
+        <div class="flex flex-wrap gap-2 capitalize">
+            <div class="">
+                <Tag outlined :value="`${currentHomework?.responses?.length || '0'} Questions`" severity="info" />
             </div>
             <template v-if="currentHomework?.allow_peer_review">
-                <div>
-                    <Tag :value="currentHomework?.peer_review_who" severity="secondary" />
-                    Reviewed
+                <div class="">
+                    <Tag outlined :value="`${currentHomework?.peer_review_who} Reviewed`" severity="success" />
                 </div>
-                <div>
-                    <Tag :value="currentHomework?.peer_review_template || 'No'" severity="secondary" />
-                    Rubric
+                <div class="">
+                    <Tag outlined :value="currentHomework?.peer_review_template || 'No Rubric'" severity="warning" />
                 </div>
             </template>
-            <div v-else>
-                <Tag value="Faculty" severity="secondary" />
-                Graded
+            <div v-else class="">
+                <Tag outlined value="Faculty Graded" severity="success" />
             </div>
-            <div>
-                <Tag :value="currentHomework?.responses?.length || '0'" severity="secondary" />
-                Questions
+            <div class="">
+                <Tag outlined
+                    :value="`Due on: ${new Date(currentHomework?.date_end as any).toDateString()} ${currentHomework?.time_end}`"
+                    severity="danger" />
             </div>
         </div>
     </div>
