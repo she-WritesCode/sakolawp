@@ -12,6 +12,10 @@ $routine_table = $wpdb->prefix . 'sakolawp_class_routine';
 $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
 $lessons_table = $wpdb->prefix . 'sakolawp_lessons';
 $homework_table = $wpdb->prefix . 'sakolawp_homework';
+$question_table = $wpdb->prefix .  'sakolawp_homework_questions'; // Table to store the main question data
+$linear_scale_options_table = $wpdb->prefix .  'sakolawp_linear_scale_options'; // Table to store linear scale options
+$linear_scale_labels_table = $wpdb->prefix . 'sakolawp_linear_scale_labels'; // Table to store linear scale labels
+$options_table = $wpdb->prefix . 'sakolawp_question_options'; // Table to store options for radio, checkbox, and dropdown questions
 $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
 $questions_bank_table = $wpdb->prefix . 'sakolawp_questions_bank';
@@ -142,6 +146,43 @@ CREATE TABLE $homework_table (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (homework_id)
+) $charset_collate;
+
+CREATE TABLE $question_table (
+    question_id INT NOT NULL AUTO_INCREMENT,
+    homework_id INT NOT NULL,
+    question TEXT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    accepts VARCHAR(255),
+    multiple BOOLEAN,
+    required BOOLEAN,
+    text_options JSON,
+    score_percentage INT,
+    expected_points INT,
+    UNIQUE KEY id (question_id),
+) $charset_collate;
+
+CREATE TABLE $linear_scale_options_table (
+    question_id INT NOT NULL,
+    min INT NOT NULL,
+    max INT NOT NULL,
+    step INT NOT NULL,
+    UNIQUE KEY id (question_id),
+) $charset_collate;
+
+CREATE TABLE $linear_scale_labels_table (
+    id INT NOT NULL AUTO_INCREMENT,
+    question_id INT NOT NULL,
+    scale_value INT NOT NULL,
+    label VARCHAR(255) NOT NULL,
+) $charset_collate;
+
+CREATE TABLE $options_table (
+    id INT NOT NULL AUTO_INCREMENT,
+    question_id INT NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    value VARCHAR(255) NOT NULL,
+    points INT,
 ) $charset_collate;
 
 CREATE TABLE $deliveries_table (

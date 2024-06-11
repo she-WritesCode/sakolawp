@@ -4,6 +4,12 @@ class RunHomeworkRepo
     protected $homework_table = 'sakolawp_homework';
     protected $deliveries_table = 'sakolawp_deliveries';
     protected $users_table = 'users';
+    protected $questions_repo;
+
+    public function __construct()
+    {
+        $this->questions_repo = new RunQuestionsRepo();
+    }
 
     /** List Homeworks */
     function list($args = [])
@@ -61,7 +67,9 @@ class RunHomeworkRepo
 
         $result = $wpdb->get_row($sql);
 
-        if (!$result) {
+        if ($result) {
+            $result->questions = $this->questions_repo->get_by_homework($homework_id);
+        } else {
             error_log($wpdb->last_error);
         }
 
@@ -72,10 +80,25 @@ class RunHomeworkRepo
     function create($homework_data)
     {
         global $wpdb;
+
+        // Extract questions from homework data
+        $questions = isset($homework_data['questions']) ? $homework_data['questions'] : [];
+        unset($homework_data['questions']);
+
         $result = $wpdb->insert(
             "{$wpdb->prefix}{$this->homework_table}",
             $homework_data
         );
+
+        if ($result) {
+            $homework_id = $wpdb->insert_id;
+
+            foreach ($questions as $question) {
+                $question['homework_id'] = $homework_id;
+                $this->questions_repo->create($question);
+            }
+        }
+
         return $result;
     }
 
@@ -83,11 +106,28 @@ class RunHomeworkRepo
     function update($homework_id, $homework_data)
     {
         global $wpdb;
+
+        // Extract questions from homework data
+        $questions = isset($homework_data['questions']) ? $homework_data['questions'] : [];
+        unset($homework_data['questions']);
+
         $result = $wpdb->update(
             "{$wpdb->prefix}{$this->homework_table}",
             $homework_data,
             array('homework_id' => $homework_id)
         );
+
+        if ($result) {
+            foreach ($questions as $question) {
+                if (isset($question['question_id'])) {
+                    $this->questions_repo->update($question['question_id'], $question);
+                } else {
+                    $question['homework_id'] = $homework_id;
+                    $this->questions_repo->create($question);
+                }
+            }
+        }
+
         return $result;
     }
 
@@ -95,6 +135,13 @@ class RunHomeworkRepo
     function delete($homework_id)
     {
         global $wpdb;
+
+        $questions = $this->questions_repo->get_by_homework($homework_id);
+
+        foreach ($questions as $question) {
+            $this->questions_repo->delete($question->question_id);
+        }
+
         $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}{$this->homework_table} WHERE homework_id = %d", $homework_id);
         $result = $wpdb->query($sql);
 
