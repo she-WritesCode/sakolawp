@@ -4,6 +4,7 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
 // @ts-ignore
 import Rig from '@/presets/rig' //import preset
 
@@ -27,6 +28,7 @@ Object.entries(publicViews).forEach(([path, module]) => {
     createApp(module.default)
       .use(createPinia())
       .use(PrimeVue, { unstyled: true, pt: Rig })
+      .use(ToastService)
       .mount(`#run-${componentName?.toLowerCase()}`)
   }
 })
@@ -42,6 +44,7 @@ Object.entries(adminViews).forEach(([path, module]) => {
     createApp(module.default)
       .use(createPinia())
       .use(PrimeVue, { unstyled: true, pt: Rig })
+      .use(ToastService)
       .mount(`#run-${componentName?.toLowerCase()}`)
   }
 })

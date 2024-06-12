@@ -54,6 +54,7 @@ class RunHomeworkRepo
         // Fetch questions for each homework and append to the result
         foreach ($result as &$homework) {
             $homework->questions = $this->questions_repo->get_by_homework($homework->homework_id);
+            $homework->allow_peer_review = $homework->allow_peer_review == '1' ? true : false;
         }
 
         return $result;
@@ -75,6 +76,7 @@ class RunHomeworkRepo
 
         if ($result) {
             $result->questions = $this->questions_repo->get_by_homework($homework_id);
+            $result->allow_peer_review = $result->allow_peer_review  == '1' ? true : false;
         } else {
             error_log($wpdb->last_error);
         }

@@ -50,9 +50,9 @@ class RunDeliveryRepo
         global $wpdb;
 
         $sql = "SELECT d.*, s.name AS subject_name, st.display_name as student_name
-         FROM {$wpdb->prefix}{$this->deliveries_table} d
-         LEFT JOIN {$wpdb->prefix}{$this->subject_table} s ON d.homework_code = s.homework_code
-         LEFT JOIN {$wpdb->prefix}{$this->users_table} st ON d.student_id = st.ID
+            FROM {$wpdb->prefix}{$this->deliveries_table} d
+            LEFT JOIN {$wpdb->prefix}{$this->subject_table} s ON d.subject_id = s.subject_id
+            LEFT JOIN {$wpdb->prefix}{$this->users_table} st ON d.student_id = st.ID
          WHERE d.delivery_id = '$delivery_id'
          GROUP BY d.delivery_id";
 

@@ -5,6 +5,7 @@ import { useHomeworkStore } from './homework'
 
 export interface HomeworkDelivery {
   delivery_id?: string
+  student_name: string
 }
 
 export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => {
@@ -141,7 +142,7 @@ export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => 
     fetchHomeworkDeliveries,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentDeliveries: computed(() => currentDelivery),
+    currentDelivery: computed(() => currentDelivery),
     goToViewHomeworkDelivery,
     closeViewHomeworkDelivery,
     deliveryId: deliveryId,

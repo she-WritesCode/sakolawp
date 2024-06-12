@@ -60,7 +60,7 @@ export const useFormStore = defineStore('formStore', {
     addQuestion(type: QuestionType) {
       const newQuestion: Question = {
         question_id: `q${this.form.questions.length + 1}`,
-        question: '',
+        question: 'Your Submission',
         type,
         accepts: '*',
         options:

@@ -52,7 +52,7 @@ class RunQuestionsRepo
         $update_result = [];
         // Update existing questions
         foreach ($questions_to_update as $question) {
-            $this->update($question['question_id'], $question);
+            $id = $this->update($question['question_id'], $question);
             array_push($update_result, $id);
         }
 
@@ -102,7 +102,7 @@ class RunQuestionsRepo
         if (isset($question_data['text_options'])) {
             $question_data['text_options'] = json_encode($question_data['text_options']);
         }
-
+        error_log('Required=>' . print_r($question_data['required'], true));
         // Extract linear scale options and labels
         $linear_scale_options = isset($question_data['linear_scale_options']) ? $question_data['linear_scale_options'] : null;
         unset($question_data['linear_scale_options']);
@@ -278,6 +278,8 @@ class RunQuestionsRepo
             $question->text_options = json_decode($question->text_options);
             if (isset($question->text_options->add_word_count)) {
                 $question->text_options->add_word_count = $question->text_options->add_word_count == 'true' ? true : false;
+                $question->text_options->min = (int)$question->text_options->min;
+                $question->text_options->max = (int)$question->text_options->max;
             }
 
             $question->multiple = $question->multiple == '1' ? true : false;

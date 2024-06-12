@@ -1,7 +1,7 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import type { Question } from './form'
-import useToast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 
 export interface Homework {
@@ -24,7 +24,7 @@ export interface Homework {
 }
 
 export const useHomeworkStore = defineStore('homework', () => {
-  // const toast = useToast()
+  const toast = useToast()
   const homeworks = ref<Homework[]>([])
   const currentHomework = ref<Homework | undefined>(undefined)
   const filter = reactive({
@@ -158,10 +158,16 @@ export const useHomeworkStore = defineStore('homework', () => {
       .then((response) => {
         currentHomework.value = response.data
         // showAddForm.value = false
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Homework created successfully',
+          life: 3000
+        })
       })
       .catch((error) => {
         console.error('Error:', error)
-        // TODO Toast
+        toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
       })
       .finally(() => {
         closeAddForm()
@@ -185,6 +191,12 @@ export const useHomeworkStore = defineStore('homework', () => {
       .then((response) => response.json())
       .then(() => {
         getOneHomework(homeworkId.value as string)
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Homework updated successfully',
+          life: 3000
+        })
       })
       .catch((error) => {
         console.error('Error:', error)

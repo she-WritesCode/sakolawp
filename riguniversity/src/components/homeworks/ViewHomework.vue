@@ -2,20 +2,23 @@
 import Tag from 'primevue/tag';
 import { useHomeworkStore } from '../../stores/homework';
 import { useHomeworkDeliveryStore } from '../../stores/homework-deliveries';
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Button from 'primevue/button';
 import { onMounted } from 'vue';
 import Column from 'primevue/column';
+import Dialog from 'primevue/dialog';
 
 
 const { currentHomework, homeworkId, getOneHomework, goToEditHomework } = useHomeworkStore()
-const { deliveries, filter, goToViewHomeworkDelivery } = useHomeworkDeliveryStore()
+const { deliveries, deliveryId, getOneHomeworkDelivery, filter, goToViewHomeworkDelivery, showViewScreen, currentDelivery } = useHomeworkDeliveryStore()
 
 onMounted(() => {
     if (homeworkId) {
         getOneHomework(homeworkId)
         filter.homework_code = currentHomework.value?.homework_code as string
+    }
+    if (deliveryId) {
+        getOneHomeworkDelivery(deliveryId)
     }
 })
 
@@ -34,7 +37,7 @@ onMounted(() => {
                     label="Edit Homework"></Button>
             </div>
 
-            <div class="mb-4">{{ currentHomework?.description }}</div>
+            <div class="mb-4 whitespace-pre-wrap">{{ currentHomework?.description }}</div>
 
             <div class="flex flex-wrap gap-2 capitalize mb-4">
                 <div class="">
@@ -75,7 +78,6 @@ onMounted(() => {
         <div>
             <div class="mb-4">
                 <h3 class="text-lg mb-0">Submissions ({{ currentHomework?.delivery_count }})</h3>
-                <!-- <Divider /> -->
             </div>
 
             <div>
@@ -85,21 +87,27 @@ onMounted(() => {
                     <Column field="mark" header="Mark">
                         <template #body="slotProps">
                             <Tag v-if="slotProps.data.mark" :value="slotProps.data.mark" severity="secondary" />
-                            <i class="text-sm" v-else>Not marked</i>
+                            <i class="text-sm text-surface-500" v-else>Not marked</i>
                         </template>
                     </Column>
                     <Column header="">
                         <template #body="slotProps">
                             <div class="flex gap-2 text-sm">
                                 <Button outlined size="small"
-                                    @click="goToViewHomeworkDelivery(slotProps.data.subject_id)" label="View"></Button>
+                                    @click="goToViewHomeworkDelivery(slotProps.data.delivery_id)" label="View"></Button>
                             </div>
                         </template>
                     </Column>
                 </DataTable>
             </div>
+
+
         </div>
     </template>
+    <Dialog v-model:visible="showViewScreen" modal :header="`${currentDelivery?.student_name}'s Submission`"
+        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <div>hi</div>
+    </Dialog>
 </template>
 
 <style></style>
