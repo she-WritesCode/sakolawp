@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag';
 import { useHomeworkStore } from '../../stores/homework';
+import { useHomeworkDeliveryStore } from '../../stores/homework-deliveries';
 import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Button from 'primevue/button';
 import { onMounted } from 'vue';
+import Column from 'primevue/column';
 
 
 const { currentHomework, homeworkId, getOneHomework, goToEditHomework } = useHomeworkStore()
+const { deliveries, filter, goToViewHomeworkDelivery } = useHomeworkDeliveryStore()
 
 onMounted(() => {
     if (homeworkId) {
         getOneHomework(homeworkId)
+        filter.homework_code = currentHomework.value?.homework_code as string
     }
 })
 
@@ -30,9 +34,9 @@ onMounted(() => {
                     label="Edit Homework"></Button>
             </div>
 
-            <div class="mb-4"> {{ currentHomework?.description }}</div>
+            <div class="mb-4">{{ currentHomework?.description }}</div>
 
-            <div class="flex flex-wrap gap-2 capitalize">
+            <div class="flex flex-wrap gap-2 capitalize mb-4">
                 <div class="">
                     <Tag outlined :value="`${currentHomework?.questions?.length || '0'} Questions`" severity="info" />
                 </div>
@@ -54,16 +58,45 @@ onMounted(() => {
                         severity="danger" />
                 </div>
             </div>
+
+            <div class="mb-4">
+                <h4 class="mb-2 text-lg">Questions</h4>
+                <ol class="!list-decima">
+                    <li class="flex gap-2 items-center" v-for="(question, index) in currentHomework?.questions"
+                        :key="question.question_id">
+                        <span class="">{{ index + 1 }}. </span>
+                        <span>{{ question.question }}</span>
+                        <Tag :value="question.type" severity="secondary" />
+                    </li>
+                </ol>
+            </div>
         </div>
 
         <div>
             <div class="mb-4">
                 <h3 class="text-lg mb-0">Submissions ({{ currentHomework?.delivery_count }})</h3>
-                <Divider />
+                <!-- <Divider /> -->
             </div>
 
             <div>
-                <DataTable></DataTable>
+                <DataTable :value="deliveries">
+                    <Column field="student_name" header="Student"></Column>
+                    <Column field="created_at" header="Submitted on"></Column>
+                    <Column field="mark" header="Mark">
+                        <template #body="slotProps">
+                            <Tag v-if="slotProps.data.mark" :value="slotProps.data.mark" severity="secondary" />
+                            <i class="text-sm" v-else>Not marked</i>
+                        </template>
+                    </Column>
+                    <Column header="">
+                        <template #body="slotProps">
+                            <div class="flex gap-2 text-sm">
+                                <Button outlined size="small"
+                                    @click="goToViewHomeworkDelivery(slotProps.data.subject_id)" label="View"></Button>
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
             </div>
         </div>
     </template>

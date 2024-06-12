@@ -3,6 +3,7 @@
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-questions-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-deliveries-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 
@@ -386,3 +387,76 @@ add_action('wp_ajax_run_single_user', 'run_single_user');
 add_action('wp_ajax_run_create_user', 'run_create_user');
 add_action('wp_ajax_run_update_user', 'run_update_user');
 add_action('wp_ajax_run_delete_user', 'run_delete_user');
+
+/** List Deliveries */
+function run_list_deliveries()
+{
+	$repo = new RunDeliveryRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single delivery */
+function run_single_delivery()
+{
+	$repo = new RunDeliveryRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$delivery_id = sanitize_text_field($_POST['delivery_id']);
+	$result = $repo->single($delivery_id);
+
+	if (!$result) {
+		wp_send_json_error('Delivery not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new delivery */
+function run_create_delivery()
+{
+	$repo = new RunDeliveryRepo();
+	$delivery_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($delivery_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing delivery */
+function run_update_delivery()
+{
+	$repo = new RunDeliveryRepo();
+	$delivery_id = sanitize_text_field($_POST['delivery_id']);
+	$delivery_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($delivery_id, $delivery_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a delivery */
+function run_delete_delivery($delivery_id)
+{
+	$repo = new RunDeliveryRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$delivery_id = sanitize_text_field($_POST['delivery_id']);
+	$result = $repo->delete($delivery_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_deliveries', 'run_list_deliveries');
+add_action('wp_ajax_run_single_delivery', 'run_single_delivery');
+add_action('wp_ajax_run_create_delivery', 'run_create_delivery');
+add_action('wp_ajax_run_update_delivery', 'run_update_delivery');
+add_action('wp_ajax_run_delete_delivery', 'run_delete_delivery');

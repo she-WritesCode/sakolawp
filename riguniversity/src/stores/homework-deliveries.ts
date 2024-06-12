@@ -1,18 +1,19 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { convertObjectToSearchParams } from '@/utils/search'
+import { useHomeworkStore } from './homework'
 
 export interface HomeworkDelivery {
   delivery_id?: string
 }
 
-export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
+export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => {
   // const toast = useToast()
   const deliveries = ref<HomeworkDelivery[]>([])
   const currentDelivery = ref<HomeworkDelivery | undefined>(undefined)
   const filter = reactive({
     search: '',
-    subject_id: ''
+    homework_code: ''
   })
   const loading = reactive({ list: false, get: false, create: false, update: false, delete: false })
 
@@ -22,17 +23,17 @@ export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
   })
   const action = computed(() => {
     const url = new URL(window.location.href)
-    return url.searchParams.get('action')
+    return url.searchParams.get('sub_action')
   })
 
   const showViewScreen = computed(() => action.value === 'view_delivery' && !!deliveryId.value)
   const showEditScreen = computed(() => action.value === 'edit_delivery' && !!deliveryId.value)
 
   watch(filter, () => {
-    fetchHomeworks()
+    fetchHomeworkDeliveries()
   })
 
-  const fetchHomeworks = () => {
+  const fetchHomeworkDeliveries = () => {
     loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -41,7 +42,7 @@ export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_list_homework_deliveries',
+        action: 'run_list_deliveries',
         ...filter
       })
     })
@@ -57,7 +58,7 @@ export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
 
   const goToViewHomeworkDelivery = (deliveryId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'view_delivery')
+    url.searchParams.set('sub_action', 'view_delivery')
     url.searchParams.set('delivery_id', deliveryId)
     // showViewScreen.value = true
     window.location.href = url.toString()
@@ -65,14 +66,14 @@ export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
 
   const closeViewHomeworkDelivery = () => {
     const url = new URL(window.location.href)
-    url.searchParams.delete('action')
+    url.searchParams.delete('sub_action')
     url.searchParams.delete('delivery_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
   const goToEditHomeworkDelivery = (deliveryId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'edit_delivery')
+    url.searchParams.set('sub_action', 'edit_delivery')
     url.searchParams.set('delivery_id', deliveryId)
     // showViewScreen.value = true
     window.location.href = url.toString()
@@ -80,9 +81,9 @@ export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
 
   const closeEditHomeworkDelivery = () => {
     const url = new URL(window.location.href)
-    url.searchParams.delete('action')
+    url.searchParams.delete('sub_action')
     url.searchParams.set('delivery_id', deliveryId.value as string)
-    url.searchParams.set('action', 'view_delivery')
+    url.searchParams.set('sub_action', 'view_delivery')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
@@ -137,7 +138,7 @@ export const useHomeworkStore = defineStore('homeworkDeliveries', () => {
 
   return {
     deliveries: computed(() => deliveries),
-    fetchHomeworks,
+    fetchHomeworkDeliveries,
     filter: computed(() => filter),
     loading: computed(() => loading),
     currentDeliveries: computed(() => currentDelivery),

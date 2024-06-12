@@ -91,8 +91,6 @@ class RunHomeworkRepo
         $questions = isset($homework_data['questions']) ? $homework_data['questions'] : [];
         unset($homework_data['questions']);
 
-        error_log(print_r($questions, true));
-
         $result = $wpdb->insert(
             "{$wpdb->prefix}{$this->homework_table}",
             $homework_data
