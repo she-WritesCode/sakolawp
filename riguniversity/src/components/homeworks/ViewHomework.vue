@@ -87,7 +87,7 @@ onMounted(() => {
                     <Column field="mark" header="Mark">
                         <template #body="slotProps">
                             <Tag v-if="slotProps.data.mark" :value="slotProps.data.mark" severity="secondary" />
-                            <i class="text-sm text-surface-500" v-else>Not marked</i>
+                            <i class="text-xs text-surface-500" v-else>Not marked</i>
                         </template>
                     </Column>
                     <Column header="">
@@ -106,7 +106,7 @@ onMounted(() => {
     </template>
     <Dialog v-model:visible="showViewScreen" modal :header="`${currentDelivery?.student_name}'s Submission`"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <div>hi</div>
+        <div>{{ currentDelivery?.homework_reply }}</div>
     </Dialog>
 </template>
 

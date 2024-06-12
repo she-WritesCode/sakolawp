@@ -6,6 +6,9 @@ import { useHomeworkStore } from './homework'
 export interface HomeworkDelivery {
   delivery_id?: string
   student_name: string
+  homework_reply: string
+  student_id: string
+  mark: string
 }
 
 export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => {

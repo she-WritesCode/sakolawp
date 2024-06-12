@@ -62,7 +62,7 @@ const {
     showAddForm,
     goToAddForm, deleteSubject,
 } = useSubjectStore();
-const { showAddForm: showHomeworkAddForm, showViewScreen: showViewHomeworkScreen } = useHomeworkStore();
+const { showAddForm: showHomeworkAddForm, showViewScreen: showViewHomeworkScreen, currentHomework } = useHomeworkStore();
 
 onMounted(() => {
     if (subjectId) {
@@ -157,12 +157,26 @@ function deleteASubject(id: string) {
         </div>
         <!-- Single Subject -->
         <div v-else>
+            <!-- Breadcrumb -->
+            <div class="mb-4 px-2 text-sm text-surface-500">
+                <a href="/wp-admin/admin.php?page=sakolawp-manage-subject">Subjects</a>
+                <template v-if="currentSubject">
+                    > <a :class="!currentHomework ? 'text-surface-900' : ''"
+                        :href="`/wp-admin/admin.php?page=sakolawp-manage-subject&subject_id=${currentSubject?.subject_id}`">{{
+        currentSubject?.name }}</a>
+                    <template v-if="currentHomework">
+                        > <a
+                            :href="`/wp-admin/admin.php?page=sakolawp-manage-subject&subject_id=${currentSubject?.subject_id}`">Homeworks</a>
+                    </template>
+                </template>
+                <template v-if="currentHomework">
+                    > <a class="text-surface-900" href="#">{{ currentHomework?.title }}</a>
+                </template>
+            </div>
             <div v-if="showHomeworkAddForm || showViewHomeworkScreen">
-                <!-- Breadcrumb -->
-                <!-- <div class="mb-4"><Button @click="goBack" label="Backb" outline severity="secondary"></Button></div> -->
             </div>
             <template v-else>
-                <div class="mb-4"><Button @click="goBack" label="Back" outlined severity="secondary"></Button></div>
+                <!-- <div class="mb-4"><Button @click="goBack" label="Back" outlined severity="secondary"></Button></div> -->
                 <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
 
                     <div class="flex items-center gap-2">
