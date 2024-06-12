@@ -52,7 +52,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="flex gap-2 justify-between">
-            <Button class="w" outline severity='secondary' type="submit" @click.prevent="closeAddForm">Cancel
+            <Button class="w" outlined severity='secondary' type="submit" @click.prevent="closeAddForm">Cancel
             </Button>
             <Button class="w" type="submit" @click.prevent="submitForm">Add Subject</Button>
         </div>

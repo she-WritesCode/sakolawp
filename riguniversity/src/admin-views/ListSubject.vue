@@ -131,7 +131,7 @@ function deleteASubject(id: string) {
                 <Column header="">
                     <template #body="slotProps">
                         <div class="flex gap-2 text-sm">
-                            <Button size="small" @click="goToViewSubject(slotProps.data.subject_id)"
+                            <Button outlined size="small" @click="goToViewSubject(slotProps.data.subject_id)"
                                 label="View"></Button>
                             <Button size="small" @click="initDelete(slotProps.data.subject_id)" text severity="danger"
                                 label="Delete"></Button>
@@ -158,10 +158,11 @@ function deleteASubject(id: string) {
         <!-- Single Subject -->
         <div v-else>
             <div v-if="showHomeworkAddForm || showViewHomeworkScreen">
+                <!-- Breadcrumb -->
                 <!-- <div class="mb-4"><Button @click="goBack" label="Backb" outline severity="secondary"></Button></div> -->
             </div>
             <template v-else>
-                <div class="mb-4"><Button @click="goBack" label="Back" outline severity="secondary"></Button></div>
+                <div class="mb-4"><Button @click="goBack" label="Back" outlined severity="secondary"></Button></div>
                 <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
 
                     <div class="flex items-center gap-2">
@@ -176,7 +177,9 @@ function deleteASubject(id: string) {
                     <div><b>Faculty:</b> {{ currentSubject?.teacher_name }}</div>
 
                 </div>
-                <TabMenu size="large" class="w-full border-0 mb-4" :model="items" />
+                <div class="mb-2 py-1">
+                    <TabMenu size="large" class="w-full" :model="items" />
+                </div>
             </template>
             <div class="border-0 mb-8">
                 <component :is="tabs[currentTab]" />

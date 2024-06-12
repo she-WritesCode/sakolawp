@@ -43,7 +43,7 @@ onMounted(() => {
         <div class="md:px-2 max-w-2xl mx-auto">
             <div class="flex gap-2 mb-8 items-center">
                 <div>
-                    <Button @click="closeViewHomework" label="Back" size="small" outline severity="secondary"></Button>
+                    <Button @click="closeViewHomework" label="Back" size="small" outlined severity="secondary"></Button>
                 </div>
                 <div class="md:text-center w-full">
                     <h2 class="px-2 text-xl font-semibold">Homework</h2>
@@ -53,7 +53,7 @@ onMounted(() => {
             </ViewHomework>
         </div>
     </div>
-    <DataTable v-else :value="homeworks" tableStyle="min-width: 10rem" paginator :rows="10"
+    <DataTable v-else :loading="loading.list" :value="homeworks" tableStyle="min-width: 10rem" paginator :rows="10"
         :rowsPerPageOptions="[5, 10, 20, 50]">
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
@@ -80,7 +80,7 @@ onMounted(() => {
         <Column header="">
             <template #body="slotProps">
                 <div class="flex gap-2">
-                    <Button size="small" outline @click="goToViewHomework(slotProps.data.homework_id)"
+                    <Button size="small" outlined @click="goToViewHomework(slotProps.data.homework_id)"
                         label="Details"></Button>
                     <Button size="small" text severity="danger" label="Delete"></Button>
                 </div>

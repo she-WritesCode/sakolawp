@@ -8,7 +8,7 @@ import Dropdown from 'primevue/dropdown';
 import SelectButton from 'primevue/selectbutton';
 import Calendar from 'primevue/calendar';
 import QuestionBuilder from './QuestionBuilder.vue';
-import { string, object } from 'yup';
+import { string, object, array } from 'yup';
 import Divider from 'primevue/divider';
 import { useHomeworkStore, type Homework } from '../../stores/homework';
 import { useSubjectStore } from '../../stores/subject';
@@ -40,6 +40,14 @@ const { handleSubmit, errors, defineField } = useForm({
     validationSchema: object({
         title: string().required(),
         description: string().optional(),
+        questions: array().min(1, "At least one option is required")
+            .of(
+                object().shape({
+                    question: string().required("You have to enter a question"),
+                    // checked: boolean(),
+                })
+            )
+            .required("You must add At least one question"),
     })
 })
 
@@ -128,6 +136,23 @@ onMounted(() => {
         <div class="flex flex-col gap-2">
 
             <div class="mb-4">
+                <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
+                <p>How would you like your students to respond to this homework. For example: if you want them to submit
+                    a url you can use short text, or if you can add file upload if you want the student to respond with
+                    a file instead </p>
+                <Divider class="mb-4" />
+            </div>
+
+            <div>
+                <QuestionBuilder :errors="errors.questions" v-model="questions" v-bind="questionsProps">
+                </QuestionBuilder>
+                <div class="p-error text-red-500">{{ }}</div>
+            </div>
+
+        </div>
+        <div class="flex flex-col gap-2">
+
+            <div class="mb-4">
                 <h4 class="text-lg font-semibold text-black">Homework Grading</h4>
                 <p>How would you like this assessment to be graded?</p>
                 <Divider class="mb-4" />
@@ -162,22 +187,6 @@ onMounted(() => {
                     </div>
                 </Transition>
             </div>
-        </div>
-        <div class="flex flex-col gap-2">
-
-            <div class="mb-4">
-                <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
-                <p>How would you like your students to respond to this homework. For example: if you want them to submit
-                    a url you can use short text, or if you can add file upload if you want the student to respond with
-                    a file instead </p>
-                <Divider class="mb-4" />
-            </div>
-
-            <div>
-                <QuestionBuilder v-model="questions" v-bind="questionsProps"></QuestionBuilder>
-                <div class="p-error text-red-500">{{ errors.questions }}</div>
-            </div>
-
         </div>
         <div class="flex gap-4 py-4 justify-between">
             <Button :loading="loading.create" class="w-1/2" type="submit" name="submit" :label="`${homeworkId ? 'Update'

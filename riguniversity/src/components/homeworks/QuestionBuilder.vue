@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFormStore, type QuestionType, type Question } from '@/stores/form';
+import { useFormStore, type Question } from '@/stores/form';
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
@@ -22,41 +22,27 @@ const options = [
 ]
 
 const model = defineModel<Question[]>({ default: [] })
+const props = defineProps<{ errors?: string }>()
 const showPreview = ref<boolean>(false)
 
 onMounted(() => {
-    console.log("onMounted", model.value)
-    // The default question is a short text
     if (model.value.length < 1) {
+        // The default question is a short text
         if (form.questions.length) {
             model.value = form.questions
-        } else { addQuestionHandler('text') }
+        } else {
+            addQuestion('text')
+        }
     } else {
+        // use model value of specified
         replaceQuestions(model.value)
     }
 })
 
-// watch(model, (value) => {
-//     console.log("watch", value)
-//     replaceQuestions(value)
-// })
+watch(form.questions, (value) => {
+    model.value = value
+})
 
-const addQuestionHandler = (type: QuestionType) => {
-    addQuestion(type)
-    model.value = form.questions
-}
-const removeQuestionHandler = (index: number) => {
-    removeQuestion(index)
-    model.value = form.questions
-}
-const addOptionHandler = (questionIndex: number) => {
-    addOption(questionIndex)
-    model.value = form.questions
-}
-const removeOptionHandler = (questionIndex: number, optionIndex: number) => {
-    removeOption(questionIndex, optionIndex)
-    model.value = form.questions
-}
 </script>
 <template>
     <div class="">
@@ -78,11 +64,11 @@ const removeOptionHandler = (questionIndex: number, optionIndex: number) => {
                 class="mb-4 px-4 pb-2 pt-8 md:px-4 md:pt-6 md:pb-4 border rounded-lg relative">
                 <div class="mb-4">
                     <label class="block text-sm w-full font-medium text-gray-700 mb-2">Question {{ index + 1 }}:</label>
-                    <div class="flex flex-col md:flex-row flex-wrap gap-2">
+                    <div class="flex flex-col md:flex-row flex-wrap md:flex-nowrap gap-2">
+                        <InputText class="md:w-8/12" v-model="question.question" placeholder="Enter question" />
                         <Dropdown class='md:w-4/12' v-model="question.type" :options="options" option-value="value"
                             option-label="label" placeholder="Choose question type">
                         </Dropdown>
-                        <InputText class="md:w-8/12" v-model="question.question" placeholder="Enter question" />
                     </div>
                 </div>
 
@@ -109,10 +95,9 @@ const removeOptionHandler = (questionIndex: number, optionIndex: number) => {
                         class="mb-2 flex gap-2 items-center">
                         <!-- <InputText class="w-full" v-model="option.label" :placeholder="`Option ${optIndex + 1}`" /> -->
                         <InputText class="w-full" v-model="option.value" :placeholder="`Option ${optIndex + 1}`" />
-                        <Button class="w-ful" plain severity="warning"
-                            @click="removeOptionHandler(index, optIndex)">x</Button>
+                        <Button class="w-ful" plain severity="warning" @click="removeOption(index, optIndex)">x</Button>
                     </div>
-                    <Button @click="addOptionHandler(index)">Add Option</Button>
+                    <Button @click="addOption(index)">Add Option</Button>
                 </div>
 
 
@@ -176,19 +161,21 @@ const removeOptionHandler = (questionIndex: number, optionIndex: number) => {
                 </div>
                 <div class="absolute z-10 top-4 right-4">
                     <Button v-if="form.questions.length > 1" size="small" severity="danger" outlined
-                        @click="removeQuestionHandler(index)" label="x" class="text-xs"></Button>
+                        @click="removeQuestion(index)" label="x" class="text-xs"></Button>
                 </div>
             </div>
         </TransitionGroup>
 
+        <div v-if="errors" class="text-red-500 mb-4"> {{ errors }} </div>
+
         <div class="flex flex-wrap gap-2 mb-4">
-            <Button outlined @click="() => addQuestionHandler('text')" label="Add Short Text"></Button>
-            <Button outlined @click="() => addQuestionHandler('textarea')" label="Add Long Text"></Button>
-            <Button outlined @click="() => addQuestionHandler('dropdown')" label="Add Dropdown"></Button>
-            <Button outlined @click="() => addQuestionHandler('checkbox')" label="Add Checkbox"></Button>
-            <Button outlined @click="() => addQuestionHandler('radio')" label="Add Radio"></Button>
-            <Button outlined @click="() => addQuestionHandler('linear-scale')" label="Add Linear Scale"></Button>
-            <Button outlined @click="() => addQuestionHandler('file')" label="Add File Upload"></Button>
+            <Button outlined @click="() => addQuestion('text')" label="Add Short Text"></Button>
+            <Button outlined @click="() => addQuestion('textarea')" label="Add Long Text"></Button>
+            <Button outlined @click="() => addQuestion('dropdown')" label="Add Dropdown"></Button>
+            <Button outlined @click="() => addQuestion('checkbox')" label="Add Checkbox"></Button>
+            <Button outlined @click="() => addQuestion('radio')" label="Add Radio"></Button>
+            <Button outlined @click="() => addQuestion('linear-scale')" label="Add Linear Scale"></Button>
+            <Button outlined @click="() => addQuestion('file')" label="Add File Upload"></Button>
         </div>
 
     </div>
