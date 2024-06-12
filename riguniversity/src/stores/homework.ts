@@ -20,6 +20,7 @@ export interface Homework {
   date_end: Date
   time_end: string
   questions: Question[]
+  delivery_count?: number
 }
 
 export const useHomeworkStore = defineStore('homework', () => {
@@ -40,9 +41,9 @@ export const useHomeworkStore = defineStore('homework', () => {
     return url.searchParams.get('action')
   })
 
-  const showAddForm = ref(action.value === 'add_homework')
-  const showViewScreen = ref(action.value === 'view_homework' && !!homeworkId.value)
-  const showEditScreen = ref(action.value === 'add_homework' && !!homeworkId.value)
+  const showAddForm = computed(() => action.value === 'add_homework')
+  const showViewScreen = computed(() => action.value === 'view_homework' && !!homeworkId.value)
+  const showEditScreen = computed(() => action.value === 'add_homework' && !!homeworkId.value)
 
   watch(filter, () => {
     fetchHomeworks()
@@ -75,7 +76,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_homework')
     url.searchParams.set('homework_id', homeworkId)
-    showViewScreen.value = true
+    // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
@@ -83,14 +84,14 @@ export const useHomeworkStore = defineStore('homework', () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('homework_id')
-    showViewScreen.value = false
+    // showViewScreen.value = false
     window.location.href = url.toString()
   }
   const goToEditHomework = (homeworkId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_homework')
     url.searchParams.set('homework_id', homeworkId)
-    showViewScreen.value = true
+    // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
@@ -99,21 +100,21 @@ export const useHomeworkStore = defineStore('homework', () => {
     url.searchParams.delete('action')
     url.searchParams.set('homework_id', homeworkId.value as string)
     url.searchParams.set('action', 'view_homework')
-    showViewScreen.value = false
+    // showViewScreen.value = false
     window.location.href = url.toString()
   }
 
   const goToAddForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_homework')
-    showAddForm.value = true
+    // showAddForm.value = true
     window.location.href = url.toString()
   }
 
   const closeAddForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    showAddForm.value = false
+    // showAddForm.value = false
     window.location.href = url.toString()
   }
 
@@ -156,7 +157,7 @@ export const useHomeworkStore = defineStore('homework', () => {
       .then((response) => response.json())
       .then((response) => {
         currentHomework.value = response.data
-        showAddForm.value = false
+        // showAddForm.value = false
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -225,9 +226,9 @@ export const useHomeworkStore = defineStore('homework', () => {
     closeViewHomework,
     homeworkId,
     getOneHomework,
-    showAddForm: computed(() => showAddForm),
-    showViewScreen: computed(() => showViewScreen),
-    showEditScreen: computed(() => showEditScreen),
+    showAddForm,
+    showViewScreen,
+    showEditScreen,
     goToAddForm,
     closeAddForm,
     createHomework,

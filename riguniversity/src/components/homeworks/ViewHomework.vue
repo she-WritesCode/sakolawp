@@ -58,7 +58,7 @@ onMounted(() => {
 
         <div>
             <div class="mb-4">
-                <h3 class="text-lg mb-0">Home Work Responses</h3>
+                <h3 class="text-lg mb-0">Submissions ({{ currentHomework?.delivery_count }})</h3>
                 <Divider />
             </div>
 
