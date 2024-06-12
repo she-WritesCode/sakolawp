@@ -159,7 +159,7 @@ CREATE TABLE $question_table (
     text_options JSON,
     score_percentage INT,
     expected_points INT,
-    UNIQUE KEY id (question_id),
+    UNIQUE KEY id (question_id)
 ) $charset_collate;
 
 CREATE TABLE $linear_scale_options_table (
@@ -167,7 +167,7 @@ CREATE TABLE $linear_scale_options_table (
     min INT NOT NULL,
     max INT NOT NULL,
     step INT NOT NULL,
-    UNIQUE KEY id (question_id),
+    UNIQUE KEY id (question_id)
 ) $charset_collate;
 
 CREATE TABLE $linear_scale_labels_table (
@@ -175,6 +175,7 @@ CREATE TABLE $linear_scale_labels_table (
     question_id INT NOT NULL,
     scale_value INT NOT NULL,
     label VARCHAR(255) NOT NULL,
+    UNIQUE KEY id (id)
 ) $charset_collate;
 
 CREATE TABLE $options_table (
@@ -183,6 +184,7 @@ CREATE TABLE $options_table (
     label VARCHAR(255) NOT NULL,
     value VARCHAR(255) NOT NULL,
     points INT,
+    UNIQUE KEY id (id)
 ) $charset_collate;
 
 CREATE TABLE $deliveries_table (

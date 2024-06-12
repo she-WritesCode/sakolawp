@@ -101,10 +101,7 @@ class RunHomeworkRepo
         if ($result) {
             $homework_id = $wpdb->insert_id;
 
-            foreach ($questions as $question) {
-                $question['homework_id'] = $homework_id;
-                $this->questions_repo->create($question);
-            }
+            $this->questions_repo->bulk_update($homework_id, $questions);
         }
 
         return $result;
@@ -126,18 +123,8 @@ class RunHomeworkRepo
         );
 
         if (isset($result)) {
-            foreach ($questions as $question) {
-                if (strlen($question['question_id']) !== 2) {
-                    error_log("Existing ===>");
-                    error_log(print_r($question, true));
-                    $this->questions_repo->update($question['question_id'], $question);
-                } else {
-                    error_log("New ===>");
-                    error_log(print_r($question, true));
-                    $question['homework_id'] = $homework_id;
-                    $this->questions_repo->create($question);
-                }
-            }
+            // error_log(print_r($questions, true));
+            $this->questions_repo->bulk_update($homework_id, $questions);
         } else {
             error_log($wpdb->last_error);
         }

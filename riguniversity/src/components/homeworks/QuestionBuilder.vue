@@ -5,11 +5,11 @@ import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 
 const formStore = useFormStore();
-const { form, addQuestion, removeQuestion, addOption, removeOption, getFileTypeOptions } = formStore;
+const { form, addQuestion, removeQuestion, addOption, removeOption, getFileTypeOptions, replaceQuestions } = formStore;
 
 const options = [
     { label: "Short Text", value: "text" },
@@ -25,13 +25,21 @@ const model = defineModel<Question[]>({ default: [] })
 const showPreview = ref<boolean>(false)
 
 onMounted(() => {
+    console.log("onMounted", model.value)
     // The default question is a short text
     if (model.value.length < 1) {
         if (form.questions.length) {
             model.value = form.questions
         } else { addQuestionHandler('text') }
+    } else {
+        replaceQuestions(model.value)
     }
 })
+
+// watch(model, (value) => {
+//     console.log("watch", value)
+//     replaceQuestions(value)
+// })
 
 const addQuestionHandler = (type: QuestionType) => {
     addQuestion(type)
@@ -39,6 +47,14 @@ const addQuestionHandler = (type: QuestionType) => {
 }
 const removeQuestionHandler = (index: number) => {
     removeQuestion(index)
+    model.value = form.questions
+}
+const addOptionHandler = (questionIndex: number) => {
+    addOption(questionIndex)
+    model.value = form.questions
+}
+const removeOptionHandler = (questionIndex: number, optionIndex: number) => {
+    removeOption(questionIndex, optionIndex)
     model.value = form.questions
 }
 </script>
@@ -93,9 +109,10 @@ const removeQuestionHandler = (index: number) => {
                         class="mb-2 flex gap-2 items-center">
                         <!-- <InputText class="w-full" v-model="option.label" :placeholder="`Option ${optIndex + 1}`" /> -->
                         <InputText class="w-full" v-model="option.value" :placeholder="`Option ${optIndex + 1}`" />
-                        <Button class="w-ful" plain severity="warning" @click="removeOption(index, optIndex)">x</Button>
+                        <Button class="w-ful" plain severity="warning"
+                            @click="removeOptionHandler(index, optIndex)">x</Button>
                     </div>
-                    <Button @click="addOption(index)">Add Option</Button>
+                    <Button @click="addOptionHandler(index)">Add Option</Button>
                 </div>
 
 

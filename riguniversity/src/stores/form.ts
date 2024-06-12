@@ -95,6 +95,9 @@ export const useFormStore = defineStore('formStore', {
       }
       this.form.questions.push(newQuestion)
     },
+    replaceQuestions(questions: Question[]) {
+      this.form.questions = questions
+    },
     removeQuestion(index: number) {
       this.form.questions.splice(index, 1)
     },
