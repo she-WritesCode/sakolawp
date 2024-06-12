@@ -16,6 +16,7 @@ import EditSubject from '../components/subjects/EditSubject.vue'
 import AddSubject from '../components/subjects/AddSubject.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import { useHomeworkStore } from "../stores/homework";
+import Toast from "primevue/toast";
 const tabs = {
     homeworks: HomeworkList,
     lessons: Lessons,
@@ -93,7 +94,7 @@ function deleteASubject(id: string) {
 </script>
 
 <template>
-
+    <Toast />
     <!-- Loading Indicator -->
     <div v-if="loading">
         <LoadingIndicator></LoadingIndicator>
@@ -117,11 +118,11 @@ function deleteASubject(id: string) {
                     </div>
                 </template>
                 <Column field="name" header="Name"></Column>
-                <Column header="Lessons" class="text-center">
+                <!-- <Column header="Lessons" class="text-center">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.lesson_count" severity="secondary" />
                     </template>
-                </Column>
+                </Column> -->
                 <Column header="Homeworks" class="text-center">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.homework_count" severity="secondary" />
