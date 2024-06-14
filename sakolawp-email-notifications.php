@@ -14,10 +14,10 @@ function sakolawp_send_homework_email($homework_data)
 	$headers = array('Content-Type: text/html; charset=UTF-8');
 
 	// GET home work template and replace placeholders with data
-	$subject = 'New Homework Assigned';
 	$template = decode_email_template(get_option(SKWP_NEW_HOMEWORK_TEMPLATE, encode_email_template(SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE)));
-	$template = str_replace('{homework_details}', print_r($homework_data, true), $template);
-	$message = $template;
+	$subject = $template->subject;
+	$message = str_replace('{homework_details}', print_r($homework_data, true), $template->template);
+	$message = str_replace('\n', '<br/>', $message);
 
 	// TODO: GET students assigned to this homework and send email to each student
 	$to = get_option('admin_email'); // Send to the site admin or customize as needed
@@ -58,12 +58,12 @@ add_action('sakolawp_send_homework_reminder', 'sakolawp_send_homework_reminder')
 const SKWP_NEW_HOMEWORK_TEMPLATE = 'sakolawp_new_homework_email_template';
 const SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE = [
 	'subject' => 'New Homework Available',
-	'template' => 'A new homework has been assigned. Details: {homework_details}',
+	'template' => 'Hi {student_name},\nA new homework has been assigned to you.\nHere are the details: {homework_details}',
 ];
 const SKWP_HOMEWORK_REMINDER_TEMPLATE = 'sakolawp_homework_email_template';
 const SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE =  [
 	'subject' => 'New Homework Available',
-	'template' => 'Reminder: Homework is due soon. Details: {homework_details}',
+	'template' => 'Hi {student_name},\nReminder: Homework is due soon. \nDetails: {homework_details}',
 ];
 function encode_email_template($template = [])
 {
@@ -88,7 +88,7 @@ register_activation_hook(__FILE__, 'sakolawp_add_email_template_settings');
  ************************************/
 function sakolawp_fetch_email_templates()
 {
-	check_ajax_referer('fetch_templates_nonce', 'security');
+	// check_ajax_referer('fetch_templates_nonce', 'security');
 
 	$templates = [
 		[
@@ -103,13 +103,13 @@ function sakolawp_fetch_email_templates()
 		]
 	];
 
-	wp_send_json_success(['templates' => $templates]);
+	wp_send_json_success($templates, 200);
 }
 add_action('wp_ajax_run_fetch_email_templates', 'sakolawp_fetch_email_templates');
 
 function sakolawp_save_email_templates()
 {
-	check_ajax_referer('save_templates_nonce', 'security');
+	// check_ajax_referer('save_templates_nonce', 'security');
 
 	$templates = $_POST['templates'];
 

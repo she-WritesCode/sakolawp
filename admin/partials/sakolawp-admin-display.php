@@ -24,6 +24,7 @@
 			<a class="nav-item nav-link active" id="nav-dashboard-tab" data-toggle="tab" href="#nav-dashboard" role="tab" aria-controls="nav-home" aria-selected="true"><?php esc_html_e('Dashboard', 'sakolawp'); ?></a>
 			<a class="nav-item nav-link" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><?php esc_html_e('Main Setting', 'sakolawp'); ?></a>
 			<a class="nav-item nav-link" id="nav-semester-tab" data-toggle="tab" href="#nav-semester" role="tab" aria-controls="nav-semester" aria-selected="true"><?php esc_html_e('Semester Period', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link" id="nav-email-templates-tab" data-toggle="tab" href="#nav-email-templates" role="tab" aria-controls="nav-email-templates" aria-selected="true"><?php esc_html_e('Email Templates', 'sakolawp'); ?></a>
 		</div>
 	</nav>
 
@@ -404,6 +405,14 @@
 				</table>
 			</div>
 			<!-- end of class table -->
+		</div>
+
+		<div class="tab-pane fade" id="nav-email-templates" role="tabpanel" aria-labelledby="nav-email-templates-tab">
+
+
+			<!-- Vue app -->
+			<div id="run-editemailtemplate"></div>
+
 		</div>
 	</div>
 </div>

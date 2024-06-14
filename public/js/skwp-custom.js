@@ -149,17 +149,17 @@
 			}
 		});
 	}
-
-	const html5QrCode = new Html5QrcodeScanner("reader", {
-		fps: 10,
-		qrbox: {
-			width: 250,
-			height: 250
-		}
-	},
+	if (document.getElementById('reader')) {
+		const html5QrCode = new Html5QrcodeScanner("reader", {
+			fps: 10,
+			qrbox: {
+				width: 250,
+				height: 250
+			}
+		},
 	/* verbose= */ true);
-	html5QrCode.render(onScanSuccess);
-
+		html5QrCode.render(onScanSuccess);
+	}
 
 	// Handle allow peer review checkbox
 	const $allowPeerReviewCheckbox = $('#allow_peer_review');

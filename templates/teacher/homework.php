@@ -29,7 +29,7 @@ if (isset($_POST['submit'])) {
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
 
-	$wpdb->insert(
+	$result = $wpdb->insert(
 		$wpdb->prefix . 'sakolawp_homework',
 		array(
 			'homework_code' => $homework_code,
@@ -62,6 +62,9 @@ if (isset($_POST['submit'])) {
 		update_post_meta($post_id, '_file_name', $attach_id);
 	}
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
+
+	$repo = new RunHomeworkRepo();
+	do_action('sakolawp_homework_added', $repo->single($result));
 
 	wp_redirect(add_query_arg(['form_submitted' => 'true'], home_url('homework')));
 }

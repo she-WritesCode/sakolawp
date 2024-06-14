@@ -17,6 +17,7 @@
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "primevue": "^3.52.0",
+    "quill": "^2.0.2",
     "vee-validate": "^4.12.8",
     "vue": "^3.4.21",
     "yup": "^1.4.0"
