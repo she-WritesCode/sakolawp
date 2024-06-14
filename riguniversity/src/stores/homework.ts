@@ -18,7 +18,7 @@ export interface Homework {
   word_count_max: null
   limit_word_count: boolean
   date_end: Date
-  time_end: string
+  time_end: Date
   questions: Question[]
   delivery_count?: number
 }

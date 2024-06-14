@@ -33,7 +33,7 @@ const { handleSubmit, errors, defineField } = useForm({
         word_count_max: null,
         limit_word_count: false,
         date_end: new Date(),
-        time_end: "23:59",
+        time_end: "23:59" as unknown as Date,
         questions: [],
         ...props.initialValues,
     },
@@ -116,8 +116,8 @@ onMounted(() => {
                 <div class="">
                     <div class="form-group">
                         <label for=""> Due Time</label>
-                        <Calendar id="calendar-timeonly" v-model="time_end as unknown as Date" v-bind="time_endProps"
-                            timeOnly name="time_end" hourFormat="24" />
+                        <Calendar id="calendar-timeonly" v-model="time_end" v-bind="time_endProps" timeOnly
+                            name="time_end" hourFormat="24" />
                         <div class="p-error text-red-500">{{ errors.time_end }}</div>
                     </div>
                 </div>
