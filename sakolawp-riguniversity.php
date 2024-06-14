@@ -5,6 +5,7 @@ require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-questions-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-deliveries-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-enroll-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 
 /** List Subjects */

@@ -8,7 +8,7 @@ import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import { useEmailTemplateStore } from '../stores/email-templates'
 
-const { fetchTemplates, loading, saveTemplates, templates, errors } = useEmailTemplateStore()
+const { fetchTemplates, loading, saveTemplates, templates, errors, placeholders } = useEmailTemplateStore()
 
 onMounted(() => {
     fetchTemplates()
@@ -35,13 +35,20 @@ onMounted(() => {
                     </template>
                     <div class="py-4">
                         <div class="form-group mb-4">
-                            <label>Subject</label>
+                            <label>Email Subject</label>
                             <InputText v-model="template.content.subject" class="w-full" />
                             <p class="text-red-500 text-sm">{{ errors[template.id]?.subject }}</p>
                         </div>
                         <div class="form-group mb-4">
-                            <label>Content</label>
-                            <Textarea v-model="template.content.template" class="w-full" rows="10"
+                            <label>Email Body</label>
+                            <div class="leading-loose mb-2">
+                                The following placeholders are available:
+                                <template v-for="(placeholder, index) in placeholders" :key="placeholder">
+                                    {{ index == 0 ? ' ' : ', ' }}<code>{{ placeholder }}</code>
+                                </template>.
+                                Indicate placeholder text with curly braces like: <code>{place_holder}</code>
+                            </div>
+                            <Textarea v-model="template.content.template" class="w-full leading-relaxed" rows="10"
                                 placeholder="Enter text"></Textarea>
                             <p class="text-red-500 text-sm">{{ errors[template.id]?.template }}</p>
                             <!-- <Editor v-model="template.content.template" editorStyle="min-height: 280px"
@@ -56,5 +63,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
+code {
+    @apply rounded;
+}
+
 /* Add any additional styling here */
 </style>

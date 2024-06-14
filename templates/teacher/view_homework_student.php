@@ -14,7 +14,6 @@ global $wpdb;
 
 
 if (isset($_POST['submit'])) {
-	error_log("We submitted " . json_encode($_POST));
 	$homework_act = $_POST['action'];
 
 	if ($homework_act == "add_peer_review") {
@@ -82,7 +81,7 @@ if (isset($_POST['submit'])) {
 		$delivery_id = sanitize_text_field($_POST['answer_id']);
 		$mark = sanitize_text_field($_POST['mark']);
 		$comment = sanitize_text_field($_POST['comment']);
-		error_log("mark" . $mark);
+
 		$wpdb->update(
 			$wpdb->prefix . 'sakolawp_deliveries',
 			array(

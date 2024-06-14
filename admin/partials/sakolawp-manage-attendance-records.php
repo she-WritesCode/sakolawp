@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_attendance']))
 	foreach ($updated_attendance as $student_id => $row) {
 		$event_id = $row['event_id'];
 		$status = $row['status'];
-		error_log(json_encode([$student_id, $row]));
 		// Get the event details
 		$event_date = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date', true));
 		$event_time = esc_attr(get_post_meta((int)$event_id, '_sakolawp_event_date_clock', true));

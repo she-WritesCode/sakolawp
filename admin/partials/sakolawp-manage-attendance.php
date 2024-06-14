@@ -246,8 +246,6 @@ $running_year = get_option('running_year');
 
 			<?php if (isset($_POST['absensi'])) {
 
-				error_log(json_encode($_POST));
-
 				$class_id = $_POST['class_id'];
 				$section_id = NULL;
 				// $section_id = $_POST['section_id'];

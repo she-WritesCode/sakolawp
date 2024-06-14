@@ -8,7 +8,6 @@ $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
 $peer_reviews_table = $wpdb->prefix . 'sakolawp_peer_reviews';
 
 if (isset($_POST['submit'])) {
-	error_log("We submitted " . json_encode($_POST));
 	$homework_act = $_POST['action'];
 
 	if ($homework_act == "add_peer_review") {
@@ -152,8 +151,6 @@ if (!empty($enroll)) :
 				$peer_reviews = $wpdb->get_results("SELECT * FROM $peer_reviews_table
 					WHERE delivery_id = '$delivery_id'
 					AND reviewer_id = '$student_id';", ARRAY_A);
-
-				error_log("current_peer_review is " . json_encode($peer_reviews));
 
 				if (count($peer_reviews) == 0) :
 				?>
