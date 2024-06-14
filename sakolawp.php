@@ -91,6 +91,7 @@ require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-post-type.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-shortcodes.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/includes/element-helper.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-riguniversity.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/sakolawp-email-notifications.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/plugin-update-checker.php';
 
 function sakolawp_new_elements()

@@ -177,7 +177,16 @@ function run_create_homework()
 	}
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
-	wp_send_json_success($result, 201);
+	if ($result) { // If the homework was created successfully
+		do_action('sakolawp_homework_added', $repo->single($result));
+		wp_send_json_success($result, 201);
+		die();
+	}
+
+	// If the homework was not created successfully
+	$error = [];
+	$error['message'] = 'Failed to create homework';
+	wp_send_json_error($error, 500);
 	die();
 }
 
