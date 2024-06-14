@@ -9,6 +9,7 @@ export interface Template {
   content: {
     subject: string
     template: string
+    placeholders: string[]
   }
 }
 
@@ -16,7 +17,6 @@ export const useEmailTemplateStore = defineStore('emailTemplate', () => {
   const toast = useToast()
   const loading = reactive({ list: false, update: false })
   const templates = ref<Template[]>([])
-  const placeholders = ref<string[]>([])
   const errors = reactive<Record<string, any>>({})
 
   const fetchTemplates = async () => {
@@ -34,7 +34,6 @@ export const useEmailTemplateStore = defineStore('emailTemplate', () => {
       .then((response) => response.json())
       .then((response) => {
         templates.value = response.data.templates
-        placeholders.value = response.data.placeholders
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -100,7 +99,6 @@ export const useEmailTemplateStore = defineStore('emailTemplate', () => {
   return {
     loading,
     templates: computed(() => templates),
-    placeholders: computed(() => placeholders),
     errors: computed(() => errors),
     saveTemplates,
     fetchTemplates

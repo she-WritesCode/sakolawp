@@ -1784,6 +1784,8 @@ if (!function_exists('array_group_by')) {
 	 */
 	function array_group_by(array $array, $key)
 	{
+
+
 		if (!is_string($key) && !is_int($key) && !is_float($key) && !is_callable($key)) {
 			trigger_error('array_group_by(): The key should be a string, an integer, or a callback', E_USER_ERROR);
 			return null;
@@ -1795,6 +1797,11 @@ if (!function_exists('array_group_by')) {
 		// Load the new array, splitting by the target key
 		$grouped = [];
 		foreach ($array as $value) {
+			// Check if $value is not an array
+			if (!is_array($array)) {
+				// Convert value to array for consistent access
+				$array = (array)$value;
+			}
 			$key = null;
 
 			if (is_callable($func)) {
@@ -1825,4 +1832,63 @@ if (!function_exists('array_group_by')) {
 
 		return $grouped;
 	}
+}
+
+add_action('admin_menu', 'custom_cron_jobs_menu');
+
+function custom_cron_jobs_menu()
+{
+	add_submenu_page(
+		'tools.php',
+		'Cron Jobs',
+		'Cron Jobs',
+		'manage_options',
+		'cron-jobs',
+		'custom_cron_jobs_page'
+	);
+}
+
+function custom_cron_jobs_page()
+{
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+
+	$cron_jobs = _get_cron_array();
+	$schedules = wp_get_schedules();
+?>
+	<div class="wrap">
+		<h1><?php esc_html_e('Cron Jobs', 'text-domain'); ?></h1>
+		<table class="widefat table" cellspacing="0">
+			<thead>
+				<tr>
+					<th><?php esc_html_e('Hook Name', 'text-domain'); ?></th>
+					<th><?php esc_html_e('Next Run (GMT/UTC)', 'text-domain'); ?></th>
+					<th><?php esc_html_e('Recurrence', 'text-domain'); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($cron_jobs as $timestamp => $cron) : ?>
+					<?php foreach ($cron as $hook => $events) : ?>
+						<?php foreach ($events as $event) : ?>
+							<tr>
+								<td><?php echo esc_html($hook); ?></td>
+								<td><?php echo esc_html(get_date_from_gmt(date('Y-m-d H:i:s', $timestamp))); ?></td>
+								<td>
+									<?php
+									if (isset($event['schedule'])) {
+										echo !empty($schedules[$event['schedule']]) ? esc_html($schedules[$event['schedule']]['display']) : '-';
+									} else {
+										esc_html_e('One-time', 'text-domain');
+									}
+									?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endforeach; ?>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+<?php
 }

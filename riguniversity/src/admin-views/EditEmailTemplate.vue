@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, watch } from 'vue';
+import { onMounted } from 'vue';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Button from 'primevue/button';
@@ -8,7 +8,7 @@ import Textarea from 'primevue/textarea';
 import Toast from 'primevue/toast';
 import { useEmailTemplateStore } from '../stores/email-templates'
 
-const { fetchTemplates, loading, saveTemplates, templates, errors, placeholders } = useEmailTemplateStore()
+const { fetchTemplates, loading, saveTemplates, templates, errors } = useEmailTemplateStore()
 
 onMounted(() => {
     fetchTemplates()
@@ -41,9 +41,9 @@ onMounted(() => {
                         </div>
                         <div class="form-group mb-4">
                             <label>Email Body</label>
-                            <div class="leading-loose mb-2">
+                            <div v-if="template.placeholders.length" class="leading-loose mb-2">
                                 The following placeholders are available:
-                                <template v-for="(placeholder, index) in placeholders" :key="placeholder">
+                                <template v-for="(placeholder, index) in template.placeholders" :key="placeholder">
                                     {{ index == 0 ? ' ' : ', ' }}<code>{{ placeholder }}</code>
                                 </template>.
                                 Indicate placeholder text with curly braces like: <code>{place_holder}</code>

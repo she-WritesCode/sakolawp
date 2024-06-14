@@ -137,7 +137,7 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 					<?php
 					$counter = 1;
 					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
-					error_log($wpdb->last_error . json_encode($homeworks));
+					error_log($wpdb->last_error);
 					foreach ($homeworks as $row) :
 					?>
 						<tr data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">

@@ -1,7 +1,8 @@
 <?php
 class RunDeliveryRepo
 {
-    // protected $homework_table = 'sakolawp_homework';
+    protected $homework_table = 'sakolawp_homework';
+    protected $enroll_table = 'sakolawp_enroll';
     protected $deliveries_table = 'sakolawp_deliveries';
     protected $users_table = 'users';
     protected $subject_table = 'sakolawp_subject';
@@ -38,6 +39,52 @@ class RunDeliveryRepo
         }
 
         $sql .= " GROUP BY d.delivery_id";
+
+        $result = $wpdb->get_results($sql);
+
+        return $result;
+    }
+
+    function peer_reviews($args = [])
+    {
+        global $wpdb;
+
+        $section_id = isset($args['section_id']) ? $args['section_id'] : '';
+        $student_id = isset($args['student_id']) ? $args['student_id'] : '';
+        $class_id = isset($args['class_id']) ? $args['class_id'] : '';
+        $interval_in_days = isset($args['interval_in_days']) ? $args['interval_in_days'] : '';
+
+        $sql = "SELECT d.*, h.title as homework_title, h.section_id, h.homework_code
+		FROM {$wpdb->prefix}{$this->homework_table} h
+		JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+		JOIN {$wpdb->prefix}{$this->enroll_table} e ON d.student_id = e.student_id
+		WHERE h.allow_peer_review = 1  
+		AND h.peer_review_who = 'student'
+		ORDER BY h.created_at DESC, d.date DESC;";
+
+
+        // Add section_id condition
+        if (!empty($section_id)) {
+            $sql .= $wpdb->prepare(" AND d.section_id = %d", $section_id);
+        }
+
+        // Add student_id condition
+        if (!empty($student_id)) {
+            $sql .= $wpdb->prepare(" AND d.student_id = %d", $student_id);
+        }
+
+        // Add class_id condition
+        if (!empty($class_id)) {
+            $sql .= $wpdb->prepare(" AND d.class_id = %s", $class_id);
+        }
+
+        // Add interval_in_days condition
+        if (!empty($interval_in_days)) {
+            $sql .= $wpdb->prepare(" AND created_at >= NOW() - INTERVAL %d DAY", $interval_in_days);
+        }
+
+        $sql .= " GROUP BY d.delivery_id";
+        $sql .= " ORDER BY h.created_at DESC, d.date DESC;";
 
         $result = $wpdb->get_results($sql);
 
