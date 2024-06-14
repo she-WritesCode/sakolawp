@@ -32,7 +32,7 @@ export const useEmailTemplateStore = defineStore('emailTemplate', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        templates.value = response.data
+        templates.value = response.data.templates
       })
       .catch((error) => {
         console.error('Error:', error)

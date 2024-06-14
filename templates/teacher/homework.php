@@ -64,7 +64,10 @@ if (isset($_POST['submit'])) {
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
 	$repo = new RunHomeworkRepo();
-	do_action('sakolawp_homework_added', $repo->single($result));
+	$homework_data = $repo->list(['homework_code' => $post_id]);
+	if (count($homework_data)) {
+		do_action('sakolawp_homework_added', $homework_data[0]);
+	}
 
 	wp_redirect(add_query_arg(['form_submitted' => 'true'], home_url('homework')));
 }
