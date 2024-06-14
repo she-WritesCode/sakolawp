@@ -18,7 +18,7 @@ const SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE = [
 ];
 const SKWP_HOMEWORK_REMINDER_TEMPLATE = 'sakolawp_homework_reminder_email_template';
 const SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE =  [
-	'subject' => "Homework Deadline Is Near: {homework_title}",
+	'subject' => "Homework Deadline is Near: {homework_title}",
 	'template' => "Hi {student_name},\nReminder: Homework is due soon. \nDetails: {homework_details}",
 ];
 const SKWP_AVAILABLE_HOMEWORK_PLACEHOLDERS = ['student_name', 'homework_details', 'due_date', 'homework_title', 'homework_description'];
@@ -84,10 +84,10 @@ function get_homework_args($homework_data)
 
 	// Construct HTML string for basic homework details
 	$homework_details = "
-        <h2>{$homework_title}</h2>
-        <p><strong>Description:</strong> {$homework_description}</p>
-        <p><strong>Due Date:</strong> {$due_date}</p>
-        <p><strong>Uploaded By:</strong> {$uploader_name}</p>
+        <h4>{$homework_title}</h4>
+        <div><strong>Description:</strong> {$homework_description}</div>
+        <div><strong>Due Date:</strong> {$due_date}</div>
+        <div><strong>Uploaded By:</strong> {$uploader_name}</div>
     ";
 
 	return [
@@ -104,6 +104,11 @@ function get_homework_args($homework_data)
  ************************************/
 function sakolawp_send_homework_email($homework_data)
 {
+	$sakolawp_env = get_option('sakolawp_env', 'dev');
+	if ($sakolawp_env === 'dev') {
+		return;
+	}
+
 	try {
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
@@ -115,27 +120,28 @@ function sakolawp_send_homework_email($homework_data)
 
 
 		$args = get_homework_args($homework_data);
-		error_log(print_r($args, true));
-		error_log(print_r($homework_data, true));
+		// error_log(print_r($args, true));
+		// error_log(print_r($homework_data, true));
 
 		// GET home work template
 		$template = decode_email_template(get_option(SKWP_NEW_HOMEWORK_TEMPLATE, encode_email_template(SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE)));
+		$SKWP_END_EMAIL_TEMPLATE = '<br/> <a href="' . site_url('/myaccount') . '" style="background-color: #4e80df;color: white;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;">Login to your Dashboard</a>';
 
-
-		// Replace placeholders with actual data	
-		$subject = replace_placeholders($template->subject, $args);
-		$message = replace_placeholders($template->template, $args);
-		$message = str_replace("\n", "<br/>", $message);
 
 		// GET students assigned to this homework and send email to each student
 		$repo = new RunEnrollRepo();
 		$students =  $repo->list(['class_id' => $homework_data->class_id, 'section_id' => $homework_data->section_id]);
 		$to = "";
+		$htmlBody = $template->template . $SKWP_END_EMAIL_TEMPLATE;
 
 		foreach ($students as $key => $student) {
 			# code...
 			$to = $student->student_email;
 			$args["student_name"] = $student->student_name;
+			// Replace placeholders with actual data	
+			$subject = replace_placeholders($template->subject, $args);
+			$message = str_replace("\n", "<br/>", $htmlBody);
+			$message = replace_placeholders($message, $args);
 			wp_mail($to, $subject, $message, $headers);
 		}
 	} catch (\Throwable $th) {
@@ -150,6 +156,11 @@ add_action('sakolawp_homework_added', 'sakolawp_send_homework_email');
  ************************************/
 function sakolawp_schedule_homework_reminder($homework_data)
 {
+	$sakolawp_env = get_option('sakolawp_env', 'dev');
+	if ($sakolawp_env === 'dev') {
+		return;
+	}
+
 	try {
 		// Check if $homework_data is an array
 		if (is_array($homework_data)) {
@@ -158,8 +169,17 @@ function sakolawp_schedule_homework_reminder($homework_data)
 		}
 
 		if (!wp_next_scheduled('sakolawp_send_homework_reminder', array($homework_data))) {
-			$timestamp = strtotime($homework_data->date_end . ' ' . $homework_data->time_end) - 86400; // 1 day before deadline
-			wp_schedule_single_event($timestamp, 'sakolawp_send_homework_reminder', array($homework_data));
+			$due_timestamp = strtotime($homework_data->date_end . ' ' . $homework_data->time_end);
+			$current_timestamp = time();
+			$time_difference = $due_timestamp - $current_timestamp;
+
+			// If the homework is due in less than 24 hours, skip scheduling the reminder
+			$skip_reminder = $time_difference < 86400;
+
+			if (!$skip_reminder) {
+				$timestamp = $due_timestamp  - 86400; // 1 day before deadline 
+				wp_schedule_single_event($timestamp, 'sakolawp_send_homework_reminder', array($homework_data));
+			}
 		}
 	} catch (\Throwable $th) {
 		error_log(print_r($th, true));
@@ -176,21 +196,23 @@ function sakolawp_send_homework_reminder($homework_data)
 
 		// GET home work template
 		$template = decode_email_template(get_option(SKWP_HOMEWORK_REMINDER_TEMPLATE, encode_email_template(SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE)));
-
-		// Replace placeholders with actual data	
-		$subject = replace_placeholders($template->subject, $args);
-		$message = replace_placeholders($template->template, $args);
-		$message = str_replace("\n", "<br/>", $message);
+		$SKWP_END_EMAIL_TEMPLATE = '<br/> <a href="' . site_url('/myaccount') . '" style="background-color: #4e80df;color: white;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;">Login to your Dashboard</a>';
 
 		// GET students assigned to this homework and send email to each student
 		$repo = new RunEnrollRepo();
 		$students =  $repo->list(['class_id' => $homework_data->class_id, 'section_id' => $homework_data->section_id]);
 		$to = "";
+		$htmlBody = $template->template . $SKWP_END_EMAIL_TEMPLATE;
 
 		foreach ($students as $key => $student) {
 			# code...
 			$to = $student->student_email;
 			$args["student_name"] = $student->student_name;
+
+			// Replace placeholders with actual data	
+			$subject = replace_placeholders($template->subject, $args);
+			$message = str_replace("\n", "<br/>", $htmlBody);
+			$message = replace_placeholders($message, $args);
 			wp_mail($to, $subject, $message, $headers);
 		}
 	} catch (\Throwable $th) {

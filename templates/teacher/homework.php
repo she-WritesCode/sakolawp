@@ -64,7 +64,7 @@ if (isset($_POST['submit'])) {
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
 	$repo = new RunHomeworkRepo();
-	$homework_data = $repo->list(['homework_code' => $post_id]);
+	$homework_data = $repo->list(['homework_code' => $homework_code]);
 	if (count($homework_data)) {
 		do_action('sakolawp_homework_added', $homework_data[0]);
 	}

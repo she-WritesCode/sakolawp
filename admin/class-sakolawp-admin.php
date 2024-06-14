@@ -1293,9 +1293,19 @@ class Sakolawp_Admin
 			'sakolawp_general_section'
 		);
 
+
+		add_settings_field(
+			'sakolawp_env',
+			esc_html__('Environment', 'sakolawp'),
+			array($this, 'Sakolawp_env_radio_button'),
+			'sakolawp_general_settings',
+			'sakolawp_general_section'
+		);
+
 		register_setting('sakolawp_general_settings', 'school_name');
 		register_setting('sakolawp_general_settings', 'running_year');
 		register_setting('sakolawp_general_settings', 'sakolawp_routine');
+		register_setting('sakolawp_general_settings', 'sakolawp_env');
 	}
 
 	public function plugin_name_display_general_account()
@@ -1325,6 +1335,13 @@ class Sakolawp_Admin
 		$options = get_option('sakolawp_routine'); ?>
 		<label class="form-check-label"><input class="form-check-input" name="sakolawp_routine" type="radio" value="1" <?php if ($options == 1) echo 'checked'; ?>><?php esc_html_e('Yes', 'sakolawp'); ?></label>
 		<label class="form-check-label"><input class="form-check-input" name="sakolawp_routine" type="radio" value="2" <?php if ($options == 2) echo 'checked'; ?> style="margin-left:5px;"><?php esc_html_e('No', 'sakolawp'); ?></label>
+	<?php
+	}
+	public function Sakolawp_env_radio_button($args)
+	{
+		$options = get_option('sakolawp_env'); ?>
+		<label class="form-check-label"><input class="form-check-input" name="sakolawp_env" type="radio" value="dev" <?php if ($options == 'dev') echo 'checked'; ?>><?php esc_html_e('Development', 'sakolawp'); ?></label>
+		<label class="form-check-label"><input class="form-check-input" name="sakolawp_env" type="radio" value="prod" <?php if ($options == 'prod') echo 'checked'; ?> style="margin-left:5px;"><?php esc_html_e('Production', 'sakolawp'); ?></label>
 		<?php
 	}
 

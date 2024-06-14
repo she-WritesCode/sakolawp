@@ -44,7 +44,7 @@ class RunHomeworkRepo
 
         // Add homework_code condition
         if (!empty($homework_code)) {
-            $sql .= " AND h.homework_code = $homework_code";
+            $sql .= " AND h.homework_code = '$homework_code'";
         }
 
         $sql .= " GROUP BY h.homework_id";
