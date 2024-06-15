@@ -54,23 +54,24 @@ class RunDeliveryRepo
         $class_id = isset($args['class_id']) ? $args['class_id'] : '';
         $interval_in_days = isset($args['interval_in_days']) ? $args['interval_in_days'] : '';
 
-        $sql = "SELECT d.*, h.title as homework_title, h.section_id, h.homework_code
+        $sql = "SELECT d.*, h.title as homework_title, h.section_id, h.homework_code, s.name as subject_name
 		FROM {$wpdb->prefix}{$this->homework_table} h
 		JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
 		JOIN {$wpdb->prefix}{$this->enroll_table} e ON d.student_id = e.student_id
+		JOIN {$wpdb->prefix}{$this->subject_table} s ON h.subject_id = s.subject_id
 		WHERE h.allow_peer_review = 1  
-		AND h.peer_review_who = 'student'
-		ORDER BY h.created_at DESC, d.date DESC;";
+		AND h.peer_review_who = 'student'";
 
 
-        // Add section_id condition
-        if (!empty($section_id)) {
-            $sql .= $wpdb->prepare(" AND d.section_id = %d", $section_id);
-        }
 
         // Add student_id condition
         if (!empty($student_id)) {
-            $sql .= $wpdb->prepare(" AND d.student_id = %d", $student_id);
+            $sql .= $wpdb->prepare(" AND d.student_id != %s", $student_id);
+        }
+
+        // Add section_id condition
+        if (!empty($section_id)) {
+            $sql .= $wpdb->prepare(" AND e.section_id = %s", $section_id);
         }
 
         // Add class_id condition
@@ -83,11 +84,10 @@ class RunDeliveryRepo
             $sql .= $wpdb->prepare(" AND created_at >= NOW() - INTERVAL %d DAY", $interval_in_days);
         }
 
-        $sql .= " GROUP BY d.delivery_id";
+        // $sql .= " GROUP BY d.delivery_id";
         $sql .= " ORDER BY h.created_at DESC, d.date DESC;";
 
         $result = $wpdb->get_results($sql);
-
         return $result;
     }
 

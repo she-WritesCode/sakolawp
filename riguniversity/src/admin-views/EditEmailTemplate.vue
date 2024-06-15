@@ -30,7 +30,7 @@ onMounted(() => {
                         <h3 class="font-bold text-primary-700 white-space-nowrap">
                             {{ template.title }}
                             <span v-if="errors[template.id]?.subject || errors[template.id]?.template"
-                                class="text-red-500">check errors</span>
+                                class="text-red-500 ml-2">check errors</span>
                         </h3>
                     </template>
                     <div class="py-4">
