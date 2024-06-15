@@ -63,6 +63,7 @@ export const useFormStore = defineStore('formStore', {
         question: 'Your Submission',
         type,
         accepts: '*',
+        required: true,
         options:
           type === 'radio' || type === 'checkbox' || type === 'dropdown'
             ? [{ label: '', value: '' }]
@@ -90,8 +91,7 @@ export const useFormStore = defineStore('formStore', {
                   1: 'Did not meet expectations',
                   10: 'Expert - demonstrates a deep understanding and mastery'
                 }
-              },
-        required: true
+              }
       }
       this.form.questions.push(newQuestion)
     },

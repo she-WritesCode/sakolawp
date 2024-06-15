@@ -5,11 +5,12 @@ import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
 import { createSubjectSchema, useSubjectStore } from '../../stores/subject';
 import { useUserStore } from '../../stores/user';
+import { useProgramStore } from '../../stores/program';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted, watch } from 'vue';
 import { computed } from 'vue';
 
-const { updateSubject, closeAddForm, currentSubject } = useSubjectStore()
+const { updateSubject, currentSubject } = useSubjectStore()
 const { errors, defineField, handleSubmit, setValues } = useForm({
     initialValues: currentSubject.value,
     validationSchema: toTypedSchema(createSubjectSchema),
@@ -17,9 +18,13 @@ const { errors, defineField, handleSubmit, setValues } = useForm({
 
 const [name, nameProps] = defineField('name');
 const [teacher_id, teacher_idProps] = defineField('teacher_id');
+const [class_id, class_idProps] = defineField('class_id');
 
-const { users, filter, fetchUsers } = useUserStore()
+const { users, filter } = useUserStore()
 const teacherOptions = computed(() => users.value.map(u => u.data));
+
+const { programs, fetchPrograms } = useProgramStore()
+const classOptions = computed(() => programs.value.map(u => u));
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
@@ -32,8 +37,10 @@ watch(currentSubject, () => {
 
 onMounted(() => {
     filter.role = "teacher";
-    fetchUsers()
+    fetchPrograms()
+    // fetchUsers()
 })
+
 </script>
 
 <template>
@@ -51,6 +58,13 @@ onMounted(() => {
                 <Dropdown name="teacher_id" :options="teacherOptions" optionLabel="display_name" optionValue="ID"
                     placeholder="Select" v-model="teacher_id" class="w-full" v-bind="teacher_idProps" />
                 <div>{{ errors.teacher_id }}</div>
+            </div>
+
+            <div class="form-group">
+                <label for="class_id">Class</label>
+                <Dropdown name="class_id" :options="classOptions" optionLabel="name" optionValue="class_id"
+                    placeholder="Select" v-model="class_id" class="w-full" v-bind="class_idProps" />
+                <div class="p-error text-red-500">{{ errors.class_id }}</div>
             </div>
         </div>
         <div class="flex gap-2 justify-between">

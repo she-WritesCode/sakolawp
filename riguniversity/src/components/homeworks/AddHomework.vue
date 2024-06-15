@@ -32,7 +32,7 @@ const { handleSubmit, errors, defineField } = useForm({
         word_count_min: null,
         word_count_max: null,
         limit_word_count: false,
-        date_end: new Date(),
+        date_end: new Date().toISOString() as unknown as Date,
         time_end: "23:59" as unknown as Date,
         questions: [],
         ...props.initialValues,
@@ -102,7 +102,8 @@ onMounted(() => {
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <Textarea v-model="description" v-bind="descriptionProps" name="description" class="w-full"></Textarea>
+                <Textarea v-model="description" v-bind="descriptionProps" name="description" rows="5"
+                    class="w-full"></Textarea>
                 <div class="p-error text-red-500">{{ errors.description }}</div>
             </div>
             <div class="flex gap-2">

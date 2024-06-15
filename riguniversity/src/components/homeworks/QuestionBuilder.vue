@@ -61,7 +61,7 @@ watch(form.questions, (value) => {
 
         <TransitionGroup name="slide-fade">
             <div v-for="(question, index) in form.questions" :key="question.question_id"
-                class="mb-4 px-4 pb-2 pt-8 md:px-4 md:pt-6 md:pb-4 border rounded-lg relative">
+                class="mb-4 px-4 pb-2 pt-8 md:px-4 md:pt-6 md:pb-2 border rounded-lg relative">
                 <div class="mb-4">
                     <label class="block text-sm w-full font-medium text-gray-700 mb-2">Question {{ index + 1 }}:</label>
                     <div class="flex flex-col md:flex-row flex-wrap md:flex-nowrap gap-2">
@@ -73,14 +73,26 @@ watch(form.questions, (value) => {
                 </div>
 
                 <div v-if="question.type === 'linear-scale'" class="mb-4">
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Min Value:</label>
-                            <InputNumber type="number" v-model.number="question.linear_scale_options!.min" />
+                    <div class="grid gap-2">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700">Min Value:</label>
+                                <InputNumber type="number" v-model.number="question.linear_scale_options!.min" />
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Label:</label>
+                                <InputNumber type="number" v-model.number="question.linear_scale_options!.min" />
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Max Value:</label>
-                            <InputNumber type="number" v-model.number="question.linear_scale_options!.max" />
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700">Max Value:</label>
+                                <InputNumber type="number" v-model.number="question.linear_scale_options!.max" />
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">Label:</label>
+                                <InputNumber type="number" v-model.number="question.linear_scale_options!.max" />
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Step:</label>

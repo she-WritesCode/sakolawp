@@ -4,7 +4,8 @@ require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-questions-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-deliveries-repo.php';
-require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-enroll-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 
@@ -123,6 +124,7 @@ function run_single_homework()
 function run_create_homework()
 {
 	$repo = new RunHomeworkRepo();
+	$subjectRepo = new RunSubjectRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
 
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
@@ -146,11 +148,18 @@ function run_create_homework()
 
 	$post_id = $homework_code;
 
+	$subject = $subjectRepo->single($subject_id);
+
+	if (!$subject) {
+		wp_send_json_error('Subject not found', 404);
+		die();
+	}
+
 	$result = $repo->create([
 		'homework_code' => $homework_code,
 		'title' => $title,
 		'description' => $description,
-		'class_id' => $class_id,
+		'class_id' => $subject->class_id,
 		'section_id' => $section_id,
 		'subject_id' => $subject_id,
 		'uploader_id' => $uploader_id,
@@ -195,6 +204,8 @@ function run_create_homework()
 function run_update_homework()
 {
 	$repo = new RunHomeworkRepo();
+	$subjectRepo = new RunSubjectRepo();
+
 	$homework_id = sanitize_text_field($_POST['homework_id']);
 	$_POST = array_map('stripslashes_deep', $_POST);
 	$title = sakolawp_sanitize_html($_POST['title']);
@@ -209,14 +220,22 @@ function run_update_homework()
 	$date_end = sanitize_text_field($_POST['date_end']);
 	$questions = $_POST['questions'];
 
-	$datetime = strtotime(date('d-m-Y', strtotime(sanitize_text_field($_POST['date_end']))));
 	$uploader_type  = 'teacher';
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
+
+	$homework = $repo->single($homework_id);
+	$subject = $subjectRepo->single($homework->subject_id);
+
+	if (!$subject) {
+		wp_send_json_error('Subject not found', 404);
+		die();
+	}
 
 	$result = $repo->update($homework_id, [
 		'title' => $title,
 		'description' => $description,
 		'uploader_id' => $uploader_id,
+		'class_id' => $subject->class_id,
 		'uploader_type' => $uploader_type,
 		'time_end' => $time_end,
 		'date_end' => $date_end,
@@ -324,6 +343,79 @@ add_action('wp_ajax_run_single_lesson', 'run_single_lesson');
 add_action('wp_ajax_run_create_lesson', 'run_create_lesson');
 add_action('wp_ajax_run_update_lesson', 'run_update_lesson');
 add_action('wp_ajax_run_delete_lesson', 'run_delete_lesson');
+
+/** List Class */
+function run_list_class()
+{
+	$repo = new RunClassRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single class */
+function run_single_class()
+{
+	$repo = new RunClassRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$result = $repo->single($class_id);
+
+	if (!$result) {
+		wp_send_json_error('Class not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new class */
+function run_create_class()
+{
+	$repo = new RunClassRepo();
+	$class_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($class_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing class */
+function run_update_class()
+{
+	$repo = new RunClassRepo();
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$class_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($class_id, $class_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a class */
+function run_delete_class($class_id)
+{
+	$repo = new RunClassRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$class_id = sanitize_text_field($_POST['class_id']);
+	$result = $repo->delete($class_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_class', 'run_list_class');
+add_action('wp_ajax_run_single_class', 'run_single_class');
+add_action('wp_ajax_run_create_class', 'run_create_class');
+add_action('wp_ajax_run_update_class', 'run_update_class');
+add_action('wp_ajax_run_delete_class', 'run_delete_class');
 
 /** List Users */
 function run_list_users()

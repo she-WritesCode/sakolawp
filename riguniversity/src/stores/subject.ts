@@ -6,6 +6,7 @@ export interface Subject {
   name: string
   subject_id?: string
   teacher_id: string
+  class_id: string
   teacher_name: string
   lesson_count: number
   homework_count: number
@@ -13,7 +14,8 @@ export interface Subject {
 
 export const createSubjectSchema = yup.object({
   name: yup.string().min(3).required(),
-  teacher_id: yup.string().optional()
+  teacher_id: yup.string().optional(),
+  class_id: yup.string().optional()
 })
 
 export const useSubjectStore = defineStore('subject', () => {
