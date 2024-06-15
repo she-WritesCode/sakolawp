@@ -283,8 +283,8 @@ function sakolawp_schedule_daily_digest()
 	// $timestamp = wp_next_scheduled('sakolawp_daily_digest_hook');
 	// wp_unschedule_event($timestamp, 'sakolawp_daily_digest_hook');
 	if (!wp_next_scheduled('sakolawp_daily_digest_hook')) {
-		// Schedule the event to run at 6 AM UTC daily & 7 AM GMT+1
-		$time = strtotime('07:00:00');
+		// Schedule the event to run at 6 PM UTC daily & 7 PM GMT+1
+		$time = strtotime('18:00:00');
 		wp_schedule_event($time, 'daily', 'sakolawp_daily_digest_hook');
 	}
 }
