@@ -20,6 +20,8 @@
     "quill": "^2.0.2",
     "vee-validate": "^4.12.8",
     "vue": "^3.4.21",
+    "vue-draggable-plus": "^0.5.0",
+    "vuedraggable": "^4.1.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
