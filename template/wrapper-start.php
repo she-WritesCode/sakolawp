@@ -53,6 +53,5 @@ switch ($template) {
 			</div>
 			<div class="sakolawp-content-wrapper skwp-column-main skwp-column">
 				<div class="sakolawp-inner-content">
-
-					<div class="menu-button-portal"></div>
+					<!-- <div class="menu-button-portal"></div> -->
 				<?php } ?>
