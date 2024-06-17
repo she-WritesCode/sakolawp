@@ -6,7 +6,7 @@ import Textarea from 'primevue/textarea';
 import FileUpload from 'primevue/fileupload';
 import Dropdown from 'primevue/dropdown';
 import SelectButton from 'primevue/selectbutton';
-import Calendar from 'primevue/calendar';
+// import Calendar from 'primevue/calendar';
 import QuestionBuilder from './QuestionBuilder.vue';
 import { string, object, array } from 'yup';
 import Divider from 'primevue/divider';
@@ -32,10 +32,11 @@ const { handleSubmit, errors, defineField } = useForm({
         word_count_min: null,
         word_count_max: null,
         limit_word_count: false,
-        date_end: new Date().toISOString() as unknown as Date,
         time_end: "23:59" as unknown as Date,
         questions: [],
         ...props.initialValues,
+        date_end: props.initialValues?.date_end ? props.initialValues?.date_end : new Date().toISOString() as unknown as Date,
+
     },
     validationSchema: object({
         title: string().required(),
@@ -64,6 +65,9 @@ const [time_end, time_endProps] = defineField('time_end')
 const [questions, questionsProps] = defineField('questions')
 
 const submitForm = handleSubmit(async (values) => {
+    values.date_end = new Date(values.date_end).toISOString().split('T')[0] as unknown as Date
+    // TODO: file upload and set the filename
+    // values.file_name = ""
     if (props.initialValues?.homework_id) {
         updateHomework({ ...values, subject_id: subjectId })
     } else {
@@ -88,7 +92,9 @@ onMounted(() => {
         getOneHomework(homeworkId)
     }
 });
-
+const onUpload = () => {
+    // toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+};
 </script>
 <template>
     <form id="myFor" class="flex flex-col gap-8" name="Add homework" @submit="submitForm">
@@ -110,15 +116,15 @@ onMounted(() => {
                 <div class="">
                     <div class="form-group">
                         <label for=""> Due Date</label>
-                        <Calendar v-model="date_end" v-bind="date_endProps" class="w-full" name="date_end" />
+                        <input type="date" v-model="date_end" v-bind="date_endProps" class="w-full" name="date_end" />
                         <div class="p-error text-red-500">{{ errors.date_end }}</div>
                     </div>
                 </div>
                 <div class="">
                     <div class="form-group">
                         <label for=""> Due Time</label>
-                        <Calendar id="calendar-timeonly" v-model="time_end" v-bind="time_endProps" timeOnly
-                            name="time_end" hourFormat="24" />
+                        <input type="time" id="calendar-timeonly" v-model="time_end" v-bind="time_endProps"
+                            name="time_end" />
                         <div class="p-error text-red-500">{{ errors.time_end }}</div>
                     </div>
                 </div>
@@ -128,7 +134,8 @@ onMounted(() => {
                 <label class="col-form-label" for="file-3">Upload homework file (optional)</label>
                 <div class="input-group mb-2">
                     <FileUpload outlined mode="basic" name="file_name" id="file-3" class=""
-                        accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" />
+                        accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" :maxFileSize="1000000"
+                        @upload="onUpload" />
                     <div class="p-error text-red-500">{{ errors.file_name }}</div>
                 </div>
                 <span class="warning">Max file size up to 10MB</span>
@@ -189,9 +196,11 @@ onMounted(() => {
                 </Transition>
             </div>
         </div>
-        <div class="flex gap-4 py-4 justify-between">
-            <Button :loading="loading.create || loading.update" class="w-1/2" type="submit" name="submit" :label="`${homeworkId ? 'Update'
+        <div class="sticky w-full bottom-0 inset-x-0 bg-surface-0">
+            <div class="text-center flex items-center max-w-2xl mx-auto justify-center py-4">
+                <Button :loading="loading.create || loading.update" class="w-full" type="submit" name="submit" :label="`${homeworkId ? 'Update'
         : 'Add'} Homework`"></Button>
+            </div>
         </div>
     </form>
 </template>

@@ -5,7 +5,7 @@ import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
 import { createSubjectSchema, useSubjectStore } from '../../stores/subject';
 import { useUserStore } from '../../stores/user';
-import { useProgramStore } from '../../stores/program';
+import { useCohortStore } from '../../stores/cohort';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
 import { computed } from 'vue';
@@ -26,8 +26,8 @@ const [class_id, class_idProps] = defineField('class_id');
 const { users, filter } = useUserStore()
 const teacherOptions = computed(() => users.value.map(u => u.data));
 
-const { programs, fetchPrograms } = useProgramStore()
-const classOptions = computed(() => programs.value.map(u => u));
+const { cohorts, fetchCohorts } = useCohortStore()
+const classOptions = computed(() => cohorts.value.map(u => u));
 
 const { createSubject, closeAddForm } = useSubjectStore()
 
@@ -38,7 +38,7 @@ const submitForm = handleSubmit((values) => {
 
 onMounted(() => {
     filter.role = "teacher";
-    fetchPrograms()
+    fetchCohorts()
     // fetchUsers()
 })
 </script>

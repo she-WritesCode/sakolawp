@@ -1919,3 +1919,47 @@ function convert_datetime(string $datetime, $from, $to)
 		return null;
 	}
 }
+
+function sakolawp_handle_file_upload()
+{
+	// Check if a file has been uploaded
+	if (isset($_FILES['file']) && !empty($_FILES['file']['name'])) {
+		// Get the uploaded file
+		$file = $_FILES['file'];
+
+		// Handle the file upload using wp_handle_upload
+		$uploaded_file = wp_handle_upload($file, array('test_form' => false));
+
+		if (isset($uploaded_file['file'])) {
+			$file_name = basename($uploaded_file['file']);
+			$file_type = wp_check_filetype($uploaded_file['file']);
+
+			// Prepare an array of post data for the attachment
+			$attachment = array(
+				'guid'           => $uploaded_file['url'],
+				'post_mime_type' => $file_type['type'],
+				'post_title'     => sanitize_file_name($file_name),
+				'post_content'   => '',
+				'post_status'    => 'inherit'
+			);
+
+			// Insert the attachment
+			$attachment_id = wp_insert_attachment($attachment, $uploaded_file['file']);
+
+			// Include the necessary library for metadata
+			require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+			// Generate the metadata for the attachment
+			$attachment_data = wp_generate_attachment_metadata($attachment_id, $uploaded_file['file']);
+			wp_update_attachment_metadata($attachment_id, $attachment_data);
+
+			wp_send_json_success(array('message' => 'File uploaded successfully!'));
+		} else {
+			wp_send_json_error(array('message' => 'There was an error uploading the file.'));
+		}
+	} else {
+		wp_send_json_error(array('message' => 'No file was uploaded.'));
+	}
+}
+add_action('wp_ajax_upload_file', 'handle_file_upload');
+add_action('wp_ajax_nopriv_upload_file', 'handle_file_upload');
