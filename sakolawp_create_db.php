@@ -8,6 +8,7 @@ $class_table = $wpdb->prefix . 'sakolawp_class';
 $section_table = $wpdb->prefix . 'sakolawp_section';
 $accountability_table = $wpdb->prefix . 'sakolawp_accountability';
 $subject_table = $wpdb->prefix . 'sakolawp_subject';
+$class_subject_table = $wpdb->prefix . 'sakolawp_class_subject';
 $routine_table = $wpdb->prefix . 'sakolawp_class_routine';
 $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
 $lessons_table = $wpdb->prefix . 'sakolawp_lessons';
@@ -75,6 +76,15 @@ CREATE TABLE $subject_table (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (subject_id)
+) $charset_collate;
+
+CREATE TABLE $class_subject_table (
+	id mediumint(11) NOT NULL AUTO_INCREMENT,
+	subject_id int(11) NOT NULL,
+	class_id int(11) NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	UNIQUE KEY id (id)
 ) $charset_collate;
 
 CREATE TABLE $routine_table (
@@ -161,22 +171,6 @@ CREATE TABLE $question_table (
     score_percentage INT,
     expected_points INT,
     UNIQUE KEY id (question_id)
-) $charset_collate;
-
-CREATE TABLE $linear_scale_options_table (
-    question_id INT NOT NULL,
-    min INT NOT NULL,
-    max INT NOT NULL,
-    step INT NOT NULL,
-    UNIQUE KEY id (question_id)
-) $charset_collate;
-
-CREATE TABLE $linear_scale_labels_table (
-    id INT NOT NULL AUTO_INCREMENT,
-    question_id INT NOT NULL,
-    scale_value INT NOT NULL,
-    label VARCHAR(255) NOT NULL,
-    UNIQUE KEY id (id)
 ) $charset_collate;
 
 CREATE TABLE $options_table (

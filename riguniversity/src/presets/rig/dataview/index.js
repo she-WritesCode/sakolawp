@@ -29,12 +29,12 @@ export default {
             'font-semibold',
 
             // Spacing
-            'py-3 px-4',
+            'py-3',
 
             // Color
             'text-surface-800 dark:text-white/80',
             'bg-surface-00 dark:bg-surface-900',
-            'border-b border-surface-200 dark:border-surface-700'
+            'border-0 border-surface-200 dark:border-surface-700'
         ]
     }
 };

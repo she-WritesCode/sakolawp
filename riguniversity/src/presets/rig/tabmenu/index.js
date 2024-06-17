@@ -18,7 +18,7 @@ export default {
         ]
     },
     menuitem: {
-        class: 'mr-0 mb-0'
+        class: 'mr-0 mb-0 min-w-fit'
     },
     action: ({ context, state }) => ({
         class: [

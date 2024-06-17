@@ -20,7 +20,7 @@ global $wpdb;
 
 	<nav class="skwp-tabs-menu">
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
-		<div class="skwp-logo">
+			<div class="skwp-logo">
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
 			<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true"><?php echo esc_html__('Classes', 'sakolawp'); ?></a>
@@ -29,9 +29,10 @@ global $wpdb;
 	</nav>
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+			<div id="run-listcohort"></div>
 
 			<!-- start of class table -->
-			<div class="table-responsive">
+			<!-- <div class="table-responsive">
 				<table id="dataTable1" width="100%" class="table table-striped table-lightfont">
 					<thead>
 						<tr>
@@ -67,7 +68,7 @@ global $wpdb;
 						<?php endforeach; ?>
 					</tbody>
 				</table>
-			</div>
+			</div> -->
 			<!-- end of class table -->
 
 		</div>
