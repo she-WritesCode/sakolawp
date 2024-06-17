@@ -190,7 +190,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="flex gap-4 py-4 justify-between">
-            <Button :loading="loading.create" class="w-1/2" type="submit" name="submit" :label="`${homeworkId ? 'Update'
+            <Button :loading="loading.create || loading.update" class="w-1/2" type="submit" name="submit" :label="`${homeworkId ? 'Update'
         : 'Add'} Homework`"></Button>
         </div>
     </form>

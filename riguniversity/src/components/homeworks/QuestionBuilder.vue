@@ -7,6 +7,7 @@ import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { onMounted, ref, watch } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus'
+// import DynamicForm from './DynamicForm.vue'
 
 
 const formStore = useFormStore();
@@ -48,7 +49,7 @@ watch(form.questions, (value) => {
 <template>
     <div class="">
         <!-- <Button @click="showPreview = !showPreview">Preview</Button>
-        <FormPreview v-if="showPreview" :questions="form.questions" /> -->
+        <DynamicForm title="" description="" v-if="showPreview" :questions="form.questions" /> -->
 
         <!-- <div class="mb-4">
             <label for="formTitle" class="block text-sm font-medium text-gray-700">Form Title:</label>
@@ -60,8 +61,8 @@ watch(form.questions, (value) => {
                 placeholder="Enter form description"></Textarea>
         </div> -->
 
-        <TransitionGroup name="slide-fade">
-            <VueDraggable ref="el" v-model="form.questions">
+        <VueDraggable ref="el" v-model="form.questions">
+            <TransitionGroup name="slide-fade">
                 <div v-for="(question, index) in form.questions" :key="question.question_id"
                     class="mb-4 px-4 pb-2 pt-8 md:px-4 md:pt-6 md:pb-2 border bg-surface-0 rounded-lg relative">
                     <div class="mb-4">
@@ -183,8 +184,8 @@ watch(form.questions, (value) => {
                             @click="removeQuestion(index)" label="x" class="text-xs"></Button>
                     </div>
                 </div>
-            </VueDraggable>
-        </TransitionGroup>
+            </TransitionGroup>
+        </VueDraggable>
 
         <div v-if="errors" class="text-red-500 mb-4"> {{ errors }} </div>
 

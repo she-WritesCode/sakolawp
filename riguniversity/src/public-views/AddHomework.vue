@@ -3,7 +3,7 @@ import Toast from 'primevue/toast';
 
 </script>
 <template>
-    <Toast />
+    <Toast position="bottom-center" />
     <div>
         <!-- <p>Home works are perfect!</p> -->
     </div>

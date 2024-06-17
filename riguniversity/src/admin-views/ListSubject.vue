@@ -94,7 +94,7 @@ function deleteASubject(id: string) {
 </script>
 
 <template>
-    <Toast />
+    <Toast position="bottom-center" />
     <!-- Loading Indicator -->
     <div v-if="loading">
         <LoadingIndicator></LoadingIndicator>
