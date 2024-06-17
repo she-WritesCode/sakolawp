@@ -154,6 +154,9 @@ input {
 	/* max-width: 1200px; */
 	margin: auto;
 }
+.sakolawp-content-wrapper.skwp-column-main.skwp-column {
+	padding: 0;
+}
 .skwp-column {
 	float: left;
 	-webkit-box-sizing: border-box;
