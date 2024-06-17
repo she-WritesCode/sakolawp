@@ -77,39 +77,42 @@ watch(form.questions, (value) => {
                         <div class="grid grid-cols-3 gap-4">
                             <div class="col-span-1">
                                 <label class="block text-sm font-medium text-gray-700">Min Value:</label>
-                                <InputNumber type="number" v-model.number="question.linear_scale_options!.min" />
+                                <InputNumber type="number" v-model.number="question.linear_scale_options.min"
+                                    class="w-full" />
                             </div>
                             <div class="col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Label:</label>
-                                <InputNumber type="number" v-model.number="question.linear_scale_options!.min" />
+                                <InputText v-model="question.linear_scale_options.minLabel" class="w-full" />
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-4">
                             <div class="col-span-1">
                                 <label class="block text-sm font-medium text-gray-700">Max Value:</label>
-                                <InputNumber type="number" v-model.number="question.linear_scale_options!.max" />
+                                <InputNumber type="number" v-model.number="question.linear_scale_options.max"
+                                    class="w-full" />
                             </div>
                             <div class="col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">Label:</label>
-                                <InputNumber type="number" v-model.number="question.linear_scale_options!.max" />
+                                <InputText v-model="question.linear_scale_options.maxLabel" class="w-full" />
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Step:</label>
-                            <InputNumber type="number" v-model.number="question.linear_scale_options!.step" />
+                            <InputNumber type="number" v-model.number="question.linear_scale_options.step" />
                         </div>
                     </div>
                 </div>
 
                 <div v-if="question.type === 'radio' || question.type === 'checkbox' || question.type === 'dropdown'"
                     class="mb-4">
+                    <div class="font-bold mb-2">Options</div>
                     <div v-for="(option, optIndex) in question.options" :key="optIndex"
                         class="mb-2 flex gap-2 items-center">
                         <!-- <InputText class="w-full" v-model="option.label" :placeholder="`Option ${optIndex + 1}`" /> -->
                         <InputText class="w-full" v-model="option.value" :placeholder="`Option ${optIndex + 1}`" />
-                        <Button class="w-ful" plain severity="warning" @click="removeOption(index, optIndex)">x</Button>
+                        <Button class="w-ful" plain severity="danger" @click="removeOption(index, optIndex)">x</Button>
                     </div>
-                    <Button @click="addOption(index)">Add Option</Button>
+                    <Button outlined @click="addOption(index)">Add Option</Button>
                 </div>
 
 
@@ -165,12 +168,12 @@ watch(form.questions, (value) => {
                 </div>
 
                 <!-- Required checkbox -->
-                <div class="form-group mb-4">
+                <!-- <div class="form-group mb-4">
                     <label class="flex gap-2">
                         <Checkbox v-model="question.required" name="required" class="" binary />
                         <span>Required</span>
                     </label>
-                </div>
+                </div> -->
                 <div class="absolute z-10 top-4 right-4">
                     <Button v-if="form.questions.length > 1" size="small" severity="danger" outlined
                         @click="removeQuestion(index)" label="x" class="text-xs"></Button>

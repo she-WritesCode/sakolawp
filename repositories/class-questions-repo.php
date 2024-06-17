@@ -14,6 +14,10 @@ class RunQuestionsRepo
             return $question;
         }, $questions_list);
 
+        $all_questions_ids =  array_map(function ($question) {
+            return $question['question_id'];
+        }, $questions_list);
+
         // Retrieve existing questions associated with the homework ID
         $existing_questions = $this->get_by_homework($homework_id);
 
@@ -23,9 +27,12 @@ class RunQuestionsRepo
         }, $existing_questions);
 
         // IDs of new questions
-        $new_question_ids = array_map(function ($question) {
-            return str_starts_with($question['question_id'], 'q');
-        }, $questions_list);
+        $new_question_ids = array_filter(array_map(function ($question) use ($existing_question_ids) {
+            return in_array($question['question_id'], $existing_question_ids) ? null : $question['question_id'];
+        }, $questions_list));
+
+        $new_question_ids = array_values(array_filter($new_question_ids)); // Reindex array to avoid gaps
+
 
         // Questions to be inserted
         $questions_to_insert = array_filter($questions_list, function ($question) use ($existing_question_ids) {
@@ -38,9 +45,11 @@ class RunQuestionsRepo
         });
 
         // Delete questions not present in the new list
-        $questions_to_delete = array_diff($existing_question_ids, $new_question_ids);
+        $questions_to_delete = array_filter($existing_question_ids, function ($question_id) use ($all_questions_ids) {
+            return !in_array($question_id, $all_questions_ids);
+        });
 
-        // error_log(print_r(["update" => $questions_to_update, "insert" => $questions_to_insert, "delete" => $questions_to_delete], true));
+        error_log(print_r(["update" => $questions_to_update, "insert" => $questions_to_insert, "delete" => $questions_to_delete], true));
 
         $create_result = [];
         // Insert new questions
@@ -94,7 +103,7 @@ class RunQuestionsRepo
     }
 
     /** Helper method to insert a new question */
-    private function create($question_data)
+    private function create(array $question_data)
     {
         global $wpdb;
 
@@ -102,10 +111,16 @@ class RunQuestionsRepo
         if (isset($question_data['text_options'])) {
             $question_data['text_options'] = json_encode($question_data['text_options']);
         }
-        error_log('Required=>' . print_r($question_data['required'], true));
+        // error_log('Required=>' . print_r($question_data['required'], true));
+
         // Extract linear scale options and labels
-        $linear_scale_options = isset($question_data['linear_scale_options']) ? $question_data['linear_scale_options'] : null;
-        unset($question_data['linear_scale_options']);
+        unset($question_data['linear_scale_labels']);
+        if (isset($question_data['linear_scale_options'])) {
+            $question_data['linear_scale_options'] = json_encode($question_data['linear_scale_options']);
+        } else {
+            $question_data['linear_scale_options'] = json_encode([]);
+        }
+        // error_log(print_r($question_data, true));
 
         // Extract options
         $options = isset($question_data['options']) ? $question_data['options'] : null;
@@ -119,36 +134,11 @@ class RunQuestionsRepo
         if ($result) {
             $question_id = $wpdb->insert_id;
 
-            if ($linear_scale_options) {
-                $linear_scale_data = [
-                    'question_id' => $question_id,
-                    'min' => $linear_scale_options['min'],
-                    'max' => $linear_scale_options['max'],
-                    'step' => $linear_scale_options['step']
-                ];
-                $wpdb->insert(
-                    "{$wpdb->prefix}{$this->linear_scale_options_table}",
-                    $linear_scale_data
-                );
-
-                foreach ($linear_scale_options['labels'] as $scale_value => $label) {
-                    $label_data = [
-                        'question_id' => $question_id,
-                        'scale_value' => $scale_value,
-                        'label' => $label
-                    ];
-                    $wpdb->insert(
-                        "{$wpdb->prefix}{$this->linear_scale_labels_table}",
-                        $label_data
-                    );
-                }
-            }
-
             if ($options) {
                 foreach ($options as $option) {
                     $option_data = [
                         'question_id' => $question_id,
-                        'label' => $option['label'],
+                        'label' => !empty($option['label']) ? $option['label'] : $option['value'],
                         'value' => $option['value'],
                         'points' => isset($option['points']) ? $option['points'] : null
                     ];
@@ -173,9 +163,10 @@ class RunQuestionsRepo
             $question_data['text_options'] = json_encode($question_data['text_options']);
         }
 
-        // Extract linear scale options and labels
-        $linear_scale_options = isset($question_data['linear_scale_options']) ? $question_data['linear_scale_options'] : null;
-        unset($question_data['linear_scale_options']);
+        // Convert arrays to JSON strings
+        if (isset($question_data['linear_scale_options'])) {
+            $question_data['linear_scale_options'] = json_encode($question_data['linear_scale_options']);
+        }
 
         // Extract options
         $options = isset($question_data['options']) ? $question_data['options'] : null;
@@ -189,37 +180,6 @@ class RunQuestionsRepo
 
         if ($result) {
             // Update linear scale options if present
-            if ($linear_scale_options) {
-                $linear_scale_data = [
-                    'min' => $linear_scale_options['min'],
-                    'max' => $linear_scale_options['max'],
-                    'step' => $linear_scale_options['step']
-                ];
-                $wpdb->update(
-                    "{$wpdb->prefix}{$this->linear_scale_options_table}",
-                    $linear_scale_data,
-                    array('question_id' => $question_id)
-                );
-
-                // Delete existing linear scale labels
-                $wpdb->delete(
-                    "{$wpdb->prefix}{$this->linear_scale_labels_table}",
-                    array('question_id' => $question_id)
-                );
-
-                // Insert updated linear scale labels
-                foreach ($linear_scale_options['labels'] as $scale_value => $label) {
-                    $label_data = [
-                        'question_id' => $question_id,
-                        'scale_value' => $scale_value,
-                        'label' => $label
-                    ];
-                    $wpdb->insert(
-                        "{$wpdb->prefix}{$this->linear_scale_labels_table}",
-                        $label_data
-                    );
-                }
-            }
 
             // Delete existing options
             $wpdb->delete(
@@ -232,7 +192,7 @@ class RunQuestionsRepo
                 foreach ($options as $option) {
                     $option_data = [
                         'question_id' => $question_id,
-                        'label' => $option['label'],
+                        'label' => !empty($option['label']) ? $option['label'] : $option['value'],
                         'value' => $option['value'],
                         'points' => isset($option['points']) ? $option['points'] : null
                     ];
@@ -262,12 +222,12 @@ class RunQuestionsRepo
                 $labels_sql = "SELECT scale_value, label
                                FROM {$wpdb->prefix}{$this->linear_scale_labels_table}
                                WHERE question_id = '{$question->question_id}'";
-                $question->linear_scale_labels = $wpdb->get_results($labels_sql);
+                // $question->linear_scale_labels = $wpdb->get_results($labels_sql);
 
                 $options_sql = "SELECT min, max, step
                                 FROM {$wpdb->prefix}{$this->linear_scale_options_table}
                                 WHERE question_id = '{$question->question_id}'";
-                $question->linear_scale_options = $wpdb->get_row($options_sql);
+                // $question->linear_scale_options = $wpdb->get_row($options_sql);
             }
 
             $options_sql = "SELECT label, value, points
@@ -276,6 +236,14 @@ class RunQuestionsRepo
             $question->options = $wpdb->get_results($options_sql);
 
             $question->text_options = json_decode($question->text_options);
+
+            if (isset($question->linear_scale_options)) {
+                $question->linear_scale_options = json_decode($question->linear_scale_options);
+                $question->linear_scale_options->min = (int)$question->linear_scale_options->min;
+                $question->linear_scale_options->max = (int)$question->linear_scale_options->max;
+                $question->linear_scale_options->step = (int)$question->linear_scale_options->step;
+            }
+
             if (isset($question->text_options->add_word_count)) {
                 $question->text_options->add_word_count = $question->text_options->add_word_count == 'true' ? true : false;
                 $question->text_options->min = (int)$question->text_options->min;

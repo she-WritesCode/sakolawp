@@ -157,6 +157,7 @@ CREATE TABLE $question_table (
     multiple BOOLEAN,
     required BOOLEAN,
     text_options JSON,
+    linear_scale_options JSON,
     score_percentage INT,
     expected_points INT,
     UNIQUE KEY id (question_id)

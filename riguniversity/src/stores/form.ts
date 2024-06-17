@@ -4,9 +4,8 @@ export interface LinearScaleOptions {
   min: number
   max: number
   step: number
-  labels: {
-    [key: number]: string
-  }
+  minLabel: string
+  maxLabel: string
 }
 export interface TextOptions {
   add_word_count?: boolean
@@ -36,7 +35,7 @@ export interface Question {
   type: QuestionType
   accepts?: string
   multiple?: boolean
-  linear_scale_options?: LinearScaleOptions
+  linear_scale_options: LinearScaleOptions
   text_options: TextOptions
   options?: Option[]
   required?: boolean
@@ -72,26 +71,14 @@ export const useFormStore = defineStore('formStore', {
           type === 'text' || type === 'textarea'
             ? { add_word_count: false, min: 250, max: 300 }
             : { add_word_count: false, min: 0, max: 0 },
-        linear_scale_options:
-          type === 'linear-scale'
-            ? {
-                min: 1,
-                max: 10,
-                step: 1,
-                labels: {
-                  1: 'Did not meet expectations',
-                  10: 'Expert - demonstrates a deep understanding and mastery'
-                }
-              }
-            : {
-                min: 1,
-                max: 10,
-                step: 1,
-                labels: {
-                  1: 'Did not meet expectations',
-                  10: 'Expert - demonstrates a deep understanding and mastery'
-                }
-              }
+
+        linear_scale_options: {
+          min: 1,
+          max: 10,
+          step: 1,
+          minLabel: 'Did not meet expectations',
+          maxLabel: 'Expert - demonstrates a deep understanding and mastery'
+        }
       }
       this.form.questions.push(newQuestion)
     },
