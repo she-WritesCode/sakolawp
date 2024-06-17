@@ -1892,3 +1892,30 @@ function custom_cron_jobs_page()
 	</div>
 <?php
 }
+
+/**
+ * Convert Datetime from any given olsonzone to other.
+ * @return string in user specified format
+ * 
+ * ### Usage
+ * ```php
+ * $from = ['localeFormat' => "d/m/Y H:i A", 'olsonZone' => 'Asia/Calcutta'];
+ * $to = ['localeFormat' => "Y-m-d H:i:s", 'olsonZone' => 'UTC'];
+ * convert_datetime("14/05/1986 10:45 PM", $from, $to); // returns "1986-05-14 17:15:00"
+ * ```
+ */
+
+function convert_datetime(string $datetime, $from, $to)
+{
+	try {
+		if ($from['localeFormat'] != 'Y-m-d H:i:s') {
+			$datetime = DateTime::createFromFormat($from['localeFormat'], $datetime)->format('Y-m-d H:i:s');
+		}
+		$datetime = new DateTime($datetime, new DateTimeZone($from['olsonZone']));
+		$datetime->setTimeZone(new DateTimeZone($to['olsonZone']));
+		return $datetime->format($to['localeFormat']);
+	} catch (\Exception $e) {
+		error_log("convert_datetime error" . print_r($e, true));
+		return null;
+	}
+}

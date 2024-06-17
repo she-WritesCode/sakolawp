@@ -34,17 +34,16 @@ switch ($template) {
 		break;
 }
 ?>
-
 <div class="main-sakolawp-wrap <?php echo esc_attr($wp->request); ?> skwp-clearfix">
 	<div class="skwp-container skwp-clearfix">
 		<?php if (is_user_logged_in()) {
 			$userrole = wp_get_current_user();
 			$usr_role = $userrole->roles; ?>
-			<div class="skwp-menu-btn">
+			<!-- <div class="skwp-menu-btn">
 				<span class="top"></span>
 				<span class="mid"></span>
 				<span class="bot"></span>
-			</div>
+			</div> -->
 			<div class="sakolawp-navigation skwp-column-nav skwp-column">
 				<div class="skwp-navigation-inner">
 					<div class="skwp-nav-items">
@@ -54,4 +53,6 @@ switch ($template) {
 			</div>
 			<div class="sakolawp-content-wrapper skwp-column-main skwp-column">
 				<div class="sakolawp-inner-content">
+
+					<div class="menu-button-portal"></div>
 				<?php } ?>

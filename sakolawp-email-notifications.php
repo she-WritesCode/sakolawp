@@ -14,7 +14,7 @@
 const SKWP_NEW_HOMEWORK_TEMPLATE = 'sakolawp_new_homework_email_template';
 const SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE = [
 	"subject" => "New Homework Available: {homework_title}",
-	"template" => "Hi {student_name},\n\nA new homework has been assigned to you.\n\nHere are the details: {homework_details}\n\nBest Regards,\nRIG University Admin"
+	"template" => "Hi {student_name},\n\nA new homework has been assigned to you.\n\n{homework_details}\n\nBest Regards,\nRIG University Admin"
 ];
 const SKWP_HOMEWORK_REMINDER_TEMPLATE = 'sakolawp_homework_reminder_email_template';
 const SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE =  [
@@ -75,37 +75,41 @@ function replace_placeholders($template, $data)
 	return $template;
 }
 
-function get_homework_args($homework_data)
+function get_homework_args($homework)
 {
-	// Check if $homework_data is an array
-	if (is_array($homework_data)) {
+	// Check if $homework is an array
+	if (is_array($homework)) {
 		// Convert array to object for consistent access
-		$homework_data = (object)$homework_data;
+		$homework = (object)$homework;
 	}
 
 	// Initialize variables to hold extracted values
-	$homework_title = isset($homework_data->title) ? $homework_data->title : '';
-	$homework_description = isset($homework_data->description) ? $homework_data->description : '';
-	$uploader_name = isset($homework_data->teacher_name) ? $homework_data->teacher_name : '';
-	$due_date = isset($homework_data->date_end) ? $homework_data->date_end  : '';
-	$due_date .= isset($homework_data->time_end) ? ' ' . $homework_data->time_end  : '';
+	$homework_id = isset($homework->homework_id) ? $homework->homework_id : '';
+	$homework_title = isset($homework->title) ? $homework->title : '';
+	$homework_description = isset($homework->description) ? $homework->description : '';
+	$uploader_name = isset($homework->teacher_name) ? $homework->teacher_name : '';
+	$due_date = isset($homework->date_end) ? $homework->date_end  : '';
+	$due_date .= isset($homework->time_end) ? ' ' . $homework->time_end  : '';
 
 	// Construct HTML string for basic homework details
-	$homework_details = "
-        <h4>{$homework_title}</h4>
-        <div><strong>Description:</strong> {$homework_description}</div>
-        <div><strong>Due Date:</strong> {$due_date}</div>
-        <div><strong>Uploaded By:</strong> {$uploader_name}</div>
-    ";
+	$homework_details = '<div class="homework-details">
+        <div class="item-heading">{homework_title}</div>
+        <div><strong>Description:</strong> {homework_description}</div>
+        <div><strong>Due Date:</strong> {due_date}</div>
+        <div><strong>Uploaded By:</strong> {uploader_name}</div>
+	</div>
+    ';
 
-	return [
-		'homework_details' => $homework_details,
+	$args  = [
+		'homework_id' => $homework_id,
 		'due_date' => $due_date,
 		'homework_title' => $homework_title,
 		'homework_description' => $homework_description,
 		'uploader_name' => $uploader_name,
 		'current_date' => date('F j, Y'),
 	];
+	$args['homework_details'] = replace_placeholders($homework_details, $args);
+	return $args;
 }
 
 /*************************************
@@ -130,7 +134,7 @@ function sakolawp_send_homework_email($homework_data)
 
 		$args = get_homework_args($homework_data);
 		$args["link_to_login"] =  '<div><a href="' . site_url('/myaccount') . '" style="background-color: #4e80df;color: white;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;text-decoration:none;">Login to your Dashboard</a></div>';
-		// error_log(print_r($args, true));
+		error_log(print_r($args, true));
 		// error_log(print_r($homework_data, true));
 
 		// GET home work template
@@ -174,8 +178,8 @@ function sakolawp_schedule_homework_reminder($homework_data)
 			// Convert array to object for consistent access
 			$homework_data = (object)$homework_data;
 		}
-
-		if (!wp_next_scheduled('sakolawp_send_homework_reminder', array($homework_data))) {
+		$cronjob_name = 'sakolawp_send_homework_reminder' . $homework_data->homework_id;
+		if (!wp_next_scheduled($cronjob_name, array($homework_data))) {
 			$due_timestamp = strtotime($homework_data->date_end . ' ' . $homework_data->time_end);
 			$current_timestamp = time();
 			$time_difference = $due_timestamp - $current_timestamp;
@@ -185,7 +189,11 @@ function sakolawp_schedule_homework_reminder($homework_data)
 
 			if (!$skip_reminder) {
 				$timestamp = $due_timestamp  - 86400; // 1 day before deadline 
-				wp_schedule_single_event($timestamp, 'sakolawp_send_homework_reminder', array($homework_data));
+				$from = ['localeFormat' => "Y-m-d H:i:s", 'olsonZone' => 'Africa/Lagos'];
+				$to = ['localeFormat' => "Y-m-d H:i:s", 'olsonZone' => 'UTC'];
+				$timestamp_utc = convert_datetime(date("Y-m-d H:i:s", $timestamp), $from, $to);
+				error_log(print_r(['$timestamp' => date("Y-m-d H:i:s", $timestamp), '$from' => $from, '$to' => $to, '$timestamp_utc' => $timestamp_utc], true));
+				wp_schedule_single_event(strtotime($timestamp_utc), $cronjob_name, array($homework_data));
 			}
 		}
 	} catch (\Throwable $th) {
@@ -212,7 +220,6 @@ function sakolawp_send_homework_reminder($homework_data)
 		$to = "";
 
 		foreach ($students as $key => $student) {
-			# code...
 			$to = $student->student_email;
 			$args["student_name"] = $student->student_name;
 
@@ -502,10 +509,25 @@ function html_wrap_template($content)
 
 			.email-header,
 			.email-footer {
-				background-color: #4e80df;
-				color: white;
 				text-align: center;
 				padding: 10px 0;
+			}
+
+			.email-footer {
+				border-top-color: #4e80df;
+				border-top-width: 2px;
+				border-top-style: solid;
+			}
+
+			.email-header {
+				border-bottom-color: #4e80df;
+				border-bottom-width: 2px;
+				border-bottom-style: solid;
+			}
+
+			.logo {
+				width: 100px;
+				height: auto;
 			}
 
 			.list-item {
@@ -555,19 +577,26 @@ function html_wrap_template($content)
 			.items-center {
 				align-items: center !important;
 			}
+
+			.homework-details {
+				border-radius: 15px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+				padding: 15px;
+			}
 		</style>
 	</head>
 
 	<body>
 		<div class="email-container">
 			<div class="email-header">
-				<h1>LOGO</h1>
+				<img class="logo" src="<?php echo esc_url(wp_get_attachment_image_src(get_theme_mod('custom_logo'), 'full')[0]); ?>" src="RIG University" />
 			</div>
 			<div class="content pre-line">
 				<?php echo $content; ?>
 			</div>
 			<div class="email-footer">
-				<p>© 2024 Your Company. All rights reserved.</p>
+				<small>You are receiving this email because you are currently enrolled in a program at RIG University. if you have any concerns or complaints please send an email to [support email]</small>
+				<p>© 2024 RIG University. All rights reserved.</p>
 			</div>
 		</div>
 	</body>

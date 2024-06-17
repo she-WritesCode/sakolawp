@@ -110,6 +110,18 @@
 		$('.skwp-masking').toggleClass("open");
 	});
 
+	if ($('.menu-button-portal').length) {
+		$('.menu-button-portal').html(`<div class="skwp-menu-btn not-fixed">
+				<span class="top"></span>
+				<span class="mid"></span>
+				<span class="bot"></span>
+			</div>`)
+		$('.skwp-menu-btn').click(function () {
+			$(this).toggleClass("active");
+			$('.sakolawp-navigation').toggleClass("open");
+			$('.skwp-masking').toggleClass("open");
+		});
+	}
 	if ($('.skwp-date').length) {
 		// Update countdown every second
 		setInterval(updateCountdown, 1000);
