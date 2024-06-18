@@ -14,7 +14,7 @@ import CohortMeetingList from '../components/cohorts/CohortMeetingList.vue'
 import CohortGroupList from '../components/cohorts/CohortGroupList.vue'
 import CohortEnrollmentList from '../components/cohorts/CohortEnrollmentList.vue'
 // import EditCohort from '../components/cohorts/EditCohort.vue'
-// import AddCohort from '../components/cohorts/AddCohort.vue'
+import AddCohort from '../components/cohorts/AddCohort.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import { useSubjectStore } from "../stores/subject";
 import Toast from "primevue/toast";
@@ -176,7 +176,7 @@ function deleteACohort(id: string) {
 
         <Dialog v-model:visible="showAddForm" modal header="Add Cohort" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <!-- <AddCohort></AddCohort> -->
+            <AddCohort></AddCohort>
         </Dialog>
         <Dialog v-model:visible="showDeleteDialog" modal header="Delete Cohort" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
@@ -223,6 +223,7 @@ function deleteACohort(id: string) {
         </template>
         <div class="border-0 mb-8">
             <div v-if="currentTab == 'statistics'">
+                <div class="text-xl font-bold mb-4">Overview</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <div class="card">
                         <div class="title">{{ currentCohort?.student_count }} </div>
@@ -248,6 +249,13 @@ function deleteACohort(id: string) {
                         <div class="title">{{ currentCohort?.teacher_count }}</div>
                         <div class="content">Faculties</div>
                     </div>
+                    <div class="card">
+                        <div class="title">
+                            <div>0</div>
+                            <div class="text-xs">0% <span>^</span></div>
+                        </div>
+                        <div class="content">Active Students</div>
+                    </div>
                 </div>
             </div>
             <component v-else :is="tabs[currentTab]" />
@@ -257,11 +265,11 @@ function deleteACohort(id: string) {
 
 <style scoped>
 .card {
-    @apply border-x-0 border-b-0 border-t-2 border-primary-500 rounded-md bg-surface-0 shadow min-w-0 m-0 p-4;
+    @apply border-y-0 border-r-0 border-l-2 border-primary-500 rounded-md bg-surface-0 shadow min-w-0 m-0 p-4;
 }
 
 .card .title {
-    @apply text-2xl font-bold;
+    @apply text-2xl font-bold flex gap-4 items-baseline text-primary-900;
 }
 
 .card .content {

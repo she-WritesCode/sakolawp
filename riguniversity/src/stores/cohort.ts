@@ -2,6 +2,7 @@ import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
+import * as yup from 'yup'
 
 export interface Cohort {
   class_id?: string
@@ -13,6 +14,12 @@ export interface Cohort {
   event_count: string
   teacher_count: string
 }
+
+export const createCohortSchema = yup.object({
+  name: yup.string().min(3).required(),
+  teacher_id: yup.string().optional(),
+  class_id: yup.string().optional()
+})
 
 export const useCohortStore = defineStore('cohort', () => {
   const toast = useToast()
