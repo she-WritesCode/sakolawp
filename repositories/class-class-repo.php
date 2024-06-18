@@ -7,6 +7,8 @@ class RunClassRepo
     protected $section_table = 'sakolawp_section';
     protected $accountability_table = 'sakolawp_accountability';
     protected $enroll_table = 'sakolawp_enroll';
+    protected $homework_table = 'sakolawp_homework';
+    protected $lesson_table = 'sakolawp_lessons';
     protected $users_table = 'users';
 
     /** List Class */
@@ -32,6 +34,40 @@ class RunClassRepo
         $sql .= " GROUP BY c.class_id";
 
         $result = $wpdb->get_results($sql);
+
+        $eventRepo = new RunEventRepo();
+        foreach ($result as $class) {
+            $class->event_count = $eventRepo->count_by_meta_query([
+                'relation' => 'AND',
+                [
+                    'key'     => 'class_id',
+                    'value'   => $class->class_id,
+                    'compare' => '='
+                ],
+            ]);
+        }
+        return $result;
+    }
+
+    /** List Class Subjects */
+    function list_subjects($args = [])
+    {
+        global $wpdb;
+
+        $search = isset($args['search']) ? $args['search'] : '';
+        $class_id = isset($args['class_id']) ? $args['class_id'] : '0';
+
+        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, COUNT(l.lesson_id) AS lesson_count, t.display_name as teacher_name
+        FROM {$wpdb->prefix}{$this->subject_table} s
+        JOIN {$wpdb->prefix}{$this->class_subject_table} cs ON s.subject_id = cs.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->lesson_table} l ON s.subject_id = l.subject_id
+        LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
+        WHERE s.name LIKE '%$search%'
+        AND cs.class_id = $class_id
+        GROUP BY s.subject_id";
+
+        $result = $wpdb->get_results($sql);
         return $result;
     }
 
@@ -54,6 +90,16 @@ class RunClassRepo
         if (!$result) {
             error_log($wpdb->last_error);
         }
+
+        $eventRepo = new RunEventRepo();
+        $result->event_count = $eventRepo->count_by_meta_query([
+            'relation' => 'AND',
+            [
+                'key'     => 'class_id',
+                'value'   => $result->class_id,
+                'compare' => '='
+            ],
+        ]);
 
         return $result;
     }

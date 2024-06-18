@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useSubjectStore } from "../../stores/subject";
+import { useCohortSubjectStore } from "../../stores/cohort-subject";
+import { useCohortStore } from "../../stores/cohort";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -8,23 +9,27 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import AddSubject from './AddSubject.vue'
+import LoadingIndicator from '../LoadingIndicator.vue'
 import { ref } from "vue";
 
 
 const {
-    subjects,
-    fetchSubjects,
+    cohortSubjects,
+    fetchCohortSubjects,
     filter,
-    goToViewSubject,
-    subjectId,
+    goToViewCohortSubject,
+    cohortSubjectId,
     loading,
     showAddForm,
-    goToAddForm, deleteSubject,
-} = useSubjectStore();
+    goToAddForm, deleteCohortSubject,
+} = useCohortSubjectStore();
+const {
+    cohortId
+} = useCohortStore();
 
 onMounted(() => {
-    if (!subjectId) {
-        fetchSubjects();
+    if (!cohortSubjectId) {
+        filter.class_id = cohortId || ''
     }
 });
 
@@ -40,14 +45,14 @@ function closeDelete() {
     toBeDeleted.value = null
 }
 function deleteASubject(id: string) {
-    deleteSubject(id)
+    deleteCohortSubject(id)
     closeDelete()
 }
 </script>
 
 <template>
     <!-- Loading Indicator -->
-    <div v-if="loading">
+    <div v-if="loading.list">
         <LoadingIndicator></LoadingIndicator>
     </div>
     <template v-else>
@@ -56,7 +61,7 @@ function deleteASubject(id: string) {
             <div class="px-2 pb-4">
                 <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Subjects</h3>
             </div>
-            <DataTable :value="subjects" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
+            <DataTable :value="cohortSubjects" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -83,7 +88,7 @@ function deleteASubject(id: string) {
                 <Column header="">
                     <template #body="slotProps">
                         <div class="flex gap-2 text-sm">
-                            <Button outlined size="small" @click="goToViewSubject(slotProps.data.subject_id)"
+                            <Button outlined size="small" @click="goToViewCohortSubject(slotProps.data.subject_id)"
                                 label="View"></Button>
                             <Button size="small" @click="initDelete(slotProps.data.subject_id)" text severity="danger"
                                 label="Delete"></Button>
@@ -96,8 +101,8 @@ function deleteASubject(id: string) {
                 :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <AddSubject></AddSubject>
             </Dialog>
-            <Dialog v-model:visible="showDeleteDialog" modal header="Remove Subject from Cohort" :style="{ width: '30rem' }"
-                :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            <Dialog v-model:visible="showDeleteDialog" modal header="Remove Subject from Cohort"
+                :style="{ width: '30rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="mb-5">
                     Are you sure you want to remove this subject from this cohort? All student progress would be lost.
                 </p>

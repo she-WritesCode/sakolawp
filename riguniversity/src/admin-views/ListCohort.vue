@@ -20,10 +20,10 @@ import Toast from "primevue/toast";
 
 const tabs = {
     subjects: CohortSubjectList,
-    parentGroups: HomeworkList,
-    accountabilityGroups: HomeworkList,
+    groupings: HomeworkList,
     enrollments: HomeworkList,
     editCohort: HomeworkList,
+    meetings: HomeworkList,
 }
 const currentTab = ref<keyof typeof tabs | 'statistics'>("statistics")
 const items = ref([
@@ -40,15 +40,15 @@ const items = ref([
         }
     },
     {
-        label: 'Parent Group',
+        label: 'Meetings',
         command: () => {
-            currentTab.value = 'parentGroups'
+            currentTab.value = 'meetings'
         }
     },
     {
-        label: 'Accountability Group',
+        label: 'Cohort Groups',
         command: () => {
-            currentTab.value = 'accountabilityGroups'
+            currentTab.value = 'groupings'
         }
     },
     {
@@ -77,7 +77,7 @@ const {
     showAddForm,
     goToAddForm, deleteCohort,
 } = useCohortStore();
-const { showAddForm: showSubjectAddForm, goToViewSubject, currentSubject } = useSubjectStore();
+const { showAddForm: showSubjectAddForm, currentSubject } = useSubjectStore();
 
 onMounted(() => {
     if (cohortId) {
@@ -114,14 +114,14 @@ function deleteACohort(id: string) {
         <div class="px-2 pb-4">
             <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Cohorts</h3>
         </div>
-        <DataView :value="cohorts" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
+        <DataView dataKey="class_id" :value="cohorts" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
             <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div>
                         <InputText v-model="filter.search" placeholder="Search Cohorts" class="font-normal" />
                     </div>
                     <div class="">
-                        <Button @click="goToAddForm" size="small" label="Add Cohort"></Button>
+                        <Button @click="goToAddForm" size="small" label="+ Add Cohort"></Button>
                     </div>
                 </div>
             </template>
@@ -132,41 +132,43 @@ function deleteACohort(id: string) {
                             <LoadingIndicator></LoadingIndicator>
                         </div>
                     </div>
-                    <div v-else v-for="(item, index) in slotProps.items" :key="index"
-                        class="col-12 border border-surface-200 rounded-md hover:shadow-md p-4">
-                        <div @click="goToViewCohort(item.class_id)"
-                            class="text-lg mb-4 gap-2 flex items-center flex-wrap">
-                            <span>{{ item.name }}</span>
-                            <Tag :value="`${item.student_count} Students`" severity="warning" />
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-2 mb-4">
-                            <div>
-                                <Tag :value="item.section_count" severity="secondary" class="min-w-8" /> Parent
-                                Groups
+                    <template v-else>
+                        <div v-for="(item, index) in slotProps.items" :key="index"
+                            class="col-12 border border-surface-200 rounded-md hover:shadow-md p-4">
+                            <div @click="goToViewCohort(item.class_id)"
+                                class="text-lg mb-4 gap-2 flex items-center flex-wrap">
+                                <span>{{ item.name }}</span>
+                                <Tag :value="`${item.student_count} Students`" severity="warning" />
                             </div>
-                            <div>
-                                <Tag :value="item.accountability_count" severity="secondary" class="min-w-8" />
-                                Accountability Groups
+                            <div class="grid md:grid-cols-2 gap-2 mb-4">
+                                <div>
+                                    <Tag :value="item.section_count" severity="secondary" class="min-w-8" /> Parent
+                                    Groups
+                                </div>
+                                <div>
+                                    <Tag :value="item.accountability_count" severity="secondary" class="min-w-8" />
+                                    Accountability Groups
+                                </div>
+                                <div>
+                                    <Tag :value="item.subject_count" severity="secondary" class="min-w-8" /> Subjects
+                                </div>
+                                <div>
+                                    <Tag :value="item.teacher_count" severity="secondary" class="min-w-8" /> Faculties
+                                </div>
                             </div>
-                            <div>
-                                <Tag :value="item.subject_count" severity="secondary" class="min-w-8" /> Subjects
-                            </div>
-                            <div>
-                                <Tag :value="item.teacher_count" severity="secondary" class="min-w-8" /> Faculties
-                            </div>
-                        </div>
-                        <div class="flex gap-2 text-sm">
-                            <Button outlined size="small" @click="goToViewCohort(item.class_id)" label="View"
-                                class="w-full"></Button>
-                            <!-- <Button size="small" @click="initDelete(slotProps.data.class_id)" text severity="danger"
+                            <div class="flex gap-2 text-sm">
+                                <Button outlined size="small" @click="goToViewCohort(item.class_id)" label="View"
+                                    class="w-full"></Button>
+                                <!-- <Button size="small" @click="initDelete(slotProps.data.class_id)" text severity="danger"
                                 label="Delete"></Button> -->
+                            </div>
                         </div>
-                    </div>
-                    <Button @click="goToAddForm" key="add_button" outlined class="border-dashed">
-                        <div class="text-lg mb-4">
-                            + Add Cohort
-                        </div>
-                    </Button>
+                        <Button @click="goToAddForm" key="add_button" outlined class="border-dashed">
+                            <div class="text-lg mb-4">
+                                + Add Cohort
+                            </div>
+                        </Button>
+                    </template>
                 </div>
             </template>
         </DataView>
@@ -201,10 +203,10 @@ function deleteACohort(id: string) {
                 </template>
             </template>
             <template v-if="currentSubject">
-                > <a class="text-surface-900" href="#">{{ currentSubject?.title }}</a>
+                > <a class="text-surface-900" href="#">{{ currentSubject?.name }}</a>
             </template>
         </div>
-        <div v-if="showSubjectAddForm || showViewSubjectScreen">
+        <div v-if="showSubjectAddForm">
         </div>
         <template v-else>
             <div class="mb-4'">
@@ -213,9 +215,8 @@ function deleteACohort(id: string) {
                     <Button text size="small" outlined class="" @click="currentTab = 'editCohort'"
                         label="Edit Cohort"></Button>
                 </div>
-
             </div>
-            <div class="mb-2 py-1">
+            <div class="my-2 py-1">
                 <TabMenu size="large" class="w-full" :model="items" />
             </div>
         </template>
@@ -239,6 +240,10 @@ function deleteACohort(id: string) {
                         <div class="content">Subjects</div>
                     </div>
                     <div class="card">
+                        <div class="title">{{ currentCohort?.event_count }}</div>
+                        <div class="content">Events</div>
+                    </div>
+                    <div class="card">
                         <div class="title">{{ currentCohort?.teacher_count }}</div>
                         <div class="content">Faculties</div>
                     </div>
@@ -251,7 +256,7 @@ function deleteACohort(id: string) {
 
 <style scoped>
 .card {
-    @apply border-0 rounded-md bg-surface-0 shadow min-w-0 m-0 p-4;
+    @apply border-x-0 border-b-0 border-t-2 border-primary-500 rounded-md bg-surface-0 shadow min-w-0 m-0 p-4;
 }
 
 .card .title {

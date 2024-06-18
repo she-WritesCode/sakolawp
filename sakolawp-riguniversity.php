@@ -8,6 +8,7 @@ require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-enroll-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-event-repo.php';
 
 /** List Subjects */
 function run_list_subjects()
@@ -356,6 +357,18 @@ function run_list_class()
 	die();
 }
 
+/** List Class */
+function run_list_class_subjects()
+{
+	$repo = new RunClassRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list_subjects($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
 /** Read a single class */
 function run_single_class()
 {
@@ -412,6 +425,7 @@ function run_delete_class($class_id)
 }
 
 add_action('wp_ajax_run_list_class', 'run_list_class');
+add_action('wp_ajax_run_list_class_subjects', 'run_list_class_subjects');
 add_action('wp_ajax_run_single_class', 'run_single_class');
 add_action('wp_ajax_run_create_class', 'run_create_class');
 add_action('wp_ajax_run_update_class', 'run_update_class');
@@ -489,6 +503,79 @@ add_action('wp_ajax_run_single_user', 'run_single_user');
 add_action('wp_ajax_run_create_user', 'run_create_user');
 add_action('wp_ajax_run_update_user', 'run_update_user');
 add_action('wp_ajax_run_delete_user', 'run_delete_user');
+
+/** List Events */
+function run_list_events()
+{
+	$repo = new RunEventRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single event */
+function run_single_event()
+{
+	$repo = new RunEventRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$event_id = sanitize_text_field($_POST['event_id']);
+	$result = $repo->single($event_id);
+
+	if (!$result) {
+		wp_send_json_error('Event not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new event */
+function run_create_event()
+{
+	$repo = new RunEventRepo();
+	$event_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($event_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing event */
+function run_update_event()
+{
+	$repo = new RunEventRepo();
+	$event_id = sanitize_text_field($_POST['event_id']);
+	$event_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($event_id, $event_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a event */
+function run_delete_event($event_id)
+{
+	$repo = new RunEventRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$event_id = sanitize_text_field($_POST['event_id']);
+	$result = $repo->delete($event_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_events', 'run_list_events');
+add_action('wp_ajax_run_single_event', 'run_single_event');
+add_action('wp_ajax_run_create_event', 'run_create_event');
+add_action('wp_ajax_run_update_event', 'run_update_event');
+add_action('wp_ajax_run_delete_event', 'run_delete_event');
 
 /** List Deliveries */
 function run_list_deliveries()
