@@ -9,8 +9,8 @@ export interface Template {
   content: {
     subject: string
     template: string
-    placeholders: string[]
   }
+  placeholders: string[]
 }
 
 export const useEmailTemplateStore = defineStore('emailTemplate', () => {
