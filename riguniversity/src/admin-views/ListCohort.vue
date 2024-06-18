@@ -164,7 +164,7 @@ function deleteACohort(id: string) {
                                 label="Delete"></Button> -->
                             </div>
                         </div>
-                        <Button @click="goToAddForm" key="add_button" outlined class="border-dashed">
+                        <Button @click="goToAddForm" key="add_button" outlined class="border-dashed min-h-44">
                             <div class="text-lg mb-4">
                                 + Add Cohort
                             </div>

@@ -39,6 +39,8 @@ CREATE TABLE $class_table (
 	class_id mediumint(9) NOT NULL AUTO_INCREMENT,
 	name text NULL,
 	name_numeric text NULL,
+	start_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+	drip_method VARCHAR(100) NOT NULL DEFAULT 'specific_dates',
 	teacher_id text NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

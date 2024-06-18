@@ -465,7 +465,11 @@ function run_single_class()
 function run_create_class()
 {
 	$repo = new RunClassRepo();
-	$class_data = array_map('stripslashes_deep', $_POST);
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$class_data['name'] = isset($_POST['name']) ? sakolawp_sanitize_html($_POST['name']) : "";
+	$class_data['drip_method'] = isset($_POST['drip_method']) ? sakolawp_sanitize_html($_POST['drip_method']) : "";
+	$class_data['start_date'] = isset($_POST['start_date']) ? sakolawp_sanitize_html($_POST['start_date']) : "";
+	$class_data['subjects'] = isset($_POST['subjects']) ? array_map('stripslashes_deep', $_POST['subjects']) : [];
 
 	$result = $repo->create($class_data);
 
@@ -477,8 +481,12 @@ function run_create_class()
 function run_update_class()
 {
 	$repo = new RunClassRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
 	$class_id = sanitize_text_field($_POST['class_id']);
-	$class_data = array_map('stripslashes_deep', $_POST);
+	$class_data['name'] = isset($_POST['name']) ? sakolawp_sanitize_html($_POST['name']) : "";
+	$class_data['drip_method'] = isset($_POST['drip_method']) ? sakolawp_sanitize_html($_POST['drip_method']) : "";
+	$class_data['start_date'] = isset($_POST['start_date']) ? sakolawp_sanitize_html($_POST['start_date']) : "";
+	$class_data['subjects'] = isset($_POST['subjects']) ? array_map('stripslashes_deep', $_POST['subjects']) : [];
 
 	$result = $repo->update($class_id, $class_data);
 

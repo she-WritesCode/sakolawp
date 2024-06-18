@@ -7,18 +7,25 @@ import * as yup from 'yup'
 export interface Cohort {
   class_id?: string
   name: string
-  student_count: string
-  section_count: string
-  accountability_count: string
-  subject_count: string
-  event_count: string
-  teacher_count: string
+  start_date: string
+  drip_method: 'specific_dates' | 'days_after_release'
+  student_count?: string
+  section_count?: string
+  accountability_count?: string
+  subject_count?: string
+  event_count?: string
+  teacher_count?: string
 }
 
 export const createCohortSchema = yup.object({
   name: yup.string().min(3).required(),
-  teacher_id: yup.string().optional(),
-  class_id: yup.string().optional()
+  start_date: yup.string().optional(),
+  drip_method: yup
+    .string()
+    .oneOf(['specific_dates', 'days_after_release'])
+    .required()
+    .default('days_after_release'),
+  subjects: yup.array().of(yup.string()).min(0)
 })
 
 export const useCohortStore = defineStore('cohort', () => {
@@ -165,20 +172,19 @@ export const useCohortStore = defineStore('cohort', () => {
       .then((response) => response.json())
       .then((response) => {
         currentCohort.value = response.data
-        // showAddForm.value = false
         toast.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Cohort created successfully',
           life: 3000
         })
+        closeAddForm()
       })
       .catch((error) => {
         console.error('Error:', error)
         toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
       })
       .finally(() => {
-        closeAddForm()
         loading.create = false
       })
   }

@@ -108,10 +108,29 @@ class RunClassRepo
     function create($class_data)
     {
         global $wpdb;
+
+        $subjects = $class_data['subjects'];
+        unset($class_data['subjects']);
+
         $result = $wpdb->insert(
-            "{$wpdb->prefix}sakolawp_classs",
+            "{$wpdb->prefix}{$this->class_table}",
             $class_data
         );
+
+        if ($result) {
+            $class_id = $wpdb->insert_id;
+            foreach ($subjects as $subject_id) {
+                skwp_insert_or_update_record(
+                    "{$wpdb->prefix}{$this->class_subject_table}",
+                    array(
+                        'class_id' => $class_id,
+                        'subject_id' => $subject_id
+                    ),
+                    ['class_id', 'subject_id'],
+                    'id'
+                );
+            }
+        }
         return $result;
     }
 
@@ -120,7 +139,7 @@ class RunClassRepo
     {
         global $wpdb;
         $result = $wpdb->update(
-            "{$wpdb->prefix}sakolawp_classs",
+            "{$wpdb->prefix}{$this->class_table}",
             $class_data,
             array('class_id' => $class_id)
         );
@@ -131,7 +150,7 @@ class RunClassRepo
     function delete($class_id)
     {
         global $wpdb;
-        $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}sakolawp_classs WHERE class_id = %d", $class_id);
+        $sql = $wpdb->prepare("DELETE FROM {$wpdb->prefix}{$this->class_table} WHERE class_id = %d", $class_id);
         $result = $wpdb->query($sql);
 
         return $result;

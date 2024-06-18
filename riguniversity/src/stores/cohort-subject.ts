@@ -4,6 +4,7 @@ import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 
 export interface CohortSubject {
+  subject_id?: string
   class_id?: string
   name?: string
 }
