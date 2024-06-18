@@ -25,7 +25,6 @@ const {
     goToAddParentGroupForm, deleteCohortParentGroup, goToEditCohortParentGroup,
 } = useCohortParentGroupStore();
 const {
-    cohortAccountabilityGroups,
     filter: accountabilityFilter,
     goToViewCohortAccountabilityGroup,
     cohortAccountabilityGroupId,
@@ -46,7 +45,7 @@ onMounted(() => {
     }
 });
 
-const treeNodes = computed(() => cohortParentGroups.value.map((item, index) => ({
+const treeNodes = computed(() => cohortParentGroups.value.map((item) => ({
     key: `${item.section_id}`,
     label: item.name,
     data: item,
