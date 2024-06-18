@@ -347,6 +347,79 @@ add_action('wp_ajax_run_create_lesson', 'run_create_lesson');
 add_action('wp_ajax_run_update_lesson', 'run_update_lesson');
 add_action('wp_ajax_run_delete_lesson', 'run_delete_lesson');
 
+/** List Enrolls */
+function run_list_enrolls()
+{
+	$repo = new RunEnrollRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single enroll */
+function run_single_enroll()
+{
+	$repo = new RunEnrollRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$enroll_id = sanitize_text_field($_POST['enroll_id']);
+	$result = $repo->single($enroll_id);
+
+	if (!$result) {
+		wp_send_json_error('Enroll not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new enroll */
+function run_create_enroll()
+{
+	$repo = new RunEnrollRepo();
+	$enroll_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($enroll_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing enroll */
+function run_update_enroll()
+{
+	$repo = new RunEnrollRepo();
+	$enroll_id = sanitize_text_field($_POST['enroll_id']);
+	$enroll_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($enroll_id, $enroll_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a enroll */
+function run_delete_enroll($enroll_id)
+{
+	$repo = new RunEnrollRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$enroll_id = sanitize_text_field($_POST['enroll_id']);
+	$result = $repo->delete($enroll_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_enrolls', 'run_list_enrolls');
+add_action('wp_ajax_run_single_enroll', 'run_single_enroll');
+add_action('wp_ajax_run_create_enroll', 'run_create_enroll');
+add_action('wp_ajax_run_update_enroll', 'run_update_enroll');
+add_action('wp_ajax_run_delete_enroll', 'run_delete_enroll');
+
 /** List Class */
 function run_list_class()
 {

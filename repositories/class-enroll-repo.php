@@ -13,6 +13,7 @@ class RunEnrollRepo
         global $wpdb;
 
         // Initialize variables with default values
+        $search = isset($args['search']) ? $args['search'] : '';
         $enroll_code = isset($args['enroll_code']) ? $args['enroll_code'] : '';
         $student_id = isset($args['student_id']) ? $args['student_id'] : '';
         $class_id = isset($args['class_id']) ? $args['class_id'] : '';
@@ -61,13 +62,17 @@ class RunEnrollRepo
             $sql .= $wpdb->prepare(" AND e.roll = %s", $roll);
         }
 
+        if (!empty($search)) {
+            $sql .= $wpdb->prepare(" AND (e.enroll_code LIKE %s OR u.display_name LIKE %s)", '%' . $wpdb->esc_like($search) . '%', '%' . $wpdb->esc_like($search) . '%');
+        }
+
         $result = $wpdb->get_results($sql);
 
         return $result;
     }
 
     /** Get an enrollment by ID */
-    public function getById($enroll_id)
+    public function single($enroll_id)
     {
         global $wpdb;
 
@@ -96,7 +101,7 @@ class RunEnrollRepo
 
 
     /** Insert a new enrollment */
-    public function insert($data)
+    public function create($data)
     {
         global $wpdb;
 

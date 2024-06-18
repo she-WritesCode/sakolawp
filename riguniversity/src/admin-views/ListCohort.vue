@@ -12,6 +12,7 @@ import HomeworkList from '../components/subjects/HomeworkList.vue'
 import CohortSubjectList from '../components/cohorts/CohortSubjectList.vue'
 import CohortMeetingList from '../components/cohorts/CohortMeetingList.vue'
 import CohortGroupList from '../components/cohorts/CohortGroupList.vue'
+import CohortEnrollmentList from '../components/cohorts/CohortEnrollmentList.vue'
 // import EditCohort from '../components/cohorts/EditCohort.vue'
 // import AddCohort from '../components/cohorts/AddCohort.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
@@ -21,7 +22,7 @@ import Toast from "primevue/toast";
 const tabs = {
     subjects: CohortSubjectList,
     groupings: CohortGroupList,
-    enrollments: HomeworkList,
+    enrollments: CohortEnrollmentList,
     editCohort: HomeworkList,
     meetings: CohortMeetingList,
 }
