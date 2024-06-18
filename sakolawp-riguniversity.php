@@ -510,7 +510,7 @@ function run_list_events()
 	$repo = new RunEventRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
 
-	$result = $repo->list($_POST);
+	$result = $repo->list($_POST['meta_query'], sanitize_text_field($_POST['search']));
 
 	wp_send_json_success($result, 200);
 	die();

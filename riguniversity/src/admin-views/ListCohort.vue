@@ -10,7 +10,7 @@ import Dialog from 'primevue/dialog';
 import { ref } from "vue";
 import HomeworkList from '../components/subjects/HomeworkList.vue'
 import CohortSubjectList from '../components/cohorts/CohortSubjectList.vue'
-// import Lessons from '../components/cohorts/Lessons.vue'
+import CohortMeetingList from '../components/cohorts/CohortMeetingList.vue'
 // import Students from '../components/cohorts/Students.vue'
 // import EditCohort from '../components/cohorts/EditCohort.vue'
 // import AddCohort from '../components/cohorts/AddCohort.vue'
@@ -23,7 +23,7 @@ const tabs = {
     groupings: HomeworkList,
     enrollments: HomeworkList,
     editCohort: HomeworkList,
-    meetings: HomeworkList,
+    meetings: CohortMeetingList,
 }
 const currentTab = ref<keyof typeof tabs | 'statistics'>("statistics")
 const items = ref([
