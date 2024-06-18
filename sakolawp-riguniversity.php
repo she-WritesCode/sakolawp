@@ -9,6 +9,8 @@ require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-enroll-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-event-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-section-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-accountability-repo.php';
 
 /** List Subjects */
 function run_list_subjects()
@@ -509,8 +511,10 @@ function run_list_events()
 {
 	$repo = new RunEventRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
+	$meta_query = isset($_POST['meta_query']) ? $_POST['meta_query'] : [];
+	$search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : "";
 
-	$result = $repo->list($_POST['meta_query'], sanitize_text_field($_POST['search']));
+	$result = $repo->list($meta_query, $search);
 
 	wp_send_json_success($result, 200);
 	die();
@@ -649,3 +653,149 @@ add_action('wp_ajax_run_single_delivery', 'run_single_delivery');
 add_action('wp_ajax_run_create_delivery', 'run_create_delivery');
 add_action('wp_ajax_run_update_delivery', 'run_update_delivery');
 add_action('wp_ajax_run_delete_delivery', 'run_delete_delivery');
+
+/** List Sections */
+function run_list_sections()
+{
+	$repo = new RunSectionRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single section */
+function run_single_section()
+{
+	$repo = new RunSectionRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$result = $repo->single($section_id);
+
+	if (!$result) {
+		wp_send_json_error('Section not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new section */
+function run_create_section()
+{
+	$repo = new RunSectionRepo();
+	$section_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($section_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing section */
+function run_update_section()
+{
+	$repo = new RunSectionRepo();
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$section_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($section_id, $section_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a section */
+function run_delete_section($section_id)
+{
+	$repo = new RunSectionRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$section_id = sanitize_text_field($_POST['section_id']);
+	$result = $repo->delete($section_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_sections', 'run_list_sections');
+add_action('wp_ajax_run_single_section', 'run_single_section');
+add_action('wp_ajax_run_create_section', 'run_create_section');
+add_action('wp_ajax_run_update_section', 'run_update_section');
+add_action('wp_ajax_run_delete_section', 'run_delete_section');
+
+/** List Accountabilities */
+function run_list_accountabilities()
+{
+	$repo = new RunAccountabilityRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single accountability */
+function run_single_accountability()
+{
+	$repo = new RunAccountabilityRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$accountability_id = sanitize_text_field($_POST['accountability_id']);
+	$result = $repo->single($accountability_id);
+
+	if (!$result) {
+		wp_send_json_error('Accountability not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new accountability */
+function run_create_accountability()
+{
+	$repo = new RunAccountabilityRepo();
+	$accountability_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->create($accountability_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing accountability */
+function run_update_accountability()
+{
+	$repo = new RunAccountabilityRepo();
+	$accountability_id = sanitize_text_field($_POST['accountability_id']);
+	$accountability_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($accountability_id, $accountability_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a accountability */
+function run_delete_accountability($accountability_id)
+{
+	$repo = new RunAccountabilityRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$accountability_id = sanitize_text_field($_POST['accountability_id']);
+	$result = $repo->delete($accountability_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_accountabilities', 'run_list_accountabilities');
+add_action('wp_ajax_run_single_accountability', 'run_single_accountability');
+add_action('wp_ajax_run_create_accountability', 'run_create_accountability');
+add_action('wp_ajax_run_update_accountability', 'run_update_accountability');
+add_action('wp_ajax_run_delete_accountability', 'run_delete_accountability');
