@@ -100,6 +100,10 @@ class RunClassRepo
                 'compare' => '='
             ],
         ]);
+        $subjects = $this->list_subjects(['class_id' => $result->class_id]);
+        $result->subjects = array_map(function ($subject) {
+            return $subject->subject_id;
+        }, $subjects);
 
         return $result;
     }
@@ -138,11 +142,29 @@ class RunClassRepo
     function update($class_id, $class_data)
     {
         global $wpdb;
+
+        $subjects = $class_data['subjects'];
+        unset($class_data['subjects']);
+
         $result = $wpdb->update(
             "{$wpdb->prefix}{$this->class_table}",
             $class_data,
             array('class_id' => $class_id)
         );
+
+        if ($result) {
+            foreach ($subjects as $subject_id) {
+                skwp_insert_or_update_record(
+                    "{$wpdb->prefix}{$this->class_subject_table}",
+                    array(
+                        'class_id' => $class_id,
+                        'subject_id' => $subject_id
+                    ),
+                    ['class_id', 'subject_id'],
+                    'id'
+                );
+            }
+        }
         return $result;
     }
 

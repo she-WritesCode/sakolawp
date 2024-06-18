@@ -8,23 +8,20 @@ import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
-import AddSubject from './AddSubject.vue'
+// import AddSubject from './AddSubject.vue'
 import LoadingIndicator from '../LoadingIndicator.vue'
 import { ref } from "vue";
 
 
 const {
     cohortSubjects,
-    fetchCohortSubjects,
     filter,
     goToViewCohortSubject,
     cohortSubjectId,
     loading,
-    showAddForm,
-    goToAddForm, deleteCohortSubject,
 } = useCohortSubjectStore();
 const {
-    cohortId
+    cohortId, goToEditCohort
 } = useCohortStore();
 
 onMounted(() => {
@@ -33,21 +30,6 @@ onMounted(() => {
     }
 });
 
-
-const showDeleteDialog = ref(false)
-const toBeDeleted = ref<string | null>(null)
-function initDelete(id: string) {
-    showDeleteDialog.value = true
-    toBeDeleted.value = id
-}
-function closeDelete() {
-    showDeleteDialog.value = false
-    toBeDeleted.value = null
-}
-function deleteASubject(id: string) {
-    deleteCohortSubject(id)
-    closeDelete()
-}
 </script>
 
 <template>
@@ -69,7 +51,8 @@ function deleteASubject(id: string) {
                             <InputText v-model="filter.search" placeholder="Search Subjects" class="font-normal" />
                         </div>
                         <div class="">
-                            <Button @click="goToAddForm" size="small" label="Add Subject"></Button>
+                            <Button @click="goToEditCohort(cohortId as string)" size="small"
+                                label="Change Subjects"></Button>
                         </div>
                     </div>
                 </template>
@@ -90,27 +73,10 @@ function deleteASubject(id: string) {
                         <div class="flex gap-2 text-sm">
                             <Button outlined size="small" @click="goToViewCohortSubject(slotProps.data.subject_id)"
                                 label="View"></Button>
-                            <Button size="small" @click="initDelete(slotProps.data.subject_id)" text severity="danger"
-                                label="Delete"></Button>
                         </div>
                     </template>
                 </Column>
             </DataTable>
-
-            <Dialog v-model:visible="showAddForm" modal header="Add Subject" :style="{ width: '30rem' }"
-                :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-                <AddSubject></AddSubject>
-            </Dialog>
-            <Dialog v-model:visible="showDeleteDialog" modal header="Remove Subject from Cohort"
-                :style="{ width: '30rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-                <p class="mb-5">
-                    Are you sure you want to remove this subject from this cohort? All student progress would be lost.
-                </p>
-                <div class="flex gap-2 justify-end">
-                    <Button @click="closeDelete">No</Button>
-                    <Button @click="deleteASubject(toBeDeleted as string)" outlined severity="danger">Yes</Button>
-                </div>
-            </Dialog>
         </div>
     </template>
 </template>

@@ -8,12 +8,12 @@ import TabMenu from 'primevue/tabmenu';
 import DataView from 'primevue/dataview';
 import Dialog from 'primevue/dialog';
 import { ref } from "vue";
-import HomeworkList from '../components/subjects/HomeworkList.vue'
+// import HomeworkList from '../components/subjects/HomeworkList.vue'
 import CohortSubjectList from '../components/cohorts/CohortSubjectList.vue'
 import CohortMeetingList from '../components/cohorts/CohortMeetingList.vue'
 import CohortGroupList from '../components/cohorts/CohortGroupList.vue'
 import CohortEnrollmentList from '../components/cohorts/CohortEnrollmentList.vue'
-// import EditCohort from '../components/cohorts/EditCohort.vue'
+import EditCohort from '../components/cohorts/EditCohort.vue'
 import AddCohort from '../components/cohorts/AddCohort.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import { useSubjectStore } from "../stores/subject";
@@ -23,45 +23,53 @@ const tabs = {
     subjects: CohortSubjectList,
     groupings: CohortGroupList,
     enrollments: CohortEnrollmentList,
-    editCohort: HomeworkList,
+    editCohort: EditCohort,
     meetings: CohortMeetingList,
 }
-const currentTab = ref<keyof typeof tabs | 'statistics'>("statistics")
+const currentTab = ref<keyof typeof tabs | 'statistics'>(new URL(window.location.href).searchParams.get('tab') as keyof typeof tabs || "statistics")
+
+const switchTabUrl = (tab: keyof typeof tabs | 'statistics') => {
+    currentTab.value = tab
+    const url = new URL(window.location.href)
+    url.searchParams.set('tab', currentTab.value)
+    window.history.pushState({}, document.title, url.toString())
+}
+
 const items = ref([
     {
         label: 'Overview',
         command: () => {
-            currentTab.value = 'statistics'
+            switchTabUrl('statistics')
         }
     },
     {
         label: 'Subjects',
         command: () => {
-            currentTab.value = 'subjects'
+            switchTabUrl('subjects')
         }
     },
     {
         label: 'Meetings',
         command: () => {
-            currentTab.value = 'meetings'
+            switchTabUrl('meetings')
         }
     },
     {
         label: 'Cohort Groups',
         command: () => {
-            currentTab.value = 'groupings'
+            switchTabUrl('groupings')
         }
     },
     {
         label: 'Enrollments',
         command: () => {
-            currentTab.value = 'enrollments'
+            switchTabUrl('enrollments')
         }
     },
     {
         label: 'Edit Cohort',
         command: () => {
-            currentTab.value = 'editCohort'
+            switchTabUrl('editCohort')
         }
     },
 ]);
@@ -88,24 +96,7 @@ onMounted(() => {
     }
 });
 
-const goBack = () => {
-    window.history.back()
-}
 
-const showDeleteDialog = ref(false)
-const toBeDeleted = ref<string | null>(null)
-function initDelete(id: string) {
-    showDeleteDialog.value = true
-    toBeDeleted.value = id
-}
-function closeDelete() {
-    showDeleteDialog.value = false
-    toBeDeleted.value = null
-}
-function deleteACohort(id: string) {
-    deleteCohort(id)
-    closeDelete()
-}
 </script>
 
 <template>
@@ -178,16 +169,6 @@ function deleteACohort(id: string) {
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <AddCohort></AddCohort>
         </Dialog>
-        <Dialog v-model:visible="showDeleteDialog" modal header="Delete Cohort" :style="{ width: '30rem' }"
-            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <p class="mb-5">
-                Are you sure you want to delete?
-            </p>
-            <div class="flex gap-2 justify-end">
-                <Button @click="closeDelete">No</Button>
-                <Button @click="deleteACohort(toBeDeleted as string)" outlined severity="danger">Yes</Button>
-            </div>
-        </Dialog>
     </div>
     <!-- Single Cohort -->
     <div v-else>
@@ -213,7 +194,7 @@ function deleteACohort(id: string) {
             <div class="mb-4'">
                 <div class="flex items-center gap-2">
                     <h3 class="text-2xl md:text-2xlmb-2">{{ currentCohort?.name }}</h3>
-                    <Button text size="small" outlined class="" @click="currentTab = 'editCohort'"
+                    <Button text size="small" outlined class="" @click="switchTabUrl('editCohort')"
                         label="Edit Cohort"></Button>
                 </div>
             </div>

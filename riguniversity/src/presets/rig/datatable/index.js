@@ -101,7 +101,7 @@ export default {
     column: {
         headercell: ({ context, props }) => ({
             class: [
-                'font-semibold',
+                'font-semibold uppercase',
                 'leading-[normal]',
 
                 // Position
@@ -120,7 +120,7 @@ export default {
                 context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'py-3 px-4',
 
                 // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-primary-50 text-primary-700 dark:text-white/80 dark:bg-surface-900',
+                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-highlight text-primary-highlight-inverse' : 'bg-surface-0 text-primary-700 dark:text-white/80 dark:bg-surface-900',
                 'border-surface-200 dark:border-surface-700 ',
 
                 // States

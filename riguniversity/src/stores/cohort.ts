@@ -9,6 +9,7 @@ export interface Cohort {
   name: string
   start_date: string
   drip_method: 'specific_dates' | 'days_after_release'
+  subjects: string[]
   student_count?: string
   section_count?: string
   accountability_count?: string
