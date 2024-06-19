@@ -2,26 +2,23 @@
 import { onMounted } from "vue";
 import { useCohortSubjectStore } from "../../stores/cohort-subject";
 import { useCohortStore } from "../../stores/cohort";
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import DataView from 'primevue/dataview';
+import Panel from 'primevue/panel';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
-import Dialog from 'primevue/dialog';
-// import AddSubject from './AddSubject.vue'
 import LoadingIndicator from '../LoadingIndicator.vue'
-import { ref } from "vue";
+import CohortSubjectSchedule from './CohortSubjectSchedule.vue'
 
 
 const {
     cohortSubjects,
     filter,
-    goToViewCohortSubject,
     cohortSubjectId,
     loading,
 } = useCohortSubjectStore();
 const {
-    cohortId, goToEditCohort
+    cohortId, goToEditCohort, currentCohort
 } = useCohortStore();
 
 onMounted(() => {
@@ -43,7 +40,8 @@ onMounted(() => {
             <div class="px-2 pb-4">
                 <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Subjects</h3>
             </div>
-            <DataTable :value="cohortSubjects" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
+
+            <DataView dataKey="class_id" :value="cohortSubjects" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -56,29 +54,46 @@ onMounted(() => {
                         </div>
                     </div>
                 </template>
-                <Column field="name" header="Name"></Column>
-                <!-- <Column header="Lessons" class="text-center">
-                    <template #body="slotProps">
-                        <Tag :value="slotProps.data.lesson_count" severity="secondary" />
-                    </template>
-                </Column> -->
-                <Column header="Homeworks" class="text-center">
-                    <template #body="slotProps">
-                        <Tag :value="slotProps.data.homework_count" severity="secondary" />
-                    </template>
-                </Column>
-                <Column field="teacher_name" header="Faculty"></Column>
-                <Column header="">
-                    <template #body="slotProps">
-                        <div class="flex gap-2 text-sm">
-                            <Button outlined size="small" @click="goToViewCohortSubject(slotProps.data.subject_id)"
-                                label="View"></Button>
+                <template #list="slotProps">
+                    <div class="grid grid-nogutter gap-4">
+                        <div v-if="loading.list">
+                            <div v-for="i in [1, 2, 3, 4, 5, 6]" :key="i" class="col-12">
+                                <LoadingIndicator></LoadingIndicator>
+                            </div>
                         </div>
-                    </template>
-                </Column>
-            </DataTable>
+                        <template v-else>
+                            <Panel toggleable v-for="(item, index) in slotProps.items" :key="index" collapsed>
+                                <template #header>
+                                    <div>
+                                        <div class="text-lg gap-2 flex items-center flex-wrap">
+                                            <span>{{ item.name }}</span>
+                                            <Tag :value="`${item.homework_count} Homeworks`" severity="warning" />
+                                            <!-- <Tag :value="`${item.lesson_count} Lessons`" severity="success" /> -->
+                                        </div>
+                                        <Tag :value="`Faculty: ${item.teacher_name}`" severity="info" />
+                                    </div>
+                                </template>
+
+                                <!-- <template #togglericon="collapsed">
+                                    <div v-if="collapsed"> <i icon="pi pi-cog"></i></div>
+                                    <div v-if="!collapsed"> <i icon="pi pi-close"></i></div>
+                                </template> -->
+
+                                <CohortSubjectSchedule :key="index" :homeworks="item.homeworks"
+                                    :subjectId="item.subject_id" :cohortId="cohortId as string"
+                                    :dripMethod="currentCohort?.drip_method"></CohortSubjectSchedule>
+                            </Panel>
+                        </template>
+                    </div>
+                </template>
+            </DataView>
         </div>
     </template>
 </template>
 
-<style scoped></style>
+<style>
+.input-number,
+.input-number input {
+    @apply w-16 !important;
+}
+</style>

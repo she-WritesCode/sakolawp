@@ -68,6 +68,15 @@ class RunClassRepo
         GROUP BY s.subject_id";
 
         $result = $wpdb->get_results($sql);
+
+        $homeworkRepo = new RunHomeworkRepo();
+        if ($result) {
+            foreach ($result as $subject) {
+                $subject->homeworks = $homeworkRepo->list([
+                    'subject_id' => $subject->subject_id
+                ]);
+            }
+        }
         return $result;
     }
 

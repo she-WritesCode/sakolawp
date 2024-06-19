@@ -4,11 +4,12 @@ import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 import * as yup from 'yup'
 
+export type DripMethod = 'specific_dates' | 'days_after_release'
 export interface Cohort {
   class_id?: string
   name: string
   start_date: string
-  drip_method: 'specific_dates' | 'days_after_release'
+  drip_method: DripMethod
   subjects: string[]
   student_count?: string
   section_count?: string
@@ -200,6 +201,7 @@ export const useCohortStore = defineStore('cohort', () => {
       },
       body: convertObjectToSearchParams({
         action: 'run_update_class',
+        class_id: cohortId.value,
         ...(args as any)
       })
     })

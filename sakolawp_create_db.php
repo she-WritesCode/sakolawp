@@ -9,6 +9,7 @@ $section_table = $wpdb->prefix . 'sakolawp_section';
 $accountability_table = $wpdb->prefix . 'sakolawp_accountability';
 $subject_table = $wpdb->prefix . 'sakolawp_subject';
 $class_subject_table = $wpdb->prefix . 'sakolawp_class_subject';
+$class_schedule_table = $wpdb->prefix . 'sakolawp_class_schedule';
 $routine_table = $wpdb->prefix . 'sakolawp_class_routine';
 $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
 $lessons_table = $wpdb->prefix . 'sakolawp_lessons';
@@ -84,6 +85,22 @@ CREATE TABLE $class_subject_table (
 	id mediumint(11) NOT NULL AUTO_INCREMENT,
 	subject_id int(11) NOT NULL,
 	class_id int(11) NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	UNIQUE KEY id (id)
+) $charset_collate;
+
+CREATE TABLE $class_schedule_table (
+	id mediumint(11) NOT NULL AUTO_INCREMENT,
+	subject_id int(11) NOT NULL,
+	class_id int(11) NOT NULL,
+	content_id int(11) NOT NULL,
+	content_type VARCHAR(11) NOT NULL,
+	drip_method VARCHAR(100) NOT NULL DEFAULT 'specific_dates',
+	release_date DATETIME NULL,
+	deadline_date DATETIME NULL,
+	release_days int(11) NULL,
+	deadline_days int(11) NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (id)

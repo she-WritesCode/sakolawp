@@ -11,6 +11,7 @@ require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-event-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-section-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-accountability-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-schedule-repo.php';
 
 /** List Subjects */
 function run_list_subjects()
@@ -466,9 +467,9 @@ function run_create_class()
 {
 	$repo = new RunClassRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
-	$class_data['name'] = isset($_POST['name']) ? sakolawp_sanitize_html($_POST['name']) : "";
-	$class_data['drip_method'] = isset($_POST['drip_method']) ? sakolawp_sanitize_html($_POST['drip_method']) : "";
-	$class_data['start_date'] = isset($_POST['start_date']) ? sakolawp_sanitize_html($_POST['start_date']) : "";
+	$class_data['name'] = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : "";
+	$class_data['drip_method'] = isset($_POST['drip_method']) ? sanitize_text_field($_POST['drip_method']) : "";
+	$class_data['start_date'] = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : "";
 	$class_data['subjects'] = isset($_POST['subjects']) ? array_map('stripslashes_deep', $_POST['subjects']) : [];
 
 	$result = $repo->create($class_data);
@@ -482,7 +483,11 @@ function run_update_class()
 {
 	$repo = new RunClassRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
-	$class_id = sanitize_text_field($_POST['class_id']);
+	$class_id = isset($_POST['name']) ? sanitize_text_field($_POST['class_id']) : NULL;
+	if (!$class_id) {
+		wp_send_json_error('Class not found', 404);
+		die();
+	}
 	$class_data['name'] = isset($_POST['name']) ? sakolawp_sanitize_html($_POST['name']) : "";
 	$class_data['drip_method'] = isset($_POST['drip_method']) ? sakolawp_sanitize_html($_POST['drip_method']) : "";
 	$class_data['start_date'] = isset($_POST['start_date']) ? sakolawp_sanitize_html($_POST['start_date']) : "";
@@ -513,6 +518,103 @@ add_action('wp_ajax_run_single_class', 'run_single_class');
 add_action('wp_ajax_run_create_class', 'run_create_class');
 add_action('wp_ajax_run_update_class', 'run_update_class');
 add_action('wp_ajax_run_delete_class', 'run_delete_class');
+
+/** List Schedule */
+function run_list_schedules()
+{
+	$repo = new RunClassScheduleRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single schedule */
+function run_single_schedule()
+{
+	$repo = new RunClassScheduleRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$schedule_id = sanitize_text_field($_POST['schedule_id']);
+	$result = $repo->single($schedule_id);
+
+	if (!$result) {
+		wp_send_json_error('Schedule not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new schedule */
+function run_create_schedule()
+{
+	$repo = new RunClassScheduleRepo();
+	$schedules = array_map('stripslashes_deep', $_POST['schedules']);
+	$schedule_data = [];
+
+	foreach ($schedules as $key => $schedule) {
+		$schedule_data[$key]['class_id'] = isset($schedule['class_id']) ? sanitize_text_field($schedule['class_id']) : "";
+		$schedule_data[$key]['subject_id'] = isset($schedule['subject_id']) ? sanitize_text_field($schedule['subject_id']) : "";
+		$schedule_data[$key]['content_id'] = isset($schedule['content_id']) ? sanitize_text_field($schedule['content_id']) : "";
+		$schedule_data[$key]['content_type'] = isset($schedule['content_type']) ? sanitize_text_field($schedule['content_type']) : "";
+		$schedule_data[$key]['drip_method'] = isset($schedule['drip_method']) ? sanitize_text_field($schedule['drip_method']) : "";
+		$schedule_data[$key]['release_date'] = isset($schedule['release_date']) ? sanitize_text_field($schedule['release_date']) : 0;
+		$schedule_data[$key]['release_days'] = isset($schedule['release_days']) ? sanitize_text_field($schedule['release_days']) : 0;
+		$schedule_data[$key]['deadline_date'] = isset($schedule['deadline_date']) ? sanitize_text_field($schedule['deadline_date']) : 0;
+		$schedule_data[$key]['deadline_days'] = isset($schedule['deadline_days']) ? sanitize_text_field($schedule['deadline_days']) : 0;
+
+		// Validate schedule data
+		if (!$schedule_data[$key]['class_id'] || !$schedule_data[$key]['subject_id'] || !$schedule_data[$key]['content_id'] || !$schedule_data[$key]['content_type']) {
+			wp_send_json_error('All field are required pleae', 400);
+			die();
+		}
+	}
+
+	$result = $repo->create(array_values($schedule_data));
+
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing schedule */
+function run_update_schedule()
+{
+	$repo = new RunClassScheduleRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$schedule_id = sanitize_text_field($_POST['schedule_id']);
+	$schedule_data['name'] = isset($_POST['name']) ? sakolawp_sanitize_html($_POST['name']) : "";
+	$schedule_data['drip_method'] = isset($_POST['drip_method']) ? sakolawp_sanitize_html($_POST['drip_method']) : "";
+	$schedule_data['start_date'] = isset($_POST['start_date']) ? sakolawp_sanitize_html($_POST['start_date']) : "";
+	$schedule_data['subjects'] = isset($_POST['subjects']) ? array_map('stripslashes_deep', $_POST['subjects']) : [];
+
+	$result = $repo->update($schedule_id, $schedule_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a schedule */
+function run_delete_schedule($schedule_id)
+{
+	$repo = new RunClassScheduleRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$schedule_id = sanitize_text_field($_POST['schedule_id']);
+	$result = $repo->delete($schedule_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_schedules', 'run_list_schedules');
+add_action('wp_ajax_run_single_schedule', 'run_single_schedule');
+add_action('wp_ajax_run_create_schedule', 'run_create_schedule');
+add_action('wp_ajax_run_update_schedule', 'run_update_schedule');
+add_action('wp_ajax_run_delete_schedule', 'run_delete_schedule');
 
 /** List Users */
 function run_list_users()
