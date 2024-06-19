@@ -149,7 +149,7 @@ onMounted(() => {
             <div v-if="loading.list">
                 <LoadingIndicator></LoadingIndicator>
             </div>
-            <template v-else>
+            <TransitionGroup v-else name="slide-fade">
                 <template v-if="!cohortMeetings.length">
                     <div class="text-base py-10 text-center">
                         No meetings for {{ DateHelper.formatDate(selectedDate) }}
@@ -164,7 +164,7 @@ onMounted(() => {
                                 <Tag :value="`0 Attendees`" severity="success" />
                                 <Tag :value="`Upcoming`" severity="warning" />
                             </div>
-                            <div class="flex gap-2 mb-2">
+                            <div class="flex flex-wrap gap-4 mb-2">
                                 <div class="">
                                     <i class="pi pi-calendar"></i>
                                     {{ DateHelper.formatDate(meeting.meta!._sakolawp_event_date[0]) }}
@@ -189,8 +189,8 @@ onMounted(() => {
                                 label="Download QR Code"></Button>
                         </div>
                     </div>
-                </template></template>
-
+                </template>
+            </TransitionGroup>
         </div>
 
         <Dialog v-model:visible="showAddForm" modal header="Add Meeting" :style="{ width: '30rem' }"
