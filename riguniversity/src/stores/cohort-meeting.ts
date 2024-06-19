@@ -3,8 +3,49 @@ import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 
+export interface CalendarDay {
+  id: string
+  dayIndex: number
+  day: number
+  dayFromEnd: number
+  weekday: number
+  weekdayOrdinal: number
+  weekdayOrdinalFromEnd: number
+  week: number
+  weekFromEnd: number
+  weeknumber: number
+  month: number
+  year: number
+  date: Date
+  position: number
+  label: string
+  ariaLabel: string
+  weekdayPosition: number
+  weekdayPositionFromEnd: number
+  weekPosition: number
+  isoWeeknumber: number
+  startDate: Date
+  noonDate: Date
+  endDate: Date
+  isToday: boolean
+  isFirstDay: boolean
+  isLastDay: boolean
+  isDisabled: boolean
+  isFocusable: boolean
+  inMonth: boolean
+  inPrevMonth: boolean
+  inNextMonth: boolean
+  onTop: boolean
+  onBottom: boolean
+  onLeft: boolean
+  onRight: boolean
+  classes: Array<string | Object>
+  locale: Locale
+}
+
 export interface CohortMeeting {
   ID?: number
+  title?: string
   content?: string
   excerpt?: string
   permalink?: string
@@ -13,13 +54,18 @@ export interface CohortMeeting {
   meta?: Record<string, string[]>
 }
 
-export const useCohortMeetingStore = defineStore('cohortMeeting', () => {
+const cohortMeetingStore = () => {
   const toast = useToast()
   const cohortMeetings = ref<CohortMeeting[]>([])
   const currentCohortMeeting = ref<CohortMeeting | undefined>(undefined)
-  const filter = reactive({
+  const filter = reactive<{
+    search: string
+    class_id: string
+    meta_query: { key: string; value: string; compare: string }[]
+  }>({
     search: '',
-    class_id: ''
+    class_id: '',
+    meta_query: []
   })
   const loading = reactive({
     list: false,
@@ -57,7 +103,7 @@ export const useCohortMeetingStore = defineStore('cohortMeeting', () => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams({
+      body: convertObjectToSearchParams({
         action: 'run_list_events',
         ...filter
       })
@@ -74,10 +120,10 @@ export const useCohortMeetingStore = defineStore('cohortMeeting', () => {
       })
   }
 
-  const goToViewCohortMeeting = (cohortMeetingId: string) => {
+  const goToViewCohortMeeting = (cohortMeetingId: number) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_cohortMeeting')
-    url.searchParams.set('class_id', cohortMeetingId)
+    url.searchParams.set('class_id', `${cohortMeetingId}`)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
@@ -232,6 +278,53 @@ export const useCohortMeetingStore = defineStore('cohortMeeting', () => {
       })
   }
 
+  async function generateQRCode(skwpEventId: number, print = true) {
+    try {
+      // @ts-ignore
+      const response = await fetch(skwp_ajax_object.ajaxurl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          action: 'sakolawp_generate_qr_code',
+          event_id: `${skwpEventId}`
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (print && data.data.image) printImage(data.data.image)
+
+      return data.data.image
+    } catch (error) {
+      console.error('Error generating QR code:', error)
+    }
+  }
+  function printImage(imageUrl: string) {
+    const printWindow = window.open('', '_blank')
+    printWindow?.document.write(
+      [
+        '<html>',
+        '   <head>',
+        '   </head>',
+        '   <body onload="window.print()" onafterprint="window.close()">',
+        '       <img style="width:100%" src="' + imageUrl + '"/>',
+        '   </body>',
+        '</html>'
+      ].join('')
+    )
+    printWindow?.document.close()
+    // wait 2 seconds
+    setTimeout(() => {
+      printWindow?.print()
+    }, 2000)
+  }
+
   return {
     cohortMeetings: computed(() => cohortMeetings),
     fetchCohortMeetings,
@@ -251,6 +344,10 @@ export const useCohortMeetingStore = defineStore('cohortMeeting', () => {
     updateCohortMeeting,
     deleteCohortMeeting,
     goToEditCohortMeeting,
-    closeEditCohortMeeting
+    closeEditCohortMeeting,
+    generateQRCode
   }
-})
+}
+
+export const useCohortMeetingStore = (uniqueStoreName = 'cohortMeeting') =>
+  defineStore(uniqueStoreName, cohortMeetingStore)()

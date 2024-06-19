@@ -13,11 +13,14 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@vee-validate/yup": "^4.12.8",
+    "date-fns": "^3.6.0",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "primevue": "^3.52.0",
     "quill": "^2.0.2",
+    "v-calendar": "^3.1.2",
     "vee-validate": "^4.12.8",
     "vue": "^3.4.21",
     "vue-draggable-plus": "^0.5.0",

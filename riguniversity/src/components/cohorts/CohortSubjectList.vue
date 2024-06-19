@@ -39,6 +39,7 @@ onMounted(() => {
         <div class="border-0">
             <div class="px-2 pb-4">
                 <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Subjects</h3>
+                <p>Click on + to manage the schedule of every course</p>
             </div>
 
             <DataView dataKey="class_id" :value="cohortSubjects" paginator :rows="10"

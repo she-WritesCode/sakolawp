@@ -9,9 +9,11 @@ import InputNumber from 'primevue/inputnumber';
 import { useForm } from 'vee-validate';
 import { useCohortScheduleStore, createCohortScheduleSchema, type CohortSchedule } from '../../stores/cohort-schedule';
 import { type DripMethod, useCohortStore } from '../../stores/cohort';
+import { DateHelper } from '../../utils/date';
 import { toTypedSchema } from '@vee-validate/yup';
 import { watch } from "vue";
 import { reactive } from "vue";
+import { computed } from "vue";
 
 const props = defineProps<{
     homeworks: Homework[];
@@ -78,6 +80,7 @@ watch(cohortSchedules, (value) => {
         })
     }
 })
+
 onMounted(() => {
     filter.subject_id = props.subjectId
     filter.class_id = props.cohortId as string
@@ -86,10 +89,19 @@ onMounted(() => {
 })
 
 
+const releaseDate = computed(() => Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
+    acc[homework_id] = DateHelper.formatDate(DateHelper.addDays(currentCohort.value!.start_date, schedules[homework_id!]!.release_days))
+    return acc
+}, {}));
+const deadlineDate = computed(() => Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
+    acc[homework_id] = DateHelper.formatDate(DateHelper.addDays(releaseDate.value[homework_id], schedules[homework_id!]!.deadline_days))
+    return acc
+}, {}));
 </script>
 
 <template>
     <form @submit="submitForm">
+        <div> Cohort starts on: {{ currentCohort?.start_date || "error" }}</div>
         <Divider />
         <div class="grid gap-0 mb-4">
             <template v-for="homework in homeworks" :key="homework.homework_id">
@@ -107,6 +119,9 @@ onMounted(() => {
                                         class="input-number" placeholder="0" type="number" />
                                     <span>days after cohort starts</span>
                                 </div>
+                                <div>
+                                    <Tag :value="releaseDate[homework.homework_id!]" severity="secondary" />
+                                </div>
                             </div>
                             <div>
                                 <label>Deadline</label>
@@ -115,6 +130,9 @@ onMounted(() => {
                                         class="input-number" placeholder="0" type="number" />
                                     <span>days after release date</span>
                                 </div>
+                                <div>
+                                    <Tag :value="deadlineDate[homework.homework_id!]" severity="secondary" />
+                                </div>
                             </div>
                         </div>
                         <div v-else class="flex flex-col md:flex-row gap-4">
@@ -122,11 +140,13 @@ onMounted(() => {
                                 <label>Release</label>
                                 <InputText class="w-full" type="date"
                                     v-model.number="schedules[homework.homework_id!]!.release_date" />
+                                <!-- :defaultValue="releaseDate[homework.homework_id!]" -->
                             </div>
                             <div>
                                 <label>Deadline</label>
-                                <InputText class="w-full" type="date"
-                                    v-model.number="schedules[homework.homework_id!]!.deadline_date" />
+                                <input class="w-full" type="date"
+                                    v-model.number="schedules[homework.homework_id!]!.deadline_date"
+                                    :defaultValue="deadlineDate[homework.homework_id!]" />
                             </div>
                         </div>
                     </div>
