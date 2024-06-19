@@ -109,8 +109,13 @@ export class DateHelper {
     return dateFns.format(dateObj, 'yyyy-MM-ddTHH:mm:ssZ')
   }
 
-  static toSimpleBeDateString(date: Date | string): string {
+  static toSimpleBackendDateString(date: Date | string): string {
     const dateObj = typeof date === 'string' ? new Date(date) : date
     return dateFns.format(dateObj, 'yyyy-MM-dd')
+  }
+
+  static toSimpleBackendTimeString(date: Date | string): string {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    return dateFns.format(dateObj, 'HH:mm')
   }
 }

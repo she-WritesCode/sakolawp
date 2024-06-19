@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useCohortMeetingStore, type CalendarDay } from "../../stores/cohort-meeting";
+import { useCohortMeetingStore, type CalendarDay, type CreateCohortMeeting } from "../../stores/cohort-meeting";
 import { useCohortStore } from "../../stores/cohort";
 import { DateHelper } from "../../utils/date";
 import Tag from 'primevue/tag';
@@ -8,30 +8,40 @@ import Button from 'primevue/button';
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
-// import AddMeeting from './AddMeeting.vue'
+import AddCohortMeeting from './AddCohortMeeting.vue'
 import LoadingIndicator from '../LoadingIndicator.vue'
 import { ref } from "vue";
 import { Calendar as VCalendar } from 'v-calendar'
 import { computed, watch } from "vue";
 
 
+const { cohortId } = useCohortStore();
 const {
     cohortMeetings,
     filter,
-    goToViewCohortMeeting,
+    goToEditCohortMeeting,
     cohortMeetingId,
     loading,
-    showAddForm,
-    goToAddForm, deleteCohortMeeting, generateQRCode
+    showAddForm, showEditScreen,
+    goToAddForm, deleteCohortMeeting, generateQRCode, currentCohortMeeting, getOneCohortMeeting
 } = useCohortMeetingStore();
+
+const editInitialValues = computed<CreateCohortMeeting & { ID: number } | undefined>(() => currentCohortMeeting.value ? ({
+    ID: currentCohortMeeting.value!.ID!,
+    title: currentCohortMeeting.value!.title || "",
+    content: currentCohortMeeting.value!.content || "",
+    meta: {
+        _sakolawp_event_date: DateHelper.toSimpleBackendDateString(currentCohortMeeting.value!.meta!._sakolawp_event_date![0] || new Date()),
+        _sakolawp_event_date_clock: currentCohortMeeting.value!.meta!._sakolawp_event_date_clock![0] || DateHelper.toSimpleBackendTimeString(new Date()),
+        _sakolawp_event_class_id: currentCohortMeeting.value!.meta!._sakolawp_event_class_id![0] || cohortId,
+        _sakolawp_event_location: currentCohortMeeting.value!.meta!._sakolawp_event_location![0] || "",
+    },
+} as CreateCohortMeeting & { ID: number }) : undefined)
 
 const {
     cohortMeetings: allCohortMeetings,
     filter: allCohortMeetingsFilter,
 } = useCohortMeetingStore('allcohorts');
-const {
-    cohortId
-} = useCohortStore();
 
 const showDeleteDialog = ref(false)
 const toBeDeleted = ref<string | null>(null)
@@ -82,13 +92,13 @@ const attrs = computed<Partial<{
 ]);
 
 const onDayClick = (day: CalendarDay, event: MouseEvent) => {
-    filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBeDateString(day.date), compare: '=' }]
+    filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBackendDateString(day.date), compare: '=' }]
     selectedDate.value = day.date
 }
 
 watch(displayView, (value) => {
     if (value == 'calendar') {
-        filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBeDateString(selectedDate.value), compare: '=' }]
+        filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBackendDateString(selectedDate.value), compare: '=' }]
     }
     if (value == 'list') {
         filter.meta_query = []
@@ -96,11 +106,10 @@ watch(displayView, (value) => {
 })
 
 onMounted(() => {
-    if (!cohortMeetingId) {
-        filter.class_id = cohortId || ''
-        filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBeDateString(selectedDate.value), compare: '=' }]
-    }
+    filter.class_id = cohortId || ''
+    filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBackendDateString(selectedDate.value), compare: '=' }]
     allCohortMeetingsFilter.class_id = cohortId || ''
+    if (cohortMeetingId) getOneCohortMeeting(cohortMeetingId!)
 });
 
 
@@ -110,16 +119,13 @@ onMounted(() => {
     <!-- Meeting List -->
     <div class="border-0">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <div class="mb-4">
+            <div class="order-1">
                 <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Meetings</h3>
             </div>
-            <div>
-                <template v-if="displayView == 'calendar'">
-                    <SelectButton v-model="calenderView" class="font-normal capitalize"
-                        :options="['weekly', 'monthly']" />
-                </template>
+            <div class="order-3 md:order-2" v-if="displayView == 'calendar'">
+                <SelectButton v-model="calenderView" class="font-normal capitalize" :options="['weekly', 'monthly']" />
             </div>
-            <div class="">
+            <div class="order-2 md:order-3">
                 <SelectButton v-model="displayView" class="font-normal capitalize" :options="['calendar', 'list']" />
             </div>
         </div>
@@ -153,25 +159,30 @@ onMounted(() => {
                     <div v-for="(meeting, index) in cohortMeetings" :key="index"
                         class="card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <div class="text-base">
+                            <div class="text-base font-bold mb-2">
                                 {{ meeting.title }}
                                 <Tag :value="`0 Attendees`" severity="success" />
                                 <Tag :value="`Upcoming`" severity="warning" />
                             </div>
-                            <div class="">
-                                {{ DateHelper.relativeTime(meeting.meta!._sakolawp_event_date[0]) }}
-                                {{ DateHelper.formatTime(`${meeting.meta!._sakolawp_event_date[0]}
-                                ${meeting.meta!._sakolawp_event_date_clock[0]}`) }}
-                            </div>
-                            <div class="">
-                                {{ meeting.meta!._sakolawp_location?.[0] }}
-                            </div>
-                            <div class="italic text sm">
-                                Added by: {{ meeting.author }}
+                            <div class="flex gap-2 mb-2">
+                                <div class="">
+                                    <i class="pi pi-calendar"></i>
+                                    {{ DateHelper.formatDate(meeting.meta!._sakolawp_event_date[0]) }}
+                                    {{ DateHelper.formatTime(`${meeting.meta!._sakolawp_event_date[0]}
+                                    ${meeting.meta!._sakolawp_event_date_clock[0]}`) }}
+                                </div>
+                                <div class="">
+                                    <i class="pi pi-map-marker"></i>
+                                    {{ meeting.meta!._sakolawp_event_location?.[0] }}
+                                </div>
+                                <div class="italic text sm">
+                                    <i class="pi pi-user"></i>
+                                    Added by: {{ meeting.author }}
+                                </div>
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <Button size="small" outlined @click="goToViewCohortMeeting(meeting.ID!)"
+                            <Button size="small" outlined @click="goToEditCohortMeeting(meeting.ID!)"
                                 label="Edit"></Button>
 
                             <Button @click="generateQRCode(meeting.ID!)" size="small" text
@@ -184,8 +195,11 @@ onMounted(() => {
 
         <Dialog v-model:visible="showAddForm" modal header="Add Meeting" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <!-- <AddMeeting></AddMeeting> -->
-            add meeting form
+            <AddCohortMeeting :cohortId="cohortId!"></AddCohortMeeting>
+        </Dialog>
+        <Dialog v-model:visible="showEditScreen" modal header="Edit Meeting" :style="{ width: '30rem' }"
+            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            <AddCohortMeeting :cohortId="cohortId!" :initialValues="editInitialValues"></AddCohortMeeting>
         </Dialog>
         <Dialog v-model:visible="showDeleteDialog" modal header="Remove Meeting from Cohort" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">

@@ -1,5 +1,6 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
+import * as yup from 'yup'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 
@@ -53,6 +54,26 @@ export interface CohortMeeting {
   author?: string
   meta?: Record<string, string[]>
 }
+export interface CreateCohortMeeting {
+  title: string
+  content?: string
+  meta: {
+    _sakolawp_event_location?: string
+    _sakolawp_event_date: string
+    _sakolawp_event_date_clock: string
+    _sakolawp_event_class_id: string
+  }
+}
+export const createCohortMeetingSchema = yup.object({
+  title: yup.string().required(),
+  content: yup.string().optional(),
+  meta: yup.object({
+    _sakolawp_event_date: yup.string().required().label('Event date'),
+    _sakolawp_event_date_clock: yup.string().required().label('Event time'),
+    _sakolawp_event_class_id: yup.string().required().label('Event cohort'),
+    _sakolawp_event_location: yup.string().optional().label('Event location')
+  })
+})
 
 const cohortMeetingStore = () => {
   const toast = useToast()
@@ -76,7 +97,7 @@ const cohortMeetingStore = () => {
   })
   const cohortMeetingId = computed(() => {
     const url = new URL(window.location.href)
-    return url.searchParams.get('subject_id')
+    return url.searchParams.get('event_id')
   })
   const action = computed(() => {
     const url = new URL(window.location.href)
@@ -123,7 +144,7 @@ const cohortMeetingStore = () => {
   const goToViewCohortMeeting = (cohortMeetingId: number) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_cohortMeeting')
-    url.searchParams.set('class_id', `${cohortMeetingId}`)
+    url.searchParams.set('event_id', `${cohortMeetingId}`)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
@@ -131,14 +152,14 @@ const cohortMeetingStore = () => {
   const closeViewCohortMeeting = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.delete('class_id')
+    url.searchParams.delete('event_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditCohortMeeting = (cohortMeetingId: string) => {
+  const goToEditCohortMeeting = (cohortMeetingId: number) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_cohortMeeting')
-    url.searchParams.set('class_id', cohortMeetingId)
+    url.searchParams.set('event_id', `${cohortMeetingId}`)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
@@ -146,8 +167,10 @@ const cohortMeetingStore = () => {
   const closeEditCohortMeeting = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.set('class_id', cohortMeetingId.value as string)
-    url.searchParams.set('action', 'view_cohortMeeting')
+    url.searchParams.delete('event_id')
+    // We don't need to go back to view screen since we don't have one
+    // url.searchParams.set('event_id', cohortMeetingId.value as string)
+    // url.searchParams.set('action', 'view_cohortMeeting')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
@@ -176,7 +199,7 @@ const cohortMeetingStore = () => {
       },
       body: new URLSearchParams({
         action: 'run_single_event',
-        class_id: id
+        event_id: id
       })
     })
       .then((response) => response.json())
@@ -191,7 +214,7 @@ const cohortMeetingStore = () => {
       })
   }
 
-  const createCohortMeeting = (args: Partial<CohortMeeting>) => {
+  const createCohortMeeting = (args: CreateCohortMeeting) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -225,7 +248,7 @@ const cohortMeetingStore = () => {
       })
   }
 
-  const updateCohortMeeting = (args: Partial<CohortMeeting>) => {
+  const updateCohortMeeting = (args: Partial<CreateCohortMeeting> & { ID: number }) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -266,7 +289,7 @@ const cohortMeetingStore = () => {
       },
       body: new URLSearchParams({
         action: 'run_delete_event',
-        class_id: id
+        event_id: id
       })
     })
       .catch((error) => {

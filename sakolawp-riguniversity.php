@@ -736,7 +736,7 @@ function run_create_event()
 function run_update_event()
 {
 	$repo = new RunEventRepo();
-	$event_id = sanitize_text_field($_POST['event_id']);
+	$event_id = sanitize_text_field($_POST['ID']);
 	$event_data = array_map('stripslashes_deep', $_POST);
 
 	$result = $repo->update($event_id, $event_data);
