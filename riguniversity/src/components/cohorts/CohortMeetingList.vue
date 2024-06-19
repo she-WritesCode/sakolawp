@@ -151,19 +151,26 @@ onMounted(() => {
                 </template>
                 <template v-else>
                     <div v-for="(meeting, index) in cohortMeetings" :key="index"
-                        class="card flex items-center justify-between gap-4">
+                        class="card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <div class="text-base">
                                 {{ meeting.title }}
-                                <Tag :value="meeting.author" severity="secondary" />
+                                <Tag :value="`0 Attendees`" severity="success" />
+                                <Tag :value="`Upcoming`" severity="warning" />
                             </div>
                             <div class="">
                                 {{ DateHelper.relativeTime(meeting.meta!._sakolawp_event_date[0]) }}
                                 {{ DateHelper.formatTime(`${meeting.meta!._sakolawp_event_date[0]}
                                 ${meeting.meta!._sakolawp_event_date_clock[0]}`) }}
                             </div>
+                            <div class="">
+                                {{ meeting.meta!._sakolawp_location?.[0] }}
+                            </div>
+                            <div class="italic text sm">
+                                Added by: {{ meeting.author }}
+                            </div>
                         </div>
-                        <div>
+                        <div class="flex gap-2">
                             <Button size="small" outlined @click="goToViewCohortMeeting(meeting.ID!)"
                                 label="Edit"></Button>
 
@@ -195,7 +202,7 @@ onMounted(() => {
 
 <style scoped>
 .card {
-    @apply border border-surface-200 rounded-md bg-surface-0 min-w-0 m-0 p-4 max-w-full w-full;
+    @apply border border-surface-200 border-l-2 border-l-primary-500 rounded-md bg-surface-0 min-w-0 m-0 p-4 max-w-full w-full;
 }
 
 .card .title {
