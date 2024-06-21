@@ -93,7 +93,7 @@ class Sakolawp_Public
 		wp_enqueue_style('datatablesstyle', plugin_dir_url(__FILE__) . 'css/datatables.min.css', array());
 		wp_enqueue_style('daterangepicker', plugin_dir_url(__FILE__) . 'css/daterangepicker.css', array());
 		wp_enqueue_style('clockpicker', plugin_dir_url(__FILE__) . 'css/clockpicker.min.css', array());
-		wp_enqueue_style('fonts', plugin_dir_url(__FILE__) . 'css/fonts.css', array());
+		// wp_enqueue_style('fonts', plugin_dir_url(__FILE__) . 'css/fonts.css', array());
 		wp_enqueue_style($this->plugin_name . '-rtl', plugin_dir_url(__FILE__) . 'css/sakolawp-public-rtl.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/sakolawp-public.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-responsive', plugin_dir_url(__FILE__) . 'css/sakolawp-responsive.css', array(), $this->version, 'all');
