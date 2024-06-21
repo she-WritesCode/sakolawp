@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useprogramStore } from "../stores/program";
+import { useProgramStore } from "../stores/program";
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -9,22 +9,22 @@ import DataView from 'primevue/dataview';
 import Dialog from 'primevue/dialog';
 import { ref } from "vue";
 // import HomeworkList from '../components/subjects/HomeworkList.vue'
-import programSubjectList from '../components/programs/programSubjectList.vue'
-import programMeetingList from '../components/programs/programMeetingList.vue'
-import programGroupList from '../components/programs/programGroupList.vue'
-import programEnrollmentList from '../components/programs/programEnrollmentList.vue'
-import Editprogram from '../components/programs/Editprogram.vue'
-import Addprogram from '../components/programs/Addprogram.vue'
+import ProgramSubjectList from '../components/programs/ProgramSubjectList.vue'
+import ProgramMeetingList from '../components/programs/ProgramMeetingList.vue'
+import ProgramGroupList from '../components/programs/ProgramGroupList.vue'
+import ProgramEnrollmentList from '../components/programs/ProgramEnrollmentList.vue'
+import EditProgram from '../components/programs/EditProgram.vue'
+import AddProgram from '../components/programs/AddProgram.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import { useSubjectStore } from "../stores/subject";
 import Toast from "primevue/toast";
 
 const tabs = {
-    subjects: programSubjectList,
-    groupings: programGroupList,
-    enrollments: programEnrollmentList,
-    editprogram: Editprogram,
-    meetings: programMeetingList,
+    subjects: ProgramSubjectList,
+    groupings: ProgramGroupList,
+    enrollments: ProgramEnrollmentList,
+    editProgram: EditProgram,
+    meetings: ProgramMeetingList,
 }
 const currentTab = ref<keyof typeof tabs | 'statistics'>(new URL(window.location.href).searchParams.get('tab') as keyof typeof tabs || "statistics")
 
@@ -55,7 +55,7 @@ const items = ref([
         }
     },
     {
-        label: 'program Groups',
+        label: 'Program Groups',
         command: () => {
             switchTabUrl('groupings')
         }
@@ -69,23 +69,23 @@ const items = ref([
     {
         label: 'Edit program',
         command: () => {
-            switchTabUrl('editprogram')
+            switchTabUrl('editProgram')
         }
     },
 ]);
 
 const {
     programs,
-    fetchprograms,
+    fetchPrograms: fetchprograms,
     filter,
-    goToViewprogram,
+    goToViewProgram: goToViewprogram,
     programId,
-    currentprogram,
-    getOneprogram,
+    currentProgram: currentprogram,
+    getOneProgram: getOneprogram,
     loading,
     showAddForm,
-    goToAddForm, deleteprogram,
-} = useprogramStore();
+    goToAddForm, deleteProgram: deleteprogram,
+} = useProgramStore();
 const { showAddForm: showSubjectAddForm, currentSubject } = useSubjectStore();
 
 onMounted(() => {
@@ -104,7 +104,7 @@ onMounted(() => {
     <!-- program List -->
     <div v-if="!programId" class="border-0">
         <div class="px-2 pb-4">
-            <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">programs</h3>
+            <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Programs</h3>
         </div>
         <DataView dataKey="class_id" :value="programs" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
             <template #header>
@@ -113,7 +113,7 @@ onMounted(() => {
                         <InputText v-model="filter.search" placeholder="Search programs" class="font-normal" />
                     </div>
                     <div class="">
-                        <Button @click="goToAddForm" size="small" label="+ Add program"></Button>
+                        <Button @click="goToAddForm" size="small" label="+ Add Program"></Button>
                     </div>
                 </div>
             </template>
@@ -165,9 +165,9 @@ onMounted(() => {
             </template>
         </DataView>
 
-        <Dialog v-model:visible="showAddForm" modal header="Add program" :style="{ width: '30rem' }"
+        <Dialog v-model:visible="showAddForm" modal header="Add Program" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <Addprogram></Addprogram>
+            <AddProgram></AddProgram>
         </Dialog>
     </div>
     <!-- Single program -->
@@ -194,7 +194,7 @@ onMounted(() => {
             <div class="mb-4'">
                 <div class="flex items-center gap-2">
                     <h3 class="text-2xl md:text-2xlmb-2">{{ currentprogram?.name }}</h3>
-                    <Button text size="small" outlined class="" @click="switchTabUrl('editprogram')"
+                    <Button text size="small" outlined class="" @click="switchTabUrl('editProgram')"
                         label="Edit program"></Button>
                 </div>
             </div>

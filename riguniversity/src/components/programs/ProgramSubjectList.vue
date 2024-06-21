@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useprogramSubjectStore } from "../../stores/program-subject";
-import { useprogramStore } from "../../stores/program";
+import { useProgramStore } from "../../stores/program";
 import DataView from 'primevue/dataview';
 import Panel from 'primevue/panel';
 import Tag from 'primevue/tag';
@@ -18,8 +18,8 @@ const {
     loading,
 } = useprogramSubjectStore();
 const {
-    programId, goToEditprogram, currentprogram
-} = useprogramStore();
+    programId, goToEditProgram: goToEditprogram, currentProgram: currentprogram
+} = useProgramStore();
 
 onMounted(() => {
     if (!programSubjectId) {

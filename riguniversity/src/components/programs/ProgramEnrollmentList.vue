@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useprogramEnrollmentStore } from "../../stores/program-enrollment";
-import { useprogramStore } from "../../stores/program";
+import { useProgramStore } from "../../stores/program";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -26,7 +26,7 @@ const {
 } = useprogramEnrollmentStore();
 const {
     programId
-} = useprogramStore();
+} = useProgramStore();
 
 onMounted(() => {
     if (!programEnrollmentId) {

@@ -2,11 +2,10 @@ import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
-import type { Homework } from './homework'
 import * as yup from 'yup'
 import type { DripMethod } from './program'
 
-export interface programSchedule {
+export interface ProgramSchedule {
   id?: string
   subject_id: string
   class_id: string
@@ -21,7 +20,7 @@ export interface programSchedule {
   updated_at?: string
 }
 
-export const createprogramScheduleSchema = yup.object<programSchedule>({
+export const createProgramScheduleSchema = yup.object<ProgramSchedule>({
   schedules: yup
     .array()
     .of(
@@ -40,10 +39,10 @@ export const createprogramScheduleSchema = yup.object<programSchedule>({
     .min(1)
 })
 
-export const useprogramScheduleStore = defineStore('programSchedule', () => {
+export const useProgramScheduleStore = defineStore('programSchedule', () => {
   const toast = useToast()
-  const programSchedules = ref<programSchedule[]>([])
-  const currentprogramSchedule = ref<programSchedule | undefined>(undefined)
+  const programSchedules = ref<ProgramSchedule[]>([])
+  const currentProgramSchedule = ref<ProgramSchedule | undefined>(undefined)
   const filter = reactive({
     search: '',
     subject_id: '',
@@ -74,10 +73,10 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
   )
 
   watch(filter, () => {
-    fetchprogramSchedules()
+    fetchProgramSchedules()
   })
 
-  const fetchprogramSchedules = () => {
+  const fetchProgramSchedules = () => {
     loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -102,7 +101,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
       })
   }
 
-  const goToViewprogramSchedule = (programScheduleId: string) => {
+  const goToViewProgramSchedule = (programScheduleId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_programSchedule')
     url.searchParams.set('schedule_id', programScheduleId)
@@ -110,14 +109,14 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
     window.location.href = url.toString()
   }
 
-  const closeViewprogramSchedule = () => {
+  const closeViewProgramSchedule = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('schedule_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditprogramSchedule = (programScheduleId: string) => {
+  const goToEditProgramSchedule = (programScheduleId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_programSchedule')
     url.searchParams.set('schedule_id', programScheduleId)
@@ -125,7 +124,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
     window.location.href = url.toString()
   }
 
-  const closeEditprogramSchedule = () => {
+  const closeEditProgramSchedule = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.set('schedule_id', programScheduleId.value as string)
@@ -148,7 +147,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
     window.location.href = url.toString()
   }
 
-  const getOneprogramSchedule = (id: string) => {
+  const getOneProgramSchedule = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -163,7 +162,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramSchedule.value = response.data
+        currentProgramSchedule.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -173,7 +172,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
       })
   }
 
-  const createprogramSchedule = (args: Partial<programSchedule>[]) => {
+  const createProgramSchedule = (args: Partial<ProgramSchedule>[]) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -188,7 +187,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramSchedule.value = response.data
+        currentProgramSchedule.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
@@ -208,7 +207,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
       })
   }
 
-  const updateprogramSchedule = (args: Partial<programSchedule>) => {
+  const updateProgramSchedule = (args: Partial<ProgramSchedule>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -223,7 +222,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
     })
       .then((response) => response.json())
       .then(() => {
-        getOneprogramSchedule(programScheduleId.value as string)
+        getOneProgramSchedule(programScheduleId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
@@ -239,7 +238,7 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
       })
   }
 
-  const deleteprogramSchedule = (id: string) => {
+  const deleteProgramSchedule = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -257,29 +256,29 @@ export const useprogramScheduleStore = defineStore('programSchedule', () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchprogramSchedules()
+        fetchProgramSchedules()
       })
   }
 
   return {
     programSchedules: computed(() => programSchedules),
-    fetchprogramSchedules,
+    fetchProgramSchedules,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentprogramSchedule: computed(() => currentprogramSchedule),
-    goToViewprogramSchedule,
-    closeViewprogramSchedule,
+    currentProgramSchedule: computed(() => currentProgramSchedule),
+    goToViewProgramSchedule,
+    closeViewProgramSchedule,
     programScheduleId,
-    getOneprogramSchedule,
+    getOneProgramSchedule,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createprogramSchedule,
-    updateprogramSchedule,
-    deleteprogramSchedule,
-    goToEditprogramSchedule,
-    closeEditprogramSchedule
+    createProgramSchedule,
+    updateProgramSchedule,
+    deleteProgramSchedule,
+    goToEditProgramSchedule,
+    closeEditProgramSchedule
   }
 })

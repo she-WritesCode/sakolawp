@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 import { useprogramParentGroupStore } from "../../stores/program-parent-group";
 import { useprogramAccountabilityGroupStore } from "../../stores/program-accountability-group";
-import { useprogramStore } from "../../stores/program";
+import { useProgramStore } from "../../stores/program";
 import DataTable from 'primevue/datatable';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
@@ -34,7 +34,7 @@ const {
 } = useprogramAccountabilityGroupStore();
 const {
     programId
-} = useprogramStore();
+} = useProgramStore();
 
 onMounted(() => {
     if (!programParentGroupId) {

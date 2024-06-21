@@ -19,7 +19,7 @@ export interface program {
   teacher_count?: string
 }
 
-export const createprogramSchema = yup.object({
+export const createProgramSchema = yup.object({
   name: yup.string().min(3).required(),
   start_date: yup.string().optional(),
   drip_method: yup
@@ -30,10 +30,10 @@ export const createprogramSchema = yup.object({
   subjects: yup.array().of(yup.string()).min(0)
 })
 
-export const useprogramStore = defineStore('program', () => {
+export const useProgramStore = defineStore('program', () => {
   const toast = useToast()
   const programs = ref<program[]>([])
-  const currentprogram = ref<program | undefined>(undefined)
+  const currentProgram = ref<program | undefined>(undefined)
   const filter = reactive({
     search: ''
   })
@@ -63,10 +63,10 @@ export const useprogramStore = defineStore('program', () => {
   const showEditScreen = computed(() => action.value === 'add_program' && !!programId.value)
 
   watch(filter, () => {
-    fetchprograms()
+    fetchPrograms()
   })
 
-  const fetchprograms = () => {
+  const fetchPrograms = () => {
     loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -89,7 +89,7 @@ export const useprogramStore = defineStore('program', () => {
       })
   }
 
-  const goToViewprogram = (programId: string) => {
+  const goToViewProgram = (programId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_program')
     url.searchParams.set('class_id', programId)
@@ -97,14 +97,14 @@ export const useprogramStore = defineStore('program', () => {
     window.location.href = url.toString()
   }
 
-  const closeViewprogram = () => {
+  const closeViewProgram = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('class_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditprogram = (programId: string) => {
+  const goToEditProgram = (programId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_program')
     url.searchParams.set('class_id', programId)
@@ -112,7 +112,7 @@ export const useprogramStore = defineStore('program', () => {
     window.location.href = url.toString()
   }
 
-  const closeEditprogram = () => {
+  const closeEditProgram = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.set('class_id', programId.value as string)
@@ -135,7 +135,7 @@ export const useprogramStore = defineStore('program', () => {
     window.location.href = url.toString()
   }
 
-  const getOneprogram = (id: string) => {
+  const getOneProgram = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -150,7 +150,7 @@ export const useprogramStore = defineStore('program', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogram.value = response.data
+        currentProgram.value = response.data
         loading.get = false
       })
       .catch((error) => {
@@ -158,7 +158,7 @@ export const useprogramStore = defineStore('program', () => {
       })
   }
 
-  const createprogram = (args: Partial<program>) => {
+  const createProgram = (args: Partial<program>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -173,7 +173,7 @@ export const useprogramStore = defineStore('program', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogram.value = response.data
+        currentProgram.value = response.data
         toast.add({
           severity: 'success',
           summary: 'Success',
@@ -191,7 +191,7 @@ export const useprogramStore = defineStore('program', () => {
       })
   }
 
-  const updateprogram = (args: Partial<program>) => {
+  const updateProgram = (args: Partial<program>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -207,7 +207,7 @@ export const useprogramStore = defineStore('program', () => {
     })
       .then((response) => response.json())
       .then(() => {
-        getOneprogram(programId.value as string)
+        getOneProgram(programId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
@@ -223,7 +223,7 @@ export const useprogramStore = defineStore('program', () => {
       })
   }
 
-  const deleteprogram = (id: string) => {
+  const deleteProgram = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -241,30 +241,30 @@ export const useprogramStore = defineStore('program', () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchprograms()
+        fetchPrograms()
       })
   }
 
   return {
     programs: computed(() => programs),
-    fetchprograms,
+    fetchPrograms: fetchPrograms,
     filter: computed(() => filter),
     subjectFilter: computed(() => subjectFilter),
     loading: computed(() => loading),
-    currentprogram: computed(() => currentprogram),
-    goToViewprogram,
-    closeViewprogram,
+    currentProgram: computed(() => currentProgram),
+    goToViewProgram,
+    closeViewProgram,
     programId,
-    getOneprogram,
+    getOneProgram,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createprogram,
-    updateprogram,
-    deleteprogram,
-    goToEditprogram,
-    closeEditprogram
+    createProgram,
+    updateProgram,
+    deleteProgram,
+    goToEditProgram,
+    closeEditProgram
   }
 })

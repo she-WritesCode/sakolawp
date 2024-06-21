@@ -3,7 +3,7 @@ import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
-import { createprogramSchema, useprogramStore } from '../../stores/program';
+import { createProgramSchema, useProgramStore } from '../../stores/program';
 import { useSubjectStore } from '../../stores/subject';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted, watch, ref } from 'vue';
@@ -11,7 +11,7 @@ import { computed } from 'vue';
 import SelectButton from 'primevue/selectbutton';
 import MultiSelect from 'primevue/multiselect';
 
-const { updateprogram, currentprogram, getOneprogram, programId, deleteprogram } = useprogramStore()
+const { updateProgram: updateprogram, currentProgram: currentprogram, getOneProgram: getOneprogram, programId, deleteProgram: deleteprogram } = useProgramStore()
 
 const { errors, defineField, handleSubmit, setValues } = useForm({
     initialValues: {
@@ -20,7 +20,7 @@ const { errors, defineField, handleSubmit, setValues } = useForm({
         subjects: currentprogram.value?.subjects,
         start_date: currentprogram.value?.start_date ? new Date(currentprogram.value?.start_date || "").toISOString().split('T')[0] : "",
     },
-    validationSchema: toTypedSchema(createprogramSchema),
+    validationSchema: toTypedSchema(createProgramSchema),
 });
 
 const [name, nameProps] = defineField('name');

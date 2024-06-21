@@ -4,7 +4,7 @@ import SelectButton from 'primevue/selectbutton';
 import MultiSelect from 'primevue/multiselect';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
-import { createprogramSchema, useprogramStore } from '../../stores/program';
+import { createProgramSchema, useProgramStore } from '../../stores/program';
 import { useSubjectStore } from '../../stores/subject';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
@@ -17,7 +17,7 @@ const { errors, defineField, handleSubmit } = useForm({
         subjects: [],
         start_date: ''
     },
-    validationSchema: toTypedSchema(createprogramSchema),
+    validationSchema: toTypedSchema(createProgramSchema),
 });
 
 const [name, nameProps] = defineField('name');
@@ -33,7 +33,7 @@ const options = [
 const { subjects: allSubjects, fetchSubjects } = useSubjectStore()
 const subjectOptions = computed(() => allSubjects.value.map((s) => ({ label: s.name, value: s.subject_id })))
 
-const { createprogram, closeAddForm } = useprogramStore()
+const { createProgram: createprogram, closeAddForm } = useProgramStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);

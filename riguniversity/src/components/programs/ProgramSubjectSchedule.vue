@@ -7,8 +7,8 @@ import Divider from 'primevue/divider';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import { useForm } from 'vee-validate';
-import { useprogramScheduleStore, createprogramScheduleSchema, type programSchedule } from '../../stores/program-schedule';
-import { type DripMethod, useprogramStore } from '../../stores/program';
+import { useProgramScheduleStore, createProgramScheduleSchema, type ProgramSchedule } from '../../stores/program-schedule';
+import { type DripMethod, useProgramStore } from '../../stores/program';
 import { DateHelper } from '../../utils/date';
 import { toTypedSchema } from '@vee-validate/yup';
 import { watch } from "vue";
@@ -21,13 +21,13 @@ const props = defineProps<{
     programId: string
     dripMethod?: DripMethod
 }>()
-const { getOneprogram, currentprogram } = useprogramStore()
-const { errors, defineField, handleSubmit, setValues, values } = useForm<{ [key: string]: programSchedule }>({
-    initialValues: props.homeworks.reduce<{ [key: string]: programSchedule }>((acc, homework) => {
+const { getOneProgram: getOneProgram, currentProgram } = useProgramStore()
+const { errors, defineField, handleSubmit, setValues, values } = useForm<{ [key: string]: ProgramSchedule }>({
+    initialValues: props.homeworks.reduce<{ [key: string]: ProgramSchedule }>((acc, homework) => {
         acc[homework.homework_id as string] = {
             subject_id: props.subjectId as string,
             class_id: props.programId as string,
-            drip_method: (currentprogram.value?.drip_method || props.dripMethod) as DripMethod,
+            drip_method: (currentProgram.value?.drip_method || props.dripMethod) as DripMethod,
             content_id: homework.homework_id as string,
             content_type: "homework",
             release_date: "",
@@ -37,20 +37,20 @@ const { errors, defineField, handleSubmit, setValues, values } = useForm<{ [key:
         }
         return acc
     }, {}),
-    validationSchema: toTypedSchema(createprogramScheduleSchema),
+    validationSchema: toTypedSchema(createProgramScheduleSchema),
 });
 
-const schedules = reactive(Object.keys(values).reduce<{ [key: string]: programSchedule }>((acc, homework_id) => {
+const schedules = reactive(Object.keys(values).reduce<{ [key: string]: ProgramSchedule }>((acc, homework_id) => {
     const [value] = defineField(homework_id)
     acc[homework_id] = value.value
     return acc
 }, {}));
 
-const { createprogramSchedule, filter, programSchedules, fetchprogramSchedules } = useprogramScheduleStore()
+const { createProgramSchedule, filter, programSchedules, fetchProgramSchedules } = useProgramScheduleStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
-    createprogramSchedule(Object.values(values))
+    createProgramSchedule(Object.values(values))
 });
 
 watch(schedules, (value) => {
@@ -60,13 +60,13 @@ watch(programSchedules, (value) => {
     if (value && value.length) {
         setValues({
             ...values,
-            ...props.homeworks.reduce<{ [key: string]: programSchedule }>((acc, homework) => {
+            ...props.homeworks.reduce<{ [key: string]: ProgramSchedule }>((acc, homework) => {
                 const existingSchedule = value.find(sch => sch.content_id == homework.homework_id && sch.content_type == 'homework')
                 if (existingSchedule) {
                     acc[homework.homework_id as string] = {
                         subject_id: props.subjectId as string,
                         class_id: props.programId as string,
-                        drip_method: (currentprogram.value?.drip_method || props.dripMethod) as DripMethod,
+                        drip_method: (currentProgram.value?.drip_method || props.dripMethod) as DripMethod,
                         content_id: homework.homework_id as string,
                         content_type: "homework",
                         release_date: existingSchedule.release_date,
@@ -84,13 +84,13 @@ watch(programSchedules, (value) => {
 onMounted(() => {
     filter.subject_id = props.subjectId
     filter.class_id = props.programId as string
-    fetchprogramSchedules()
-    if (props.programId && !currentprogram.value) getOneprogram(props.programId)
+    fetchProgramSchedules()
+    if (props.programId && !currentProgram.value) getOneProgram(props.programId)
 })
 
 
 const releaseDate = computed(() => Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
-    acc[homework_id] = DateHelper.formatDate(DateHelper.addDays(currentprogram.value!.start_date, schedules[homework_id!]!.release_days))
+    acc[homework_id] = DateHelper.formatDate(DateHelper.addDays(currentProgram.value!.start_date, schedules[homework_id!]!.release_days))
     return acc
 }, {}));
 const deadlineDate = computed(() => Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
@@ -101,7 +101,7 @@ const deadlineDate = computed(() => Object.keys(values).reduce<{ [key: string]: 
 
 <template>
     <form @submit="submitForm">
-        <div> program starts on: {{ currentprogram?.start_date || "error" }}</div>
+        <div> program starts on: {{ currentProgram?.start_date || "error" }}</div>
         <Divider />
         <div class="grid gap-0 mb-4">
             <template v-for="homework in homeworks" :key="homework.homework_id">

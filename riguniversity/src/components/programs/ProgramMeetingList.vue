@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useprogramMeetingStore, type CalendarDay, type CreateprogramMeeting } from "../../stores/program-meeting";
-import { useprogramStore } from "../../stores/program";
+import { useProgramStore } from "../../stores/program";
 import { DateHelper } from "../../utils/date";
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
@@ -15,7 +15,7 @@ import { Calendar as VCalendar } from 'v-calendar'
 import { computed, watch } from "vue";
 
 
-const { programId } = useprogramStore();
+const { programId } = useProgramStore();
 const {
     programMeetings,
     filter,
