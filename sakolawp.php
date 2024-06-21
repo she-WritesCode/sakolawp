@@ -1439,7 +1439,7 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
 			return false;
 		}
 
-		return $wpdb->insert_id;
+		return $wpdb->insert_id ? $wpdb->insert_id : $insert_result;
 	}
 }
 

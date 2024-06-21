@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useprogramSubjectStore } from "../../stores/program-subject";
+import { useProgramSubjectStore } from "../../stores/program-subject";
 import { useProgramStore } from "../../stores/program";
 import DataView from 'primevue/dataview';
 import Panel from 'primevue/panel';
@@ -8,7 +8,7 @@ import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import LoadingIndicator from '../LoadingIndicator.vue'
-import programSubjectSchedule from './programSubjectSchedule.vue'
+import ProgramSubjectSchedule from './ProgramSubjectSchedule.vue'
 
 
 const {
@@ -16,9 +16,9 @@ const {
     filter,
     programSubjectId,
     loading,
-} = useprogramSubjectStore();
+} = useProgramSubjectStore();
 const {
-    programId, goToEditProgram: goToEditprogram, currentProgram: currentprogram
+    programId, goToEditProgram: goToEditProgram, currentProgram: currentProgram
 } = useProgramStore();
 
 onMounted(() => {
@@ -50,7 +50,7 @@ onMounted(() => {
                             <InputText v-model="filter.search" placeholder="Search Subjects" class="font-normal" />
                         </div>
                         <div class="">
-                            <Button @click="goToEditprogram(programId as string)" size="small"
+                            <Button @click="goToEditProgram(programId as string)" size="small"
                                 label="Change Subjects"></Button>
                         </div>
                     </div>
@@ -80,9 +80,9 @@ onMounted(() => {
                                     <div v-if="!collapsed"> <i icon="pi pi-close"></i></div>
                                 </template> -->
 
-                                <programSubjectSchedule :key="index" :homeworks="item.homeworks"
-                                    :subjectId="item.subject_id" :programId="programId as string"
-                                    :dripMethod="currentprogram?.drip_method"></programSubjectSchedule>
+                                <ProgramSubjectSchedule :key="index" :homeworks="item.homeworks"
+                                    :subjectId="item.subject_id" :programId="(programId as string)"
+                                    :dripMethod="currentProgram?.drip_method"></ProgramSubjectSchedule>
                             </Panel>
                         </template>
                     </div>

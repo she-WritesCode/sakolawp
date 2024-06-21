@@ -83,6 +83,17 @@ export class DateHelper {
   }
 
   /**
+   * Set hours to a date
+   * @param date - Date object or date string
+   * @param hours - Number of hours to add
+   * @returns New date with hours added
+   */
+  static setTime(date: Date | string, hours: number, mins: number = 0, seconds = 0): Date {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    return dateFns.setSeconds(dateFns.setMinutes(dateFns.setHours(dateObj, +hours), +mins), seconds)
+  }
+
+  /**
    * Add days to a date
    * @param date - Date object or date string
    * @param days - Number of days to add
@@ -107,6 +118,12 @@ export class DateHelper {
   static toISOString(date: Date | string): string {
     const dateObj = typeof date === 'string' ? new Date(date) : date
     return dateFns.format(dateObj, 'yyyy-MM-ddTHH:mm:ssZ')
+  }
+
+  static toSimpleBackendDateAndTimeString(date: Date | string | null): string {
+    if (!date) return ''
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    return dateFns.format(dateObj, 'yyyy-MM-dd HH:mm:ss')
   }
 
   static toSimpleBackendDateString(date: Date | string): string {

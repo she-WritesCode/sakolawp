@@ -561,8 +561,8 @@ function run_create_schedule()
 		$schedule_data[$key]['content_id'] = isset($schedule['content_id']) ? sanitize_text_field($schedule['content_id']) : "";
 		$schedule_data[$key]['content_type'] = isset($schedule['content_type']) ? sanitize_text_field($schedule['content_type']) : "";
 		$schedule_data[$key]['drip_method'] = isset($schedule['drip_method']) ? sanitize_text_field($schedule['drip_method']) : "";
-		$schedule_data[$key]['release_date'] = isset($schedule['release_date']) ? sanitize_text_field($schedule['release_date']) : 0;
-		$schedule_data[$key]['release_days'] = isset($schedule['release_days']) ? sanitize_text_field($schedule['release_days']) : 0;
+		$schedule_data[$key]['release_date'] = isset($schedule['release_date']) ? sanitize_text_field($schedule['release_date']) : NULL;
+		$schedule_data[$key]['release_days'] = isset($schedule['release_days']) ? sanitize_text_field($schedule['release_days']) : NULL;
 		$schedule_data[$key]['deadline_date'] = isset($schedule['deadline_date']) ? sanitize_text_field($schedule['deadline_date']) : 0;
 		$schedule_data[$key]['deadline_days'] = isset($schedule['deadline_days']) ? sanitize_text_field($schedule['deadline_days']) : 0;
 
@@ -572,6 +572,8 @@ function run_create_schedule()
 			die();
 		}
 	}
+
+	error_log(print_r($schedule_data, true));
 
 	$result = $repo->create(array_values($schedule_data));
 

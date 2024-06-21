@@ -9,10 +9,10 @@ export interface programSubject extends Subject {
   homeworks?: Homework[]
 }
 
-export const useprogramSubjectStore = defineStore('programSubject', () => {
+export const useProgramSubjectStore = defineStore('programSubject', () => {
   const toast = useToast()
   const programSubjects = ref<programSubject[]>([])
-  const currentprogramSubject = ref<programSubject | undefined>(undefined)
+  const currentProgramSubject = ref<programSubject | undefined>(undefined)
   const filter = reactive({
     search: '',
     class_id: ''
@@ -42,10 +42,10 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
   )
 
   watch(filter, () => {
-    fetchprogramSubjects()
+    fetchProgramSubjects()
   })
 
-  const fetchprogramSubjects = () => {
+  const fetchProgramSubjects = () => {
     loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -70,7 +70,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
       })
   }
 
-  const goToViewprogramSubject = (programSubjectId: string) => {
+  const goToViewProgramSubject = (programSubjectId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_programSubject')
     url.searchParams.set('subject_id', programSubjectId)
@@ -78,14 +78,14 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
     window.location.href = url.toString()
   }
 
-  const closeViewprogramSubject = () => {
+  const closeViewProgramSubject = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('subject_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditprogramSubject = (programSubjectId: string) => {
+  const goToEditProgramSubject = (programSubjectId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_programSubject')
     url.searchParams.set('subject_id', programSubjectId)
@@ -93,7 +93,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
     window.location.href = url.toString()
   }
 
-  const closeEditprogramSubject = () => {
+  const closeEditProgramSubject = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.set('subject_id', programSubjectId.value as string)
@@ -116,7 +116,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
     window.location.href = url.toString()
   }
 
-  const getOneprogramSubject = (id: string) => {
+  const getOneProgramSubject = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -131,7 +131,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramSubject.value = response.data
+        currentProgramSubject.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -141,7 +141,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
       })
   }
 
-  const createprogramSubject = (args: Partial<programSubject>) => {
+  const createProgramSubject = (args: Partial<programSubject>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -156,7 +156,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramSubject.value = response.data
+        currentProgramSubject.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
@@ -175,7 +175,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
       })
   }
 
-  const updateprogramSubject = (args: Partial<programSubject>) => {
+  const updateProgramSubject = (args: Partial<programSubject>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -190,7 +190,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
     })
       .then((response) => response.json())
       .then(() => {
-        getOneprogramSubject(programSubjectId.value as string)
+        getOneProgramSubject(programSubjectId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
@@ -206,7 +206,7 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
       })
   }
 
-  const deleteprogramSubject = (id: string) => {
+  const deleteProgramSubject = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -224,29 +224,29 @@ export const useprogramSubjectStore = defineStore('programSubject', () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchprogramSubjects()
+        fetchProgramSubjects()
       })
   }
 
   return {
     programSubjects: computed(() => programSubjects),
-    fetchprogramSubjects,
+    fetchProgramSubjects: fetchProgramSubjects,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentprogramSubject: computed(() => currentprogramSubject),
-    goToViewprogramSubject,
-    closeViewprogramSubject,
+    currentProgramSubject: computed(() => currentProgramSubject),
+    goToViewProgramSubject,
+    closeViewProgramSubject,
     programSubjectId,
-    getOneprogramSubject,
+    getOneProgramSubject,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createprogramSubject,
-    updateprogramSubject,
-    deleteprogramSubject,
-    goToEditprogramSubject,
-    closeEditprogramSubject
+    createProgramSubject,
+    updateProgramSubject,
+    deleteProgramSubject,
+    goToEditProgramSubject,
+    closeEditProgramSubject
   }
 })

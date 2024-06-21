@@ -43,7 +43,7 @@ const items = ref([
         }
     },
     {
-        label: 'Subjects',
+        label: 'Schedule',
         command: () => {
             switchTabUrl('subjects')
         }
@@ -76,23 +76,24 @@ const items = ref([
 
 const {
     programs,
-    fetchPrograms: fetchprograms,
+    fetchPrograms,
     filter,
-    goToViewProgram: goToViewprogram,
+    goToViewProgram,
     programId,
-    currentProgram: currentprogram,
-    getOneProgram: getOneprogram,
+    currentProgram,
+    getOneProgram,
     loading,
     showAddForm,
-    goToAddForm, deleteProgram: deleteprogram,
+    goToAddForm,
+    deleteProgram,
 } = useProgramStore();
 const { showAddForm: showSubjectAddForm, currentSubject } = useSubjectStore();
 
 onMounted(() => {
     if (programId) {
-        getOneprogram(programId)
+        getOneProgram(programId)
     } else {
-        fetchprograms();
+        fetchPrograms();
     }
 });
 
@@ -127,7 +128,7 @@ onMounted(() => {
                     <template v-else>
                         <div v-for="(item, index) in slotProps.items" :key="index"
                             class="col-12 border border-surface-200 rounded-md hover:shadow-md p-4">
-                            <div @click="goToViewprogram(item.class_id)"
+                            <div @click="goToViewProgram(item.class_id)"
                                 class="text-lg mb-4 gap-2 flex items-center flex-wrap">
                                 <span>{{ item.name }}</span>
                                 <Tag :value="`${item.student_count} Students`" severity="warning" />
@@ -149,7 +150,7 @@ onMounted(() => {
                                 </div>
                             </div>
                             <div class="flex gap-2 text-sm">
-                                <Button outlined size="small" @click="goToViewprogram(item.class_id)" label="View"
+                                <Button outlined size="small" @click="goToViewProgram(item.class_id)" label="View"
                                     class="w-full"></Button>
                                 <!-- <Button size="small" @click="initDelete(slotProps.data.class_id)" text severity="danger"
                                 label="Delete"></Button> -->
@@ -175,13 +176,13 @@ onMounted(() => {
         <!-- Breadcrumb -->
         <div class="mb-4 px-2 text-sm text-surface-500">
             <a href="/wp-admin/admin.php?page=sakolawp-manage-class">programs</a>
-            <template v-if="currentprogram">
+            <template v-if="currentProgram">
                 > <a :class="!currentSubject ? 'text-surface-900' : ''"
-                    :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentprogram?.class_id}`">{{
-        currentprogram?.name }}</a>
+                    :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">{{
+        currentProgram?.name }}</a>
                 <template v-if="currentSubject">
                     > <a
-                        :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentprogram?.class_id}`">Subjects</a>
+                        :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">Subjects</a>
                 </template>
             </template>
             <template v-if="currentSubject">
@@ -193,7 +194,7 @@ onMounted(() => {
         <template v-else>
             <div class="mb-4'">
                 <div class="flex items-center gap-2">
-                    <h3 class="text-2xl md:text-2xlmb-2">{{ currentprogram?.name }}</h3>
+                    <h3 class="text-2xl md:text-2xlmb-2">{{ currentProgram?.name }}</h3>
                     <Button text size="small" outlined class="" @click="switchTabUrl('editProgram')"
                         label="Edit program"></Button>
                 </div>
@@ -207,27 +208,27 @@ onMounted(() => {
                 <div class="text-xl font-bold mb-4">Overview</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <div class="card">
-                        <div class="title">{{ currentprogram?.student_count }} </div>
+                        <div class="title">{{ currentProgram?.student_count }} </div>
                         <div class="content">Students</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentprogram?.section_count }}</div>
+                        <div class="title">{{ currentProgram?.section_count }}</div>
                         <div class="content">Parent Groups</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentprogram?.accountability_count }}</div>
+                        <div class="title">{{ currentProgram?.accountability_count }}</div>
                         <div class="content">Accountability Groups</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentprogram?.subject_count }}</div>
+                        <div class="title">{{ currentProgram?.subject_count }}</div>
                         <div class="content">Subjects</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentprogram?.event_count }}</div>
+                        <div class="title">{{ currentProgram?.event_count }}</div>
                         <div class="content">Events</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentprogram?.teacher_count }}</div>
+                        <div class="title">{{ currentProgram?.teacher_count }}</div>
                         <div class="content">Faculties</div>
                     </div>
                     <div class="card">
