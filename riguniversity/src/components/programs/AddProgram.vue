@@ -4,7 +4,7 @@ import SelectButton from 'primevue/selectbutton';
 import MultiSelect from 'primevue/multiselect';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
-import { createCohortSchema, useCohortStore } from '../../stores/cohort';
+import { createprogramSchema, useprogramStore } from '../../stores/program';
 import { useSubjectStore } from '../../stores/subject';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
@@ -17,7 +17,7 @@ const { errors, defineField, handleSubmit } = useForm({
         subjects: [],
         start_date: ''
     },
-    validationSchema: toTypedSchema(createCohortSchema),
+    validationSchema: toTypedSchema(createprogramSchema),
 });
 
 const [name, nameProps] = defineField('name');
@@ -33,11 +33,11 @@ const options = [
 const { subjects: allSubjects, fetchSubjects } = useSubjectStore()
 const subjectOptions = computed(() => allSubjects.value.map((s) => ({ label: s.name, value: s.subject_id })))
 
-const { createCohort, closeAddForm } = useCohortStore()
+const { createprogram, closeAddForm } = useprogramStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
-    createCohort(values as any)
+    createprogram(values as any)
 });
 
 onMounted(() => {
@@ -46,11 +46,11 @@ onMounted(() => {
 </script>
 
 <template>
-    <form id="myForm" name="Add Cohort">
+    <form id="myForm" name="Add program">
         <div class="flex flex-col gap-4 mb-4">
             <div class="form-group">
-                <label for="name">Cohort Name</label>
-                <InputText placeholder="Cohort Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
+                <label for="name">program Name</label>
+                <InputText placeholder="program Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
                 <div class="p-error text-red-500">{{ errors.name }}</div>
             </div>
             <div class="form-group">
@@ -75,7 +75,7 @@ onMounted(() => {
         <div class="flex gap-2 justify-between">
             <Button class="w" outlined severity='secondary' type="submit" @click.prevent="closeAddForm">Cancel
             </Button>
-            <Button class="w" type="submit" @click.prevent="submitForm">Add Cohort</Button>
+            <Button class="w" type="submit" @click.prevent="submitForm">Add program</Button>
         </div>
     </form>
 </template>

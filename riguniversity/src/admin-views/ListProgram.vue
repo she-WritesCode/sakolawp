@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useCohortStore } from "../stores/cohort";
+import { useprogramStore } from "../stores/program";
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -9,22 +9,22 @@ import DataView from 'primevue/dataview';
 import Dialog from 'primevue/dialog';
 import { ref } from "vue";
 // import HomeworkList from '../components/subjects/HomeworkList.vue'
-import CohortSubjectList from '../components/cohorts/CohortSubjectList.vue'
-import CohortMeetingList from '../components/cohorts/CohortMeetingList.vue'
-import CohortGroupList from '../components/cohorts/CohortGroupList.vue'
-import CohortEnrollmentList from '../components/cohorts/CohortEnrollmentList.vue'
-import EditCohort from '../components/cohorts/EditCohort.vue'
-import AddCohort from '../components/cohorts/AddCohort.vue'
+import programSubjectList from '../components/programs/programSubjectList.vue'
+import programMeetingList from '../components/programs/programMeetingList.vue'
+import programGroupList from '../components/programs/programGroupList.vue'
+import programEnrollmentList from '../components/programs/programEnrollmentList.vue'
+import Editprogram from '../components/programs/Editprogram.vue'
+import Addprogram from '../components/programs/Addprogram.vue'
 import LoadingIndicator from "../components/LoadingIndicator.vue";
 import { useSubjectStore } from "../stores/subject";
 import Toast from "primevue/toast";
 
 const tabs = {
-    subjects: CohortSubjectList,
-    groupings: CohortGroupList,
-    enrollments: CohortEnrollmentList,
-    editCohort: EditCohort,
-    meetings: CohortMeetingList,
+    subjects: programSubjectList,
+    groupings: programGroupList,
+    enrollments: programEnrollmentList,
+    editprogram: Editprogram,
+    meetings: programMeetingList,
 }
 const currentTab = ref<keyof typeof tabs | 'statistics'>(new URL(window.location.href).searchParams.get('tab') as keyof typeof tabs || "statistics")
 
@@ -55,7 +55,7 @@ const items = ref([
         }
     },
     {
-        label: 'Cohort Groups',
+        label: 'program Groups',
         command: () => {
             switchTabUrl('groupings')
         }
@@ -67,32 +67,32 @@ const items = ref([
         }
     },
     {
-        label: 'Edit Cohort',
+        label: 'Edit program',
         command: () => {
-            switchTabUrl('editCohort')
+            switchTabUrl('editprogram')
         }
     },
 ]);
 
 const {
-    cohorts,
-    fetchCohorts,
+    programs,
+    fetchprograms,
     filter,
-    goToViewCohort,
-    cohortId,
-    currentCohort,
-    getOneCohort,
+    goToViewprogram,
+    programId,
+    currentprogram,
+    getOneprogram,
     loading,
     showAddForm,
-    goToAddForm, deleteCohort,
-} = useCohortStore();
+    goToAddForm, deleteprogram,
+} = useprogramStore();
 const { showAddForm: showSubjectAddForm, currentSubject } = useSubjectStore();
 
 onMounted(() => {
-    if (cohortId) {
-        getOneCohort(cohortId)
+    if (programId) {
+        getOneprogram(programId)
     } else {
-        fetchCohorts();
+        fetchprograms();
     }
 });
 
@@ -101,19 +101,19 @@ onMounted(() => {
 
 <template>
     <Toast position="bottom-center" />
-    <!-- Cohort List -->
-    <div v-if="!cohortId" class="border-0">
+    <!-- program List -->
+    <div v-if="!programId" class="border-0">
         <div class="px-2 pb-4">
-            <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Cohorts</h3>
+            <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">programs</h3>
         </div>
-        <DataView dataKey="class_id" :value="cohorts" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
+        <DataView dataKey="class_id" :value="programs" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
             <template #header>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                        <InputText v-model="filter.search" placeholder="Search Cohorts" class="font-normal" />
+                        <InputText v-model="filter.search" placeholder="Search programs" class="font-normal" />
                     </div>
                     <div class="">
-                        <Button @click="goToAddForm" size="small" label="+ Add Cohort"></Button>
+                        <Button @click="goToAddForm" size="small" label="+ Add program"></Button>
                     </div>
                 </div>
             </template>
@@ -127,7 +127,7 @@ onMounted(() => {
                     <template v-else>
                         <div v-for="(item, index) in slotProps.items" :key="index"
                             class="col-12 border border-surface-200 rounded-md hover:shadow-md p-4">
-                            <div @click="goToViewCohort(item.class_id)"
+                            <div @click="goToViewprogram(item.class_id)"
                                 class="text-lg mb-4 gap-2 flex items-center flex-wrap">
                                 <span>{{ item.name }}</span>
                                 <Tag :value="`${item.student_count} Students`" severity="warning" />
@@ -149,7 +149,7 @@ onMounted(() => {
                                 </div>
                             </div>
                             <div class="flex gap-2 text-sm">
-                                <Button outlined size="small" @click="goToViewCohort(item.class_id)" label="View"
+                                <Button outlined size="small" @click="goToViewprogram(item.class_id)" label="View"
                                     class="w-full"></Button>
                                 <!-- <Button size="small" @click="initDelete(slotProps.data.class_id)" text severity="danger"
                                 label="Delete"></Button> -->
@@ -157,7 +157,7 @@ onMounted(() => {
                         </div>
                         <Button @click="goToAddForm" key="add_button" outlined class="border-dashed min-h-44">
                             <div class="text-lg mb-4">
-                                + Add Cohort
+                                + Add program
                             </div>
                         </Button>
                     </template>
@@ -165,23 +165,23 @@ onMounted(() => {
             </template>
         </DataView>
 
-        <Dialog v-model:visible="showAddForm" modal header="Add Cohort" :style="{ width: '30rem' }"
+        <Dialog v-model:visible="showAddForm" modal header="Add program" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <AddCohort></AddCohort>
+            <Addprogram></Addprogram>
         </Dialog>
     </div>
-    <!-- Single Cohort -->
+    <!-- Single program -->
     <div v-else>
         <!-- Breadcrumb -->
         <div class="mb-4 px-2 text-sm text-surface-500">
-            <a href="/wp-admin/admin.php?page=sakolawp-manage-class">Cohorts</a>
-            <template v-if="currentCohort">
+            <a href="/wp-admin/admin.php?page=sakolawp-manage-class">programs</a>
+            <template v-if="currentprogram">
                 > <a :class="!currentSubject ? 'text-surface-900' : ''"
-                    :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentCohort?.class_id}`">{{
-        currentCohort?.name }}</a>
+                    :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentprogram?.class_id}`">{{
+        currentprogram?.name }}</a>
                 <template v-if="currentSubject">
                     > <a
-                        :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentCohort?.class_id}`">Subjects</a>
+                        :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentprogram?.class_id}`">Subjects</a>
                 </template>
             </template>
             <template v-if="currentSubject">
@@ -193,9 +193,9 @@ onMounted(() => {
         <template v-else>
             <div class="mb-4'">
                 <div class="flex items-center gap-2">
-                    <h3 class="text-2xl md:text-2xlmb-2">{{ currentCohort?.name }}</h3>
-                    <Button text size="small" outlined class="" @click="switchTabUrl('editCohort')"
-                        label="Edit Cohort"></Button>
+                    <h3 class="text-2xl md:text-2xlmb-2">{{ currentprogram?.name }}</h3>
+                    <Button text size="small" outlined class="" @click="switchTabUrl('editprogram')"
+                        label="Edit program"></Button>
                 </div>
             </div>
             <div class="my-2 py-1">
@@ -207,27 +207,27 @@ onMounted(() => {
                 <div class="text-xl font-bold mb-4">Overview</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <div class="card">
-                        <div class="title">{{ currentCohort?.student_count }} </div>
+                        <div class="title">{{ currentprogram?.student_count }} </div>
                         <div class="content">Students</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentCohort?.section_count }}</div>
+                        <div class="title">{{ currentprogram?.section_count }}</div>
                         <div class="content">Parent Groups</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentCohort?.accountability_count }}</div>
+                        <div class="title">{{ currentprogram?.accountability_count }}</div>
                         <div class="content">Accountability Groups</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentCohort?.subject_count }}</div>
+                        <div class="title">{{ currentprogram?.subject_count }}</div>
                         <div class="content">Subjects</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentCohort?.event_count }}</div>
+                        <div class="title">{{ currentprogram?.event_count }}</div>
                         <div class="content">Events</div>
                     </div>
                     <div class="card">
-                        <div class="title">{{ currentCohort?.teacher_count }}</div>
+                        <div class="title">{{ currentprogram?.teacher_count }}</div>
                         <div class="content">Faculties</div>
                     </div>
                     <div class="card">

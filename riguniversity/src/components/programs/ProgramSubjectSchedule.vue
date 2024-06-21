@@ -7,8 +7,8 @@ import Divider from 'primevue/divider';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import { useForm } from 'vee-validate';
-import { useCohortScheduleStore, createCohortScheduleSchema, type CohortSchedule } from '../../stores/cohort-schedule';
-import { type DripMethod, useCohortStore } from '../../stores/cohort';
+import { useprogramScheduleStore, createprogramScheduleSchema, type programSchedule } from '../../stores/program-schedule';
+import { type DripMethod, useprogramStore } from '../../stores/program';
 import { DateHelper } from '../../utils/date';
 import { toTypedSchema } from '@vee-validate/yup';
 import { watch } from "vue";
@@ -18,16 +18,16 @@ import { computed } from "vue";
 const props = defineProps<{
     homeworks: Homework[];
     subjectId: string
-    cohortId: string
+    programId: string
     dripMethod?: DripMethod
 }>()
-const { getOneCohort, currentCohort } = useCohortStore()
-const { errors, defineField, handleSubmit, setValues, values } = useForm<{ [key: string]: CohortSchedule }>({
-    initialValues: props.homeworks.reduce<{ [key: string]: CohortSchedule }>((acc, homework) => {
+const { getOneprogram, currentprogram } = useprogramStore()
+const { errors, defineField, handleSubmit, setValues, values } = useForm<{ [key: string]: programSchedule }>({
+    initialValues: props.homeworks.reduce<{ [key: string]: programSchedule }>((acc, homework) => {
         acc[homework.homework_id as string] = {
             subject_id: props.subjectId as string,
-            class_id: props.cohortId as string,
-            drip_method: (currentCohort.value?.drip_method || props.dripMethod) as DripMethod,
+            class_id: props.programId as string,
+            drip_method: (currentprogram.value?.drip_method || props.dripMethod) as DripMethod,
             content_id: homework.homework_id as string,
             content_type: "homework",
             release_date: "",
@@ -37,36 +37,36 @@ const { errors, defineField, handleSubmit, setValues, values } = useForm<{ [key:
         }
         return acc
     }, {}),
-    validationSchema: toTypedSchema(createCohortScheduleSchema),
+    validationSchema: toTypedSchema(createprogramScheduleSchema),
 });
 
-const schedules = reactive(Object.keys(values).reduce<{ [key: string]: CohortSchedule }>((acc, homework_id) => {
+const schedules = reactive(Object.keys(values).reduce<{ [key: string]: programSchedule }>((acc, homework_id) => {
     const [value] = defineField(homework_id)
     acc[homework_id] = value.value
     return acc
 }, {}));
 
-const { createCohortSchedule, filter, cohortSchedules, fetchCohortSchedules } = useCohortScheduleStore()
+const { createprogramSchedule, filter, programSchedules, fetchprogramSchedules } = useprogramScheduleStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
-    createCohortSchedule(Object.values(values))
+    createprogramSchedule(Object.values(values))
 });
 
 watch(schedules, (value) => {
     if (value) setValues({ ...values, ...value })
 })
-watch(cohortSchedules, (value) => {
+watch(programSchedules, (value) => {
     if (value && value.length) {
         setValues({
             ...values,
-            ...props.homeworks.reduce<{ [key: string]: CohortSchedule }>((acc, homework) => {
+            ...props.homeworks.reduce<{ [key: string]: programSchedule }>((acc, homework) => {
                 const existingSchedule = value.find(sch => sch.content_id == homework.homework_id && sch.content_type == 'homework')
                 if (existingSchedule) {
                     acc[homework.homework_id as string] = {
                         subject_id: props.subjectId as string,
-                        class_id: props.cohortId as string,
-                        drip_method: (currentCohort.value?.drip_method || props.dripMethod) as DripMethod,
+                        class_id: props.programId as string,
+                        drip_method: (currentprogram.value?.drip_method || props.dripMethod) as DripMethod,
                         content_id: homework.homework_id as string,
                         content_type: "homework",
                         release_date: existingSchedule.release_date,
@@ -83,14 +83,14 @@ watch(cohortSchedules, (value) => {
 
 onMounted(() => {
     filter.subject_id = props.subjectId
-    filter.class_id = props.cohortId as string
-    fetchCohortSchedules()
-    if (props.cohortId && !currentCohort.value) getOneCohort(props.cohortId)
+    filter.class_id = props.programId as string
+    fetchprogramSchedules()
+    if (props.programId && !currentprogram.value) getOneprogram(props.programId)
 })
 
 
 const releaseDate = computed(() => Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
-    acc[homework_id] = DateHelper.formatDate(DateHelper.addDays(currentCohort.value!.start_date, schedules[homework_id!]!.release_days))
+    acc[homework_id] = DateHelper.formatDate(DateHelper.addDays(currentprogram.value!.start_date, schedules[homework_id!]!.release_days))
     return acc
 }, {}));
 const deadlineDate = computed(() => Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
@@ -101,7 +101,7 @@ const deadlineDate = computed(() => Object.keys(values).reduce<{ [key: string]: 
 
 <template>
     <form @submit="submitForm">
-        <div> Cohort starts on: {{ currentCohort?.start_date || "error" }}</div>
+        <div> program starts on: {{ currentprogram?.start_date || "error" }}</div>
         <Divider />
         <div class="grid gap-0 mb-4">
             <template v-for="homework in homeworks" :key="homework.homework_id">
@@ -117,7 +117,7 @@ const deadlineDate = computed(() => Object.keys(values).reduce<{ [key: string]: 
                                 <div class="flex gap-2 items-center">
                                     <InputNumber v-model.number="schedules[homework.homework_id!]!.release_days"
                                         class="input-number" placeholder="0" type="number" />
-                                    <span>days after cohort starts</span>
+                                    <span>days after program starts</span>
                                 </div>
                                 <div>
                                     <Tag :value="releaseDate[homework.homework_id!]" severity="secondary" />

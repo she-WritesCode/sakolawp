@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useCohortEnrollmentStore } from "../../stores/cohort-enrollment";
-import { useCohortStore } from "../../stores/cohort";
+import { useprogramEnrollmentStore } from "../../stores/program-enrollment";
+import { useprogramStore } from "../../stores/program";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -15,22 +15,22 @@ import { ref } from "vue";
 
 
 const {
-    cohortEnrollments,
-    fetchCohortEnrollments,
+    programEnrollments,
+    fetchprogramEnrollments,
     filter,
-    goToViewCohortEnrollment,
-    cohortEnrollmentId,
+    goToViewprogramEnrollment,
+    programEnrollmentId,
     loading,
     showAddForm,
-    goToAddForm, deleteCohortEnrollment,
-} = useCohortEnrollmentStore();
+    goToAddForm, deleteprogramEnrollment,
+} = useprogramEnrollmentStore();
 const {
-    cohortId
-} = useCohortStore();
+    programId
+} = useprogramStore();
 
 onMounted(() => {
-    if (!cohortEnrollmentId) {
-        filter.class_id = cohortId || ''
+    if (!programEnrollmentId) {
+        filter.class_id = programId || ''
     }
 });
 
@@ -46,7 +46,7 @@ function closeDelete() {
     toBeDeleted.value = null
 }
 function deleteAEnrollment(id: string) {
-    deleteCohortEnrollment(id)
+    deleteprogramEnrollment(id)
     closeDelete()
 }
 function getInitials(name: string) {
@@ -65,7 +65,7 @@ function getInitials(name: string) {
             <div class="px-2 pb-4">
                 <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Enrollments</h3>
             </div>
-            <DataTable :value="cohortEnrollments" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
+            <DataTable :value="programEnrollments" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -111,7 +111,7 @@ function getInitials(name: string) {
                 <Column header="">
                     <template #body="slotProps">
                         <div class="flex gap-2 text-sm">
-                            <Button outlined size="small" @click="goToViewCohortEnrollment(slotProps.data.ID)"
+                            <Button outlined size="small" @click="goToViewprogramEnrollment(slotProps.data.ID)"
                                 label="View"></Button>
                             <Button size="small" @click="initDelete(slotProps.data.ID)" text severity="danger"
                                 label="Delete"></Button>
@@ -125,10 +125,10 @@ function getInitials(name: string) {
                 <!-- <AddEnrollment></AddEnrollment> -->
                 add enrollment form
             </Dialog>
-            <Dialog v-model:visible="showDeleteDialog" modal header="Remove Enrollment from Cohort"
+            <Dialog v-model:visible="showDeleteDialog" modal header="Remove Enrollment from program"
                 :style="{ width: '30rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="mb-5">
-                    Are you sure you want to remove this enrollment from this cohort? All student progress would be
+                    Are you sure you want to remove this enrollment from this program? All student progress would be
                     lost.
                 </p>
                 <div class="flex gap-2 justify-end">

@@ -44,7 +44,7 @@ export interface CalendarDay {
   locale: Locale
 }
 
-export interface CohortMeeting {
+export interface programMeeting {
   ID?: number
   title?: string
   content?: string
@@ -54,7 +54,7 @@ export interface CohortMeeting {
   author?: string
   meta?: Record<string, string[]>
 }
-export interface CreateCohortMeeting {
+export interface CreateprogramMeeting {
   title: string
   content?: string
   meta: {
@@ -64,21 +64,21 @@ export interface CreateCohortMeeting {
     _sakolawp_event_class_id: string
   }
 }
-export const createCohortMeetingSchema = yup.object({
+export const createprogramMeetingSchema = yup.object({
   title: yup.string().required(),
   content: yup.string().optional(),
   meta: yup.object({
     _sakolawp_event_date: yup.string().required().label('Event date'),
     _sakolawp_event_date_clock: yup.string().required().label('Event time'),
-    _sakolawp_event_class_id: yup.string().required().label('Event cohort'),
+    _sakolawp_event_class_id: yup.string().required().label('Event program'),
     _sakolawp_event_location: yup.string().optional().label('Event location')
   })
 })
 
-const cohortMeetingStore = () => {
+const programMeetingStore = () => {
   const toast = useToast()
-  const cohortMeetings = ref<CohortMeeting[]>([])
-  const currentCohortMeeting = ref<CohortMeeting | undefined>(undefined)
+  const programMeetings = ref<programMeeting[]>([])
+  const currentprogramMeeting = ref<programMeeting | undefined>(undefined)
   const filter = reactive<{
     search: string
     class_id: string
@@ -95,7 +95,7 @@ const cohortMeetingStore = () => {
     update: false,
     delete: false
   })
-  const cohortMeetingId = computed(() => {
+  const programMeetingId = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('event_id')
   })
@@ -104,19 +104,19 @@ const cohortMeetingStore = () => {
     return url.searchParams.get('action')
   })
 
-  const showAddForm = computed(() => action.value === 'add_cohortMeeting')
+  const showAddForm = computed(() => action.value === 'add_programMeeting')
   const showViewScreen = computed(
-    () => action.value === 'view_cohortMeeting' && !!cohortMeetingId.value
+    () => action.value === 'view_programMeeting' && !!programMeetingId.value
   )
   const showEditScreen = computed(
-    () => action.value === 'add_cohortMeeting' && !!cohortMeetingId.value
+    () => action.value === 'add_programMeeting' && !!programMeetingId.value
   )
 
   watch(filter, () => {
-    fetchCohortMeetings()
+    fetchprogramMeetings()
   })
 
-  const fetchCohortMeetings = () => {
+  const fetchprogramMeetings = () => {
     if (!filter.search) loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -131,7 +131,7 @@ const cohortMeetingStore = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        cohortMeetings.value = response.data
+        programMeetings.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -141,43 +141,43 @@ const cohortMeetingStore = () => {
       })
   }
 
-  const goToViewCohortMeeting = (cohortMeetingId: number) => {
+  const goToViewprogramMeeting = (programMeetingId: number) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'view_cohortMeeting')
-    url.searchParams.set('event_id', `${cohortMeetingId}`)
+    url.searchParams.set('action', 'view_programMeeting')
+    url.searchParams.set('event_id', `${programMeetingId}`)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeViewCohortMeeting = () => {
+  const closeViewprogramMeeting = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('event_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditCohortMeeting = (cohortMeetingId: number) => {
+  const goToEditprogramMeeting = (programMeetingId: number) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohortMeeting')
-    url.searchParams.set('event_id', `${cohortMeetingId}`)
+    url.searchParams.set('action', 'add_programMeeting')
+    url.searchParams.set('event_id', `${programMeetingId}`)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeEditCohortMeeting = () => {
+  const closeEditprogramMeeting = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('event_id')
     // We don't need to go back to view screen since we don't have one
-    // url.searchParams.set('event_id', cohortMeetingId.value as string)
-    // url.searchParams.set('action', 'view_cohortMeeting')
+    // url.searchParams.set('event_id', programMeetingId.value as string)
+    // url.searchParams.set('action', 'view_programMeeting')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
 
   const goToAddForm = () => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohortMeeting')
+    url.searchParams.set('action', 'add_programMeeting')
     // showAddForm.value = true
     window.location.href = url.toString()
   }
@@ -189,7 +189,7 @@ const cohortMeetingStore = () => {
     window.location.href = url.toString()
   }
 
-  const getOneCohortMeeting = (id: string) => {
+  const getOneprogramMeeting = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -204,7 +204,7 @@ const cohortMeetingStore = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohortMeeting.value = response.data
+        currentprogramMeeting.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -214,7 +214,7 @@ const cohortMeetingStore = () => {
       })
   }
 
-  const createCohortMeeting = (args: CreateCohortMeeting) => {
+  const createprogramMeeting = (args: CreateprogramMeeting) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -229,12 +229,12 @@ const cohortMeetingStore = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohortMeeting.value = response.data
+        currentprogramMeeting.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'CohortMeeting created successfully',
+          detail: 'programMeeting created successfully',
           life: 3000
         })
       })
@@ -248,7 +248,7 @@ const cohortMeetingStore = () => {
       })
   }
 
-  const updateCohortMeeting = (args: Partial<CreateCohortMeeting> & { ID: number }) => {
+  const updateprogramMeeting = (args: Partial<CreateprogramMeeting> & { ID: number }) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -263,11 +263,11 @@ const cohortMeetingStore = () => {
     })
       .then((response) => response.json())
       .then(() => {
-        getOneCohortMeeting(cohortMeetingId.value as string)
+        getOneprogramMeeting(programMeetingId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'CohortMeeting updated successfully',
+          detail: 'programMeeting updated successfully',
           life: 3000
         })
       })
@@ -279,7 +279,7 @@ const cohortMeetingStore = () => {
       })
   }
 
-  const deleteCohortMeeting = (id: string) => {
+  const deleteprogramMeeting = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -297,7 +297,7 @@ const cohortMeetingStore = () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchCohortMeetings()
+        fetchprogramMeetings()
       })
   }
 
@@ -349,28 +349,28 @@ const cohortMeetingStore = () => {
   }
 
   return {
-    cohortMeetings: computed(() => cohortMeetings),
-    fetchCohortMeetings,
+    programMeetings: computed(() => programMeetings),
+    fetchprogramMeetings,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentCohortMeeting: computed(() => currentCohortMeeting),
-    goToViewCohortMeeting,
-    closeViewCohortMeeting,
-    cohortMeetingId,
-    getOneCohortMeeting,
+    currentprogramMeeting: computed(() => currentprogramMeeting),
+    goToViewprogramMeeting,
+    closeViewprogramMeeting,
+    programMeetingId,
+    getOneprogramMeeting,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createCohortMeeting,
-    updateCohortMeeting,
-    deleteCohortMeeting,
-    goToEditCohortMeeting,
-    closeEditCohortMeeting,
+    createprogramMeeting,
+    updateprogramMeeting,
+    deleteprogramMeeting,
+    goToEditprogramMeeting,
+    closeEditprogramMeeting,
     generateQRCode
   }
 }
 
-export const useCohortMeetingStore = (uniqueStoreName = 'cohortMeeting') =>
-  defineStore(uniqueStoreName, cohortMeetingStore)()
+export const useprogramMeetingStore = (uniqueStoreName = 'programMeeting') =>
+  defineStore(uniqueStoreName, programMeetingStore)()

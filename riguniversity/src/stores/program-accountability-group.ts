@@ -3,20 +3,19 @@ import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 
-export interface CohortEnrollment {
-  ID?: number
-  content?: string
-  excerpt?: string
-  permalink?: string
-  date?: string
-  author?: string
-  meta?: Record<string, string[]>
+export interface programAccountabilityGroup {
+  accountability_id?: string
+  section_id: string
+  name: string
+  class_id: string
+  created_at: string
+  updated_at: string
 }
 
-export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
+export const useprogramAccountabilityGroupStore = defineStore('programAccountabilityGroup', () => {
   const toast = useToast()
-  const cohortEnrollments = ref<CohortEnrollment[]>([])
-  const currentCohortEnrollment = ref<CohortEnrollment | undefined>(undefined)
+  const programAccountabilityGroups = ref<programAccountabilityGroup[]>([])
+  const currentprogramAccountabilityGroup = ref<programAccountabilityGroup | undefined>(undefined)
   const filter = reactive({
     search: '',
     class_id: ''
@@ -28,7 +27,7 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
     update: false,
     delete: false
   })
-  const cohortEnrollmentId = computed(() => {
+  const programAccountabilityGroupId = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('subject_id')
   })
@@ -37,19 +36,21 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
     return url.searchParams.get('action')
   })
 
-  const showAddForm = computed(() => action.value === 'add_cohortEnrollment')
-  const showViewScreen = computed(
-    () => action.value === 'view_cohortEnrollment' && !!cohortEnrollmentId.value
+  const showAddAccountabilityGroupForm = computed(
+    () => action.value === 'add_programAccountabilityGroup'
   )
-  const showEditScreen = computed(
-    () => action.value === 'add_cohortEnrollment' && !!cohortEnrollmentId.value
+  const showViewAccountabilityGroupScreen = computed(
+    () => action.value === 'view_programAccountabilityGroup' && !!programAccountabilityGroupId.value
+  )
+  const showEditAccountabilityGroupScreen = computed(
+    () => action.value === 'add_programAccountabilityGroup' && !!programAccountabilityGroupId.value
   )
 
   watch(filter, () => {
-    fetchCohortEnrollments()
+    fetchprogramAccountabilityGroups()
   })
 
-  const fetchCohortEnrollments = () => {
+  const fetchprogramAccountabilityGroups = () => {
     if (!filter.search) loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -58,13 +59,13 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_list_enrolls',
+        action: 'run_list_accountabilities',
         ...filter
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        cohortEnrollments.value = response.data
+        programAccountabilityGroups.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -74,53 +75,53 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
       })
   }
 
-  const goToViewCohortEnrollment = (cohortEnrollmentId: string) => {
+  const goToViewprogramAccountabilityGroup = (programAccountabilityGroupId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'view_cohortEnrollment')
-    url.searchParams.set('class_id', cohortEnrollmentId)
+    url.searchParams.set('action', 'view_programAccountabilityGroup')
+    url.searchParams.set('class_id', programAccountabilityGroupId)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeViewCohortEnrollment = () => {
+  const closeViewprogramAccountabilityGroup = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('class_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditCohortEnrollment = (cohortEnrollmentId: string) => {
+  const goToEditprogramAccountabilityGroup = (programAccountabilityGroupId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohortEnrollment')
-    url.searchParams.set('class_id', cohortEnrollmentId)
+    url.searchParams.set('action', 'add_programAccountabilityGroup')
+    url.searchParams.set('class_id', programAccountabilityGroupId)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeEditCohortEnrollment = () => {
+  const closeEditprogramAccountabilityGroup = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.set('class_id', cohortEnrollmentId.value as string)
-    url.searchParams.set('action', 'view_cohortEnrollment')
+    url.searchParams.set('class_id', programAccountabilityGroupId.value as string)
+    url.searchParams.set('action', 'view_programAccountabilityGroup')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
 
-  const goToAddForm = () => {
+  const goToAddAccountabilityGroupForm = () => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohortEnrollment')
+    url.searchParams.set('action', 'add_programAccountabilityGroup')
     // showAddForm.value = true
     window.location.href = url.toString()
   }
 
-  const closeAddForm = () => {
+  const closeAddAccountabilityGroupForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     // showAddForm.value = false
     window.location.href = url.toString()
   }
 
-  const getOneCohortEnrollment = (id: string) => {
+  const getOneprogramAccountabilityGroup = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -129,13 +130,13 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_single_enroll',
+        action: 'run_single_accountability',
         class_id: id
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohortEnrollment.value = response.data
+        currentprogramAccountabilityGroup.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -145,7 +146,7 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
       })
   }
 
-  const createCohortEnrollment = (args: Partial<CohortEnrollment>) => {
+  const createprogramAccountabilityGroup = (args: Partial<programAccountabilityGroup>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -154,18 +155,18 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: convertObjectToSearchParams({
-        action: 'run_create_enroll',
+        action: 'run_create_accountability',
         ...(args as any)
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohortEnrollment.value = response.data
+        currentprogramAccountabilityGroup.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'CohortEnrollment created successfully',
+          detail: 'programAccountabilityGroup created successfully',
           life: 3000
         })
       })
@@ -174,12 +175,12 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
         toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
       })
       .finally(() => {
-        closeAddForm()
+        closeAddAccountabilityGroupForm()
         loading.create = false
       })
   }
 
-  const updateCohortEnrollment = (args: Partial<CohortEnrollment>) => {
+  const updateprogramAccountabilityGroup = (args: Partial<programAccountabilityGroup>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -188,17 +189,17 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: convertObjectToSearchParams({
-        action: 'run_update_enroll',
+        action: 'run_update_accountability',
         ...(args as any)
       })
     })
       .then((response) => response.json())
       .then(() => {
-        getOneCohortEnrollment(cohortEnrollmentId.value as string)
+        getOneprogramAccountabilityGroup(programAccountabilityGroupId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'CohortEnrollment updated successfully',
+          detail: 'programAccountabilityGroup updated successfully',
           life: 3000
         })
       })
@@ -210,7 +211,7 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
       })
   }
 
-  const deleteCohortEnrollment = (id: string) => {
+  const deleteprogramAccountabilityGroup = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -219,7 +220,7 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_delete_enroll',
+        action: 'run_delete_accountability',
         class_id: id
       })
     })
@@ -228,29 +229,29 @@ export const useCohortEnrollmentStore = defineStore('cohortEnrollment', () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchCohortEnrollments()
+        fetchprogramAccountabilityGroups()
       })
   }
 
   return {
-    cohortEnrollments: computed(() => cohortEnrollments),
-    fetchCohortEnrollments,
+    programAccountabilityGroups: computed(() => programAccountabilityGroups),
+    fetchprogramAccountabilityGroups,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentCohortEnrollment: computed(() => currentCohortEnrollment),
-    goToViewCohortEnrollment,
-    closeViewCohortEnrollment,
-    cohortEnrollmentId,
-    getOneCohortEnrollment,
-    showAddForm,
-    showViewScreen,
-    showEditScreen,
-    goToAddForm,
-    closeAddForm,
-    createCohortEnrollment,
-    updateCohortEnrollment,
-    deleteCohortEnrollment,
-    goToEditCohortEnrollment,
-    closeEditCohortEnrollment
+    currentprogramAccountabilityGroup: computed(() => currentprogramAccountabilityGroup),
+    goToViewprogramAccountabilityGroup,
+    closeViewprogramAccountabilityGroup,
+    programAccountabilityGroupId,
+    getOneprogramAccountabilityGroup,
+    showAddAccountabilityGroupForm,
+    showViewAccountabilityGroupScreen,
+    showEditAccountabilityGroupScreen,
+    goToAddAccountabilityGroupForm,
+    closeAddAccountabilityGroupForm,
+    createprogramAccountabilityGroup,
+    updateprogramAccountabilityGroup,
+    deleteprogramAccountabilityGroup,
+    goToEditprogramAccountabilityGroup,
+    closeEditprogramAccountabilityGroup
   }
 })

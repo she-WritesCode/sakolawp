@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useCohortSubjectStore } from "../../stores/cohort-subject";
-import { useCohortStore } from "../../stores/cohort";
+import { useprogramSubjectStore } from "../../stores/program-subject";
+import { useprogramStore } from "../../stores/program";
 import DataView from 'primevue/dataview';
 import Panel from 'primevue/panel';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import LoadingIndicator from '../LoadingIndicator.vue'
-import CohortSubjectSchedule from './CohortSubjectSchedule.vue'
+import programSubjectSchedule from './programSubjectSchedule.vue'
 
 
 const {
-    cohortSubjects,
+    programSubjects,
     filter,
-    cohortSubjectId,
+    programSubjectId,
     loading,
-} = useCohortSubjectStore();
+} = useprogramSubjectStore();
 const {
-    cohortId, goToEditCohort, currentCohort
-} = useCohortStore();
+    programId, goToEditprogram, currentprogram
+} = useprogramStore();
 
 onMounted(() => {
-    if (!cohortSubjectId) {
-        filter.class_id = cohortId || ''
+    if (!programSubjectId) {
+        filter.class_id = programId || ''
     }
 });
 
@@ -42,7 +42,7 @@ onMounted(() => {
                 <p>Click on + to manage the schedule of every course</p>
             </div>
 
-            <DataView dataKey="class_id" :value="cohortSubjects" paginator :rows="10"
+            <DataView dataKey="class_id" :value="programSubjects" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -50,7 +50,7 @@ onMounted(() => {
                             <InputText v-model="filter.search" placeholder="Search Subjects" class="font-normal" />
                         </div>
                         <div class="">
-                            <Button @click="goToEditCohort(cohortId as string)" size="small"
+                            <Button @click="goToEditprogram(programId as string)" size="small"
                                 label="Change Subjects"></Button>
                         </div>
                     </div>
@@ -80,9 +80,9 @@ onMounted(() => {
                                     <div v-if="!collapsed"> <i icon="pi pi-close"></i></div>
                                 </template> -->
 
-                                <CohortSubjectSchedule :key="index" :homeworks="item.homeworks"
-                                    :subjectId="item.subject_id" :cohortId="cohortId as string"
-                                    :dripMethod="currentCohort?.drip_method"></CohortSubjectSchedule>
+                                <programSubjectSchedule :key="index" :homeworks="item.homeworks"
+                                    :subjectId="item.subject_id" :programId="programId as string"
+                                    :dripMethod="currentprogram?.drip_method"></programSubjectSchedule>
                             </Panel>
                         </template>
                     </div>

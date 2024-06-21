@@ -1,47 +1,47 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useCohortMeetingStore, type CalendarDay, type CreateCohortMeeting } from "../../stores/cohort-meeting";
-import { useCohortStore } from "../../stores/cohort";
+import { useprogramMeetingStore, type CalendarDay, type CreateprogramMeeting } from "../../stores/program-meeting";
+import { useprogramStore } from "../../stores/program";
 import { DateHelper } from "../../utils/date";
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
-import AddCohortMeeting from './AddCohortMeeting.vue'
+import AddprogramMeeting from './AddprogramMeeting.vue'
 import LoadingIndicator from '../LoadingIndicator.vue'
 import { ref } from "vue";
 import { Calendar as VCalendar } from 'v-calendar'
 import { computed, watch } from "vue";
 
 
-const { cohortId } = useCohortStore();
+const { programId } = useprogramStore();
 const {
-    cohortMeetings,
+    programMeetings,
     filter,
-    goToEditCohortMeeting,
-    cohortMeetingId,
+    goToEditprogramMeeting,
+    programMeetingId,
     loading,
     showAddForm, showEditScreen,
-    goToAddForm, deleteCohortMeeting, generateQRCode, currentCohortMeeting, getOneCohortMeeting
-} = useCohortMeetingStore();
+    goToAddForm, deleteprogramMeeting, generateQRCode, currentprogramMeeting, getOneprogramMeeting
+} = useprogramMeetingStore();
 
-const editInitialValues = computed<CreateCohortMeeting & { ID: number } | undefined>(() => currentCohortMeeting.value ? ({
-    ID: currentCohortMeeting.value!.ID!,
-    title: currentCohortMeeting.value!.title || "",
-    content: currentCohortMeeting.value!.content || "",
+const editInitialValues = computed<CreateprogramMeeting & { ID: number } | undefined>(() => currentprogramMeeting.value ? ({
+    ID: currentprogramMeeting.value!.ID!,
+    title: currentprogramMeeting.value!.title || "",
+    content: currentprogramMeeting.value!.content || "",
     meta: {
-        _sakolawp_event_date: DateHelper.toSimpleBackendDateString(currentCohortMeeting.value!.meta!._sakolawp_event_date![0] || new Date()),
-        _sakolawp_event_date_clock: currentCohortMeeting.value!.meta!._sakolawp_event_date_clock![0] || DateHelper.toSimpleBackendTimeString(new Date()),
-        _sakolawp_event_class_id: currentCohortMeeting.value!.meta!._sakolawp_event_class_id![0] || cohortId,
-        _sakolawp_event_location: currentCohortMeeting.value!.meta!._sakolawp_event_location![0] || "",
+        _sakolawp_event_date: DateHelper.toSimpleBackendDateString(currentprogramMeeting.value!.meta!._sakolawp_event_date![0] || new Date()),
+        _sakolawp_event_date_clock: currentprogramMeeting.value!.meta!._sakolawp_event_date_clock![0] || DateHelper.toSimpleBackendTimeString(new Date()),
+        _sakolawp_event_class_id: currentprogramMeeting.value!.meta!._sakolawp_event_class_id![0] || programId,
+        _sakolawp_event_location: currentprogramMeeting.value!.meta!._sakolawp_event_location![0] || "",
     },
-} as CreateCohortMeeting & { ID: number }) : undefined)
+} as CreateprogramMeeting & { ID: number }) : undefined)
 
 const {
-    cohortMeetings: allCohortMeetings,
-    filter: allCohortMeetingsFilter,
-} = useCohortMeetingStore('allcohorts');
+    programMeetings: allprogramMeetings,
+    filter: allprogramMeetingsFilter,
+} = useprogramMeetingStore('allprograms');
 
 const showDeleteDialog = ref(false)
 const toBeDeleted = ref<string | null>(null)
@@ -54,7 +54,7 @@ function closeDelete() {
     toBeDeleted.value = null
 }
 function deleteAMeeting(id: string) {
-    deleteCohortMeeting(id)
+    deleteprogramMeeting(id)
     closeDelete()
 }
 
@@ -78,7 +78,7 @@ const attrs = computed<Partial<{
         dates: selectedDate.value,
     },
     // Attributes for todos
-    ...allCohortMeetings.value.map(meeting => ({
+    ...allprogramMeetings.value.map(meeting => ({
         key: meeting.ID,
         dates: new Date(`${meeting.meta!._sakolawp_event_date[0]} ${meeting.meta!._sakolawp_event_date_clock[0]}`),
         dot: {
@@ -106,10 +106,10 @@ watch(displayView, (value) => {
 })
 
 onMounted(() => {
-    filter.class_id = cohortId || ''
+    filter.class_id = programId || ''
     filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBackendDateString(selectedDate.value), compare: '=' }]
-    allCohortMeetingsFilter.class_id = cohortId || ''
-    if (cohortMeetingId) getOneCohortMeeting(cohortMeetingId!)
+    allprogramMeetingsFilter.class_id = programId || ''
+    if (programMeetingId) getOneprogramMeeting(programMeetingId!)
 });
 
 
@@ -150,13 +150,13 @@ onMounted(() => {
                 <LoadingIndicator></LoadingIndicator>
             </div>
             <TransitionGroup v-else name="slide-fade">
-                <template v-if="!cohortMeetings.length">
+                <template v-if="!programMeetings.length">
                     <div class="text-base py-10 text-center">
                         No meetings for {{ DateHelper.formatDate(selectedDate) }}
                     </div>
                 </template>
                 <template v-else>
-                    <div v-for="(meeting, index) in cohortMeetings" :key="index"
+                    <div v-for="(meeting, index) in programMeetings" :key="index"
                         class="card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <div class="text-base font-bold mb-2">
@@ -182,7 +182,7 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <Button size="small" outlined @click="goToEditCohortMeeting(meeting.ID!)"
+                            <Button size="small" outlined @click="goToEditprogramMeeting(meeting.ID!)"
                                 label="Edit"></Button>
 
                             <Button @click="generateQRCode(meeting.ID!)" size="small" text
@@ -195,16 +195,16 @@ onMounted(() => {
 
         <Dialog v-model:visible="showAddForm" modal header="Add Meeting" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <AddCohortMeeting :cohortId="cohortId!"></AddCohortMeeting>
+            <AddprogramMeeting :programId="programId!"></AddprogramMeeting>
         </Dialog>
         <Dialog v-model:visible="showEditScreen" modal header="Edit Meeting" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <AddCohortMeeting :cohortId="cohortId!" :initialValues="editInitialValues"></AddCohortMeeting>
+            <AddprogramMeeting :programId="programId!" :initialValues="editInitialValues"></AddprogramMeeting>
         </Dialog>
-        <Dialog v-model:visible="showDeleteDialog" modal header="Remove Meeting from Cohort" :style="{ width: '30rem' }"
-            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <Dialog v-model:visible="showDeleteDialog" modal header="Remove Meeting from program"
+            :style="{ width: '30rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
             <p class="mb-5">
-                Are you sure you want to remove this meeting from this cohort? All student progress would be lost.
+                Are you sure you want to remove this meeting from this program? All student progress would be lost.
             </p>
             <div class="flex gap-2 justify-end">
                 <Button @click="closeDelete">No</Button>

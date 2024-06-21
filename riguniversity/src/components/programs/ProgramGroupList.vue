@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useCohortParentGroupStore } from "../../stores/cohort-parent-group";
-import { useCohortAccountabilityGroupStore } from "../../stores/cohort-accountability-group";
-import { useCohortStore } from "../../stores/cohort";
+import { useprogramParentGroupStore } from "../../stores/program-parent-group";
+import { useprogramAccountabilityGroupStore } from "../../stores/program-accountability-group";
+import { useprogramStore } from "../../stores/program";
 import DataTable from 'primevue/datatable';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
@@ -16,36 +16,36 @@ import { ref, computed } from "vue";
 
 
 const {
-    cohortParentGroups,
+    programParentGroups,
     filter,
-    goToViewCohortParentGroup,
-    cohortParentGroupId,
+    goToViewprogramParentGroup,
+    programParentGroupId,
     loading,
     showAddParentGroupForm,
-    goToAddParentGroupForm, deleteCohortParentGroup, goToEditCohortParentGroup,
-} = useCohortParentGroupStore();
+    goToAddParentGroupForm, deleteprogramParentGroup, goToEditprogramParentGroup,
+} = useprogramParentGroupStore();
 const {
     filter: accountabilityFilter,
-    goToViewCohortAccountabilityGroup,
-    cohortAccountabilityGroupId,
+    goToViewprogramAccountabilityGroup,
+    programAccountabilityGroupId,
     loading: accountabilityLoading,
     showAddAccountabilityGroupForm,
-    goToAddAccountabilityGroupForm, deleteCohortAccountabilityGroup, goToEditCohortAccountabilityGroup
-} = useCohortAccountabilityGroupStore();
+    goToAddAccountabilityGroupForm, deleteprogramAccountabilityGroup, goToEditprogramAccountabilityGroup
+} = useprogramAccountabilityGroupStore();
 const {
-    cohortId
-} = useCohortStore();
+    programId
+} = useprogramStore();
 
 onMounted(() => {
-    if (!cohortParentGroupId) {
-        filter.class_id = cohortId || ''
+    if (!programParentGroupId) {
+        filter.class_id = programId || ''
     }
-    if (!cohortAccountabilityGroupId) {
-        accountabilityFilter.class_id = cohortId || ''
+    if (!programAccountabilityGroupId) {
+        accountabilityFilter.class_id = programId || ''
     }
 });
 
-const treeNodes = computed(() => cohortParentGroups.value.map((item) => ({
+const treeNodes = computed(() => programParentGroups.value.map((item) => ({
     key: `${item.section_id}`,
     label: item.name,
     data: item,
@@ -77,7 +77,7 @@ function closeDeleteParentGroup() {
     toBeDeletedParentGroup.value = null
 }
 function deleteParentGroup(id: string) {
-    deleteCohortParentGroup(id)
+    deleteprogramParentGroup(id)
     closeDeleteParentGroup()
 }
 const showDeleteAccountabilityGroupDialog = ref(false)
@@ -91,7 +91,7 @@ function closeDeleteAccountabilityGroup() {
     toBeDeletedAccountabilityGroup.value = null
 }
 function deleteAccountabilityGroup(id: string) {
-    deleteCohortAccountabilityGroup(id)
+    deleteprogramAccountabilityGroup(id)
     closeDeleteAccountabilityGroup()
 }
 </script>
@@ -127,17 +127,17 @@ function deleteAccountabilityGroup(id: string) {
                     <template #body="slotProps">
                         <div v-if="slotProps.node.children?.length" class="flex gap-2 text-sm">
                             <Button @click="toggleRow(slotProps.node.key)" text plain label="+ Add"></Button>
-                            <Button text size="small" @click="goToViewCohortParentGroup(slotProps.node.key)"
+                            <Button text size="small" @click="goToViewprogramParentGroup(slotProps.node.key)"
                                 label="View"></Button>
-                            <Button text size="small" @click="goToEditCohortParentGroup(slotProps.node.key)"
+                            <Button text size="small" @click="goToEditprogramParentGroup(slotProps.node.key)"
                                 label="Edit"></Button>
                             <Button size="small" @click="initDeleteParentGroup(slotProps.node.key)" text
                                 severity="danger" label="Delete"></Button>
                         </div>
                         <div v-else class="flex gap-2 text-sm items-center justify-end">
-                            <Button size="small" @click="goToViewCohortAccountabilityGroup(slotProps.node.key)" text
+                            <Button size="small" @click="goToViewprogramAccountabilityGroup(slotProps.node.key)" text
                                 label="View"></Button>
-                            <Button size="small" @click="goToEditCohortAccountabilityGroup(slotProps.node.key)" text
+                            <Button size="small" @click="goToEditprogramAccountabilityGroup(slotProps.node.key)" text
                                 label="Edit"></Button>
                             <Button size="small" @click="initDeleteAccountabilityGroup(slotProps.node.key)" text
                                 severity="danger" label="Delete"></Button>
@@ -151,10 +151,10 @@ function deleteAccountabilityGroup(id: string) {
                 <!-- <AddMeeting></AddMeeting> -->
                 add meeting form
             </Dialog>
-            <Dialog v-model:visible="showDeleteParentGroupDialog" modal header="Remove Meeting from Cohort"
+            <Dialog v-model:visible="showDeleteParentGroupDialog" modal header="Remove Meeting from program"
                 :style="{ width: '30rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
                 <p class="mb-5">
-                    Are you sure you want to remove this meeting from this cohort? All student progress would be lost.
+                    Are you sure you want to remove this meeting from this program? All student progress would be lost.
                 </p>
                 <div class="flex gap-2 justify-end">
                     <Button @click="closeDeleteParentGroup">No</Button>

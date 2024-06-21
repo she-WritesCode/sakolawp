@@ -3,7 +3,7 @@ import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
-import { createCohortSchema, useCohortStore } from '../../stores/cohort';
+import { createprogramSchema, useprogramStore } from '../../stores/program';
 import { useSubjectStore } from '../../stores/subject';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted, watch, ref } from 'vue';
@@ -11,16 +11,16 @@ import { computed } from 'vue';
 import SelectButton from 'primevue/selectbutton';
 import MultiSelect from 'primevue/multiselect';
 
-const { updateCohort, currentCohort, getOneCohort, cohortId, deleteCohort } = useCohortStore()
+const { updateprogram, currentprogram, getOneprogram, programId, deleteprogram } = useprogramStore()
 
 const { errors, defineField, handleSubmit, setValues } = useForm({
     initialValues: {
-        name: currentCohort.value?.name,
-        drip_method: currentCohort.value?.drip_method,
-        subjects: currentCohort.value?.subjects,
-        start_date: currentCohort.value?.start_date ? new Date(currentCohort.value?.start_date || "").toISOString().split('T')[0] : "",
+        name: currentprogram.value?.name,
+        drip_method: currentprogram.value?.drip_method,
+        subjects: currentprogram.value?.subjects,
+        start_date: currentprogram.value?.start_date ? new Date(currentprogram.value?.start_date || "").toISOString().split('T')[0] : "",
     },
-    validationSchema: toTypedSchema(createCohortSchema),
+    validationSchema: toTypedSchema(createprogramSchema),
 });
 
 const [name, nameProps] = defineField('name');
@@ -39,10 +39,10 @@ const subjectOptions = computed(() => allSubjects.value.map((s) => ({ label: s.n
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
-    updateCohort(values as any)
+    updateprogram(values as any)
 
 });
-watch(currentCohort, (value) => {
+watch(currentprogram, (value) => {
     setValues({
         name: value?.name,
         drip_method: value?.drip_method,
@@ -52,8 +52,8 @@ watch(currentCohort, (value) => {
 });
 
 onMounted(() => {
-    if (!currentCohort.value) {
-        getOneCohort(cohortId as string)
+    if (!currentprogram.value) {
+        getOneprogram(programId as string)
     }
     fetchSubjects()
 })
@@ -69,19 +69,19 @@ function closeDelete() {
     showDeleteDialog.value = false
     toBeDeleted.value = null
 }
-function deleteACohort(id: string) {
-    deleteCohort(id)
+function deleteAprogram(id: string) {
+    deleteprogram(id)
     closeDelete()
 }
 </script>
 
 <template>
 
-    <form id="myForm" name="Add Cohort">
+    <form id="myForm" name="Add program">
         <div class="flex flex-col gap-4 mb-4">
             <div class="form-group">
-                <label for="name">Cohort Name</label>
-                <InputText placeholder="Cohort Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
+                <label for="name">program Name</label>
+                <InputText placeholder="program Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
                 <div>{{ errors.name }}</div>
             </div>
             <div class="form-group">
@@ -104,20 +104,20 @@ function deleteACohort(id: string) {
             </div>
         </div>
         <div class="flex gap-2 justify-between">
-            <Button class="w" type="submit" @click.prevent="submitForm">Save Cohort</Button>
+            <Button class="w" type="submit" @click.prevent="submitForm">Save program</Button>
         </div>
     </form>
-    <Dialog v-model:visible="showDeleteDialog" modal header="Delete Cohort" :style="{ width: '30rem' }"
+    <Dialog v-model:visible="showDeleteDialog" modal header="Delete program" :style="{ width: '30rem' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <p class="mb-5">
             Are you sure you want to delete?
         </p>
         <div class="flex gap-2 justify-end">
             <Button @click="closeDelete">No</Button>
-            <Button @click="deleteACohort(toBeDeleted as string)" outlined severity="danger">Yes</Button>
+            <Button @click="deleteAprogram(toBeDeleted as string)" outlined severity="danger">Yes</Button>
         </div>
     </Dialog>
 </template>
 
 <style scoped></style>
-../../stores/cohort
+../../stores/program

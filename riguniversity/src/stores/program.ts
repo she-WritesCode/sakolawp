@@ -5,7 +5,7 @@ import { convertObjectToSearchParams } from '@/utils/search'
 import * as yup from 'yup'
 
 export type DripMethod = 'specific_dates' | 'days_after_release'
-export interface Cohort {
+export interface program {
   class_id?: string
   name: string
   start_date: string
@@ -19,7 +19,7 @@ export interface Cohort {
   teacher_count?: string
 }
 
-export const createCohortSchema = yup.object({
+export const createprogramSchema = yup.object({
   name: yup.string().min(3).required(),
   start_date: yup.string().optional(),
   drip_method: yup
@@ -30,10 +30,10 @@ export const createCohortSchema = yup.object({
   subjects: yup.array().of(yup.string()).min(0)
 })
 
-export const useCohortStore = defineStore('cohort', () => {
+export const useprogramStore = defineStore('program', () => {
   const toast = useToast()
-  const cohorts = ref<Cohort[]>([])
-  const currentCohort = ref<Cohort | undefined>(undefined)
+  const programs = ref<program[]>([])
+  const currentprogram = ref<program | undefined>(undefined)
   const filter = reactive({
     search: ''
   })
@@ -45,28 +45,28 @@ export const useCohortStore = defineStore('cohort', () => {
     delete: false,
     subjects: false
   })
-  const cohortId = computed(() => {
+  const programId = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('class_id')
   })
   const subjectFilter = reactive({
     search: '',
-    class_id: cohortId.value || ''
+    class_id: programId.value || ''
   })
   const action = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('action')
   })
 
-  const showAddForm = computed(() => action.value === 'add_cohort')
-  const showViewScreen = computed(() => action.value === 'view_cohort' && !!cohortId.value)
-  const showEditScreen = computed(() => action.value === 'add_cohort' && !!cohortId.value)
+  const showAddForm = computed(() => action.value === 'add_program')
+  const showViewScreen = computed(() => action.value === 'view_program' && !!programId.value)
+  const showEditScreen = computed(() => action.value === 'add_program' && !!programId.value)
 
   watch(filter, () => {
-    fetchCohorts()
+    fetchprograms()
   })
 
-  const fetchCohorts = () => {
+  const fetchprograms = () => {
     loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -81,7 +81,7 @@ export const useCohortStore = defineStore('cohort', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        cohorts.value = response.data
+        programs.value = response.data
         loading.list = false
       })
       .catch((error) => {
@@ -89,41 +89,41 @@ export const useCohortStore = defineStore('cohort', () => {
       })
   }
 
-  const goToViewCohort = (cohortId: string) => {
+  const goToViewprogram = (programId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'view_cohort')
-    url.searchParams.set('class_id', cohortId)
+    url.searchParams.set('action', 'view_program')
+    url.searchParams.set('class_id', programId)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeViewCohort = () => {
+  const closeViewprogram = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('class_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditCohort = (cohortId: string) => {
+  const goToEditprogram = (programId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohort')
-    url.searchParams.set('class_id', cohortId)
+    url.searchParams.set('action', 'add_program')
+    url.searchParams.set('class_id', programId)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeEditCohort = () => {
+  const closeEditprogram = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.set('class_id', cohortId.value as string)
-    url.searchParams.set('action', 'view_cohort')
+    url.searchParams.set('class_id', programId.value as string)
+    url.searchParams.set('action', 'view_program')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
 
   const goToAddForm = () => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohort')
+    url.searchParams.set('action', 'add_program')
     // showAddForm.value = true
     window.location.href = url.toString()
   }
@@ -135,7 +135,7 @@ export const useCohortStore = defineStore('cohort', () => {
     window.location.href = url.toString()
   }
 
-  const getOneCohort = (id: string) => {
+  const getOneprogram = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -150,7 +150,7 @@ export const useCohortStore = defineStore('cohort', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohort.value = response.data
+        currentprogram.value = response.data
         loading.get = false
       })
       .catch((error) => {
@@ -158,7 +158,7 @@ export const useCohortStore = defineStore('cohort', () => {
       })
   }
 
-  const createCohort = (args: Partial<Cohort>) => {
+  const createprogram = (args: Partial<program>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -173,11 +173,11 @@ export const useCohortStore = defineStore('cohort', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohort.value = response.data
+        currentprogram.value = response.data
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Cohort created successfully',
+          detail: 'program created successfully',
           life: 3000
         })
         closeAddForm()
@@ -191,7 +191,7 @@ export const useCohortStore = defineStore('cohort', () => {
       })
   }
 
-  const updateCohort = (args: Partial<Cohort>) => {
+  const updateprogram = (args: Partial<program>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -201,17 +201,17 @@ export const useCohortStore = defineStore('cohort', () => {
       },
       body: convertObjectToSearchParams({
         action: 'run_update_class',
-        class_id: cohortId.value,
+        class_id: programId.value,
         ...(args as any)
       })
     })
       .then((response) => response.json())
       .then(() => {
-        getOneCohort(cohortId.value as string)
+        getOneprogram(programId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Cohort updated successfully',
+          detail: 'program updated successfully',
           life: 3000
         })
       })
@@ -223,7 +223,7 @@ export const useCohortStore = defineStore('cohort', () => {
       })
   }
 
-  const deleteCohort = (id: string) => {
+  const deleteprogram = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -241,30 +241,30 @@ export const useCohortStore = defineStore('cohort', () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchCohorts()
+        fetchprograms()
       })
   }
 
   return {
-    cohorts: computed(() => cohorts),
-    fetchCohorts,
+    programs: computed(() => programs),
+    fetchprograms,
     filter: computed(() => filter),
     subjectFilter: computed(() => subjectFilter),
     loading: computed(() => loading),
-    currentCohort: computed(() => currentCohort),
-    goToViewCohort,
-    closeViewCohort,
-    cohortId,
-    getOneCohort,
+    currentprogram: computed(() => currentprogram),
+    goToViewprogram,
+    closeViewprogram,
+    programId,
+    getOneprogram,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createCohort,
-    updateCohort,
-    deleteCohort,
-    goToEditCohort,
-    closeEditCohort
+    createprogram,
+    updateprogram,
+    deleteprogram,
+    goToEditprogram,
+    closeEditprogram
   }
 })

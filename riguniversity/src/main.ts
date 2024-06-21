@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
-import { setupCalendar, Calendar, DatePicker } from 'v-calendar'
+import { setupCalendar } from 'v-calendar'
 import 'v-calendar/style.css'
 // @ts-ignore
 import Rig from '@/presets/rig' //import preset

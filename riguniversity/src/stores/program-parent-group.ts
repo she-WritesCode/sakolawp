@@ -2,51 +2,25 @@ import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
-import type { Homework } from './homework'
-import * as yup from 'yup'
-import type { DripMethod } from './cohort'
+import type { programAccountabilityGroup } from './program-accountability-group'
 
-export interface CohortSchedule {
-  id?: string
-  subject_id: string
+export interface programParentGroup {
+  section_id?: string
+  name: string
   class_id: string
-  content_id: string
-  content_type: string
-  drip_method: DripMethod
-  release_date: string
-  deadline_date: string
-  release_days: number
-  deadline_days: number
-  created_at?: string
-  updated_at?: string
+  teacher_id: string
+  created_at: string
+  updated_at: string
+  accountability_count: string
+  accountabilities: programAccountabilityGroup[]
 }
 
-export const createCohortScheduleSchema = yup.object<CohortSchedule>({
-  schedules: yup
-    .array()
-    .of(
-      yup.object({
-        subject_id: yup.string().required(),
-        class_id: yup.string().required(),
-        content_id: yup.string().required(),
-        content_type: yup.string().required(),
-        drip_method: yup.string().required(),
-        release_date: yup.string().required(),
-        deadline_date: yup.string().required(),
-        release_days: yup.string().required(),
-        deadline_days: yup.string().required()
-      })
-    )
-    .min(1)
-})
-
-export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
+export const useprogramParentGroupStore = defineStore('programParentGroup', () => {
   const toast = useToast()
-  const cohortSchedules = ref<CohortSchedule[]>([])
-  const currentCohortSchedule = ref<CohortSchedule | undefined>(undefined)
+  const programParentGroups = ref<programParentGroup[]>([])
+  const currentprogramParentGroup = ref<programParentGroup | undefined>(undefined)
   const filter = reactive({
     search: '',
-    subject_id: '',
     class_id: ''
   })
   const loading = reactive({
@@ -56,29 +30,29 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
     update: false,
     delete: false
   })
-  const cohortScheduleId = computed(() => {
+  const programParentGroupId = computed(() => {
     const url = new URL(window.location.href)
-    return url.searchParams.get('schedule_id')
+    return url.searchParams.get('subject_id')
   })
   const action = computed(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get('action')
   })
 
-  const showAddForm = computed(() => action.value === 'add_cohortSchedule')
-  const showViewScreen = computed(
-    () => action.value === 'view_cohortSchedule' && !!cohortScheduleId.value
+  const showAddParentGroupForm = computed(() => action.value === 'add_programParentGroup')
+  const showViewParentGroupScreen = computed(
+    () => action.value === 'view_programParentGroup' && !!programParentGroupId.value
   )
-  const showEditScreen = computed(
-    () => action.value === 'add_cohortSchedule' && !!cohortScheduleId.value
+  const showEditParentGroupScreen = computed(
+    () => action.value === 'add_programParentGroup' && !!programParentGroupId.value
   )
 
   watch(filter, () => {
-    fetchCohortSchedules()
+    fetchprogramParentGroups()
   })
 
-  const fetchCohortSchedules = () => {
-    loading.list = true
+  const fetchprogramParentGroups = () => {
+    if (!filter.search) loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
@@ -86,13 +60,13 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_list_schedules',
+        action: 'run_list_sections',
         ...filter
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        cohortSchedules.value = response.data
+        programParentGroups.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -102,53 +76,53 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
       })
   }
 
-  const goToViewCohortSchedule = (cohortScheduleId: string) => {
+  const goToViewprogramParentGroup = (programParentGroupId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'view_cohortSchedule')
-    url.searchParams.set('schedule_id', cohortScheduleId)
+    url.searchParams.set('action', 'view_programParentGroup')
+    url.searchParams.set('class_id', programParentGroupId)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeViewCohortSchedule = () => {
+  const closeViewprogramParentGroup = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.delete('schedule_id')
+    url.searchParams.delete('class_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditCohortSchedule = (cohortScheduleId: string) => {
+  const goToEditprogramParentGroup = (programParentGroupId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohortSchedule')
-    url.searchParams.set('schedule_id', cohortScheduleId)
+    url.searchParams.set('action', 'add_programParentGroup')
+    url.searchParams.set('class_id', programParentGroupId)
     // showViewScreen.value = true
     window.location.href = url.toString()
   }
 
-  const closeEditCohortSchedule = () => {
+  const closeEditprogramParentGroup = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
-    url.searchParams.set('schedule_id', cohortScheduleId.value as string)
-    url.searchParams.set('action', 'view_cohortSchedule')
+    url.searchParams.set('class_id', programParentGroupId.value as string)
+    url.searchParams.set('action', 'view_programParentGroup')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
 
-  const goToAddForm = () => {
+  const goToAddParentGroupForm = () => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_cohortSchedule')
+    url.searchParams.set('action', 'add_programParentGroup')
     // showAddForm.value = true
     window.location.href = url.toString()
   }
 
-  const closeAddForm = () => {
+  const closeAddParentGroupForm = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     // showAddForm.value = false
     window.location.href = url.toString()
   }
 
-  const getOneCohortSchedule = (id: string) => {
+  const getOneprogramParentGroup = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -157,13 +131,13 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_single_schedule',
-        schedule_id: id
+        action: 'run_single_section',
+        class_id: id
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohortSchedule.value = response.data
+        currentprogramParentGroup.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -173,7 +147,7 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
       })
   }
 
-  const createCohortSchedule = (args: Partial<CohortSchedule>[]) => {
+  const createprogramParentGroup = (args: Partial<programParentGroup>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -182,33 +156,32 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: convertObjectToSearchParams({
-        action: 'run_create_schedule',
-        schedules: args
+        action: 'run_create_section',
+        ...(args as any)
       })
     })
       .then((response) => response.json())
       .then((response) => {
-        currentCohortSchedule.value = response.data
+        currentprogramParentGroup.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Cohort Schedule created successfully',
+          detail: 'programParentGroup created successfully',
           life: 3000
         })
-        // closeAddForm()
-        // fetchCohortSchedules()
       })
       .catch((error) => {
         console.error('Error:', error)
         toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
       })
       .finally(() => {
+        closeAddParentGroupForm()
         loading.create = false
       })
   }
 
-  const updateCohortSchedule = (args: Partial<CohortSchedule>) => {
+  const updateprogramParentGroup = (args: Partial<programParentGroup>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -217,17 +190,17 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: convertObjectToSearchParams({
-        action: 'run_update_schedule',
+        action: 'run_update_section',
         ...(args as any)
       })
     })
       .then((response) => response.json())
       .then(() => {
-        getOneCohortSchedule(cohortScheduleId.value as string)
+        getOneprogramParentGroup(programParentGroupId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Cohort Schedule updated successfully',
+          detail: 'programParentGroup updated successfully',
           life: 3000
         })
       })
@@ -239,7 +212,7 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
       })
   }
 
-  const deleteCohortSchedule = (id: string) => {
+  const deleteprogramParentGroup = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -248,8 +221,8 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        action: 'run_delete_schedule',
-        schedule_id: id
+        action: 'run_delete_section',
+        class_id: id
       })
     })
       .catch((error) => {
@@ -257,29 +230,29 @@ export const useCohortScheduleStore = defineStore('cohortSchedule', () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchCohortSchedules()
+        fetchprogramParentGroups()
       })
   }
 
   return {
-    cohortSchedules: computed(() => cohortSchedules),
-    fetchCohortSchedules,
+    programParentGroups: computed(() => programParentGroups),
+    fetchprogramParentGroups,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentCohortSchedule: computed(() => currentCohortSchedule),
-    goToViewCohortSchedule,
-    closeViewCohortSchedule,
-    cohortScheduleId,
-    getOneCohortSchedule,
-    showAddForm,
-    showViewScreen,
-    showEditScreen,
-    goToAddForm,
-    closeAddForm,
-    createCohortSchedule,
-    updateCohortSchedule,
-    deleteCohortSchedule,
-    goToEditCohortSchedule,
-    closeEditCohortSchedule
+    currentprogramParentGroup: computed(() => currentprogramParentGroup),
+    goToViewprogramParentGroup,
+    closeViewprogramParentGroup,
+    programParentGroupId,
+    getOneprogramParentGroup,
+    showAddParentGroupForm,
+    showViewParentGroupScreen,
+    showEditParentGroupScreen,
+    goToAddParentGroupForm,
+    closeAddParentGroupForm,
+    createprogramParentGroup,
+    updateprogramParentGroup,
+    deleteprogramParentGroup,
+    goToEditprogramParentGroup,
+    closeEditprogramParentGroup
   }
 })

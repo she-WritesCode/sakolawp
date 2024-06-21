@@ -3,29 +3,29 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
-import { createCohortMeetingSchema, useCohortMeetingStore, type CreateCohortMeeting } from '../../stores/cohort-meeting';
+import { createprogramMeetingSchema, useprogramMeetingStore, type CreateprogramMeeting } from '../../stores/program-meeting';
 import { DateHelper } from '../../utils/date';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
 import { watch } from 'vue';
 
 const props = defineProps<{
-    cohortId: string;
-    initialValues?: CreateCohortMeeting & { ID: number };
+    programId: string;
+    initialValues?: CreateprogramMeeting & { ID: number };
 }>()
-const { errors, defineField, handleSubmit, setValues, values } = useForm<CreateCohortMeeting & { ID?: number }>({
+const { errors, defineField, handleSubmit, setValues, values } = useForm<CreateprogramMeeting & { ID?: number }>({
     initialValues: {
         title: "",
         content: "",
         meta: {
             _sakolawp_event_date: DateHelper.toSimpleBackendDateString(new Date()),
             _sakolawp_event_date_clock: DateHelper.toSimpleBackendTimeString(new Date()),
-            _sakolawp_event_class_id: props.cohortId,
+            _sakolawp_event_class_id: props.programId,
             _sakolawp_event_location: '',
         },
         ...props.initialValues,
     },
-    validationSchema: toTypedSchema(createCohortMeetingSchema),
+    validationSchema: toTypedSchema(createprogramMeetingSchema),
 });
 
 const [title, titleProps] = defineField('title');
@@ -36,15 +36,15 @@ const [location, locationProps] = defineField('meta._sakolawp_event_location');
 // we set this from props
 // const [class_id, class_idProps] = defineField('meta._sakolawp_event_class_id');
 
-const { createCohortMeeting, closeAddForm, updateCohortMeeting } = useCohortMeetingStore()
+const { createprogramMeeting, closeAddForm, updateprogramMeeting } = useprogramMeetingStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
     if (props.initialValues && props.initialValues?.ID) {
-        updateCohortMeeting({ ...values, ID: props.initialValues!.ID })
+        updateprogramMeeting({ ...values, ID: props.initialValues!.ID })
     } else {
 
-        createCohortMeeting(values)
+        createprogramMeeting(values)
     }
 });
 watch(() => props.initialValues, () => {
@@ -56,7 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <form id="myForm" name="Add Cohort Meeting">
+    <form id="myForm" name="Add program Meeting">
         <div class="flex flex-col gap-4 mb-4">
             <div class="form-group">
                 <label for="name">Meeting Title</label>

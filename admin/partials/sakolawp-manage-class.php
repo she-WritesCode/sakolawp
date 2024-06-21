@@ -29,7 +29,7 @@ global $wpdb;
 	</nav>
 	<div class="skwp-tab-content tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-			<div id="run-listcohort"></div>
+			<div id="run-listprogram"></div>
 
 			<!-- start of class table -->
 			<!-- <div class="table-responsive">
