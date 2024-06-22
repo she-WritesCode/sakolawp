@@ -339,7 +339,7 @@ export default {
 
                     // States
                     'hover:border-surface-400 dark:hover:border-surface-600',
-                    { 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
+                    { 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-[50010]': state.focused },
 
                     // Misc
                     'cursor-pointer',
@@ -838,7 +838,7 @@ export default {
                     // Position
                     'absolute',
                     'top-0 left-0',
-                    'z-10',
+                    'z-[50010]',
 
                     // Spacing
                     'p-0',
@@ -925,7 +925,7 @@ export default {
                     {
                         'peer-hover:border-surface-400 dark:peer-hover:border-surface-600': !props.disabled && !context.checked && !props.invalid,
                         'peer-hover:bg-primary-hover peer-hover:border-primary-hover': !props.disabled && context.checked,
-                        'peer-focus-visible:z-10 peer-focus-visible:outline-none peer-focus-visible:outline-offset-0 peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
+                        'peer-focus-visible:z-[50010] peer-focus-visible:outline-none peer-focus-visible:outline-offset-0 peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
                         'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled
                     },
 
@@ -945,7 +945,7 @@ export default {
                     // Position
                     'absolute',
                     'top-0 left-0',
-                    'z-10',
+                    'z-[50010]',
 
                     // Spacing
                     'p-0',
@@ -1026,7 +1026,7 @@ export default {
                     {
                         'peer-hover:border-surface-400 dark:peer-hover:border-surface-600': !props.disabled && !context.checked && !props.invalid,
                         'peer-hover:bg-primary-hover peer-hover:border-primary-hover': !props.disabled && context.checked,
-                        'peer-focus-visible:z-10 peer-focus-visible:outline-none peer-focus-visible:outline-offset-0 peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
+                        'peer-focus-visible:z-[50010] peer-focus-visible:outline-none peer-focus-visible:outline-offset-0 peer-focus-visible:ring-1 peer-focus-visible:ring-primary-500 dark:peer-focus-visible:ring-primary-400': !props.disabled,
                         'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled
                     },
 
@@ -1046,7 +1046,7 @@ export default {
                     // Position
                     'absolute',
                     'top-0 left-0',
-                    'z-10',
+                    'z-[50010]',
 
                     // Spacing
                     'p-0',

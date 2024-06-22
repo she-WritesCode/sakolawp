@@ -49,7 +49,7 @@ class RunQuestionsRepo
             return !in_array($question_id, $all_questions_ids);
         });
 
-        error_log(print_r(["update" => $questions_to_update, "insert" => $questions_to_insert, "delete" => $questions_to_delete], true));
+        // error_log(print_r(["update" => $questions_to_update, "insert" => $questions_to_insert, "delete" => $questions_to_delete], true));
 
         $create_result = [];
         // Insert new questions
@@ -125,11 +125,23 @@ class RunQuestionsRepo
         // Extract options
         $options = isset($question_data['options']) ? $question_data['options'] : null;
         unset($question_data['options']);
+        unset($question_data['question_id']);
+
+        if (isset($question_data['question_id'])) {
+            unset($question_data['question_id']);
+        }
 
         $result = $wpdb->insert(
             "{$wpdb->prefix}{$this->questions_table}",
             $question_data
         );
+
+        if ($wpdb->last_error) {
+            // Log or handle insertion error
+            error_log('Database error: ' . $wpdb->last_error);
+            return false;
+        }
+
 
         if ($result) {
             $question_id = $wpdb->insert_id;

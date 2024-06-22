@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import SingleCourse from '../components/courses/SingleCourse.vue'
 import Button from 'primevue/button'
+import Toast from "primevue/toast";
 
 const expand = ref(new URL(window.location.href).searchParams.get('expanded') == '1')
 
@@ -24,7 +25,6 @@ const expandView = () => {
 <template>
     <div :class="expand ? 'fixed inset-0 bg-white z-[10000] pt-16 overflow-y-auto' : ''">
         <Toast position="bottom-center" />
-        <!-- Loading Indicator -->
         <div class="flex justify-end"><Button @click="expandView" text icon="pi pi-expand" label="Expand"></Button>
         </div>
         <SingleCourse :class="`bg-white ${expand ? 'max-w-4xl mx-auto' : ''}`"></SingleCourse>

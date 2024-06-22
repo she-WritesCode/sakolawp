@@ -168,11 +168,11 @@ function run_delete_subject($subject_id)
 	die();
 }
 
-add_action('wp_ajax_run_list_subjects', 'run_list_subjects');
-add_action('wp_ajax_run_single_subject', 'run_single_subject');
-add_action('wp_ajax_run_create_subject', 'run_create_subject');
-add_action('wp_ajax_run_update_subject', 'run_update_subject');
-add_action('wp_ajax_run_delete_subject', 'run_delete_subject');
+// add_action('wp_ajax_run_list_subjects', 'run_list_subjects');
+// add_action('wp_ajax_run_single_subject', 'run_single_subject');
+// add_action('wp_ajax_run_create_subject', 'run_create_subject');
+// add_action('wp_ajax_run_update_subject', 'run_update_subject');
+// add_action('wp_ajax_run_delete_subject', 'run_delete_subject');
 
 
 
@@ -209,7 +209,7 @@ function run_single_homework()
 function run_create_homework()
 {
 	$repo = new RunHomeworkRepo();
-	$subjectRepo = new RunSubjectRepo();
+	$courseRepo = new RunCourseRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
 
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
@@ -233,10 +233,10 @@ function run_create_homework()
 
 	$post_id = $homework_code;
 
-	$subject = $subjectRepo->single($subject_id);
+	$course = $courseRepo->single($subject_id);
 
-	if (!$subject) {
-		wp_send_json_error('Subject not found', 404);
+	if (!$course) {
+		wp_send_json_error('Course not found', 404);
 		die();
 	}
 
@@ -244,7 +244,7 @@ function run_create_homework()
 		'homework_code' => $homework_code,
 		'title' => $title,
 		'description' => $description,
-		'class_id' => $subject->class_id,
+		// 'class_id' => $subject->class_id,
 		'section_id' => $section_id,
 		'subject_id' => $subject_id,
 		'uploader_id' => $uploader_id,
@@ -285,11 +285,79 @@ function run_create_homework()
 	die();
 }
 
+/** Duplicate an existing homework */
+function run_duplicate_homework()
+{
+	$repo = new RunHomeworkRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+
+	$homework_id = isset($_POST['homework_id']) ? sanitize_text_field($_POST['homework_id']) : '';
+	$homework = $repo->single($homework_id);
+
+	$title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : $homework->title  . ' - Copy';
+	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
+
+	$post_id = $homework_code;
+
+	$result = $repo->create(array_merge([
+		'title' => $title,
+		'description' => $homework->description,
+		'section_id' => $homework->section_id,
+		'subject_id' => $homework->subject_id,
+		'uploader_id' => $homework->uploader_id,
+		'uploader_type' => $homework->uploader_type,
+		'time_end' => $homework->time_end,
+		'date_end' => $homework->date_end,
+		'file_name' => $homework->file_name,
+		'allow_peer_review' => $homework->allow_peer_review,
+		'peer_review_template' => $homework->peer_review_template,
+		'peer_review_who' => $homework->peer_review_who,
+		'word_count_min' => (int)$homework->word_count_min,
+		'word_count_max' => (int)$homework->word_count_max,
+	], [
+		'homework_code' => $homework_code,
+		'questions' => array_map(function ($question, $key) {
+			$question = (array)$question;
+			return array_merge($question, [
+				'question_id' => 'q' . (string)$key,
+				'options' => array_map(function ($option) {
+					return (array)$option;
+				}, $question['options'])
+			]);
+		}, $homework->questions, array_keys($homework->questions)),
+	]));
+
+	require_once(ABSPATH . 'wp-admin/includes/image.php');
+	require_once(ABSPATH . 'wp-admin/includes/file.php');
+	require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+	add_filter('upload_dir', 'sakolawp_custom_dir_homework');
+	$attach_id = media_handle_upload('file_name', $post_id);
+	if (is_numeric($attach_id)) {
+		update_option('homework_file_name', $attach_id);
+		update_post_meta($post_id, '_file_name', $attach_id);
+	}
+	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
+
+	if ($result) { // If the homework was created successfully
+		do_action('sakolawp_homework_added', $repo->single($result));
+		wp_send_json_success($result, 201);
+		die();
+	}
+
+	// If the homework was not created successfully
+	$error = [];
+	$error['message'] = 'Failed to create homework';
+	wp_send_json_error($error, 500);
+	die();
+}
+
 /** Update an existing homework */
 function run_update_homework()
 {
 	$repo = new RunHomeworkRepo();
-	$subjectRepo = new RunSubjectRepo();
+	$courseRepo = new RunCourseRepo();
 
 	$homework_id = sanitize_text_field($_POST['homework_id']);
 	$_POST = array_map('stripslashes_deep', $_POST);
@@ -309,10 +377,10 @@ function run_update_homework()
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
 
 	$homework = $repo->single($homework_id);
-	$subject = $subjectRepo->single($homework->subject_id);
+	$course = $courseRepo->single($homework->subject_id);
 
-	if (!$subject) {
-		wp_send_json_error('Subject not found', 404);
+	if (!$course) {
+		wp_send_json_error('Course not found', 404);
 		die();
 	}
 
@@ -320,7 +388,7 @@ function run_update_homework()
 		'title' => $title,
 		'description' => $description,
 		'uploader_id' => $uploader_id,
-		'class_id' => $subject->class_id,
+		// 'class_id' => $subject->class_id,
 		'uploader_type' => $uploader_type,
 		'time_end' => $time_end,
 		'date_end' => $date_end,
@@ -352,6 +420,7 @@ function run_delete_homework($homework_id)
 add_action('wp_ajax_run_list_homeworks', 'run_list_homeworks');
 add_action('wp_ajax_run_single_homework', 'run_single_homework');
 add_action('wp_ajax_run_create_homework', 'run_create_homework');
+add_action('wp_ajax_run_duplicate_homework', 'run_duplicate_homework');
 add_action('wp_ajax_run_update_homework', 'run_update_homework');
 add_action('wp_ajax_run_delete_homework', 'run_delete_homework');
 

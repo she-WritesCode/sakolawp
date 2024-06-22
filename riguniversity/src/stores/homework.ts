@@ -32,7 +32,14 @@ export const useHomeworkStore = defineStore('homework', () => {
     search: '',
     subject_id: ''
   })
-  const loading = reactive({ list: false, get: false, create: false, update: false, delete: false })
+  const loading = reactive({
+    list: false,
+    get: false,
+    create: false,
+    duplicate: false,
+    update: false,
+    delete: false
+  })
   const { urlParams } = useUrlParamsStore()
 
   const homeworkId = computed(() => urlParams.value.get('homework_id'))
@@ -153,7 +160,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentHomework.value = response.data
+        // currentHomework.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
@@ -161,14 +168,51 @@ export const useHomeworkStore = defineStore('homework', () => {
           detail: 'Homework created successfully',
           life: 3000
         })
+        closeAddForm()
       })
       .catch((error) => {
         console.error('Error:', error)
         toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
       })
       .finally(() => {
-        closeAddForm()
         loading.create = false
+      })
+  }
+  const duplicate = (homework_id: string, title: string = '') => {
+    loading.duplicate = true
+    // @ts-ignore
+    return fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: convertObjectToSearchParams({
+        action: 'run_duplicate_homework',
+        homework_id,
+        title
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        // currentHomework.value = response.data
+        // showAddForm.value = false
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Homework duplicated successfully',
+          life: 3000
+        })
+        fetchHomeworks()
+        return new Promise((resolve) => {
+          resolve(response)
+        })
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+        toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
+      })
+      .finally(() => {
+        loading.duplicate = false
       })
   }
 
@@ -244,6 +288,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     updateHomework,
     deleteHomework,
     goToEditHomework,
-    closeEditHomework
+    closeEditHomework,
+    duplicate
   }
 })

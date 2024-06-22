@@ -11,17 +11,20 @@ import QuestionBuilder from './QuestionBuilder.vue';
 import { string, object, array } from 'yup';
 import Divider from 'primevue/divider';
 import { useHomeworkStore, type Homework } from '../../stores/homework';
-import { useSubjectStore } from '../../stores/subject';
-import { onMounted } from 'vue';
+import { useCourseStore } from '../../stores/course';
+import { onMounted, watch, ref } from 'vue';
 
 const props = defineProps<{
     initialValues?: Homework
+    // courseId: string
 }>();
 
-const { createHomework, updateHomework, loading, homeworkId, getOneHomework } = useHomeworkStore()
-const { subjectId } = useSubjectStore();
+const { courseId } = useCourseStore();
 
-const { handleSubmit, errors, defineField } = useForm({
+
+const { createHomework, updateHomework, loading, homeworkId, getOneHomework, currentHomework } = useHomeworkStore()
+
+const { handleSubmit, errors, defineField, setValues } = useForm({
     initialValues: {
         title: '',
         description: '',
@@ -32,16 +35,13 @@ const { handleSubmit, errors, defineField } = useForm({
         word_count_min: null,
         word_count_max: null,
         limit_word_count: false,
-        time_end: "23:59" as unknown as Date,
         questions: [],
         ...props.initialValues,
-        date_end: props.initialValues?.date_end ? props.initialValues?.date_end : new Date().toISOString() as unknown as Date,
-
     },
     validationSchema: object({
         title: string().required(),
         description: string().optional(),
-        questions: array().min(1, "At least one option is required")
+        questions: array().min(1, "You must add At least one question")
             .of(
                 object().shape({
                     question: string().required("You have to enter a question"),
@@ -57,21 +57,16 @@ const [description, descriptionProps] = defineField('description')
 const [allow_peer_review, allow_peer_reviewProps] = defineField('allow_peer_review')
 const [peer_review_template, peer_review_templateProps] = defineField('peer_review_template')
 const [peer_review_who, peer_review_whoProps] = defineField('peer_review_who')
-const [word_count_min, word_count_minProps] = defineField('word_count_min')
-const [word_count_max, word_count_maxProps] = defineField('word_count_max')
-const [limit_word_count, limit_word_countProps] = defineField('limit_word_count')
-const [date_end, date_endProps] = defineField('date_end')
-const [time_end, time_endProps] = defineField('time_end')
 const [questions, questionsProps] = defineField('questions')
 
 const submitForm = handleSubmit(async (values) => {
-    values.date_end = new Date(values.date_end).toISOString().split('T')[0] as unknown as Date
+    // values.date_end = new Date(values.date_end).toISOString().split('T')[0] as unknown as Date
     // TODO: file upload and set the filename
     // values.file_name = ""
     if (props.initialValues?.homework_id) {
-        updateHomework({ ...values, subject_id: subjectId })
+        updateHomework({ ...values, subject_id: courseId })
     } else {
-        createHomework({ ...values, subject_id: subjectId })
+        createHomework({ ...values, subject_id: courseId })
     }
     console.log('Form submitted:', values)
 })
@@ -86,6 +81,14 @@ const peerReviewTemplateOptions = [
     { label: 'prophetic_word', value: 'prophetic_word' },
     { label: 'bible_teaching', value: 'bible_teaching' },
 ];
+const key = ref(0);
+
+watch(currentHomework, (value) => {
+    if (value) {
+        setValues({ ...value, questions: value.questions })
+        key.value++
+    }
+})
 
 onMounted(() => {
     if (homeworkId) {
@@ -112,23 +115,6 @@ const onUpload = () => {
                     class="w-full"></Textarea>
                 <div class="p-error text-red-500">{{ errors.description }}</div>
             </div>
-            <div class="flex gap-2">
-                <div class="">
-                    <div class="form-group">
-                        <label for=""> Due Date</label>
-                        <input type="date" v-model="date_end" v-bind="date_endProps" class="w-full" name="date_end" />
-                        <div class="p-error text-red-500">{{ errors.date_end }}</div>
-                    </div>
-                </div>
-                <div class="">
-                    <div class="form-group">
-                        <label for=""> Due Time</label>
-                        <input type="time" id="calendar-timeonly" v-model="time_end" v-bind="time_endProps"
-                            name="time_end" />
-                        <div class="p-error text-red-500">{{ errors.time_end }}</div>
-                    </div>
-                </div>
-            </div>
 
             <div class="form-group">
                 <label class="col-form-label" for="file-3">Upload homework file (optional)</label>
@@ -152,7 +138,7 @@ const onUpload = () => {
             </div>
 
             <div>
-                <QuestionBuilder :errors="errors.questions" v-model="questions" v-bind="questionsProps">
+                <QuestionBuilder :key="key" :errors="errors.questions" v-model="questions" v-bind="questionsProps">
                 </QuestionBuilder>
                 <div class="p-error text-red-500">{{ }}</div>
             </div>
@@ -185,11 +171,10 @@ const onUpload = () => {
                             <div class="p-error text-red-500">{{ errors.peer_review_who }}</div>
                         </div>
                         <div class="form-group w-full">
-                            <label for="peer_review_template">Choose a rubric</label>
-                            <Dropdown name="peer_review_template" id="peer_review_template"
-                                :options="peerReviewTemplateOptions" v-model="peer_review_template"
-                                v-bind="peer_review_templateProps" class="w-full" option-label="label"
-                                option-value="value" />
+                            <label for="peer_review_templat">Choose a rubric</label>
+                            <Dropdown id="peer_review_templat" :options="peerReviewTemplateOptions"
+                                v-model="peer_review_template" v-bind="peer_review_templateProps" class="w-full"
+                                option-label="label" option-value="value" />
                             <div class="p-error text-red-500">{{ errors.peer_review_template }}</div>
                         </div>
                     </div>

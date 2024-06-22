@@ -80,13 +80,13 @@ onMounted(() => {
         </div>
         <template v-else>
             <!-- <div class="mb-4"><Button @click="goBack" label="Back" outlined severity="secondary"></Button></div> -->
-            <div class="p-4 md:p-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
+            <div class="p-4 md:px-8 lg:p-12 bg-primary-700 text-white rounded flex flex-col gap-2 mb-4">
 
                 <div class="flex items-center gap-2">
                     <h3 class="text-xl md:text-2xl text-white mb-2">{{ currentCourse?.title }}</h3>
                 </div>
                 <div class="flex items-center gap-2">
-                    <p class="text-white mb-2">{{ currentCourse?.content }}</p>
+                    <p class="text-white mb-2">{{ currentCourse?.excerpt }}</p>
                 </div>
                 <div class="flex gap-2">
                     <span>{{ currentCourse?.lesson_count }} Lesson(s)</span> |
