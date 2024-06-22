@@ -5,14 +5,50 @@ class RunHomeworkRepo
     protected $deliveries_table = 'sakolawp_deliveries';
     protected $users_table = 'users';
     protected $questions_repo;
+    protected $delivery_repo = null;
 
     public function __construct()
     {
         $this->questions_repo = new RunQuestionsRepo();
+        // $this->delivery_repo = new RunDeliveryRepo();
+    }
+
+    function migrate($old_subject, $new_subject)
+    {
+        global $wpdb;
+
+        $batch_size = 10; // Adjust the batch size as needed
+        $offset = 0;
+
+        do {
+            $homeworks = $this->list(['subject_id' => $old_subject], $batch_size, $offset);
+
+            foreach ($homeworks as $homework) {
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "UPDATE {$wpdb->prefix}{$this->homework_table} SET subject_id = %d WHERE homework_id = %d",
+                        $new_subject,
+                        $homework->homework_id
+                    )
+                );
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "UPDATE {$wpdb->prefix}{$this->deliveries_table} SET subject_id = %d WHERE homework_code = %d",
+                        $new_subject,
+                        $homework->homework_code
+                    )
+                );
+            }
+
+            $offset += $batch_size;
+
+            // Free memory
+            $wpdb->flush();
+        } while (!empty($homeworks));
     }
 
     /** List Homeworks */
-    function list($args = [], $returnArray = false)
+    function list($args = [])
     {
         global $wpdb;
 

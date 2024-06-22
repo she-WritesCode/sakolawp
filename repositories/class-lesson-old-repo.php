@@ -1,5 +1,5 @@
 <?php
-class RunLessonRepo
+class RunLessonOldRepo
 {
     protected $lesson_table = 'sakolawp_lessons';
     protected $users_table = 'users';

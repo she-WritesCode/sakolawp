@@ -36,6 +36,51 @@ class RunCourseRepo
         $this->lesson_repo = new RunLessonRepo();
     }
 
+    public function migrate()
+    {
+        global $wpdb;
+
+        $batch_size = 2; // Adjust the batch size as needed
+        $offset = 0;
+
+        do {
+            $subjects = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM {$wpdb->prefix}sakolawp_subject LIMIT %d OFFSET %d",
+                    $batch_size,
+                    $offset
+                )
+            );
+
+            if (empty($subjects)) {
+                break;
+            }
+
+            foreach ($subjects as $subject) {
+                // Process each subject
+                $post_data = array(
+                    'post_title'   => $subject->name,
+                    'post_content' => '',
+                    'post_type'    => $this->post_type,
+                    'post_status'  => 'publish',
+                );
+                $post_id = wp_insert_post($post_data);
+
+                // Migrate associated data
+                $this->homework_repo->migrate($subject->subject_id, $post_id);
+            }
+
+            $offset += $batch_size;
+
+            // Free memory
+            $wpdb->flush();
+
+            // delete subject
+            $wpdb->delete($wpdb->prefix . 'sakolawp_subject', array('subject_id' => $subject->subject_id));
+        } while (!empty($subjects));
+    }
+
+
     /** List Courses by meta query and search string */
     public function list($meta_query = [], $search = '', $ids = [])
     {

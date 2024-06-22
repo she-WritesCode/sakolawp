@@ -59,6 +59,9 @@ function activate_sakolawp()
 function sakolawp_create_db()
 {
 	include('sakolawp_create_db.php');
+
+	$repo = new RunCourseRepo();
+	$repo->migrate();
 }
 
 function sakolawp_add_roles()
