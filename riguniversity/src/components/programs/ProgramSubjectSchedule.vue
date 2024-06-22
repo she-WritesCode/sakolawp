@@ -20,7 +20,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   homeworks: Homework[]
-  subjectId: string
+  subjectId: number
   programId: string
   dripMethod?: DripMethod
 }>()
@@ -28,9 +28,9 @@ const { getOneProgram: getOneProgram, currentProgram } = useProgramStore()
 const { errors, defineField, handleSubmit, setValues, values } = useForm<{
   [key: string]: ProgramSchedule
 }>({
-  initialValues: props.homeworks.reduce<{ [key: string]: ProgramSchedule }>((acc, homework) => {
+  initialValues: (props.homeworks??[]).reduce<{ [key: string]: ProgramSchedule }>((acc, homework) => {
     acc[homework.homework_id as string] = {
-      subject_id: props.subjectId as string,
+      subject_id: `${props.subjectId}`,
       class_id: props.programId as string,
       drip_method: (currentProgram.value?.drip_method || props.dripMethod) as DripMethod,
       content_id: homework.homework_id as string,
@@ -72,7 +72,7 @@ watch(programSchedules, (value) => {
       )
       if (existingSchedule) {
         schedules[homework.homework_id as string] = {
-          subject_id: props.subjectId as string,
+          subject_id: `${props.subjectId}`,
           class_id: props.programId as string,
           drip_method: (currentProgram.value?.drip_method || props.dripMethod) as DripMethod,
           content_id: homework.homework_id as string,
@@ -88,7 +88,7 @@ watch(programSchedules, (value) => {
 })
 
 onMounted(() => {
-  filter.subject_id = props.subjectId
+  filter.subject_id = `${props.subjectId}`
   filter.class_id = props.programId as string
   fetchProgramSchedules()
   if (props.programId && !currentProgram.value) getOneProgram(props.programId)
@@ -96,6 +96,7 @@ onMounted(() => {
 
 const releaseDate = computed(() =>
   Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
+  
     acc[homework_id] = DateHelper.formatDate(
       DateHelper.addDays(
         currentProgram.value?.start_date ?? '',

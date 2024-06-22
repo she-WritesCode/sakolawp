@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import type { Question } from './form'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
+import { useUrlParamsStore } from './urlparams'
 
 export interface Homework {
   homework_id?: string
@@ -32,14 +33,10 @@ export const useHomeworkStore = defineStore('homework', () => {
     subject_id: ''
   })
   const loading = reactive({ list: false, get: false, create: false, update: false, delete: false })
-  const homeworkId = computed(() => {
-    const url = new URL(window.location.href)
-    return url.searchParams.get('homework_id')
-  })
-  const action = computed(() => {
-    const url = new URL(window.location.href)
-    return url.searchParams.get('action')
-  })
+  const { urlParams } = useUrlParamsStore()
+
+  const homeworkId = computed(() => urlParams.value.get('homework_id'))
+  const action = computed(() => urlParams.value.get('rig_action'))
 
   const showAddForm = computed(() => action.value === 'add_homework')
   const showViewScreen = computed(() => action.value === 'view_homework' && !!homeworkId.value)
@@ -74,7 +71,7 @@ export const useHomeworkStore = defineStore('homework', () => {
 
   const goToViewHomework = (homeworkId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'view_homework')
+    url.searchParams.set('rig_action', 'view_homework')
     url.searchParams.set('homework_id', homeworkId)
     // showViewScreen.value = true
     window.location.href = url.toString()
@@ -82,14 +79,14 @@ export const useHomeworkStore = defineStore('homework', () => {
 
   const closeViewHomework = () => {
     const url = new URL(window.location.href)
-    url.searchParams.delete('action')
+    url.searchParams.delete('rig_action')
     url.searchParams.delete('homework_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
   const goToEditHomework = (homeworkId: string) => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_homework')
+    url.searchParams.set('rig_action', 'add_homework')
     url.searchParams.set('homework_id', homeworkId)
     // showViewScreen.value = true
     window.location.href = url.toString()
@@ -97,23 +94,23 @@ export const useHomeworkStore = defineStore('homework', () => {
 
   const closeEditHomework = () => {
     const url = new URL(window.location.href)
-    url.searchParams.delete('action')
+    url.searchParams.delete('rig_action')
     url.searchParams.set('homework_id', homeworkId.value as string)
-    url.searchParams.set('action', 'view_homework')
+    url.searchParams.set('rig_action', 'view_homework')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
 
   const goToAddForm = () => {
     const url = new URL(window.location.href)
-    url.searchParams.set('action', 'add_homework')
+    url.searchParams.set('rig_action', 'add_homework')
     // showAddForm.value = true
     window.location.href = url.toString()
   }
 
   const closeAddForm = () => {
     const url = new URL(window.location.href)
-    url.searchParams.delete('action')
+    url.searchParams.delete('rig_action')
     // showAddForm.value = false
     window.location.href = url.toString()
   }

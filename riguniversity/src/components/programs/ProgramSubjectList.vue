@@ -67,22 +67,17 @@ onMounted(() => {
                                 <template #header>
                                     <div>
                                         <div class="text-lg gap-2 flex items-center flex-wrap">
-                                            <span>{{ item.name }}</span>
+                                            <span>{{ item.title }}</span>
                                             <Tag :value="`${item.homework_count} Homeworks`" severity="warning" />
                                             <!-- <Tag :value="`${item.lesson_count} Lessons`" severity="success" /> -->
                                         </div>
-                                        <Tag :value="`Faculty: ${item.teacher_name}`" severity="info" />
+                                        <Tag :value="`Faculty: ${item.author}`" severity="info" />
                                     </div>
                                 </template>
 
-                                <!-- <template #togglericon="collapsed">
-                                    <div v-if="collapsed"> <i icon="pi pi-cog"></i></div>
-                                    <div v-if="!collapsed"> <i icon="pi pi-close"></i></div>
-                                </template> -->
-
-                                <ProgramSubjectSchedule :key="index" :homeworks="item.homeworks"
-                                    :subjectId="item.subject_id" :programId="(programId as string)"
-                                    :dripMethod="currentProgram?.drip_method"></ProgramSubjectSchedule>
+                                <ProgramSubjectSchedule :key="index" :homeworks="item.homeworks" :subjectId="item.ID"
+                                    :programId="(programId as string)" :dripMethod="currentProgram?.drip_method">
+                                </ProgramSubjectSchedule>
                             </Panel>
                         </template>
                     </div>

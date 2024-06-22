@@ -1,17 +1,98 @@
 <?php
 
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-course-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-questions-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-deliveries-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
-require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-enroll-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-user-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-event-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-section-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-accountability-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-schedule-repo.php';
+
+/** List Courses */
+function run_list_courses()
+{
+	$repo = new RunCourseRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list(sanitize_text_field($_POST['search']));
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single course */
+function run_single_course()
+{
+	$repo = new RunCourseRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$course_id = sanitize_text_field($_POST['course_id']);
+	$result = $repo->single($course_id);
+
+	if (!$result) {
+		wp_send_json_error('Course not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new course */
+function run_create_course()
+{
+	$repo = new RunCourseRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$course_data = [
+		'name' => sanitize_text_field($_POST['name']),
+		'teacher_id' => sanitize_text_field($_POST['teacher_id']),
+	];
+
+	$result = $repo->create($course_data);
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing course */
+function run_update_course()
+{
+	$repo = new RunCourseRepo();
+	$course_id = sanitize_text_field($_POST['course_id']);
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$course_data = [
+		'name' => sanitize_text_field($_POST['name']),
+		'teacher_id' => sanitize_text_field($_POST['teacher_id']),
+	];
+	$result = $repo->update($course_id, $course_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a course */
+function run_delete_course($course_id)
+{
+	$repo = new RunCourseRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$course_id = sanitize_text_field($_POST['course_id']);
+	$result = $repo->delete($course_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_courses', 'run_list_courses');
+add_action('wp_ajax_run_single_course', 'run_single_course');
+add_action('wp_ajax_run_create_course', 'run_create_course');
+add_action('wp_ajax_run_update_course', 'run_update_course');
+add_action('wp_ajax_run_delete_course', 'run_delete_course');
 
 /** List Subjects */
 function run_list_subjects()

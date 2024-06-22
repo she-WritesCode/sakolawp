@@ -175,11 +175,12 @@ onMounted(() => {
     <div v-else>
         <!-- Breadcrumb -->
         <div class="mb-4 px-2 text-sm text-surface-500">
-            <a href="/wp-admin/admin.php?page=sakolawp-manage-class">programs</a>
+            <a href="/wp-admin/admin.php?page=sakolawp-manage-class">Programs</a>
             <template v-if="currentProgram">
                 > <a :class="!currentSubject ? 'text-surface-900' : ''"
-                    :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">{{
-        currentProgram?.name }}</a>
+                    :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">
+                    {{ currentProgram?.name }}
+                </a>
                 <template v-if="currentSubject">
                     > <a
                         :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">Subjects</a>

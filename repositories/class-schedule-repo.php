@@ -3,15 +3,6 @@
 class RunClassScheduleRepo
 {
     protected $class_schedule_table = 'sakolawp_class_schedule';
-    // protected $class_table = 'sakolawp_class';
-    // protected $subject_table = 'sakolawp_subject';
-    // protected $class_subject_table = 'sakolawp_class_subject';
-    // protected $section_table = 'sakolawp_section';
-    // protected $accountability_table = 'sakolawp_accountability';
-    // protected $enroll_table = 'sakolawp_enroll';
-    // protected $homework_table = 'sakolawp_homework';
-    // protected $lesson_table = 'sakolawp_lessons';
-    // protected $users_table = 'users';
 
     /** List Schedules */
     public function list($args = [])

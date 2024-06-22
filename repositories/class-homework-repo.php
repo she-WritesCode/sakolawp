@@ -12,7 +12,7 @@ class RunHomeworkRepo
     }
 
     /** List Homeworks */
-    function list($args = [])
+    function list($args = [], $returnArray = false)
     {
         global $wpdb;
 
@@ -56,6 +56,47 @@ class RunHomeworkRepo
             $homework->questions = $this->questions_repo->get_by_homework($homework->homework_id);
             $homework->allow_peer_review = $homework->allow_peer_review == '1' ? true : false;
         }
+
+        return $result;
+    }
+
+    /** count homework */
+    function count($args = [])
+    {
+
+        global $wpdb;
+
+        $search = isset($args['search']) ? $args['search'] : '';
+        $subject_id = isset($args['subject_id']) ? $args['subject_id'] : '';
+        $uploader_id = isset($args['uploader_id']) ? $args['uploader_id'] : '';
+        $homework_code = isset($args['homework_code']) ? $args['homework_code'] : '';
+
+        $sql = "SELECT COUNT(h.homework_id) FROM {$wpdb->prefix}{$this->homework_table} h
+         WHERE 1=1"; // Start with a tautology
+
+        // Add search condition
+        if (!empty($search)) {
+            $sql .= " AND h.title LIKE '%$search%'";
+        }
+
+        // Add subject_id condition
+        if (!empty($subject_id)) {
+            $sql .= " AND h.subject_id = '$subject_id'";
+        }
+
+        // Add uploader_id condition
+        if (!empty($uploader_id)) {
+            $sql .= " AND h.uploader_id = $uploader_id";
+        }
+
+        // Add homework_code condition
+        if (!empty($homework_code)) {
+            $sql .= " AND h.homework_code = '$homework_code'";
+        }
+
+        $sql .= " GROUP BY h.homework_id";
+
+        $result = $wpdb->get_var($sql);
 
         return $result;
     }

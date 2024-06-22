@@ -4,7 +4,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
 import { createProgramSchema, useProgramStore } from '../../stores/program';
-import { useSubjectStore } from '../../stores/subject';
+import { useCourseStore } from '../../stores/course';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted, watch, ref } from 'vue';
 import { computed } from 'vue';
@@ -33,8 +33,8 @@ const options = [
     { label: "Specific dates", value: "specific_dates" },
 ]
 
-const { subjects: allSubjects, fetchSubjects } = useSubjectStore()
-const subjectOptions = computed(() => allSubjects.value.map((s) => ({ label: s.name, value: s.subject_id })))
+const { courses: allCourses, fetchCourses } = useCourseStore()
+const courseOptions = computed(() => allCourses.value.map((s) => ({ label: s.title, value: s.ID })))
 
 
 const submitForm = handleSubmit((values) => {
@@ -55,7 +55,7 @@ onMounted(() => {
     if (!currentprogram.value) {
         getOneprogram(programId as string)
     }
-    fetchSubjects()
+    fetchCourses()
 })
 
 
@@ -93,7 +93,7 @@ function deleteAprogram(id: string) {
             <div class="form-group">
                 <label for="name">Subjects</label>
                 <MultiSelect name="subjects" v-model="subjects" class="w-full text-base" v-bind="subjectsProps"
-                    :options="subjectOptions" optionLabel="label" optionValue="value" />
+                    :options="courseOptions" optionLabel="label" optionValue="value" />
                 <div class="p-error text-red-500">{{ errors.subjects }}</div>
             </div>
             <div class="form-group">

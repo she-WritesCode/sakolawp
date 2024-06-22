@@ -5,7 +5,7 @@ import MultiSelect from 'primevue/multiselect';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
 import { createProgramSchema, useProgramStore } from '../../stores/program';
-import { useSubjectStore } from '../../stores/subject';
+import { useCourseStore } from '../../stores/course';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
 import { computed } from 'vue';
@@ -30,18 +30,18 @@ const options = [
     { label: "Specific dates", value: "specific_dates" },
 ]
 
-const { subjects: allSubjects, fetchSubjects } = useSubjectStore()
-const subjectOptions = computed(() => allSubjects.value.map((s) => ({ label: s.name, value: s.subject_id })))
+const { courses: allCourses, fetchCourses } = useCourseStore()
+const courseOptions = computed(() => allCourses.value.map((s) => ({ label: s.title, value: s.ID })))
 
-const { createProgram: createprogram, closeAddForm } = useProgramStore()
+const { createProgram: createProgram, closeAddForm } = useProgramStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
-    createprogram(values as any)
+    createProgram(values as any)
 });
 
 onMounted(() => {
-    fetchSubjects()
+    fetchCourses()
 })
 </script>
 
@@ -62,7 +62,7 @@ onMounted(() => {
             <div class="form-group">
                 <label for="name">Subjects</label>
                 <MultiSelect name="subjects" v-model="subjects" class="w-full text-base" v-bind="subjectsProps"
-                    :options="subjectOptions" optionLabel="label" optionValue="value" />
+                    :options="courseOptions" optionLabel="label" optionValue="value" />
                 <div class="p-error text-red-500">{{ errors.subjects }}</div>
             </div>
             <div class="form-group">

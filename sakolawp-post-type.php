@@ -199,7 +199,7 @@ function sakolawp_event_date_meta_box_callback($post)
 	if ($post->ID) {
 	?>
 		<div class="my-4">
-			<h4 class="text-lg font-medium">QR Code For Attendance CODE</h4>
+			<h4 class="text-lg font-medium">QR Code For Attendance</h4>
 			<div id="qr_code_holder">
 				<img src="<?php echo esc_attr(get_post_meta($post->ID, 'attendance_qr_code', true)); ?>" />
 			</div>
@@ -208,7 +208,7 @@ function sakolawp_event_date_meta_box_callback($post)
 				<a class="btn skwp-btn btn-primary btn-large" id="generate_qr_code" data-event_id="<?php echo $post->ID; ?>">Download QR Code</a>
 			</div>
 		</div>
-<?php
+	<?php
 	}
 }
 
@@ -262,3 +262,194 @@ function sakolawp_save_event_date_meta_box_data($post_id)
 }
 
 add_action('save_post', 'sakolawp_save_event_date_meta_box_data');
+
+
+/*-----------------------------------------------------------------------------------*/
+/* The Course custom post type
+/*-----------------------------------------------------------------------------------*/
+
+add_action('init', 'sakolawp_course_register');
+function sakolawp_course_register()
+{
+	$labels = array(
+		'name'                => _x('Course', 'Post Type General Name', 'sakolawp'),
+		'singular_name'       => _x('Course', 'Post Type Singular Name', 'sakolawp'),
+		'menu_name'           => esc_html__('Course', 'sakolawp'),
+		'parent_item_colon'   => esc_html__('Parent Course:', 'sakolawp'),
+		'all_items'           => esc_html__('Courses', 'sakolawp'),
+		'view_item'           => esc_html__('View Course', 'sakolawp'),
+		'add_new_item'        => esc_html__('Add New Course', 'sakolawp'),
+		'add_new'             => esc_html__('Add New', 'sakolawp'),
+		'edit_item'           => esc_html__('Edit Course', 'sakolawp'),
+		'update_item'         => esc_html__('Update Course', 'sakolawp'),
+		'search_items'        => esc_html__('Search Courses', 'sakolawp'),
+		'not_found'           => esc_html__('Not found', 'sakolawp'),
+		'not_found_in_trash'  => esc_html__('Not found in Trash', 'sakolawp'),
+	);
+	$args = array(
+		'labels'             => $labels,
+		'public'             => true,
+		'publicly_queryable' => true,
+		'show_ui'            => true,
+		'query_var'          => 'course',
+		'capability_type'    => 'post',
+		'hierarchical'       => false,
+		'rewrite'            => array('slug' => 'course'),
+		'supports'           => array('title', 'editor', 'thumbnail'),
+		'menu_position'      => 2,
+		'show_in_menu' 		 =>  'sakolawp-settings', // show under Rig university menu
+		'register_meta_box_cb' => 'sakolawp_course_date_meta_box'
+
+	);
+	register_post_type('sakolawp-course', $args);
+
+	register_taxonomy(
+		"course-category",
+		array("sakolawp-course"),
+		array(
+			"hierarchical"    => true,
+			"label"       => "Categories",
+			"singular_label"  => "Categories",
+			"rewrite"     => true
+		)
+	);
+
+	register_taxonomy_for_object_type('course-category', 'sakolawp-course');
+
+	register_taxonomy(
+		"course-tags",
+		array("sakolawp-course"),
+		array(
+			"hierarchical"    => true,
+			"label"       => "Tags",
+			"singular_label"  => "Tags",
+			"rewrite"     => true
+		)
+	);
+
+	register_taxonomy_for_object_type('course-tags', 'sakolawp-course');
+
+	register_taxonomy_for_object_type('course-category', 'sakolawp-course');
+}
+
+
+// sakola course metabox
+function sakolawp_course_date_meta_box()
+{
+	add_meta_box(
+		'sakolawp-course-metabox',
+		esc_html__('Course Lessons', 'sakolawp'),
+		'sakolawp_course_meta_box_callback'
+	);
+}
+add_action('add_meta_boxes_sakolawp-course', 'sakolawp_course_date_meta_box');
+
+function sakolawp_course_meta_box_callback($post)
+{
+	wp_nonce_field('sakolawp_course_nonce', 'sakolawp_course_nonce');
+	?>
+	<div>
+		<div id="run-editcourselessonhomework"></div>
+	</div>
+<?php
+}
+
+function sakolawp_save_course_date_meta_box_data($post_id)
+{
+
+	// Check if our nonce is set.
+	if (!isset($_POST['sakolawp_course_nonce'])) {
+		return;
+	}
+
+	// Verify that the nonce is valid.
+	if (!wp_verify_nonce($_POST['sakolawp_course_nonce'], 'sakolawp_course_nonce')) {
+		return;
+	}
+
+	// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+		return;
+	}
+
+	// Check the user's permissions.
+	if (isset($_POST['post_type']) && 'page' == $_POST['post_type']) {
+		if (!current_user_can('edit_page', $post_id)) {
+			return;
+		}
+	} else {
+		if (!current_user_can('edit_post', $post_id)) {
+			return;
+		}
+	}
+
+	// do what you need to do
+}
+
+add_action('save_post', 'sakolawp_save_course_date_meta_box_data');
+
+/*-----------------------------------------------------------------------------------*/
+/* The Lesson custom post type
+/*-----------------------------------------------------------------------------------*/
+
+add_action('init', 'sakolawp_lesson_register');
+function sakolawp_lesson_register()
+{
+	$labels = array(
+		'name'                => _x('Lesson', 'Post Type General Name', 'sakolawp'),
+		'singular_name'       => _x('Lesson', 'Post Type Singular Name', 'sakolawp'),
+		'menu_name'           => esc_html__('Lesson', 'sakolawp'),
+		'parent_item_colon'   => esc_html__('Parent Lesson:', 'sakolawp'),
+		'all_items'           => esc_html__('All Lessons', 'sakolawp'),
+		'view_item'           => esc_html__('View Lesson', 'sakolawp'),
+		'add_new_item'        => esc_html__('Add New Lesson', 'sakolawp'),
+		'add_new'             => esc_html__('Add New', 'sakolawp'),
+		'edit_item'           => esc_html__('Edit Lesson', 'sakolawp'),
+		'update_item'         => esc_html__('Update Lesson', 'sakolawp'),
+		'search_items'        => esc_html__('Search Lessons', 'sakolawp'),
+		'not_found'           => esc_html__('Not found', 'sakolawp'),
+		'not_found_in_trash'  => esc_html__('Not found in Trash', 'sakolawp'),
+	);
+	$args = array(
+		'labels'             => $labels,
+		'public'             => true,
+		'publicly_queryable' => true,
+		'show_ui'            => true,
+		'query_var'          => 'lesson',
+		'capability_type'    => 'post',
+		'hierarchical'       => false,
+		'rewrite'            => array('slug' => 'lesson'),
+		'supports'           => array('title', 'editor', 'thumbnail'),
+		'menu_position'      => 2,
+		'show_in_menu' 		 => false, // 'sakolawp-settings', // show under Rig university menu
+		'register_meta_box_cb' => 'sakolawp_lesson_date_meta_box'
+
+	);
+	register_post_type('sakolawp-lesson', $args);
+}
+
+
+// sakola lesson metabox
+function sakolawp_lesson_date_meta_box()
+{
+	add_meta_box(
+		'sakolawp-lesson-metabox',
+		esc_html__('Lesson Date & Attendance', 'sakolawp'),
+		'sakolawp_lesson_date_meta_box_callback'
+	);
+}
+add_action('add_meta_boxes_sakolawp-lesson', 'sakolawp_lesson_date_meta_box');
+
+function sakolawp_lesson_date_meta_box_callback($post)
+{
+?>
+	<div></div>
+<?php
+}
+
+function sakolawp_save_lesson_date_meta_box_data($post_id)
+{
+	//
+}
+
+add_action('save_post', 'sakolawp_save_lesson_date_meta_box_data');

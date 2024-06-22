@@ -5,7 +5,14 @@ class RunDeliveryRepo
     protected $enroll_table = 'sakolawp_enroll';
     protected $deliveries_table = 'sakolawp_deliveries';
     protected $users_table = 'users';
-    protected $subject_table = 'sakolawp_subject';
+    // protected $subject_table = 'sakolawp_subject';
+    protected $courses_repo = null;
+
+    public function __construct()
+    {
+        $this->courses_repo = new RunCourseRepo();
+    }
+
 
 
     /** List Deliveries */
@@ -17,9 +24,8 @@ class RunDeliveryRepo
         $student_id = isset($args['student_id']) ? $args['student_id'] : '';
         $homework_code = isset($args['homework_code']) ? $args['homework_code'] : '';
 
-        $sql = "SELECT d.*, s.name AS subject_name, st.display_name as student_name
+        $sql = "SELECT d.*, st.display_name as student_name
             FROM {$wpdb->prefix}{$this->deliveries_table} d
-            LEFT JOIN {$wpdb->prefix}{$this->subject_table} s ON d.subject_id = s.subject_id
             LEFT JOIN {$wpdb->prefix}{$this->users_table} st ON d.student_id = st.ID
             WHERE 1=1"; // Start with a tautology
 
@@ -42,6 +48,13 @@ class RunDeliveryRepo
 
         $result = $wpdb->get_results($sql);
 
+        if ($result) {
+            // get courses 
+            foreach ($result as $key => $row) {
+                $result[$key]->course = $this->courses_repo->single($row->subject_id);
+            }
+        }
+
         return $result;
     }
 
@@ -58,7 +71,6 @@ class RunDeliveryRepo
 		FROM {$wpdb->prefix}{$this->homework_table} h
 		JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
 		JOIN {$wpdb->prefix}{$this->enroll_table} e ON d.student_id = e.student_id
-		JOIN {$wpdb->prefix}{$this->subject_table} s ON h.subject_id = s.subject_id
 		WHERE h.allow_peer_review = 1  
 		AND h.peer_review_who = 'student'";
 
@@ -88,6 +100,14 @@ class RunDeliveryRepo
         $sql .= " ORDER BY h.created_at DESC, d.date DESC;";
 
         $result = $wpdb->get_results($sql);
+
+        if ($result) {
+            // get courses 
+            foreach ($result as $key => $row) {
+                $result[$key]->course = $this->courses_repo->single($row->subject_id);
+            }
+        }
+
         return $result;
     }
 
@@ -98,7 +118,6 @@ class RunDeliveryRepo
 
         $sql = "SELECT d.*, s.name AS subject_name, st.display_name as student_name
             FROM {$wpdb->prefix}{$this->deliveries_table} d
-            LEFT JOIN {$wpdb->prefix}{$this->subject_table} s ON d.subject_id = s.subject_id
             LEFT JOIN {$wpdb->prefix}{$this->users_table} st ON d.student_id = st.ID
          WHERE d.delivery_id = '$delivery_id'
          GROUP BY d.delivery_id";
@@ -107,6 +126,11 @@ class RunDeliveryRepo
 
         if (!$result) {
             error_log($wpdb->last_error);
+        }
+
+        if ($result) {
+            // get courses 
+            $result->course = $this->courses_repo->single($result->subject_id);
         }
 
         return $result;

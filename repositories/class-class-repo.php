@@ -2,7 +2,6 @@
 class RunClassRepo
 {
     protected $class_table = 'sakolawp_class';
-    protected $subject_table = 'sakolawp_subject';
     protected $class_subject_table = 'sakolawp_class_subject';
     protected $section_table = 'sakolawp_section';
     protected $accountability_table = 'sakolawp_accountability';
@@ -10,6 +9,12 @@ class RunClassRepo
     protected $homework_table = 'sakolawp_homework';
     protected $lesson_table = 'sakolawp_lessons';
     protected $users_table = 'users';
+    protected $courses_repo = null;
+
+    public function __construct()
+    {
+        $this->courses_repo = new RunCourseRepo();
+    }
 
     /** List Class */
     function list($args = [])
@@ -55,26 +60,22 @@ class RunClassRepo
         global $wpdb;
 
         $search = isset($args['search']) ? $args['search'] : '';
-        $class_id = isset($args['class_id']) ? $args['class_id'] : '0';
+        $class_id = isset($args['class_id']) ? intval($args['class_id']) : 0;
 
-        $sql = "SELECT s.*, COUNT(h.homework_id) AS homework_count, COUNT(l.lesson_id) AS lesson_count, t.display_name as teacher_name
-        FROM {$wpdb->prefix}{$this->subject_table} s
-        JOIN {$wpdb->prefix}{$this->class_subject_table} cs ON s.subject_id = cs.subject_id
-        LEFT JOIN {$wpdb->prefix}{$this->homework_table} h ON s.subject_id = h.subject_id
-        LEFT JOIN {$wpdb->prefix}{$this->lesson_table} l ON s.subject_id = l.subject_id
-        LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON s.teacher_id = t.ID
-        WHERE s.name LIKE '%$search%'
-        AND cs.class_id = $class_id
-        GROUP BY s.subject_id";
+        $sql = $wpdb->prepare("SELECT cs.subject_id FROM {$wpdb->prefix}{$this->class_subject_table} cs WHERE cs.class_id = %d", $class_id);
 
-        $result = $wpdb->get_results($sql);
+        $classSubjects = $wpdb->get_results($sql);
+        $classSubjectsIds = array_map(function ($subject) {
+            return $subject->subject_id;
+        }, $classSubjects);
+
+        $result = $this->courses_repo->list([], $search, $classSubjectsIds);
 
         $homeworkRepo = new RunHomeworkRepo();
+
         if ($result) {
-            foreach ($result as $subject) {
-                $subject->homeworks = $homeworkRepo->list([
-                    'subject_id' => $subject->subject_id
-                ]);
+            foreach ($result as &$course) {
+                $course['homeworks'] = (array) $homeworkRepo->list(['subject_id' => $course['ID']]);
             }
         }
         return $result;
@@ -111,7 +112,7 @@ class RunClassRepo
         ]);
         $subjects = $this->list_subjects(['class_id' => $result->class_id]);
         $result->subjects = array_map(function ($subject) {
-            return $subject->subject_id;
+            return $subject['ID'];
         }, $subjects);
 
         return $result;
@@ -132,7 +133,14 @@ class RunClassRepo
 
         if ($result) {
             $class_id = $wpdb->insert_id;
+            $wpdb->delete(
+                "{$wpdb->prefix}{$this->class_subject_table}",
+                [
+                    'class_id' => $class_id,
+                ]
+            );
             foreach ($subjects as $subject_id) {
+                // Delete from class_subject table
                 skwp_insert_or_update_record(
                     "{$wpdb->prefix}{$this->class_subject_table}",
                     array(
@@ -162,6 +170,12 @@ class RunClassRepo
         );
 
         if ($result) {
+            $wpdb->delete(
+                "{$wpdb->prefix}{$this->class_subject_table}",
+                [
+                    'class_id' => $class_id,
+                ]
+            );
             foreach ($subjects as $subject_id) {
                 skwp_insert_or_update_record(
                     "{$wpdb->prefix}{$this->class_subject_table}",

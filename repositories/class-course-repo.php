@@ -1,10 +1,43 @@
 <?php
-class RunLessonRepo
-{
-    protected $post_type = 'sakolawp-lesson';
+/*
+$course_repo = new RunCourseRepo();
+$meta_query = array(
+    'relation' => 'AND',
+    array(
+        'key'     => 'your_meta_key_1',
+        'value'   => 'your_meta_value_1',
+        'compare' => '='
+    ),
+    array(
+        'key'     => 'your_meta_key_2',
+        'value'   => 'your_meta_value_2',
+        'compare' => '='
+    ),
+    // Add more conditions as needed
+);
 
-    /** List Lessons by meta query and search string */
-    public function list($meta_query = [], $search = '')
+$search = 'search term';
+
+$courses = $course_repo->list($meta_query, $search);
+
+echo '<pre>';
+print_r($courses);
+echo '</pre>';
+ */
+class RunCourseRepo
+{
+    protected $post_type = 'sakolawp-course';
+    protected $homework_repo = null;
+    protected $lesson_repo = null;
+
+    public function __construct()
+    {
+        $this->homework_repo = new RunHomeworkRepo();
+        $this->lesson_repo = new RunLessonRepo();
+    }
+
+    /** List Courses by meta query and search string */
+    public function list($meta_query = [], $search = '', $ids = [])
     {
         $args = array(
             'post_type'      => $this->post_type,
@@ -12,18 +45,22 @@ class RunLessonRepo
             'meta_query'     => $meta_query,
         );
 
+        if (!empty($ids)) {
+            $args['post__in'] = $ids;
+        }
+
         if (!empty($search)) {
             $args['s'] = $search;
         }
 
         $query = new WP_Query($args);
-        $lessons = array();
+        $courses = array();
 
         if ($query->have_posts()) {
             while ($query->have_posts()) {
                 $query->the_post();
                 global $post;
-                $lessons[] = array(
+                $courses[] = array(
                     'ID'        => get_the_ID(),
                     'title'     => get_the_title(),
                     'content'   => get_the_content(),
@@ -32,16 +69,18 @@ class RunLessonRepo
                     'permalink' => get_permalink(),
                     'date'      => get_the_date(),
                     'author'    => get_the_author(),
+                    'homework_count' => $this->homework_repo->count(['subject_id' => get_the_ID()]),
+                    'lesson_count' => $this->lesson_repo->count_by_meta_query(['key' => 'sakolawp_subject_id', 'value' => get_the_ID(), 'compare' => '=']),
                 );
             }
             wp_reset_postdata();
         }
 
-        return $lessons;
+        return $courses;
     }
 
 
-    /** Count Lessons by meta query */
+    /** Count Courses by meta query */
     public function count_by_meta_query($meta_query)
     {
         $args = array(
@@ -55,12 +94,12 @@ class RunLessonRepo
         return $query->found_posts;
     }
 
-    /** Create a new lesson */
-    public function create($lesson_data)
+    /** Create a new course */
+    public function create($course_data)
     {
         $post_data = array(
-            'post_title'   => $lesson_data['title'],
-            'post_content' => $lesson_data['content'],
+            'post_title'   => $course_data['title'],
+            'post_content' => $course_data['content'],
             'post_status'  => 'publish',
             'post_type'    => $this->post_type,
         );
@@ -68,7 +107,7 @@ class RunLessonRepo
         $post_id = wp_insert_post($post_data);
 
         if ($post_id && !is_wp_error($post_id)) {
-            foreach ($lesson_data['meta'] as $meta_key => $meta_value) {
+            foreach ($course_data['meta'] as $meta_key => $meta_value) {
                 update_post_meta($post_id, $meta_key, $meta_value);
             }
         }
@@ -76,10 +115,10 @@ class RunLessonRepo
         return $post_id;
     }
 
-    /** Read a single lesson */
-    public function single($lesson_id)
+    /** Read a single course */
+    public function single($course_id)
     {
-        $post = get_post($lesson_id);
+        $post = get_post($course_id);
 
         if ($post && $post->post_type === $this->post_type) {
             return array(
@@ -91,25 +130,27 @@ class RunLessonRepo
                 'permalink' => get_permalink($post->ID),
                 'date'      => $post->post_date,
                 'author'    => get_the_author_meta('display_name', $post->post_author),
+                'homework_count' => $this->homework_repo->count(['subject_id' => $post->ID]),
+                'lesson_count' => $this->lesson_repo->count_by_meta_query(['key' => 'subject_id', 'value' => $post->ID, 'compare' => '=']),
             );
         }
 
         return null;
     }
 
-    /** Update an existing lesson */
-    public function update($lesson_id, $lesson_data)
+    /** Update an existing course */
+    public function update($course_id, $course_data)
     {
         $post_data = array(
-            'ID'           => $lesson_id,
-            'post_title'   => $lesson_data['title'],
-            'post_content' => $lesson_data['content'],
+            'ID'           => $course_id,
+            'post_title'   => $course_data['title'],
+            'post_content' => $course_data['content'],
         );
 
         $post_id = wp_update_post($post_data);
 
         if ($post_id && !is_wp_error($post_id)) {
-            foreach ($lesson_data['meta'] as $meta_key => $meta_value) {
+            foreach ($course_data['meta'] as $meta_key => $meta_value) {
                 update_post_meta($post_id, $meta_key, $meta_value);
             }
         }
@@ -117,9 +158,9 @@ class RunLessonRepo
         return $post_id;
     }
 
-    /** Delete an lesson */
-    public function delete($lesson_id)
+    /** Delete an course */
+    public function delete($course_id)
     {
-        return wp_delete_post($lesson_id, true);
+        return wp_delete_post($course_id, true);
     }
 }
