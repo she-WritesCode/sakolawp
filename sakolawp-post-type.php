@@ -338,7 +338,7 @@ function sakolawp_course_date_meta_box()
 {
 	add_meta_box(
 		'sakolawp-course-metabox',
-		esc_html__('Course Lessons', 'sakolawp'),
+		esc_html__('Course Details', 'sakolawp'),
 		'sakolawp_course_meta_box_callback'
 	);
 }
@@ -434,7 +434,7 @@ function sakolawp_lesson_date_meta_box()
 {
 	add_meta_box(
 		'sakolawp-lesson-metabox',
-		esc_html__('Lesson Date & Attendance', 'sakolawp'),
+		esc_html__('Lesson Details', 'sakolawp'),
 		'sakolawp_lesson_date_meta_box_callback'
 	);
 }
@@ -442,14 +442,43 @@ add_action('add_meta_boxes_sakolawp-lesson', 'sakolawp_lesson_date_meta_box');
 
 function sakolawp_lesson_date_meta_box_callback($post)
 {
+	wp_nonce_field('sakolawp_lesson_nonce', 'sakolawp_lesson_nonce');
 ?>
-	<div></div>
+	<div>
+		<div id="run-editlesson"></div>
+	</div>
 <?php
 }
 
 function sakolawp_save_lesson_date_meta_box_data($post_id)
 {
-	//
+	// Check if our nonce is set.
+	if (!isset($_POST['sakolawp_lesson_nonce'])) {
+		return;
+	}
+
+	// Verify that the nonce is valid.
+	if (!wp_verify_nonce($_POST['sakolawp_lesson_nonce'], 'sakolawp_lesson_nonce')) {
+		return;
+	}
+
+	// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+		return;
+	}
+
+	// Check the user's permissions.
+	if (isset($_POST['post_type']) && 'page' == $_POST['post_type']) {
+		if (!current_user_can('edit_page', $post_id)) {
+			return;
+		}
+	} else {
+		if (!current_user_can('edit_post', $post_id)) {
+			return;
+		}
+	}
+
+	// do what you need to do
 }
 
 add_action('save_post', 'sakolawp_save_lesson_date_meta_box_data');

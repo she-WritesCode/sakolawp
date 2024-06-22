@@ -36,51 +36,6 @@ class RunCourseRepo
         $this->lesson_repo = new RunLessonRepo();
     }
 
-    public function migrate()
-    {
-        global $wpdb;
-
-        $batch_size = 2; // Adjust the batch size as needed
-        $offset = 0;
-
-        do {
-            $subjects = $wpdb->get_results(
-                $wpdb->prepare(
-                    "SELECT * FROM {$wpdb->prefix}sakolawp_subject LIMIT %d OFFSET %d",
-                    $batch_size,
-                    $offset
-                )
-            );
-
-            if (empty($subjects)) {
-                break;
-            }
-
-            foreach ($subjects as $subject) {
-                // Process each subject
-                $post_data = array(
-                    'post_title'   => $subject->name,
-                    'post_content' => '',
-                    'post_type'    => $this->post_type,
-                    'post_status'  => 'publish',
-                );
-                $post_id = wp_insert_post($post_data);
-
-                // Migrate associated data
-                $this->homework_repo->migrate($subject->subject_id, $post_id);
-            }
-
-            $offset += $batch_size;
-
-            // Free memory
-            $wpdb->flush();
-
-            // delete subject
-            $wpdb->delete($wpdb->prefix . 'sakolawp_subject', array('subject_id' => $subject->subject_id));
-        } while (!empty($subjects));
-    }
-
-
     /** List Courses by meta query and search string */
     public function list($meta_query = [], $search = '', $ids = [])
     {
@@ -115,7 +70,7 @@ class RunCourseRepo
                     'date'      => get_the_date(),
                     'author'    => get_the_author(),
                     'homework_count' => $this->homework_repo->count(['subject_id' => get_the_ID()]),
-                    'lesson_count' => $this->lesson_repo->count_by_meta_query(['key' => 'sakolawp_subject_id', 'value' => get_the_ID(), 'compare' => '=']),
+                    'lesson_count' => $this->lesson_repo->count_by_meta_query([['key' => 'sakolawp_subject_id', 'value' => (string)get_the_ID(), 'compare' => '=']]),
                 );
             }
             wp_reset_postdata();
@@ -176,7 +131,7 @@ class RunCourseRepo
                 'date'      => $post->post_date,
                 'author'    => get_the_author_meta('display_name', $post->post_author),
                 'homework_count' => $this->homework_repo->count(['subject_id' => $post->ID]),
-                'lesson_count' => $this->lesson_repo->count_by_meta_query(['key' => 'subject_id', 'value' => $post->ID, 'compare' => '=']),
+                'lesson_count' => $this->lesson_repo->count_by_meta_query([['key' => 'sakolawp_subject_id', 'value' => (string)$post->ID, 'compare' => '=']]),
             );
         }
 
@@ -207,5 +162,49 @@ class RunCourseRepo
     public function delete($course_id)
     {
         return wp_delete_post($course_id, true);
+    }
+
+    public function migrate()
+    {
+        global $wpdb;
+
+        $batch_size = 2; // Adjust the batch size as needed
+        $offset = 0;
+
+        do {
+            $subjects = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM {$wpdb->prefix}sakolawp_subject LIMIT %d OFFSET %d",
+                    $batch_size,
+                    $offset
+                )
+            );
+
+            if (empty($subjects)) {
+                break;
+            }
+
+            foreach ($subjects as $subject) {
+                // Process each subject
+                $post_data = array(
+                    'post_title'   => $subject->name,
+                    'post_content' => '',
+                    'post_type'    => $this->post_type,
+                    'post_status'  => 'publish',
+                );
+                $post_id = wp_insert_post($post_data);
+
+                // Migrate associated data
+                $this->homework_repo->migrate($subject->subject_id, $post_id);
+            }
+
+            $offset += $batch_size;
+
+            // Free memory
+            $wpdb->flush();
+
+            // delete subject
+            $wpdb->delete($wpdb->prefix . 'sakolawp_subject', array('subject_id' => $subject->subject_id));
+        } while (!empty($subjects));
     }
 }

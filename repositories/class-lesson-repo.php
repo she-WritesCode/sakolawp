@@ -40,7 +40,6 @@ class RunLessonRepo
         return $lessons;
     }
 
-
     /** Count Lessons by meta query */
     public function count_by_meta_query($meta_query)
     {

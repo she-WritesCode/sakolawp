@@ -139,10 +139,10 @@ class Sakolawp_Admin
 			add_menu_page('RIG University', 'RIG University', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings'), 'dashicons-welcome-learn-more', 2);
 			add_submenu_page($this->plugin_name . '-settings', 'Dashboard', 'Dashboard', 'administrator', $this->plugin_name . '-settings', array($this, 'displayPluginAdminSettings'));
 
-			add_submenu_page($this->plugin_name . '-settings', esc_html__('Classes', 'sakolawp'), esc_html__('Manage Classes', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-class', array($this, 'manageClassAdminSettings'), 3);
+			add_submenu_page($this->plugin_name . '-settings', esc_html__('Programs', 'sakolawp'), esc_html__('Manage Programs', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-class', array($this, 'manageClassAdminSettings'), 3);
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Parent Groups', 'sakolawp'), esc_html__('Manage Parent Groups', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-section', array($this, 'manageSectionAdminSettings'), 4);
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Accountability Groups', 'sakolawp'), esc_html__('Manage Accountability Groups', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-accountability', array($this, 'manageAccountabilityAdminSettings'), 5);
-			add_submenu_page($this->plugin_name . '-settings', esc_html__('Subjects', 'sakolawp'), esc_html__('Manage Subjects', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-subject', array($this, 'manageSubjectAdminSettings'), 3);
+			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Subjects', 'sakolawp'), esc_html__('Manage Subjects', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-subject', array($this, 'manageSubjectAdminSettings'), 3);
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Homeworks', 'sakolawp'), esc_html__('Homeworks', 'sakolawp'), 'administrator', $this->plugin_name . '-homework', array($this, 'homeworkAdminSettings'), 6);
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Routine', 'sakolawp'), esc_html__('Manage Routines', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-routine', array($this, 'manageRoutineAdminSettings'));
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Attendance', 'sakolawp'), esc_html__('Manage Attendance', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-attendance', array($this, 'manageAttendanceAdminSettings'));
