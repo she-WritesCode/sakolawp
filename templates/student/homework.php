@@ -58,17 +58,17 @@ if (!empty($enroll)) :
 						$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $enroll->class_id AND content_type = 'homework' AND content_id = '$homework_id'");
 
 						if (!$homework_schedule) {
-							continue;
-						}
-
-						if ($homework_schedule->drip_method == 'specific_dates') {
-							$release_date = $homework_schedule->release_date;
-							$due_date = $homework_schedule->deadline_date;
+							$release_date = '0000-00-00 00:00:00';
+							$due_date = '0000-00-00 00:00:00';
 						} else {
-							$release_date = date('Y-m-d H:i:s', strtotime($programStartDate . " +{$homework_schedule->release_days} days"));
-							$due_date = date('Y-m-d H:i:s', strtotime($release_date . " +{$homework_schedule->deadline_days} days"));
+							if ($homework_schedule->drip_method == 'specific_dates') {
+								$release_date = $homework_schedule->release_date;
+								$due_date = $homework_schedule->deadline_date;
+							} else {
+								$release_date = date('Y-m-d H:i:s', strtotime($programStartDate . " +{$homework_schedule->release_days} days"));
+								$due_date = date('Y-m-d H:i:s', strtotime($release_date . " +{$homework_schedule->deadline_days} days"));
+							}
 						}
-
 						// echo '<pre>' . esc_html($row['title']) . ' $release_date' . $release_date . ' $due_date' . $due_date . '</pre>';
 						$homeWorkIsDueForRelease = strtotime($release_date) <= max(strtotime($programStartDate), time());
 					?>

@@ -207,9 +207,11 @@ if (!empty($enroll)) :
 									</th>
 									<td>
 										<?php
-										$subject_id = $row["subject_id"];
-										$subject_name = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
-										echo esc_html($subject_name['name']);
+										// going this route because I recently changed subject to courses(a custom post type) and deliveries where not migrated
+										$subject_id = $wpdb->get_var("SELECT subject_id FROM {$homework_table} WHERE homework_code = '{$row['homework_code']}'");
+										// $subject_id = $row['subject_id'];
+										$subject = get_post((int)$subject_id);
+										echo esc_html($subject->post_title);
 										?>
 									</td>
 								</tr>

@@ -26,12 +26,20 @@ if (!empty($enroll)) :
 	$student_section = $wpdb->get_row("SELECT section_id, name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $enroll->section_id");
 	$student_accountability = $wpdb->get_row("SELECT accountability_id, name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $enroll->accountability_id");
 
+	// $courseRepo = new RunCourseRepo();
+	// $courses = $courseRepo->list(['key' => 'sakolawp_class_id', 'value' => $enroll->class_id, 'compare' => '=']);
+	// $course_ids = array_column($courses, 'ID');
+	// $course_ids_string = implode(',', $course_ids);
+	// $homeworks = $wpdb->get_results("SELECT homework_id FROM {$homework_table} WHERE subject_id IN($course_ids_string) AND allow_peer_review = 1 AND peer_review_who = 'student' ORDER BY created_at DESC;", ARRAY_A);
+	// $homework_ids = array_column($homeworks, 'homework_id');
+	// $homework_ids_string = implode(', ', $homework_ids);
+
 	$homework_deliveries = $wpdb->get_results("SELECT d.*, h.title, h.section_id,h.homework_code
 		FROM $homework_table h
 		JOIN $deliveries_table d ON h.homework_code = d.homework_code
 		JOIN $enroll_table e ON d.student_id = e.student_id
 		WHERE h.allow_peer_review = 1  
-		AND h.peer_review_who = 'student'  
+		AND h.peer_review_who = 'student'
 		AND d.student_id != '$student_id' 
 		AND d.class_id = '$enroll->class_id' 
 		AND e.section_id = '$enroll->section_id'
@@ -112,9 +120,12 @@ if (!empty($enroll)) :
 										<?php echo esc_html($row['title']); ?>
 									</td> -->
 									<td>
-										<?php $subject_id = $row['subject_id'];
-										$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = $subject_id");
-										echo esc_html($subject->name);
+										<?php
+										// going this route because I recently changed subject to courses(a custom post type) and deliveries where not migrated
+										$subject_id = $wpdb->get_var("SELECT subject_id FROM {$homework_table} WHERE homework_code = '{$row['homework_code']}'");
+										// $subject_id = $row['subject_id'];
+										$subject = get_post((int)$subject_id);
+										echo esc_html($subject->post_title);
 										?>
 									</td>
 									<td>
