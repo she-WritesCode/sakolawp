@@ -15,7 +15,7 @@ onMounted(() => {
     if (lessonId) {
         getOneLesson(lessonId)
     } else {
-        filter.subject_id = subjectId ?? ""
+        // filter.subject_id = subjectId ?? ""
         // fetchLessons();
     }
 });

@@ -5,7 +5,7 @@ import Button from 'primevue/button';
 import TabMenu from 'primevue/tabmenu';
 import { ref } from "vue";
 import HomeworkList from '../subjects/HomeworkList.vue'
-import Lessons from '../subjects/Lessons.vue'
+import Lessons from '../subjects/SubjectLessons.vue'
 import Students from '../subjects/Students.vue'
 import EditSubject from '../subjects/EditSubject.vue'
 import { useHomeworkStore } from "../../stores/homework";

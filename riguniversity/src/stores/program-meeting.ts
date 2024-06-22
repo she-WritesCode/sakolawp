@@ -54,7 +54,7 @@ export interface programMeeting {
   author?: string
   meta?: Record<string, string[]>
 }
-export interface CreateprogramMeeting {
+export interface CreateProgramMeeting {
   title: string
   content?: string
   meta: {
@@ -64,7 +64,7 @@ export interface CreateprogramMeeting {
     _sakolawp_event_class_id: string
   }
 }
-export const createprogramMeetingSchema = yup.object({
+export const createProgramMeetingSchema = yup.object({
   title: yup.string().required(),
   content: yup.string().optional(),
   meta: yup.object({
@@ -78,7 +78,7 @@ export const createprogramMeetingSchema = yup.object({
 const programMeetingStore = () => {
   const toast = useToast()
   const programMeetings = ref<programMeeting[]>([])
-  const currentprogramMeeting = ref<programMeeting | undefined>(undefined)
+  const currentProgramMeeting = ref<programMeeting | undefined>(undefined)
   const filter = reactive<{
     search: string
     class_id: string
@@ -113,10 +113,10 @@ const programMeetingStore = () => {
   )
 
   watch(filter, () => {
-    fetchprogramMeetings()
+    fetchProgramMeetings()
   })
 
-  const fetchprogramMeetings = () => {
+  const fetchProgramMeetings = () => {
     if (!filter.search) loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -141,7 +141,7 @@ const programMeetingStore = () => {
       })
   }
 
-  const goToViewprogramMeeting = (programMeetingId: number) => {
+  const goToViewProgramMeeting = (programMeetingId: number) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_programMeeting')
     url.searchParams.set('event_id', `${programMeetingId}`)
@@ -149,14 +149,14 @@ const programMeetingStore = () => {
     window.location.href = url.toString()
   }
 
-  const closeViewprogramMeeting = () => {
+  const closeViewProgramMeeting = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('event_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditprogramMeeting = (programMeetingId: number) => {
+  const goToEditProgramMeeting = (programMeetingId: number) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_programMeeting')
     url.searchParams.set('event_id', `${programMeetingId}`)
@@ -164,7 +164,7 @@ const programMeetingStore = () => {
     window.location.href = url.toString()
   }
 
-  const closeEditprogramMeeting = () => {
+  const closeEditProgramMeeting = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('event_id')
@@ -189,7 +189,7 @@ const programMeetingStore = () => {
     window.location.href = url.toString()
   }
 
-  const getOneprogramMeeting = (id: string) => {
+  const getOneProgramMeeting = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -204,7 +204,7 @@ const programMeetingStore = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramMeeting.value = response.data
+        currentProgramMeeting.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -214,7 +214,7 @@ const programMeetingStore = () => {
       })
   }
 
-  const createprogramMeeting = (args: CreateprogramMeeting) => {
+  const createProgramMeeting = (args: CreateProgramMeeting) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -229,7 +229,7 @@ const programMeetingStore = () => {
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramMeeting.value = response.data
+        currentProgramMeeting.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
@@ -248,7 +248,7 @@ const programMeetingStore = () => {
       })
   }
 
-  const updateprogramMeeting = (args: Partial<CreateprogramMeeting> & { ID: number }) => {
+  const updateProgramMeeting = (args: Partial<CreateProgramMeeting> & { ID: number }) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -263,7 +263,7 @@ const programMeetingStore = () => {
     })
       .then((response) => response.json())
       .then(() => {
-        getOneprogramMeeting(programMeetingId.value as string)
+        getOneProgramMeeting(programMeetingId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
@@ -279,7 +279,7 @@ const programMeetingStore = () => {
       })
   }
 
-  const deleteprogramMeeting = (id: string) => {
+  const deleteProgramMeeting = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -297,7 +297,7 @@ const programMeetingStore = () => {
       })
       .finally(() => {
         loading.delete = false
-        fetchprogramMeetings()
+        fetchProgramMeetings()
       })
   }
 
@@ -350,27 +350,27 @@ const programMeetingStore = () => {
 
   return {
     programMeetings: computed(() => programMeetings),
-    fetchprogramMeetings,
+    fetchProgramMeetings,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentprogramMeeting: computed(() => currentprogramMeeting),
-    goToViewprogramMeeting,
-    closeViewprogramMeeting,
+    currentProgramMeeting: computed(() => currentProgramMeeting),
+    goToViewProgramMeeting,
+    closeViewProgramMeeting,
     programMeetingId,
-    getOneprogramMeeting,
+    getOneProgramMeeting,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createprogramMeeting,
-    updateprogramMeeting,
-    deleteprogramMeeting,
-    goToEditprogramMeeting,
-    closeEditprogramMeeting,
+    createProgramMeeting,
+    updateProgramMeeting,
+    deleteProgramMeeting,
+    goToEditProgramMeeting,
+    closeEditProgramMeeting,
     generateQRCode
   }
 }
 
-export const useprogramMeetingStore = (uniqueStoreName = 'programMeeting') =>
+export const useProgramMeetingStore = (uniqueStoreName = 'programMeeting') =>
   defineStore(uniqueStoreName, programMeetingStore)()

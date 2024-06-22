@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useprogramMeetingStore, type CalendarDay, type CreateprogramMeeting } from "../../stores/program-meeting";
+import { useProgramMeetingStore, type CalendarDay, type CreateProgramMeeting } from "../../stores/program-meeting";
 import { useProgramStore } from "../../stores/program";
 import { DateHelper } from "../../utils/date";
 import Tag from 'primevue/tag';
@@ -8,7 +8,7 @@ import Button from 'primevue/button';
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
-import AddprogramMeeting from './AddprogramMeeting.vue'
+import AddProgramMeeting from './AddProgramMeeting.vue'
 import LoadingIndicator from '../LoadingIndicator.vue'
 import { ref } from "vue";
 import { Calendar as VCalendar } from 'v-calendar'
@@ -19,29 +19,29 @@ const { programId } = useProgramStore();
 const {
     programMeetings,
     filter,
-    goToEditprogramMeeting,
+    goToEditProgramMeeting,
     programMeetingId,
     loading,
     showAddForm, showEditScreen,
-    goToAddForm, deleteprogramMeeting, generateQRCode, currentprogramMeeting, getOneprogramMeeting
-} = useprogramMeetingStore();
+    goToAddForm, deleteProgramMeeting, generateQRCode, currentProgramMeeting, getOneProgramMeeting
+} = useProgramMeetingStore();
 
-const editInitialValues = computed<CreateprogramMeeting & { ID: number } | undefined>(() => currentprogramMeeting.value ? ({
-    ID: currentprogramMeeting.value!.ID!,
-    title: currentprogramMeeting.value!.title || "",
-    content: currentprogramMeeting.value!.content || "",
+const editInitialValues = computed<CreateProgramMeeting & { ID: number } | undefined>(() => currentProgramMeeting.value ? ({
+    ID: currentProgramMeeting.value!.ID!,
+    title: currentProgramMeeting.value!.title || "",
+    content: currentProgramMeeting.value!.content || "",
     meta: {
-        _sakolawp_event_date: DateHelper.toSimpleBackendDateString(currentprogramMeeting.value!.meta!._sakolawp_event_date![0] || new Date()),
-        _sakolawp_event_date_clock: currentprogramMeeting.value!.meta!._sakolawp_event_date_clock![0] || DateHelper.toSimpleBackendTimeString(new Date()),
-        _sakolawp_event_class_id: currentprogramMeeting.value!.meta!._sakolawp_event_class_id![0] || programId,
-        _sakolawp_event_location: currentprogramMeeting.value!.meta!._sakolawp_event_location![0] || "",
+        _sakolawp_event_date: DateHelper.toSimpleBackendDateString(currentProgramMeeting.value!.meta!._sakolawp_event_date![0] || new Date()),
+        _sakolawp_event_date_clock: currentProgramMeeting.value!.meta!._sakolawp_event_date_clock![0] || DateHelper.toSimpleBackendTimeString(new Date()),
+        _sakolawp_event_class_id: currentProgramMeeting.value!.meta!._sakolawp_event_class_id![0] || programId,
+        _sakolawp_event_location: currentProgramMeeting.value!.meta!._sakolawp_event_location![0] || "",
     },
-} as CreateprogramMeeting & { ID: number }) : undefined)
+} as CreateProgramMeeting & { ID: number }) : undefined)
 
 const {
     programMeetings: allprogramMeetings,
     filter: allprogramMeetingsFilter,
-} = useprogramMeetingStore('allprograms');
+} = useProgramMeetingStore('allPrograms');
 
 const showDeleteDialog = ref(false)
 const toBeDeleted = ref<string | null>(null)
@@ -54,7 +54,7 @@ function closeDelete() {
     toBeDeleted.value = null
 }
 function deleteAMeeting(id: string) {
-    deleteprogramMeeting(id)
+    deleteProgramMeeting(id)
     closeDelete()
 }
 
@@ -109,7 +109,7 @@ onMounted(() => {
     filter.class_id = programId || ''
     filter.meta_query = [{ key: '_sakolawp_event_date', value: DateHelper.toSimpleBackendDateString(selectedDate.value), compare: '=' }]
     allprogramMeetingsFilter.class_id = programId || ''
-    if (programMeetingId) getOneprogramMeeting(programMeetingId!)
+    if (programMeetingId) getOneProgramMeeting(programMeetingId!)
 });
 
 
@@ -182,7 +182,7 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <Button size="small" outlined @click="goToEditprogramMeeting(meeting.ID!)"
+                            <Button size="small" outlined @click="goToEditProgramMeeting(meeting.ID!)"
                                 label="Edit"></Button>
 
                             <Button @click="generateQRCode(meeting.ID!)" size="small" text
@@ -195,11 +195,11 @@ onMounted(() => {
 
         <Dialog v-model:visible="showAddForm" modal header="Add Meeting" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <AddprogramMeeting :programId="programId!"></AddprogramMeeting>
+            <AddProgramMeeting :programId="programId!"></AddProgramMeeting>
         </Dialog>
         <Dialog v-model:visible="showEditScreen" modal header="Edit Meeting" :style="{ width: '30rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <AddprogramMeeting :programId="programId!" :initialValues="editInitialValues"></AddprogramMeeting>
+            <AddProgramMeeting :programId="programId!" :initialValues="editInitialValues"></AddProgramMeeting>
         </Dialog>
         <Dialog v-model:visible="showDeleteDialog" modal header="Remove Meeting from program"
             :style="{ width: '30rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">

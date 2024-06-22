@@ -3,7 +3,7 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import { useForm } from 'vee-validate';
-import { createprogramMeetingSchema, useprogramMeetingStore, type CreateprogramMeeting } from '../../stores/program-meeting';
+import { createProgramMeetingSchema, useProgramMeetingStore, type CreateProgramMeeting } from '../../stores/program-meeting';
 import { DateHelper } from '../../utils/date';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted } from 'vue';
@@ -11,9 +11,9 @@ import { watch } from 'vue';
 
 const props = defineProps<{
     programId: string;
-    initialValues?: CreateprogramMeeting & { ID: number };
+    initialValues?: CreateProgramMeeting & { ID: number };
 }>()
-const { errors, defineField, handleSubmit, setValues, values } = useForm<CreateprogramMeeting & { ID?: number }>({
+const { errors, defineField, handleSubmit, setValues, values } = useForm<CreateProgramMeeting & { ID?: number }>({
     initialValues: {
         title: "",
         content: "",
@@ -25,7 +25,7 @@ const { errors, defineField, handleSubmit, setValues, values } = useForm<Createp
         },
         ...props.initialValues,
     },
-    validationSchema: toTypedSchema(createprogramMeetingSchema),
+    validationSchema: toTypedSchema(createProgramMeetingSchema),
 });
 
 const [title, titleProps] = defineField('title');
@@ -36,15 +36,15 @@ const [location, locationProps] = defineField('meta._sakolawp_event_location');
 // we set this from props
 // const [class_id, class_idProps] = defineField('meta._sakolawp_event_class_id');
 
-const { createprogramMeeting, closeAddForm, updateprogramMeeting } = useprogramMeetingStore()
+const { createProgramMeeting, closeAddForm, updateProgramMeeting } = useProgramMeetingStore()
 
 const submitForm = handleSubmit((values) => {
     console.log(values);
     if (props.initialValues && props.initialValues?.ID) {
-        updateprogramMeeting({ ...values, ID: props.initialValues!.ID })
+        updateProgramMeeting({ ...values, ID: props.initialValues!.ID })
     } else {
 
-        createprogramMeeting(values)
+        createProgramMeeting(values)
     }
 });
 watch(() => props.initialValues, () => {
