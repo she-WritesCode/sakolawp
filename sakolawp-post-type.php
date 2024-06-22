@@ -294,9 +294,9 @@ function sakolawp_course_register()
 		'query_var'          => 'course',
 		'capability_type'    => 'post',
 		'hierarchical'       => false,
-		'rewrite'            => array('slug' => 'course'),
+		'rewrite'            => array('slug' => 'courses'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 2,
+		'menu_position'      => 1,
 		'show_in_menu' 		 =>  'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_course_date_meta_box'
 

@@ -120,6 +120,11 @@ if (!empty($enroll)) :
 	}
 	foreach ($current_homework as $row) :
 		$homework_id = $row['homework_id'];
+		$current_user_has_submitted = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = $student_id");
+		$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $enroll->class_id AND content_type = 'homework' AND content_id = '$homework_id'");
+
+		$release_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->release_date : date('Y-m-d H:i:s', $homework_schedule->release_days * 24 * 60 * 60);
+		$due_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->deadline_date : date('Y-m-d H:i:s', $homework_schedule->deadline_days * 24 * 60 * 60);
 
 		// Get peer reviews for the current user and the specific homework
 		$peer_reviews = $wpdb->get_results($wpdb->prepare(
@@ -135,11 +140,11 @@ if (!empty($enroll)) :
 		<?php
 
 		$query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name, date FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
-		$time_end = $row['time_end'];
-		$date_end = $row['date_end'];
-		$homework_due_date = $row['date_end'] . ' ' . $row['time_end'];
+		// $time_end = $row['time_end'];
+		// $date_end = $row['date_end'];
+		$homework_due_date = $due_date;
 		$today = date('d-m-Y', time());
-		$is_late =  strtotime($today) > strtotime($homework_due_date);
+		$is_late =  $homework_due_date == '0000-00-00 00:00:00' ? false : strtotime($today) > strtotime($homework_due_date);
 		$has_been_marked = $mark !== NULL || count($peer_reviews) > 0;
 		$word_count_min = $row['word_count_min'];
 		$word_count_max = $row['word_count_max'];
@@ -201,7 +206,7 @@ if (!empty($enroll)) :
 								<div class="">
 									<div class="btn btn-danger skwp-btn">
 										<?php esc_html_e('Sorry you cannot ' . $action . ' this homework any longer. The deadline was', 'sakolawp'); ?>
-										<span class="skwp-date" data-end-date="<?php echo esc_html($date_end); ?>" data-end-time="<?php echo esc_html($time_end); ?>"></span>
+										<span class="skwp-date" data-end-date="<?php echo date('Y-m-d', strtotime($homework_due_date)); ?>" data-end-time="<?php echo date('H:i:s', strtotime($homework_due_date)); ?>"></span>
 									</div>
 								</div>
 							<?php endif; ?>
@@ -346,8 +351,8 @@ if (!empty($enroll)) :
 									<td>
 										<?php
 										$subject_id = $row["subject_id"];
-										$subject_name = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
-										echo esc_html($subject_name['name']);
+										$subject = get_post((int)$subject_id);
+										echo esc_html($subject->post_title);
 										?>
 									</td>
 								</tr>
@@ -377,7 +382,7 @@ if (!empty($enroll)) :
 									</th>
 									<td>
 										<?php
-										$class_id = $row["class_id"];
+										$class_id = $enroll->class_id;
 										$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$class_id'", ARRAY_A);
 										echo esc_html($class['name']);
 										?>

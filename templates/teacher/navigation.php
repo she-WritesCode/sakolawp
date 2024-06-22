@@ -28,7 +28,7 @@
 			<i class="sakolawp2-icon-edit"></i>
 		</a>
 		<a href="<?php echo esc_url(wp_logout_url(home_url())); ?>" class="skwp-edit-profile-logout skwp-prof-side">
-			<i class="sakolawp2-icon-logout"></i>
+			<i class="sakolawp2-icon-logout"></i> Logout
 		</a>
 	</div>
 </div>

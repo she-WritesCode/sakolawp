@@ -103,8 +103,8 @@ foreach ($current_homework as $row) :
 						<td>
 							<?php
 							$subject_id = $row["subject_id"];
-							$subject_name = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
-							echo esc_html($subject_name['name']);
+							$subject = get_post((int)$subject_id);
+							echo esc_html($subject->post_title);
 							?>
 						</td>
 					</tr>

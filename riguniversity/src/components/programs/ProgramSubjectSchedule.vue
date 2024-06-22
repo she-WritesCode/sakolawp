@@ -139,14 +139,21 @@ const setDefaultDeadlineTime = (homework_id: string) => {
 
 <template>
   <form @submit="submitForm">
-    <div>program starts on: {{ currentProgram?.start_date || 'error' }}</div>
-    <Divider />
     <div class="grid gap-0 mb-4">
+      <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
+        <div class="text-yellow-700 text-sm">
+          If no deadline is set the student will continue to have access to submit the homework at
+          any time.
+          <br/>
+          If the release date is not set the assessment would be released to the students by default
+        </div>
+        <Button type="submit" class="w-64" label="Save Schedule"></Button>
+      </div>
+    <Divider />
       <template v-for="homework in homeworks" :key="homework.homework_id">
         <div class="flex flex-col md:flex-row gap-4 items-center md:justify-between">
           <div class="text-base w-full">
             <div>{{ homework.title }}</div>
-            {{ schedules[homework.homework_id!]!.release_date }}
             <Tag :value="`${homework.questions.length} Questions`" severity="secondary" />
           </div>
           <div class="w-full md:max-w-96 lg:max-w-[500px]">
@@ -208,9 +215,11 @@ const setDefaultDeadlineTime = (homework_id: string) => {
         <Divider />
       </template>
       <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
-        <div class="text-yellow-700">
+        <div class="text-yellow-700 text-sm">
           If no deadline is set the student will continue to have access to submit the homework at
-          any time
+          any time.
+          <br/>
+          If the release date is not set the assessment would be released to the students by default
         </div>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>
