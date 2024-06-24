@@ -46,19 +46,23 @@ class RunClassScheduleRepo
 
         $results = [];
 
-        foreach ($data_array as $data) {
-            $result[] = skwp_insert_or_update_record(
+        foreach ($data_array as $key => $data) {
+            $results[$key] = skwp_insert_or_update_record(
                 "{$wpdb->prefix}{$this->class_schedule_table}",
                 $data,
                 ['content_type', 'content_id', 'subject_id', 'class_id']
             );
         }
 
-        $results_string = implode(',', $results);
+        if (count($results) > 0) {
+            $results_string = implode(',', $results);
 
-        $schedules = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}{$this->class_schedule_table}", ARRAY_A);
+            $schedules = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}{$this->class_schedule_table} WHERE id IN($results_string)", ARRAY_A);
 
-        return $schedules;
+            return $schedules;
+        }
+
+        return $results;
     }
 
     /** Update an existing schedule */

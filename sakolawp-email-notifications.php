@@ -275,6 +275,8 @@ function custom_cron_schedules($schedules)
 	return $schedules;
 }
 add_filter('cron_schedules', 'custom_cron_schedules');
+
+
 // Schedule Homework and Lesson Reminders:
 function schedule_homework_reminders($schedules)
 {
@@ -282,10 +284,13 @@ function schedule_homework_reminders($schedules)
 		$class_id = $schedule['class_id'];
 		$content_type = $schedule['content_type'];
 		$content_id = $schedule['content_id'];
-		$release_date = strtotime($schedule['release_date']);
-		// convert to utc time 
+		$release_date_local = $schedule['release_date'];
+		$deadline_date_local = $schedule['deadline_date'];
 
-		$deadline_date = strtotime($schedule['deadline_date']);
+		// Convert local times to UTC
+		$release_date = convert_to_utc($release_date_local);
+		$deadline_date = convert_to_utc($deadline_date_local);
+
 		$unique_id = $content_id . '_' . $release_date;
 
 		// Schedule release date reminder
@@ -303,8 +308,8 @@ function schedule_homework_reminders($schedules)
 			$hook_48 = 'sakolawp_send_due_reminder_' . $unique_id_48;
 			$hook_24 = 'sakolawp_send_due_reminder_' . $unique_id_24;
 
-			wp_schedule_single_event($deadline_date - 172800, $hook_48, array($content_id, $content_type, $class_id, '48_hours'));
-			wp_schedule_single_event($deadline_date - 86400, $hook_24, array($content_id, $content_type, $$class_id, '24_hours'));
+			wp_schedule_single_event($deadline_date - 172800, $hook_48, array($content_id, $content_type, $class_id));
+			wp_schedule_single_event($deadline_date - 86400, $hook_24, array($content_id, $content_type, $class_id));
 
 			add_action($hook_48, 'sakolawp_send_due_reminder', 10, 3);
 			add_action($hook_24, 'sakolawp_send_due_reminder', 10, 3);
@@ -315,6 +320,7 @@ function schedule_homework_reminders($schedules)
 // Create Callback Functions:
 function sakolawp_send_release_reminder($content_id, $content_type, $class_id)
 {
+	error_log("Scheduled cron job is running -> sakolawp_send_release_reminder");
 	if ($content_type == 'homework') {
 		$repo = new RunHomeworkRepo();
 		$homework_data = $repo->single($content_id);
@@ -329,6 +335,7 @@ function sakolawp_send_release_reminder($content_id, $content_type, $class_id)
 }
 function sakolawp_send_due_reminder($content_id, $content_type, $class_id, $reminder_type)
 {
+	error_log("Scheduled cron job is running -> sakolawp_send_due_reminder");
 	if ($content_type == 'homework') {
 		$repo = new RunHomeworkRepo();
 		$homework_data = $repo->single($content_id);
@@ -348,29 +355,53 @@ add_action('sakolawp_send_due_reminder', 'sakolawp_send_due_reminder', 10, 3);
 // Handle Schedule Updates:
 function sakolawp_update_schedules($new_schedules)
 {
-	// Clear existing cron jobs
-	clear_existing_cron_jobs();
+	try {
+		// Clear existing cron jobs
+		clear_existing_cron_jobs($new_schedules);
 
-	// Schedule new reminders
-	schedule_homework_reminders($new_schedules);
+		// Schedule new reminders
+		schedule_homework_reminders($new_schedules);
+	} catch (\Throwable $th) {
+		wp_mail(
+			get_option('admin_email'),
+			'Error scheduling homework reminders',
+			$th->getMessage() . "\n" . $th->getTraceAsString()
+		);
+	}
 }
 
-function clear_existing_cron_jobs()
+function clear_existing_cron_jobs($criteria)
 {
+	// Ensure criteria is an array
+	if (!is_array($criteria)) {
+		return;
+	}
+
 	// Get all scheduled events
 	$crons = _get_cron_array();
 
-	// Loop through events and unschedule them
+	// Loop through events and unschedule those related to the specified criteria
 	foreach ($crons as $timestamp => $cron) {
 		foreach ($cron as $hook => $dings) {
-			if (strpos($hook, 'sakolawp_send_release_reminder_') === 0 || strpos($hook, 'sakolawp_send_due_reminder_') === 0 || strpos($hook, 'send_release_reminder_') === 0 || strpos($hook, 'send_due_reminder_') === 0) {
-				foreach ($dings as $sig => $data) {
-					wp_unschedule_event($timestamp, $hook, $data['args']);
+			foreach ($dings as $sig => $data) {
+				// Check if the hook is related to release or due reminders
+				if (strpos($hook, 'sakolawp_send_release_reminder_') === 0 || strpos($hook, 'sakolawp_send_due_reminder_') === 0) {
+					// Check if the content_id and content_type in the args match the specified criteria
+					foreach ($criteria as $criterion) {
+						if (
+							isset($data['args'][0]) && $data['args'][0] == $criterion['content_id'] &&
+							isset($data['args'][1]) && $data['args'][1] == $criterion['content_type']
+						) {
+							wp_unschedule_event($timestamp, $hook, $data['args']);
+							break; // No need to check other criteria if one matches
+						}
+					}
 				}
 			}
 		}
 	}
 }
+
 
 /************************************
  * DAILY DIGEST

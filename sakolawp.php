@@ -1431,8 +1431,6 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
 			return false;
 		}
 
-		error_log('existing record id ' . $existing_record_id);
-
 		return $existing_record_id;
 	} else {
 		// If the record does not exist, insert it
@@ -1839,6 +1837,25 @@ if (!function_exists('array_group_by')) {
 	}
 }
 
+
+function convert_to_utc($local_time)
+{
+	// Get the site's timezone string (e.g., 'Africa/Lagos')
+	$timezone_string = get_option('timezone_string') ?? 'Africa/Lagos';
+
+	if ($timezone_string) {
+		// Create DateTime object with local time and site's timezone
+		$datetime = new DateTime($local_time, new DateTimeZone($timezone_string));
+		// Convert the DateTime object to UTC
+		$datetime->setTimezone(new DateTimeZone('UTC'));
+		// Return the UTC timestamp
+		return $datetime->getTimestamp();
+	} else {
+		// If timezone string is not set, assume UTC
+		return strtotime($local_time);
+	}
+}
+
 add_action('admin_menu', 'custom_cron_jobs_menu');
 
 function custom_cron_jobs_menu()
@@ -1861,15 +1878,18 @@ function custom_cron_jobs_page()
 
 	$cron_jobs = _get_cron_array();
 	$schedules = wp_get_schedules();
+	// Get the site's timezone string (e.g., 'Africa/Lagos')
+	$timezone_string = get_option('timezone_string') ?? 'Africa/Lagos';
 ?>
 	<div class="wrap">
-		<h1><?php esc_html_e('Cron Jobs', 'text-domain'); ?></h1>
+		<h1><?php esc_html_e('Cron Jobs', 'sakolawp'); ?></h1>
 		<table class="widefat table" cellspacing="0">
 			<thead>
 				<tr>
-					<th><?php esc_html_e('Hook Name', 'text-domain'); ?></th>
-					<th><?php esc_html_e('Next Run (GMT/UTC)', 'text-domain'); ?></th>
-					<th><?php esc_html_e('Recurrence', 'text-domain'); ?></th>
+					<th><?php esc_html_e('Hook Name', 'sakolawp'); ?></th>
+					<th><?php esc_html_e('Next Run (GMT/UTC)', 'sakolawp'); ?></th>
+					<th><?php esc_html_e("Next Run $timezone_string", 'sakolawp'); ?></th>
+					<th><?php esc_html_e('Recurrence', 'sakolawp'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -1878,13 +1898,14 @@ function custom_cron_jobs_page()
 						<?php foreach ($events as $event) : ?>
 							<tr>
 								<td><?php echo esc_html($hook); ?></td>
-								<td><?php echo esc_html(get_date_from_gmt(date('Y-m-d H:i:s', $timestamp))); ?></td>
+								<td><?php echo esc_html(date('F j, Y, g:i a', $timestamp)); ?></td>
+								<td><?php echo esc_html(get_date_from_gmt(date('Y-m-d H:i:s', $timestamp), 'F j, Y, g:i a')); ?></td>
 								<td>
 									<?php
 									if (isset($event['schedule'])) {
 										echo !empty($schedules[$event['schedule']]) ? esc_html($schedules[$event['schedule']]['display']) : '-';
 									} else {
-										esc_html_e('One-time', 'text-domain');
+										esc_html_e('One-time', 'sakolawp');
 									}
 									?>
 								</td>
