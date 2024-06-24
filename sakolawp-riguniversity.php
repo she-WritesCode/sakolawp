@@ -215,9 +215,7 @@ function run_create_homework()
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sanitize_text_field($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
-	$date_end = date("Y-m-d", strtotime(sanitize_text_field($_POST['date_end'])));
-	$time_end = sanitize_text_field($_POST['time_end']);
-	$class_id = sanitize_text_field($_POST['class_id']);
+	// $class_id = sanitize_text_field($_POST['class_id']);
 	$file_name = $_FILES["file_name"]["name"];
 	$section_id = sanitize_text_field($_POST['section_id']);
 	$subject_id = sanitize_text_field($_POST['subject_id']);
@@ -249,8 +247,6 @@ function run_create_homework()
 		'subject_id' => $subject_id,
 		'uploader_id' => $uploader_id,
 		'uploader_type' => $uploader_type,
-		'time_end' => $time_end,
-		'date_end' => $date_end,
 		'file_name' => $file_name,
 		'allow_peer_review' => $allow_peer_review,
 		'peer_review_template' => $peer_review_template,
