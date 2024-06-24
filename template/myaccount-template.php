@@ -24,7 +24,7 @@ $page = skwp_get_page_by_title('register');
 		<?php if (!empty($logo_image)) { ?>
 			<img src="<?php echo esc_url($logo_image[0]); ?>" alt="<?php esc_html_e('logo', 'sakolawp'); ?>" />
 		<?php } ?>
-		<h4 class="sakolawp_header"><?php esc_html_e('Login Account', 'sakolawp'); ?></h4>
+		<h4 class="sakolawp_header"><?php esc_html_e('Great to have back!', 'sakolawp'); ?></h4>
 		<?php sakolawp_show_error_messages(); ?>
 		<p>
 			<input name="sakolawp_user_login" id="sakolawp_user_login" class="required swkp-usr-form" type="text" placeholder="<?php esc_html_e('Username', 'sakolawp'); ?>" />

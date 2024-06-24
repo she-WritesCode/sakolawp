@@ -296,7 +296,7 @@ function sakolawp_course_register()
 		'hierarchical'       => false,
 		'rewrite'            => array('slug' => 'courses'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 1,
+		'menu_position'      => 99,
 		'show_in_menu' 		 =>  'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_course_date_meta_box'
 
@@ -330,6 +330,7 @@ function sakolawp_course_register()
 	register_taxonomy_for_object_type('course-tags', 'sakolawp-course');
 
 	register_taxonomy_for_object_type('course-category', 'sakolawp-course');
+	flush_rewrite_rules();
 }
 
 
@@ -418,7 +419,7 @@ function sakolawp_lesson_register()
 		'query_var'          => 'lesson',
 		'capability_type'    => 'post',
 		'hierarchical'       => false,
-		'rewrite'            => array('slug' => 'lesson'),
+		'rewrite'            => array('slug' => 'lessons'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
 		'menu_position'      => 2,
 		'show_in_menu' 		 => false, // 'sakolawp-settings', // show under Rig university menu
@@ -426,6 +427,7 @@ function sakolawp_lesson_register()
 
 	);
 	register_post_type('sakolawp-lesson', $args);
+	flush_rewrite_rules();
 }
 
 
@@ -482,3 +484,45 @@ function sakolawp_save_lesson_date_meta_box_data($post_id)
 }
 
 add_action('save_post', 'sakolawp_save_lesson_date_meta_box_data');
+
+
+function my_custom_template($template)
+{
+	if (is_post_type_archive('sakolawp-lesson')) {
+		// Check if the plugin's template file exists
+		$plugin_template = plugin_dir_path(__FILE__) . 'templates/archive-sakolawp-lesson.php';
+		if (file_exists($plugin_template)) {
+			return $plugin_template;
+		}
+	}
+	if (is_post_type_archive('sakolawp-course')) {
+		// Check if the plugin's template file exists
+		$plugin_template = plugin_dir_path(__FILE__) . 'templates/archive-sakolawp-course.php';
+		if (file_exists($plugin_template)) {
+			return $plugin_template;
+		}
+	}
+	return $template;
+}
+add_filter('template_include', 'my_custom_template');
+
+add_filter('single_template', 'sakolawp_single_course_template');
+function sakolawp_single_course_template($single)
+{
+	global $post;
+
+	// course
+	if ($post->post_type == 'sakolawp-course') {
+		if (file_exists(SAKOLAWP_PLUGIN_DIR . '/templates/single-sakolawp-course.php')) {
+			return SAKOLAWP_PLUGIN_DIR . '/templates/single-sakolawp-course.php';
+		}
+	}
+	// lesson
+	if ($post->post_type == 'sakolawp-lesson') {
+		if (file_exists(SAKOLAWP_PLUGIN_DIR . '/templates/single-sakolawp-lesson.php')) {
+			return SAKOLAWP_PLUGIN_DIR . '/templates/single-sakolawp-lesson.php';
+		}
+	}
+
+	return $single;
+}

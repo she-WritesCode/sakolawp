@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "../../templates/**/*.php",
   ],
   darkMode: 'class', // This enables dark mode based on the presence of the "dark" class in the HTML tag
   theme: {
