@@ -1431,6 +1431,8 @@ function skwp_insert_or_update_record($table_name, $data, $unique_columns, $id_c
 			return false;
 		}
 
+		error_log('existing record id ' . $existing_record_id);
+
 		return $existing_record_id;
 	} else {
 		// If the record does not exist, insert it

@@ -97,7 +97,7 @@ function sakolawp_event_register()
 		'hierarchical'       => false,
 		'rewrite'            => array('slug' => 'event'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 2,
+		'menu_position'      => 7,
 		'show_in_menu' 		 => 'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_event_date_meta_box'
 
@@ -296,7 +296,7 @@ function sakolawp_course_register()
 		'hierarchical'       => false,
 		'rewrite'            => array('slug' => 'courses'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 99,
+		'menu_position'      => 7,
 		'show_in_menu' 		 =>  'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_course_date_meta_box'
 
@@ -421,7 +421,7 @@ function sakolawp_lesson_register()
 		'hierarchical'       => false,
 		'rewrite'            => array('slug' => 'lessons'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 2,
+		'menu_position'      => 7,
 		'show_in_menu' 		 => false, // 'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_lesson_date_meta_box'
 
@@ -504,7 +504,7 @@ function my_custom_template($template)
 	}
 	return $template;
 }
-add_filter('template_include', 'my_custom_template');
+add_filter('template_include', 'my_custom_template', 99);
 
 add_filter('single_template', 'sakolawp_single_course_template');
 function sakolawp_single_course_template($single)

@@ -23,7 +23,7 @@ class RunClassScheduleRepo
             $sql .= $wpdb->prepare(" AND content_type = %s", $args['content_type']);
         }
 
-        error_log("RunClassScheduleRepo =>" . $sql);
+        // error_log("RunClassScheduleRepo =>" . $sql);
 
         $results = $wpdb->get_results($sql);
         return $results;
@@ -54,7 +54,11 @@ class RunClassScheduleRepo
             );
         }
 
-        return $results;
+        $results_string = implode(',', $results);
+
+        $schedules = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}{$this->class_schedule_table}", ARRAY_A);
+
+        return $schedules;
     }
 
     /** Update an existing schedule */

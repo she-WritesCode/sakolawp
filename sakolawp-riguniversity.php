@@ -273,7 +273,7 @@ function run_create_homework()
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
 	if ($result) { // If the homework was created successfully
-		do_action('sakolawp_homework_added', $repo->single($result));
+		// do_action('sakolawp_homework_added', $repo->single($result));
 		wp_send_json_success($result, 201);
 		die();
 	}
@@ -341,7 +341,7 @@ function run_duplicate_homework()
 	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
 
 	if ($result) { // If the homework was created successfully
-		do_action('sakolawp_homework_added', $repo->single($result));
+		// do_action('sakolawp_homework_added', $repo->single($result));
 		wp_send_json_success($result, 201);
 		die();
 	}
@@ -723,10 +723,11 @@ function run_create_schedule()
 		}
 	}
 
-	error_log(print_r($schedule_data, true));
+	// error_log(print_r($schedule_data, true));
 
 	$result = $repo->create(array_values($schedule_data));
 
+	sakolawp_update_schedules($result);
 
 	wp_send_json_success($result, 201);
 	die();

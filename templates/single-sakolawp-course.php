@@ -10,12 +10,12 @@
                 <header class="entry-header text-center p-4 md:p-8 min-h-48">
                     <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
 
-                    <button>
+                    <!-- <button>
                         <div class="flex gap-2 items-center">
                             <span>Enroll Now</span>
                             <i class="pi pi-arrow-right"></i>
                         </div>
-                    </button>
+                    </button> -->
                 </header>
 
                 <div class="my-8 entry-content">
@@ -41,7 +41,7 @@
                                     <?php
                                     foreach ($lessons as $key => $lesson) {
                                     ?>
-                                        <div class="shadow-sm border hover:shadow-md rounded-md p-4 md:p-8 flex gap-4 justify-between items-center">
+                                        <div class="shadow-sm border  rounded-md p-4 md:p-8 flex gap-4 justify-between items-center">
 
                                             <div>
                                                 <div class="uppercase text-gray-600 text-sm">

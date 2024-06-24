@@ -75,21 +75,36 @@ function replace_placeholders($template, $data)
 	return $template;
 }
 
-function get_homework_args($homework)
+function get_homework_args($homework, $class_id)
 {
+	global $wpdb;
 	// Check if $homework is an array
 	if (is_array($homework)) {
 		// Convert array to object for consistent access
 		$homework = (object)$homework;
 	}
+	$class = $wpdb->get_row("SELECT name, start_date FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
 
+	$programStartDate = $class->start_date;
 	// Initialize variables to hold extracted values
 	$homework_id = isset($homework->homework_id) ? $homework->homework_id : '';
 	$homework_title = isset($homework->title) ? $homework->title : '';
 	$homework_description = isset($homework->description) ? $homework->description : '';
 	$uploader_name = isset($homework->teacher_name) ? $homework->teacher_name : '';
-	$due_date = isset($homework->date_end) ? $homework->date_end  : '';
-	$due_date .= isset($homework->time_end) ? ' ' . $homework->time_end  : '';
+	$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = class_id AND content_type = 'homework' AND content_id = '$homework_id'");
+
+	if (!$homework_schedule) {
+		$release_date = date('F j, Y', strtotime($programStartDate));
+		$due_date = 'No deadline';
+	} else {
+		if ($homework_schedule->drip_method == 'specific_dates') {
+			$release_date = date('F j, Y', strtotime($homework_schedule->release_date));
+			$due_date = date('F j, Y', strtotime($homework_schedule->deadline_date));
+		} else {
+			$release_date = date('F j, Y', strtotime($programStartDate . " +{$homework_schedule->release_days} days"));
+			$due_date = date('F j, Y', strtotime($release_date . " +{$homework_schedule->deadline_days} days"));
+		}
+	}
 
 	// Construct HTML string for basic homework details
 	$homework_details = '<div class="homework-details">
@@ -103,6 +118,7 @@ function get_homework_args($homework)
 	$args  = [
 		'homework_id' => $homework_id,
 		'due_date' => $due_date,
+		'release_date' => $release_date,
 		'homework_title' => $homework_title,
 		'homework_description' => $homework_description,
 		'uploader_name' => $uploader_name,
@@ -115,7 +131,7 @@ function get_homework_args($homework)
 /*************************************
  * NEW HOMEWORK NOTIFICATION
  ************************************/
-function sakolawp_send_homework_email($homework_data)
+function sakolawp_send_homework_email($homework_data, $class_id)
 {
 	$sakolawp_env = get_option('sakolawp_env', 'dev');
 	if ($sakolawp_env === 'dev') {
@@ -132,7 +148,7 @@ function sakolawp_send_homework_email($homework_data)
 		}
 
 
-		$args = get_homework_args($homework_data);
+		$args = get_homework_args($homework_data, $class_id);
 		$args["link_to_login"] =  '<div><a href="' . site_url('/myaccount') . '" style="background-color: #4e80df;color: white;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;text-decoration:none;">Login to your Dashboard</a></div>';
 		error_log(print_r($args, true));
 		// error_log(print_r($homework_data, true));
@@ -159,55 +175,16 @@ function sakolawp_send_homework_email($homework_data)
 		error_log(print_r($th, true));
 	}
 }
-add_action('sakolawp_homework_added', 'sakolawp_send_homework_email');
-
 
 /*************************************
  * HOMEWORK REMINDERS
  ************************************/
-function sakolawp_schedule_homework_reminder($homework_data)
-{
-	$sakolawp_env = get_option('sakolawp_env', 'dev');
-	if ($sakolawp_env === 'dev') {
-		return;
-	}
-
-	try {
-		// Check if $homework_data is an array
-		if (is_array($homework_data)) {
-			// Convert array to object for consistent access
-			$homework_data = (object)$homework_data;
-		}
-		$cronjob_name = 'sakolawp_send_homework_reminder' . $homework_data->homework_id;
-		if (!wp_next_scheduled($cronjob_name, array($homework_data))) {
-			$due_timestamp = strtotime($homework_data->date_end . ' ' . $homework_data->time_end);
-			$current_timestamp = time();
-			$time_difference = $due_timestamp - $current_timestamp;
-
-			// If the homework is due in less than 24 hours, skip scheduling the reminder
-			$skip_reminder = $time_difference < 86400;
-
-			if (!$skip_reminder) {
-				$timestamp = $due_timestamp  - 86400; // 1 day before deadline 
-				$from = ['localeFormat' => "Y-m-d H:i:s", 'olsonZone' => 'Africa/Lagos'];
-				$to = ['localeFormat' => "Y-m-d H:i:s", 'olsonZone' => 'UTC'];
-				$timestamp_utc = convert_datetime(date("Y-m-d H:i:s", $timestamp), $from, $to);
-				error_log(print_r(['$timestamp' => date("Y-m-d H:i:s", $timestamp), '$from' => $from, '$to' => $to, '$timestamp_utc' => $timestamp_utc], true));
-				wp_schedule_single_event(strtotime($timestamp_utc), $cronjob_name, array($homework_data));
-			}
-		}
-	} catch (\Throwable $th) {
-		error_log(print_r($th, true));
-	}
-}
-add_action('sakolawp_homework_added', 'sakolawp_schedule_homework_reminder');
-
-function sakolawp_send_homework_reminder($homework_data)
+function sakolawp_send_homework_reminder($homework_data, $class_id)
 {
 	try {
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
-		$args = get_homework_args($homework_data);
+		$args = get_homework_args($homework_data, $class_id);
 		$args["link_to_login"] =  '<div><a href="' . site_url('/myaccount') . '" style="background-color: #4e80df;color: white;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;text-decoration:none;">Login to your Dashboard</a></div>';
 
 
@@ -280,6 +257,120 @@ function sakolawp_save_email_templates()
 }
 add_action('wp_ajax_run_save_email_templates', 'sakolawp_save_email_templates');
 
+
+/************************************
+ * NEW HOME WORK & LESSON SCHEDULER
+ ************************************/
+// Add Custom Schedules:
+function custom_cron_schedules($schedules)
+{
+	$schedules['48_hours'] = array(
+		'interval' => 172800, // 48 hours in seconds
+		'display' => __('Every 48 Hours')
+	);
+	$schedules['24_hours'] = array(
+		'interval' => 86400, // 24 hours in seconds
+		'display' => __('Every 24 Hours')
+	);
+	return $schedules;
+}
+add_filter('cron_schedules', 'custom_cron_schedules');
+// Schedule Homework and Lesson Reminders:
+function schedule_homework_reminders($schedules)
+{
+	foreach ($schedules as $schedule) {
+		$class_id = $schedule['class_id'];
+		$content_type = $schedule['content_type'];
+		$content_id = $schedule['content_id'];
+		$release_date = strtotime($schedule['release_date']);
+		// convert to utc time 
+
+		$deadline_date = strtotime($schedule['deadline_date']);
+		$unique_id = $content_id . '_' . $release_date;
+
+		// Schedule release date reminder
+		if ($content_type == 'homework' || $content_type == 'lesson') {
+			$hook_release = 'sakolawp_send_release_reminder_' . $unique_id;
+			wp_schedule_single_event($release_date, $hook_release, array($content_id, $content_type, $class_id));
+			add_action($hook_release, 'sakolawp_send_release_reminder', 10, 2);
+		}
+
+		// Schedule due date reminders (48 hours and 24 hours before deadline)
+		if ($content_type == 'homework') {
+			$unique_id_48 = $content_id . '_' . ($deadline_date - 172800);
+			$unique_id_24 = $content_id . '_' . ($deadline_date - 86400);
+
+			$hook_48 = 'sakolawp_send_due_reminder_' . $unique_id_48;
+			$hook_24 = 'sakolawp_send_due_reminder_' . $unique_id_24;
+
+			wp_schedule_single_event($deadline_date - 172800, $hook_48, array($content_id, $content_type, $class_id, '48_hours'));
+			wp_schedule_single_event($deadline_date - 86400, $hook_24, array($content_id, $content_type, $$class_id, '24_hours'));
+
+			add_action($hook_48, 'sakolawp_send_due_reminder', 10, 3);
+			add_action($hook_24, 'sakolawp_send_due_reminder', 10, 3);
+		}
+	}
+}
+
+// Create Callback Functions:
+function sakolawp_send_release_reminder($content_id, $content_type, $class_id)
+{
+	if ($content_type == 'homework') {
+		$repo = new RunHomeworkRepo();
+		$homework_data = $repo->single($content_id);
+		sakolawp_send_homework_email($homework_data, $class_id);
+	}
+	if ($content_type == 'lesson') {
+		$repo = new RunLessonRepo();
+		// $lesson_data = $repo->single($content_id);
+		// do_action('sakolawp_lesson_added', $lesson_data);
+		error_log("WE HAVE NOT SET UP LESSON RELEASE NOTIFICATION");
+	}
+}
+function sakolawp_send_due_reminder($content_id, $content_type, $class_id, $reminder_type)
+{
+	if ($content_type == 'homework') {
+		$repo = new RunHomeworkRepo();
+		$homework_data = $repo->single($content_id);
+		sakolawp_send_homework_reminder($homework_data, $class_id);
+	}
+	if ($content_type == 'lesson') {
+		$repo = new RunLessonRepo();
+		// $lesson_data = $repo->single($content_id);
+		// do_action('sakolawp_lesson_added', $lesson_data);
+		error_log("WE HAVE NOT SET UP LESSON DUE DATE NOTIFICATION");
+	}
+}
+
+add_action('sakolawp_send_release_reminder', 'sakolawp_send_release_reminder', 10, 2);
+add_action('sakolawp_send_due_reminder', 'sakolawp_send_due_reminder', 10, 3);
+
+// Handle Schedule Updates:
+function sakolawp_update_schedules($new_schedules)
+{
+	// Clear existing cron jobs
+	clear_existing_cron_jobs();
+
+	// Schedule new reminders
+	schedule_homework_reminders($new_schedules);
+}
+
+function clear_existing_cron_jobs()
+{
+	// Get all scheduled events
+	$crons = _get_cron_array();
+
+	// Loop through events and unschedule them
+	foreach ($crons as $timestamp => $cron) {
+		foreach ($cron as $hook => $dings) {
+			if (strpos($hook, 'sakolawp_send_release_reminder_') === 0 || strpos($hook, 'sakolawp_send_due_reminder_') === 0 || strpos($hook, 'send_release_reminder_') === 0 || strpos($hook, 'send_due_reminder_') === 0) {
+				foreach ($dings as $sig => $data) {
+					wp_unschedule_event($timestamp, $hook, $data['args']);
+				}
+			}
+		}
+	}
+}
 
 /************************************
  * DAILY DIGEST
