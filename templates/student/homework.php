@@ -12,7 +12,7 @@ $running_year = get_option('running_year');
 $student_id = get_current_user_id();
 
 $enroll = $wpdb->get_row("SELECT class_id, section_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $student_id");
-$class = $wpdb->get_row("SELECT name, start_date FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $enroll->class_id");
+$class = $wpdb->get_row("SELECT name, start_date, drip_method FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $enroll->class_id");
 if (!empty($enroll)) :
 
 	$user_info = get_userdata($student_id);
@@ -58,10 +58,9 @@ if (!empty($enroll)) :
 						$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $enroll->class_id AND content_type = 'homework' AND content_id = '$homework_id'");
 
 						if (!$homework_schedule) {
-							$release_date = '0000-00-00 00:00:00';
-							$due_date = '0000-00-00 00:00:00';
+							continue; // Skip if no schedule found
 						} else {
-							if ($homework_schedule->drip_method == 'specific_dates') {
+							if ($class->drip_method == 'specific_dates') {
 								$release_date = $homework_schedule->release_date;
 								$due_date = $homework_schedule->deadline_date;
 							} else {
@@ -69,11 +68,13 @@ if (!empty($enroll)) :
 								$due_date = date('Y-m-d H:i:s', strtotime($release_date . " +{$homework_schedule->deadline_days} days"));
 							}
 						}
-						// echo '<pre>' . esc_html($row['title']) . ' $release_date' . $release_date . ' $due_date' . $due_date . '</pre>';
+						if ($due_date == '0000-00-00 00:00:00' || $due_date == '1970-01-01 00:00:00') {
+							continue; // Skip if no due date set
+						}
 						$homeWorkIsDueForRelease = strtotime($release_date) <= max(strtotime($programStartDate), time());
 					?>
 						<!-- ONLY DISPLAY HOMEWORKS DUE For release -->
-						<?php if ($homeWorkIsDueForRelease || $due_date == '0000-00-00 00:00:00') : ?>
+						<?php if ($homeWorkIsDueForRelease) : ?>
 							<tr class="clickable-row" data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
 								<td><?php echo esc_html($row['title']); ?></td>
 								<td><?php echo $due_date == '0000-00-00 00:00:00' ? 'No deadline' : date('F j, Y', strtotime($due_date)); ?>

@@ -83,8 +83,7 @@ function duplicateAHomework() {
                     <h2 class="px-2 text-xl font-semibold">Homework</h2>
                 </div>
             </div>
-            <ViewHomework>
-            </ViewHomework>
+            <ViewHomework></ViewHomework>
         </div>
     </div>
     <DataTable v-else :loading="loading.list" :value="homeworks" paginatorPosition="both" tableStyle="min-width: 10rem"

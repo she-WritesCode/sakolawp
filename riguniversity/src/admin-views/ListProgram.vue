@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUpdated } from "vue";
 import { useProgramStore } from "../stores/program";
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
@@ -7,8 +7,7 @@ import InputText from 'primevue/inputtext';
 import TabMenu from 'primevue/tabmenu';
 import DataView from 'primevue/dataview';
 import Dialog from 'primevue/dialog';
-import { ref } from "vue";
-// import HomeworkList from '../components/subjects/HomeworkList.vue'
+import { ref, computed } from "vue";
 import ProgramSubjectList from '../components/programs/ProgramSubjectList.vue'
 import ProgramMeetingList from '../components/programs/ProgramMeetingList.vue'
 import ProgramGroupList from '../components/programs/ProgramGroupList.vue'
@@ -27,8 +26,9 @@ const tabs = {
     meetings: ProgramMeetingList,
 }
 const currentTab = ref<keyof typeof tabs | 'statistics'>(new URL(window.location.href).searchParams.get('tab') as keyof typeof tabs || "statistics")
-
+const count = ref(0)
 const switchTabUrl = (tab: keyof typeof tabs | 'statistics') => {
+    count.value = 0
     currentTab.value = tab
     const url = new URL(window.location.href)
     url.searchParams.set('tab', currentTab.value)
@@ -38,41 +38,49 @@ const switchTabUrl = (tab: keyof typeof tabs | 'statistics') => {
 const items = ref([
     {
         label: 'Overview',
+        key: 'statistics',
         command: () => {
             switchTabUrl('statistics')
         }
     },
     {
         label: 'Schedule',
+        key: 'subjects',
         command: () => {
             switchTabUrl('subjects')
         }
     },
     {
         label: 'Meetings',
+        key: 'meetings',
         command: () => {
             switchTabUrl('meetings')
         }
     },
     {
         label: 'Program Groups',
+        key: 'groupings',
         command: () => {
             switchTabUrl('groupings')
         }
     },
     {
         label: 'Enrollments',
+        key: 'enrollments',
         command: () => {
             switchTabUrl('enrollments')
         }
     },
     {
         label: 'Edit program',
+        key: 'editProgram',
         command: () => {
             switchTabUrl('editProgram')
         }
     },
 ]);
+
+const activeIndex = computed(() => items.value.findIndex(item => item.key == currentTab.value) ?? 0)
 
 const {
     programs,
@@ -97,6 +105,12 @@ onMounted(() => {
     }
 });
 
+onUpdated(() => {
+    if (programId && currentTab.value == 'editProgram' && count.value == 0) {
+        getOneProgram(programId)
+        count.value++
+    }
+})
 
 </script>
 
@@ -122,7 +136,7 @@ onMounted(() => {
                 <div class="grid grid-nogutter md:grid-cols-2 xl:grid-cols-3 gap-4">
                     <div v-if="loading.list">
                         <div v-for="i in [1, 2, 3, 4, 5, 6]" :key="i" class="col-12">
-                            <LoadingIndicator></LoadingIndicator>
+                            <LoadingIndicator class="w-full"></LoadingIndicator>
                         </div>
                     </div>
                     <template v-else>
@@ -201,7 +215,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class="my-2 py-1">
-                <TabMenu size="large" class="w-full" :model="items" />
+                <TabMenu size="large" class="w-full" :activeIndex="activeIndex" :model="items" />
             </div>
         </template>
         <div class="border-0 mb-8">
@@ -241,7 +255,7 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <component v-else :is="tabs[currentTab]" />
+            <component v-else :is="tabs[currentTab]" :key="activeIndex" />
         </div>
     </div>
 </template>

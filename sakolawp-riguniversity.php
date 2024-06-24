@@ -708,9 +708,11 @@ function run_create_schedule()
 		$schedule_data[$key]['content_type'] = isset($schedule['content_type']) ? sanitize_text_field($schedule['content_type']) : "";
 		$schedule_data[$key]['drip_method'] = isset($schedule['drip_method']) ? sanitize_text_field($schedule['drip_method']) : "";
 		$schedule_data[$key]['release_date'] = isset($schedule['release_date']) ? sanitize_text_field($schedule['release_date']) : NULL;
-		$schedule_data[$key]['release_days'] = isset($schedule['release_days']) ? sanitize_text_field($schedule['release_days']) : NULL;
 		$schedule_data[$key]['deadline_date'] = isset($schedule['deadline_date']) ? sanitize_text_field($schedule['deadline_date']) : 0;
+		$schedule_data[$key]['release_days'] = isset($schedule['release_days']) ? sanitize_text_field($schedule['release_days']) : NULL;
+		$schedule_data[$key]['release_days_time'] = isset($schedule['release_days_time']) ? sanitize_text_field($schedule['release_days_time']) : NULL;
 		$schedule_data[$key]['deadline_days'] = isset($schedule['deadline_days']) ? sanitize_text_field($schedule['deadline_days']) : 0;
+		$schedule_data[$key]['deadline_days_time'] = isset($schedule['deadline_days_time']) ? sanitize_text_field($schedule['deadline_days_time']) : 0;
 
 		// Validate schedule data
 		if (!$schedule_data[$key]['class_id'] || !$schedule_data[$key]['subject_id'] || !$schedule_data[$key]['content_id'] || !$schedule_data[$key]['content_type']) {

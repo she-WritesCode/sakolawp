@@ -16,6 +16,8 @@ export interface ProgramSchedule {
   deadline_date: string
   release_days: number
   deadline_days: number
+  release_days_time: string
+  deadline_days_time: string
   created_at?: string
   updated_at?: string
 }

@@ -101,6 +101,8 @@ CREATE TABLE $class_schedule_table (
 	deadline_date DATETIME NULL,
 	release_days int(11) NULL,
 	deadline_days int(11) NULL,
+	release_days_time VARCHAR(11) NOT NULL DEFAULT '09:00:00',
+	deadline_days_time VARCHAR(11) NOT NULL DEFAULT '23:59:00',
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	UNIQUE KEY id (id)

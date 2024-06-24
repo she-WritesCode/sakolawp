@@ -5,15 +5,26 @@
   durations and timing functions.
 */
 .slide-fade-enter-active {
-    transition: all 0.3s ease-in;
-  }
+  transition: all 0.3s ease-in;
+}
   
-  .slide-fade-leave-active {
-    transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-  }
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
   
-  .slide-fade-enter-from,
-  .slide-fade-leave-to {
-    transform: translateY(30px);
-    opacity: 0;
-  }
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+table.fixed.wp-list-table.widefat {
+  position: relative !important;
+}
+
+.notice.inline {
+  display: block;
+}
+.notice.hidden {
+  display: none;
+}

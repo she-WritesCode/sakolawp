@@ -132,8 +132,8 @@ const onUpload = () => {
             <div class="mb-4">
                 <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
                 <p>How would you like your students to respond to this homework. For example: if you want them to submit
-                    a url you can use short text, or if you can add file upload if you want the student to respond with
-                    a file instead </p>
+                    a url you can use short text, or if you want the student to respond with
+                    a file, you can use the file upload instead</p>
                 <Divider class="mb-4" />
             </div>
 

@@ -2,23 +2,24 @@
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import SelectButton from 'primevue/selectbutton';
+import MultiSelect from 'primevue/multiselect';
 import { useForm } from 'vee-validate';
 import { createProgramSchema, useProgramStore } from '../../stores/program';
 import { useCourseStore } from '../../stores/course';
+import { DateHelper } from '../../utils/date';
 import { toTypedSchema } from '@vee-validate/yup';
 import { onMounted, watch, ref } from 'vue';
 import { computed } from 'vue';
-import SelectButton from 'primevue/selectbutton';
-import MultiSelect from 'primevue/multiselect';
 
 const { updateProgram: updateprogram, currentProgram: currentprogram, getOneProgram: getOneprogram, programId, deleteProgram: deleteprogram } = useProgramStore()
 
-const { errors, defineField, handleSubmit, setValues } = useForm({
+const { errors, defineField, handleSubmit, setValues, values } = useForm({
     initialValues: {
         name: currentprogram.value?.name,
         drip_method: currentprogram.value?.drip_method,
         subjects: currentprogram.value?.subjects,
-        start_date: currentprogram.value?.start_date ? new Date(currentprogram.value?.start_date || "").toISOString().split('T')[0] : "",
+        start_date: currentprogram.value?.start_date ? DateHelper.toSimpleBackendDateString(currentprogram.value?.start_date || "") : "",
     },
     validationSchema: toTypedSchema(createProgramSchema),
 });
@@ -34,7 +35,7 @@ const options = [
 ]
 
 const { courses: allCourses, fetchCourses } = useCourseStore()
-const courseOptions = computed(() => allCourses.value.map((s) => ({ label: s.title, value: s.ID })))
+const courseOptions = computed(() => (allCourses.value ?? []).map((s) => ({ label: s.title, value: s.ID })))
 
 
 const submitForm = handleSubmit((values) => {
@@ -47,7 +48,7 @@ watch(currentprogram, (value) => {
         name: value?.name,
         drip_method: value?.drip_method,
         subjects: value?.subjects,
-        start_date: new Date(value?.start_date || "").toISOString().split('T')[0],
+        start_date: DateHelper.toSimpleBackendDateString(value?.start_date || ""),
     } as any)
 });
 
@@ -80,24 +81,24 @@ function deleteAprogram(id: string) {
     <form id="myForm" name="Add program">
         <div class="flex flex-col gap-4 mb-4">
             <div class="form-group">
-                <label for="name">program Name</label>
+                <label for="name">Program Name</label>
                 <InputText placeholder="program Name" name="name" v-model="name" class="w-full" v-bind="nameProps" />
                 <div>{{ errors.name }}</div>
             </div>
             <div class="form-group">
-                <label for="name">Start Date</label>
+                <label for="start_date">Start Date</label>
                 <InputText type="date" placeholder="Start Date" name="start_date" v-model="start_date" class="w-full"
                     v-bind="start_dateProps" />
                 <div class="p-error text-red-500">{{ errors.start_date }}</div>
             </div>
             <div class="form-group">
-                <label for="name">Subjects</label>
-                <MultiSelect name="subjects" v-model="subjects" class="w-full text-base" v-bind="subjectsProps"
-                    :options="courseOptions" optionLabel="label" optionValue="value" />
+                <label for="subjects">Courses</label>
+                <MultiSelect name="subjects" v-model="subjects" display="chip" class="w-full text-base"
+                    v-bind="subjectsProps" :options="courseOptions" optionLabel="label" optionValue="value" />
                 <div class="p-error text-red-500">{{ errors.subjects }}</div>
             </div>
             <div class="form-group">
-                <label for="name">Release Contents On?</label>
+                <label for="drip_method">Release Contents On?</label>
                 <SelectButton name="drip_method" v-model="drip_method" class="w-full text-base"
                     v-bind="drip_methodProps" :options="options" optionLabel="label" optionValue="value" />
                 <div class="p-error text-red-500">{{ errors.drip_method }}</div>

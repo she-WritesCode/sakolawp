@@ -296,7 +296,7 @@ function sakolawp_course_register()
 		'hierarchical'       => false,
 		'rewrite'            => array('slug' => 'courses'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 7,
+		'menu_position'      => 0,
 		'show_in_menu' 		 =>  'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_course_date_meta_box'
 
@@ -421,7 +421,7 @@ function sakolawp_lesson_register()
 		'hierarchical'       => false,
 		'rewrite'            => array('slug' => 'lessons'),
 		'supports'           => array('title', 'editor', 'thumbnail'),
-		'menu_position'      => 7,
+		'menu_position'      => 0,
 		'show_in_menu' 		 => false, // 'sakolawp-settings', // show under Rig university menu
 		'register_meta_box_cb' => 'sakolawp_lesson_date_meta_box'
 

@@ -28,7 +28,7 @@ const { getOneProgram: getOneProgram, currentProgram } = useProgramStore()
 const { errors, defineField, handleSubmit, setValues, values } = useForm<{
   [key: string]: ProgramSchedule
 }>({
-  initialValues: (props.homeworks??[]).reduce<{ [key: string]: ProgramSchedule }>((acc, homework) => {
+  initialValues: (props.homeworks ?? []).reduce<{ [key: string]: ProgramSchedule }>((acc, homework) => {
     acc[homework.homework_id as string] = {
       subject_id: `${props.subjectId}`,
       class_id: props.programId as string,
@@ -38,7 +38,9 @@ const { errors, defineField, handleSubmit, setValues, values } = useForm<{
       release_date: '',
       deadline_date: '',
       release_days: 0,
-      deadline_days: 0
+      deadline_days: 0,
+      release_days_time: '',
+      deadline_days_time: ''
     }
     return acc
   }, {}),
@@ -80,7 +82,9 @@ watch(programSchedules, (value) => {
           release_date: existingSchedule.release_date,
           deadline_date: existingSchedule.deadline_date,
           release_days: existingSchedule.release_days,
-          deadline_days: existingSchedule.deadline_days
+          deadline_days: existingSchedule.deadline_days,
+          release_days_time: existingSchedule.release_days_time,
+          deadline_days_time: existingSchedule.deadline_days_time,
         }
       }
     })
@@ -96,12 +100,13 @@ onMounted(() => {
 
 const releaseDate = computed(() =>
   Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
-  
+
     acc[homework_id] = DateHelper.formatDate(
       DateHelper.addDays(
         currentProgram.value?.start_date ?? '',
         schedules[homework_id!]!.release_days
-      )
+      ),
+      'EEEE MMMM dd, yyyy'
     )
     return acc
   }, {})
@@ -109,7 +114,8 @@ const releaseDate = computed(() =>
 const deadlineDate = computed(() =>
   Object.keys(values).reduce<{ [key: string]: string }>((acc, homework_id) => {
     acc[homework_id] = DateHelper.formatDate(
-      DateHelper.addDays(releaseDate.value[homework_id], schedules[homework_id!]!.deadline_days)
+      DateHelper.addDays(releaseDate.value[homework_id], schedules[homework_id!]!.deadline_days),
+      'EEEE MMMM dd, yyyy'
     )
     return acc
   }, {})
@@ -144,45 +150,59 @@ const setDefaultDeadlineTime = (homework_id: string) => {
         <div class="text-yellow-700 text-sm">
           If no deadline is set the student will continue to have access to submit the homework at
           any time.
-          <br/>
+          <br />
           If the release date is not set the assessment would be released to the students by default
         </div>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>
-    <Divider />
+      <Divider />
       <template v-for="homework in homeworks" :key="homework.homework_id">
         <div class="flex flex-col md:flex-row gap-4 items-center md:justify-between">
           <div class="text-base w-full">
             <div>{{ homework.title }}</div>
             <Tag :value="`${homework.questions.length} Questions`" severity="secondary" />
           </div>
-          <div class="w-full md:max-w-96 lg:max-w-[500px]">
-            <div v-if="dripMethod == 'days_after_release'" class="flex flex-col md:flex-row gap-4">
+          <div class="w-full md:max-w-96 lg:max-w-[600px]">
+            <div v-if="dripMethod == 'days_after_release'" class="flex flex-col gap-4">
               <div>
-                <label>Release</label>
-                <div class="flex gap-2 items-center">
-                  <InputNumber
-                    v-model.number="schedules[homework.homework_id!]!.release_days"
-                    class="input-number"
-                    placeholder="0"
-                    type="number"
-                  />
-                  <span>days after program starts</span>
+                <div class="flex gap-4">
+                  <div>
+                    <label>Release</label>
+                    <div class="flex gap-2 items-center">
+                      <InputNumber v-model.number="schedules[homework.homework_id!]!.release_days" class="input-number"
+                        placeholder="0" type="number" />
+                      <span>days after program starts</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label>Time</label>
+                    <div class="flex gap-2 items-center">
+                      <input v-model="schedules[homework.homework_id!]!.release_days_time" class="input-time w-full"
+                        placeholder="0" type="time" />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <Tag :value="releaseDate[homework.homework_id!]" severity="secondary" />
                 </div>
               </div>
               <div>
-                <label>Deadline</label>
-                <div class="flex gap-2 items-center">
-                  <InputNumber
-                    v-model.number="schedules[homework.homework_id!]!.deadline_days"
-                    class="input-number"
-                    placeholder="0"
-                    type="number"
-                  />
-                  <span>days after release date</span>
+                <div class="flex gap-4">
+                  <div>
+                    <label>Deadline</label>
+                    <div class="flex gap-2 items-center">
+                      <InputNumber v-model.number="schedules[homework.homework_id!]!.deadline_days" class="input-number"
+                        placeholder="0" type="number" />
+                      <span>days after release date</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label>Time</label>
+                    <div class="flex gap-2 items-center">
+                      <input v-model="schedules[homework.homework_id!]!.deadline_days_time" class="input-time w-full"
+                        placeholder="0" type="time" />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <Tag :value="deadlineDate[homework.homework_id!]" severity="secondary" />
@@ -192,22 +212,14 @@ const setDefaultDeadlineTime = (homework_id: string) => {
             <div v-else class="flex flex-col gap-2">
               <div>
                 <label>Release</label>
-                <input
-                  class="w-full"
-                  type="datetime-local"
-                  v-model="schedules[homework.homework_id!]!.release_date"
-                  @focus="setDefaultReleaseTime(homework.homework_id!)"
-                />
+                <input class="w-full" type="datetime-local" v-model="schedules[homework.homework_id!]!.release_date"
+                  @focus="setDefaultReleaseTime(homework.homework_id!)" />
               </div>
               <div>
                 <label>Deadline</label>
-                <input
-                  class="w-full"
-                  type="datetime-local"
-                  v-model="schedules[homework.homework_id!]!.deadline_date"
+                <input class="w-full" type="datetime-local" v-model="schedules[homework.homework_id!]!.deadline_date"
                   @focus="setDefaultDeadlineTime(homework.homework_id!)"
-                  :min="schedules[homework.homework_id!]!.release_date"
-                />
+                  :min="schedules[homework.homework_id!]!.release_date" />
               </div>
             </div>
           </div>
@@ -218,7 +230,7 @@ const setDefaultDeadlineTime = (homework_id: string) => {
         <div class="text-yellow-700 text-sm">
           If no deadline is set the student will continue to have access to submit the homework at
           any time.
-          <br/>
+          <br />
           If the release date is not set the assessment would be released to the students by default
         </div>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
