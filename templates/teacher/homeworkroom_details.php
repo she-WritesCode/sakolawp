@@ -11,9 +11,15 @@ $teacher_id = get_current_user_id();
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
-$current_homework = $wpdb->get_results("SELECT homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review,peer_review_who FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+$current_homework = $wpdb->get_results("SELECT homework_id, homework_code, title, date_end, time_end, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review,peer_review_who FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 foreach ($current_homework as $row) :
+	$homework_id = $row['homework_id'];
+
+	$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE content_type = 'homework' AND content_id = '$homework_id'");
+
+	$release_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->release_date : date('Y-m-d H:i:s', $homework_schedule->release_days * 24 * 60 * 60);
+	$due_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->deadline_date : date('Y-m-d H:i:s', $homework_schedule->deadline_days * 24 * 60 * 60);
 
 ?>
 	<div class="homeworkroom-page skwp-content-inner">
@@ -52,9 +58,7 @@ foreach ($current_homework as $row) :
 					</thead>
 					<tbody>
 						<?php
-						$time1 = $row['date_end'];
-						$time2 = $row['time_end'];
-						$time = $time1 . " " . $time2;
+						$time = ($due_date !== '0000-00-00 00:00:00' && $due_date !== '1970-01-01 00:00:00') ? $due_date : date("Y-m-d H:i:s");
 						// in current teachers parent group.
 						$homework_details = $wpdb->get_results("SELECT student_id, student_comment, date, file_name, teacher_comment, mark, delivery_id FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code'", ARRAY_A);
 						foreach ($homework_details as $row2) :
@@ -104,20 +108,8 @@ foreach ($current_homework as $row) :
 						<td>
 							<?php
 							$subject_id = $row["subject_id"];
-							$subject_name = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
-							echo esc_html($subject_name['name']);
-							?>
-						</td>
-					</tr>
-					<tr>
-						<th>
-							<?php echo esc_html__('Class', 'sakolawp'); ?>
-						</th>
-						<td>
-							<?php
-							$class_id = $row["class_id"];
-							$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$class_id'", ARRAY_A);
-							echo esc_html($class['name']);
+							$subject = get_post((int)$subject_id);
+							echo esc_html($subject->post_title);
 							?>
 						</td>
 					</tr>

@@ -189,20 +189,8 @@ foreach ($current_homework as $row) :
 							<td>
 								<?php
 								$subject_id = $row["subject_id"];
-								$subject = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_subject WHERE subject_id = '$subject_id'", ARRAY_A);
-								echo esc_html($subject['name']);
-								?>
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<?php echo esc_html__('Class', 'sakolawp'); ?>
-							</th>
-							<td>
-								<?php
-								$class_id = $row["class_id"];
-								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$class_id'", ARRAY_A);
-								echo esc_html($class['name']);
+								$subject = get_post((int)$subject_id);
+								echo esc_html($subject->post_title);
 								?>
 							</td>
 						</tr>
