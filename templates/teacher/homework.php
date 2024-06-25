@@ -3,7 +3,6 @@ defined('ABSPATH') || exit;
 
 global $wpdb;
 
-$homework_code = "";
 
 if (isset($_POST['submit'])) {
 	//$_POST = array_map( 'stripslashes_deep', $_POST );
@@ -84,6 +83,13 @@ if (isset($_GET['action']) == 'delete') {
 	wp_redirect(home_url('homework'));
 }
 
+$class_id = 1;
+
+if (isset($_POST['action']) == 'select_class' && isset($_POST['class_id'])) {
+	$class_id = sanitize_text_field($_POST['class_id']);
+	wp_redirect(add_query_arg(['class_id' => $class_id], home_url('homework')));
+}
+
 get_header();
 do_action('sakolawp_before_main_content');
 
@@ -95,10 +101,37 @@ $user_info = get_userdata($teacher_id);
 $teacher_name = $user_info->display_name;
 $user_is_admin = in_array('administrator',  $user_info->roles);
 
-$homework_sql = $user_is_admin
-	? "SELECT homework_id, title,class_id,section_id,subject_id,date_end,time_end,homework_code,uploader_id,allow_peer_review,peer_review_template,peer_review_who,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;"
-	: "SELECT homework_id, title, class_id, section_id, subject_id, date_end,time_end, homework_code, uploader_id,allow_peer_review,peer_review_template,peer_review_who,created_at FROM {$wpdb->prefix}sakolawp_homework WHERE uploader_id = $teacher_id OR subject_id IN (SELECT subject_id FROM {$wpdb->prefix}sakolawp_subject WHERE teacher_id = $teacher_id) OR section_id IN (SELECT section_id FROM {$wpdb->prefix}sakolawp_section WHERE teacher_id = $teacher_id) ORDER BY created_at desc;";
-$my_homework = $wpdb->get_row($homework_sql); ?>
+$classes_sql = $user_is_admin
+	? "SELECT class_id, name FROM {$wpdb->prefix}sakolawp_class ORDER BY class_id ASC;"
+	: "SELECT c.class_id, c.name 
+       FROM {$wpdb->prefix}sakolawp_section s
+       JOIN {$wpdb->prefix}sakolawp_class c ON s.class_id = c.class_id
+       WHERE s.teacher_id = $teacher_id 
+       ORDER BY c.class_id ASC;";
+
+$classes = $wpdb->get_results($classes_sql);
+
+$subjects_in_class = get_posts([
+	'post_type' => 'sakolawp-course',
+	'post_status' => 'publish',
+	'posts_per_page' => -1,
+	'meta_query' => [
+		[
+			'key' => 'sakolawp_class_id',
+			'compare' => '=',
+			'terms' => $class_id,
+		],
+	],
+]);
+
+$subjects_in_class_ids = array_map(function ($subject) {
+	return $subject->ID;
+}, $subjects_in_class);
+$subjects_in_class_id_string = count($subjects_in_class_ids) > 0 ? implode(',', $subjects_in_class_ids) : "0";
+
+$homework_sql = "SELECT homework_id,title,class_id,section_id,subject_id,homework_code,uploader_id,allow_peer_review,peer_review_template,peer_review_who,created_at FROM {$wpdb->prefix}sakolawp_homework ORDER BY created_at desc;";
+$my_homework = $wpdb->get_row($homework_sql);
+?>
 
 <input id="teacher_id_sel" type="hidden" name="teacher_id_target" value="<?php echo esc_attr($teacher_id); ?>">
 
@@ -118,8 +151,31 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 			</div>
 		</div>
 
-
 		<?php do_action('sakolawp_show_alert_dialog') ?>
+
+		<div>
+			<!-- form to select a class_id -->
+			<form action="/homework" method="POST" id="class_id_form">
+				<input type="hidden" name="action" value="select_class">
+				<div class="flex gap-4 items-base">
+					<div class="form-group w-full">
+						<label for="class_id"><?php esc_html_e('Class', 'sakolawp'); ?></label>
+						<select class="form-control" id="class_id" name="class_id">
+							<option>Select</option>
+							<?php
+							foreach ($classes as $cls) :
+							?>
+								<option <?= $cls->class_id == $class_id ? "selected" : '' ?> value="<?= $cls->class_id ?>"><?= $cls->name ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<div>
+						<div class="p-3 px-4"></div>
+						<button type="submit" name="search" class="btn skwp-btn btn-primary"><?php esc_html_e('Select', 'sakolawp'); ?></button>
+					</div>
+				</div>
+			</form>
+		</div>
 
 		<div class="skwp-table table-responsive skwp-mt-20">
 			<table id="tableini" class="table dataTable responsive homework-table">
@@ -140,89 +196,76 @@ $my_homework = $wpdb->get_row($homework_sql); ?>
 					error_log($wpdb->last_error);
 					foreach ($homeworks as $row) :
 						// Temporary Hack - until we can separate classes
-						$class_id = 1; // $row['class_id'];
+						// $class_id = 1; // $row['class_id'];
 						$class = $wpdb->get_row("SELECT name, start_date FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
-						$programStartDate = $class->start_date;
 						$homework_code = $row['homework_code'];
 						$homework_id = $row['homework_id'];
-						$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $class_id AND content_type = 'homework' AND content_id = '$homework_id'");
+						$schedule = get_homework_schedule($class_id, $homework_id);
 
-						if (!$homework_schedule) {
-							$release_date = '0000-00-00 00:00:00';
-							$due_date = '0000-00-00 00:00:00';
-						} else {
-							if ($homework_schedule->drip_method == 'specific_dates') {
-								$release_date = $homework_schedule->release_date;
-								$due_date = $homework_schedule->deadline_date;
-							} else {
-								$release_date = date('Y-m-d H:i:s', strtotime($programStartDate . " +{$homework_schedule->release_days} days"));
-								$due_date = date('Y-m-d H:i:s', strtotime($release_date . " +{$homework_schedule->deadline_days} days"));
-							}
+						if (!$schedule || !$schedule['homework_is_due_for_release']) {
+							continue; // Skip if no valid schedule or not due for release
 						}
-						// echo '<pre>' . esc_html($row['title']) . ' $release_date' . $release_date . ' $due_date' . $due_date . '</pre>';
-						$homeWorkIsDueForRelease = strtotime($release_date) <= max(strtotime($programStartDate), time());
 
+						$release_date = $schedule['release_date'];
+						$due_date = $schedule['due_date'];
 					?>
-						<!-- ONLY DISPLAY HOMEWORKS DUE For release -->
-						<?php if ($homeWorkIsDueForRelease || $due_date == '0000-00-00 00:00:00') : ?>
-							<tr data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
-								<td hidden><?php echo $row['created_at']; ?></td>
-								<td>
-									<?php
-									echo esc_html($row['title']);
-									if ($user_is_admin) {
-										$uploader = get_user_by('id', $row['uploader_id']);
-										if ($uploader) {
-											echo '<br/><i class="text-gray-500">Uploaded by: ' . $uploader->display_name, '</i>';
-										}
+						<tr data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
+							<td hidden><?php echo $row['created_at']; ?></td>
+							<td>
+								<?php
+								echo esc_html($row['title']);
+								if ($user_is_admin) {
+									$uploader = get_user_by('id', $row['uploader_id']);
+									if ($uploader) {
+										echo '<br/><i class="text-gray-500">Uploaded by: ' . $uploader->display_name, '</i>';
 									}
-									$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
-									echo '<br/><i class="text-gray-500">' . $count . ' submission(s)</i>';
-									?>
-								</td>
-								<td>
+								}
+								$count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '{$row["homework_code"]}'");
+								echo '<br/><i class="text-gray-500">' . $count . ' submission(s)</i>';
+								?>
+							</td>
+							<td>
+								<?php
+								$subject_id = $row['subject_id'];
+								$subject = get_post((int)$subject_id);
+								echo esc_html($subject->post_title);
+								$allow_peer_review = $row['allow_peer_review'];
+								$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
+								echo $allow_peer_review ? '<br/> <span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>' : "";
+								?>
+							</td>
+							<td>
+								<a class="">
 									<?php
-									$subject_id = $row['subject_id'];
-									$subject = get_post((int)$subject_id);
-									echo esc_html($subject->post_title);
-									$allow_peer_review = $row['allow_peer_review'];
-									$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
-									echo $allow_peer_review ? '<br/> <span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>' : "";
+									if ($due_date !== '0000-00-00 00:00:00') :
+										echo date("l F j, Y, g:i a", strtotime($due_date));
+									else :
+										echo "No deadline";
+									endif;
 									?>
-								</td>
-								<td>
-									<a class="">
-										<?php
-										if ($due_date !== '0000-00-00 00:00:00') :
-											echo date("F j, Y, g:i a", strtotime($due_date));
-										else :
-											echo "No deadline";
-										endif;
-										?>
-									</a>
-									<br />
-									<?php if ($due_date !== '0000-00-00 00:00:00') : ?>
-										<span class="skwp-date italic" data-end-date="<?php echo date('Y-m-d', strtotime($due_date)); ?>" data-end-time="<?php echo date('H:i:s', strtotime($due_date)); ?>"></span>
-									<?php endif; ?>
-								</td>
-								<td>
-									<?php
-									// $class_id = $row['class_id'];
-									$section_id = $row['section_id'];
-									// $class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
-									echo esc_html($class->name);
-									?>
-								</td>
-								<td>
-									<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
-										<?php echo esc_html__('View', 'sakolawp'); ?>
-									</a>
-									<a class="btn btn-danger btn-rounded btn-sm skwp-btn" onClick="return confirm('Confirm Delete?')" href="<?php echo add_query_arg(array('homework_code' => $row['homework_code'], 'action' => 'delete'), home_url('homework')); ?>">
-										<?php echo esc_html__('Delete', 'sakolawp'); ?>
-									</a>
-								</td>
-							</tr>
-						<?php endif; ?>
+								</a>
+								<br />
+								<?php if ($due_date !== '0000-00-00 00:00:00') : ?>
+									<span class="skwp-date italic" data-end-date="<?php echo date('Y-m-d', strtotime($due_date)); ?>" data-end-time="<?php echo date('H:i:s', strtotime($due_date)); ?>"></span>
+								<?php endif; ?>
+							</td>
+							<td>
+								<?php
+								// $class_id = $row['class_id'];
+								$section_id = $row['section_id'];
+								// $class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
+								echo esc_html($class->name);
+								?>
+							</td>
+							<td>
+								<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
+									<?php echo esc_html__('View', 'sakolawp'); ?>
+								</a>
+								<a class="btn btn-danger btn-rounded btn-sm skwp-btn" onClick="return confirm('Confirm Delete?')" href="<?php echo add_query_arg(array('homework_code' => $row['homework_code'], 'action' => 'delete'), home_url('homework')); ?>">
+									<?php echo esc_html__('Delete', 'sakolawp'); ?>
+								</a>
+							</td>
+						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>

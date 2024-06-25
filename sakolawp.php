@@ -1989,3 +1989,44 @@ function sakolawp_handle_file_upload()
 }
 add_action('wp_ajax_upload_file', 'handle_file_upload');
 add_action('wp_ajax_nopriv_upload_file', 'handle_file_upload');
+
+function get_homework_schedule($class_id, $homework_id)
+{
+	global $wpdb;
+	$class = $wpdb->get_row("SELECT name, start_date, drip_method FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
+	$drip_method = $class->drip_method;
+	$programStartDate = $class->start_date;
+	$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $class_id AND content_type = 'homework' AND content_id = '$homework_id'");
+
+	if (!$homework_schedule) {
+		return null; // No schedule found
+	}
+
+	if ($drip_method == 'specific_dates') {
+		$release_date = $homework_schedule->release_date;
+		$due_date = $homework_schedule->deadline_date;
+	} else {
+		// Calculate release date
+		$time_split = array_pad(explode(':', $homework_schedule->release_days_time), 3, 0);
+		[$hours, $minutes, $seconds] = $time_split;
+		$release_date = date('Y-m-d H:i:s', strtotime($programStartDate . " +{$homework_schedule->release_days} days {$hours} hours {$minutes} minutes {$seconds} seconds"));
+
+		// Calculate due date
+		$start_of_release_date = date('Y-m-d', strtotime($release_date));
+		$time_split = array_pad(explode(':', $homework_schedule->deadline_days_time), 3, 0);
+		[$hours, $minutes, $seconds] = $time_split;
+		$due_date = date('Y-m-d H:i:s', strtotime($start_of_release_date . " +{$homework_schedule->deadline_days} days {$hours} hours {$minutes} minutes {$seconds} seconds"));
+	}
+
+	if ($due_date == '0000-00-00 00:00:00' || $due_date == '1970-01-01 00:00:00') {
+		return null; // Invalid due date
+	}
+
+	$homework_is_due_for_release = strtotime($release_date) <= max(strtotime($programStartDate), time());
+
+	return [
+		'release_date' => $release_date,
+		'due_date' => $due_date,
+		'homework_is_due_for_release' => $homework_is_due_for_release
+	];
+}

@@ -110,7 +110,7 @@ if (!empty($enroll)) :
 	$student_name = $user_info->display_name;
 
 	$homework_code = $_GET['homework_code'];
-	$current_homework = $wpdb->get_results("SELECT title, date_end, time_end, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review,word_count_min,word_count_max,peer_review_who FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
+	$current_homework = $wpdb->get_results("SELECT title, description, file_name, class_id, section_id, subject_id, uploader_id, homework_id, allow_peer_review,word_count_min,word_count_max,peer_review_who FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 	$homework_deliveries = $wpdb->get_results("SELECT mark, teacher_comment FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
 	if ($wpdb->num_rows > 0) {
@@ -121,10 +121,14 @@ if (!empty($enroll)) :
 	foreach ($current_homework as $row) :
 		$homework_id = $row['homework_id'];
 		$current_user_has_submitted = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = $student_id");
-		$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $enroll->class_id AND content_type = 'homework' AND content_id = '$homework_id'");
+		$schedule = get_homework_schedule($enroll->class_id, $homework_id);
 
-		$release_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->release_date : date('Y-m-d H:i:s', $homework_schedule->release_days * 24 * 60 * 60);
-		$due_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->deadline_date : date('Y-m-d H:i:s', $homework_schedule->deadline_days * 24 * 60 * 60);
+		if (!$schedule || !$schedule['homework_is_due_for_release']) {
+			continue; // Skip if no valid schedule or not due for release
+		}
+
+		$release_date = $schedule['release_date'];
+		$due_date = $schedule['due_date'];
 
 		// Get peer reviews for the current user and the specific homework
 		$peer_reviews = $wpdb->get_results($wpdb->prepare(
@@ -140,8 +144,6 @@ if (!empty($enroll)) :
 		<?php
 
 		$query = $wpdb->get_results("SELECT homework_code,student_comment,homework_reply,file_name, date FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = '$student_id'", ARRAY_A);
-		// $time_end = $row['time_end'];
-		// $date_end = $row['date_end'];
 		$homework_due_date = $due_date;
 		$today = date('d-m-Y', time());
 		$is_late =  $homework_due_date == '0000-00-00 00:00:00' ? false : strtotime($today) > strtotime($homework_due_date);
@@ -152,7 +154,6 @@ if (!empty($enroll)) :
 
 		?>
 		<div class="homeworkroom-inner homeworkroom-page skwp-content-inner skwp-clearfix">
-
 			<?php
 			// Only display menu for peer reviewable homeworks
 			$allow_peer_review = $row['allow_peer_review'];
@@ -194,7 +195,8 @@ if (!empty($enroll)) :
 									<b>
 										<i class="os-icon picons-thin-icon-thin-0024_calendar_month_day_planner_events"></i>
 										Due Date:
-										<?php echo esc_html($row['date_end']); ?> <?php echo esc_html($row['time_end']); ?></b><br>
+										<?php echo esc_html(date("l F j, Y g:i a", strtotime($due_date))); ?>
+									</b><br>
 
 								</div>
 							</div>
@@ -409,8 +411,7 @@ if (!empty($enroll)) :
 									</th>
 									<td>
 										<a class="btn nc btn-rounded btn-sm skwp-btn btn-success">
-											<?php echo esc_html($row['date_end']); ?>
-											<?php echo esc_html($row['time_end']); ?>
+											<?php echo esc_html(date("l F j, Y g:i a", strtotime($due_date))); ?>
 										</a>
 									</td>
 								</tr>

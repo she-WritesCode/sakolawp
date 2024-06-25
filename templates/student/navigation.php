@@ -24,10 +24,10 @@
 	<div class="skwp-user-name-area">
 		<h5 class="skwp-user"><?php echo esc_html($user_name); ?></h5>
 		<a href="<?php echo esc_url(home_url('edit_profile')); ?>" class="skwp-edit-profile-link skwp-prof-side">
-			<i class="sakolawp2-icon-edit"></i>
+			<i class="sakolawp2-icon-edit"></i> Edit Profile
 		</a>
 		<a href="<?php echo esc_url(wp_logout_url(home_url())); ?>" class="skwp-edit-profile-logout skwp-prof-side">
-			<i class="sakolawp2-icon-logout"></i>
+			<i class="sakolawp2-icon-logout"></i> Logout
 		</a>
 	</div>
 </div>

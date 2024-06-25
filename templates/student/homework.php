@@ -23,7 +23,7 @@ if (!empty($enroll)) :
 	<div class="homework-inner skwp-content-inner skwp-clearfix">
 
 		<div class="skwp-page-title">
-			<h5><?php esc_html_e('My Class Homeworks', 'sakolawp'); ?>
+			<h5><?php esc_html_e('My Class Homeworks', 'sakolawp'); ?>: <?php echo esc_html($class->name); ?>
 				<span class="skwp-subtitle">
 					<?php echo esc_html($student_name); ?>
 				</span>
@@ -37,7 +37,7 @@ if (!empty($enroll)) :
 						<th class="title-homework"><?php esc_html_e('Title', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Due Date', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Subject', 'sakolawp'); ?></th>
-						<th><?php esc_html_e('Class', 'sakolawp'); ?></th>
+						<!-- <th><?php esc_html_e('Class', 'sakolawp'); ?></th> -->
 						<th><?php esc_html_e('Faculty', 'sakolawp'); ?></th>
 						<th><?php esc_html_e('Options', 'sakolawp'); ?></th>
 					</tr>
@@ -55,77 +55,65 @@ if (!empty($enroll)) :
 						$homework_code = $row['homework_code'];
 						$homework_id = $row['homework_id'];
 						$current_user_has_submitted = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_deliveries WHERE homework_code = '$homework_code' AND student_id = $student_id");
-						$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $enroll->class_id AND content_type = 'homework' AND content_id = '$homework_id'");
+						$schedule = get_homework_schedule($enroll->class_id, $homework_id);
 
-						if (!$homework_schedule) {
-							continue; // Skip if no schedule found
-						} else {
-							if ($class->drip_method == 'specific_dates') {
-								$release_date = $homework_schedule->release_date;
-								$due_date = $homework_schedule->deadline_date;
-							} else {
-								$release_date = date('Y-m-d H:i:s', strtotime($programStartDate . " +{$homework_schedule->release_days} days"));
-								$due_date = date('Y-m-d H:i:s', strtotime($release_date . " +{$homework_schedule->deadline_days} days"));
-							}
+						if (!$schedule || !$schedule['homework_is_due_for_release']) {
+							continue; // Skip if no valid schedule or not due for release
 						}
-						if ($due_date == '0000-00-00 00:00:00' || $due_date == '1970-01-01 00:00:00') {
-							continue; // Skip if no due date set
-						}
-						$homeWorkIsDueForRelease = strtotime($release_date) <= max(strtotime($programStartDate), time());
+
+						$release_date = $schedule['release_date'];
+						$due_date = $schedule['due_date'];
 					?>
-						<!-- ONLY DISPLAY HOMEWORKS DUE For release -->
-						<?php if ($homeWorkIsDueForRelease) : ?>
-							<tr class="clickable-row" data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
-								<td><?php echo esc_html($row['title']); ?></td>
-								<td><?php echo $due_date == '0000-00-00 00:00:00' ? 'No deadline' : date('F j, Y', strtotime($due_date)); ?>
-									<div>
-										<?php if (!empty($current_user_has_submitted)) : ?>
-											<div class="badge badge-info badge-plain flex gap-2 justify-center items-center">
-												<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-												</svg>
-												<span>Submitted</span>
-											</div>
-										<?php else : ?>
-											<?php if ($due_date !== '0000-00-00 00:00:00') : ?>
-												<span class="skwp-date italic" data-end-date="<?php echo date('Y-m-d', strtotime($due_date)); ?>" data-end-time="<?php echo date('H:i:s', strtotime($due_date)); ?>"></span>
-											<?php endif; ?>
+						<tr class="clickable-row" data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
+							<td><?php echo esc_html($row['title']); ?></td>
+							<td><?php echo $due_date == '0000-00-00 00:00:00' ? 'No deadline' : date('l F j, Y g:i a', strtotime($due_date)); ?>
+								<div>
+									<?php if (!empty($current_user_has_submitted)) : ?>
+										<div class="badge badge-info badge-plain flex gap-2 justify-center items-center">
+											<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+											</svg>
+											<span>Submitted</span>
+										</div>
+									<?php else : ?>
+										<?php if ($due_date !== '0000-00-00 00:00:00') : ?>
+											<span class="skwp-date italic" data-end-date="<?php echo date('Y-m-d', strtotime($due_date)); ?>" data-end-time="<?php echo date('H:i:s', strtotime($due_date)); ?>"></span>
 										<?php endif; ?>
-									</div>
-								</td>
-								<td>
-									<?php
-									$subject_id = $row['subject_id'];
-									$subject = get_post((int)$subject_id);
-									echo esc_html($subject->post_title);
-									$allow_peer_review = $row['allow_peer_review'];
-									$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
-									echo $allow_peer_review ? '<br/> <span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>' : "";
-									?>
-								</td>
-								<td><?php echo esc_html($class->name); ?></td>
-								<td>
-									<?php
-									$user_info = get_user_meta($row['uploader_id']);
-									$first_name = $user_info["first_name"][0] ?? '';
-									$last_name = $user_info["last_name"][0] ?? '';
+									<?php endif; ?>
+								</div>
+							</td>
+							<td>
+								<?php
+								$subject_id = $row['subject_id'];
+								$subject = get_post((int)$subject_id);
+								echo esc_html($subject->post_title);
+								$allow_peer_review = $row['allow_peer_review'];
+								$peer_review_who = $row["peer_review_who"] == "teacher" ? "Faculty" : "Peer";
+								echo $allow_peer_review ? '<br/> <span class="badge badge-' . ($peer_review_who == 'Faculty' ? 'warning' : 'info') . ' badge-light ">' . $peer_review_who . ' reviewed</span>' : "";
+								?>
+							</td>
+							<!-- <td></td> -->
+							<td>
+								<?php
+								$user_info = get_user_meta($row['uploader_id']);
+								$first_name = $user_info["first_name"][0] ?? '';
+								$last_name = $user_info["last_name"][0] ?? '';
 
-									$user_name = $first_name . ' ' . $last_name;
+								$user_name = $first_name . ' ' . $last_name;
 
-									if (empty($first_name)) {
-										$user_info = get_userdata($row['uploader_id']);
-										$user_name = $user_info->display_name;
-									}
-									echo esc_html($user_name);
-									?>
-								</td>
-								<td class="row-actions">
-									<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
-										<?php echo esc_html__('View Detail', 'sakolawp'); ?>
-									</a>
-								</td>
-							</tr>
-						<?php endif; ?>
+								if (empty($first_name)) {
+									$user_info = get_userdata($row['uploader_id']);
+									$user_name = $user_info->display_name;
+								}
+								echo esc_html($user_name);
+								?>
+							</td>
+							<td class="row-actions">
+								<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
+									<?php echo esc_html__('View Detail', 'sakolawp'); ?>
+								</a>
+							</td>
+						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
