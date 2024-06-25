@@ -177,7 +177,7 @@ const getEditHomeworkUrl = (subjectId: string | number, homework_id: string) => 
             <div class="text-base">{{ homework.title }}</div>
             <Tag :value="`${homework.questions.length} Questions`" severity="secondary" />
             <a :href="getEditHomeworkUrl(homework.subject_id, homework.homework_id!)"><Button link class="!py-0"
-                label="Edit Homework"></Button></a>
+                label="Edit Assessment"></Button></a>
           </div>
           <div class="w-full md:max-w-96 lg:max-w-[600px]">
             <div v-if="dripMethod == 'days_after_release'" class="flex flex-col gap-4">

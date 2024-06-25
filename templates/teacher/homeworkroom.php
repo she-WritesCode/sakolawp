@@ -57,7 +57,7 @@ foreach ($current_homework as $row) :
 								<?php echo $row['title']; ?>
 
 								<a class="skwp-tab-item ml-2 btn btn-small btn-primary skwp-btn" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_edit')); ?>">
-									<span><?php echo esc_html__('Edit Homework', 'sakolawp'); ?></span>
+									<span><?php echo esc_html__('Edit Assessment', 'sakolawp'); ?></span>
 								</a>
 							</h5>
 							<div class="pipeline-header-numbers">

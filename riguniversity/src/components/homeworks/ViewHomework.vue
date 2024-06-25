@@ -35,7 +35,7 @@ onMounted(() => {
             <div class="w-full flex gap-2 mb-4">
                 <h3 class="text-2xl font-semibold text-primary-900">{{ currentHomework?.title }}</h3>
                 <Button size="small" @click="goToEditHomework(homeworkId as string)" class="!text-xs" outlined
-                    label="Edit Homework"></Button>
+                    label="Edit Assessment"></Button>
             </div>
 
             <div class="mb-4 whitespace-pre-wrap">{{ currentHomework?.description }}</div>

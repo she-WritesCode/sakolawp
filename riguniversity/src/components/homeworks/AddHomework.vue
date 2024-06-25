@@ -101,7 +101,7 @@ const onUpload = () => {
 const showPreview = ref<boolean>(false)
 </script>
 <template>
-    <form id="myFor" class="flex flex-col gap-8" name="Add homework" @submit="submitForm">
+    <form id="myFor" class="flex flex-col gap-8" name="Add Assessment" @submit="submitForm">
         <div class="flex flex-col gap-2">
 
             <div class="form-group">

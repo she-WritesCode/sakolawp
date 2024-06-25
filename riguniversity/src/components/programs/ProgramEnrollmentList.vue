@@ -2,6 +2,7 @@
 import { onMounted, computed, ref } from "vue";
 import { useProgramEnrollmentStore } from "../../stores/program-enrollment";
 import { useProgramStore } from "../../stores/program";
+import { DateHelper } from "../../utils/date";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -15,7 +16,6 @@ import LoadingIndicator from '../LoadingIndicator.vue'
 
 const {
     programEnrollments,
-    fetchprogramEnrollments,
     filter,
     goToViewprogramEnrollment,
     programEnrollmentId,
@@ -105,7 +105,7 @@ function getInitials(name: string) {
                 </Column>
                 <Column header="Added at">
                     <template #body="slotProps">
-                        {{ slotProps.data.created_at }}
+                        {{ DateHelper.formatDate(slotProps.data.created_at) }}
                     </template>
                 </Column>
                 <Column header="">

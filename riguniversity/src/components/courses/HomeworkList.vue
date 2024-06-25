@@ -94,7 +94,7 @@ function duplicateAHomework() {
                     <InputText v-model="filter.search" placeholder="Search Homeworks" class="font-normal" />
                 </div>
                 <div class="">
-                    <Button @click="goToAddForm" size="small" label="Add Homework"></Button>
+                    <Button @click="goToAddForm" size="small" label="Add Assessment"></Button>
                 </div>
             </div>
         </template>

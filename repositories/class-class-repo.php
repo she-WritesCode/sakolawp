@@ -169,25 +169,25 @@ class RunClassRepo
             array('class_id' => $class_id)
         );
 
-        if ($result) {
-            $wpdb->delete(
+        // if ($result) {
+        $wpdb->delete(
+            "{$wpdb->prefix}{$this->class_subject_table}",
+            [
+                'class_id' => $class_id,
+            ]
+        );
+        foreach ($subjects as $subject_id) {
+            skwp_insert_or_update_record(
                 "{$wpdb->prefix}{$this->class_subject_table}",
-                [
+                array(
                     'class_id' => $class_id,
-                ]
+                    'subject_id' => $subject_id
+                ),
+                ['class_id', 'subject_id'],
+                'id'
             );
-            foreach ($subjects as $subject_id) {
-                skwp_insert_or_update_record(
-                    "{$wpdb->prefix}{$this->class_subject_table}",
-                    array(
-                        'class_id' => $class_id,
-                        'subject_id' => $subject_id
-                    ),
-                    ['class_id', 'subject_id'],
-                    'id'
-                );
-            }
         }
+        // }
         return $result;
     }
 

@@ -240,7 +240,7 @@ onUpdated(() => {
                     </div>
                     <div class="card">
                         <div class="title">{{ currentProgram?.event_count }}</div>
-                        <div class="content">Events</div>
+                        <div class="content">Meetings</div>
                     </div>
                     <div class="card">
                         <div class="title">{{ currentProgram?.teacher_count }}</div>
