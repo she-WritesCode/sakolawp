@@ -24,8 +24,8 @@ global $wpdb;
 			<div class="skwp-logo">
 				<img src="<?php echo plugin_dir_url(__DIR__); ?>img/swp-logo.png" alt="<?php echo esc_attr('Sakola Logo'); ?>">
 			</div>
-			<a class="nav-item nav-link active" href="admin.php?page=sakolawp-homework"><?php esc_html_e('Homework', 'sakolawp'); ?></a>
-			<a class="nav-item nav-link" target="__blank" href="<?php echo site_url(); ?>/homework"><?php esc_html_e('Add Homework', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link active" href="admin.php?page=sakolawp-homework"><?php esc_html_e('Assessment', 'sakolawp'); ?></a>
+			<a class="nav-item nav-link" target="__blank" href="<?php echo site_url(); ?>/homework"><?php esc_html_e('Add Assessment', 'sakolawp'); ?></a>
 
 		</div>
 	</nav>
@@ -120,12 +120,12 @@ global $wpdb;
 							<li class="nav-item">
 								<a class="nav-link <?php if ($action == 'homeworkroom') {
 														echo 'active';
-													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Homework', 'sakolawp'); ?></span></a>
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Assessment', 'sakolawp'); ?></span></a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link <?php if ($action == 'homeworkroom_details') {
 														echo 'active';
-													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Delivered Homework', 'sakolawp'); ?></span></a>
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Submitted Assessment', 'sakolawp'); ?></span></a>
 							</li>
 						</ul>
 					</div>
@@ -164,7 +164,7 @@ global $wpdb;
 						<div class="skwp-column skwp-column-1 homework-info">
 							<div class="skwp-header">
 								<h5 class="skwp-form-header">
-									<?php echo esc_html__('Homework Information', 'sakolawp'); ?>
+									<?php echo esc_html__('Assessment Information', 'sakolawp'); ?>
 								</h5>
 							</div>
 							<div class="table-responsive">
@@ -250,12 +250,12 @@ global $wpdb;
 							<li class="nav-item">
 								<a class="nav-link <?php if ($action == 'homeworkroom') {
 														echo 'active';
-													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Homework', 'sakolawp'); ?></span></a>
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom'), admin_url('admin.php?page=sakolawp-homework')); ?>"><?php echo esc_html__('Assessment', 'sakolawp'); ?></span></a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link <?php if ($action == 'homeworkroom_details') {
 														echo 'active';
-													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Delivered Homework', 'sakolawp'); ?></span></a>
+													} ?>" href="<?php echo add_query_arg(array('homework_code' => $homework_code, 'action' => 'homeworkroom_details'), admin_url('admin.php?page=sakolawp-homework')); ?>"><span><?php echo esc_html__('Submitted Assessment', 'sakolawp'); ?></span></a>
 							</li>
 						</ul>
 					</div>
@@ -272,7 +272,7 @@ global $wpdb;
 										<th><?php echo esc_html__('Student', 'sakolawp'); ?></th>
 										<th><?php echo esc_html__('Student Comment', 'sakolawp'); ?></th>
 										<th><?php echo esc_html__('Delivery Status', 'sakolawp'); ?></th>
-										<th><?php echo esc_html__('Homework Detail', 'sakolawp'); ?></th>
+										<th><?php echo esc_html__('Assessment Detail', 'sakolawp'); ?></th>
 										<th><?php echo esc_html__('Faculty Comment', 'sakolawp'); ?></th>
 										<th style="width:50px"><?php echo esc_html__('Mark', 'sakolawp'); ?></th>
 									</tr>
@@ -321,7 +321,7 @@ global $wpdb;
 						<div class="skwp-column skwp-column-1 homework-info">
 							<div class="skwp-header">
 								<h5 class="skwp-form-header">
-									<?php echo esc_html__('Homework Information', 'sakolawp'); ?>
+									<?php echo esc_html__('Assessment Information', 'sakolawp'); ?>
 								</h5>
 							</div>
 							<div class="table-responsive">

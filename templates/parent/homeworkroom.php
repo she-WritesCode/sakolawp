@@ -71,11 +71,11 @@ if (!empty($enroll)) :
 
 						<?php if (!empty($query)) : ?>
 							<div class="homework-stat-button skwp-row no-margin">
-								<span class="btn skwp-btn btn-success"><strong></strong><?php echo esc_html__('Homework Delivered', 'sakolawp'); ?></span>
+								<span class="btn skwp-btn btn-success"><strong></strong><?php echo esc_html__('Assessment Submitted', 'sakolawp'); ?></span>
 							</div>
 						<?php else : ?>
 							<div class="homework-stat-button skwp-row no-margin">
-								<span class="btn skwp-btn btn-danger"><strong></strong> <?php echo esc_html__('Homework Not Delivered', 'sakolawp'); ?></span>
+								<span class="btn skwp-btn btn-danger"><strong></strong> <?php echo esc_html__('Assessment Not Submitted', 'sakolawp'); ?></span>
 							</div>
 						<?php endif; ?>
 
@@ -186,10 +186,10 @@ if (!empty($enroll)) :
 									</th>
 									<td>
 										<?php if (count($query) <= 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Delivered', 'sakolawp'); ?></a>
+											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Submitted', 'sakolawp'); ?></a>
 										<?php endif; ?>
 										<?php if (count($query) > 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Delivered', 'sakolawp'); ?></a>
+											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Submitted', 'sakolawp'); ?></a>
 										<?php endif; ?>
 									</td>
 								</tr>

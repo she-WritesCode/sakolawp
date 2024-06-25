@@ -198,7 +198,7 @@ function run_single_homework()
 	$result = $repo->single($homework_id);
 
 	if (!$result) {
-		wp_send_json_error('Homework not found', 404);
+		wp_send_json_error('Assessment not found', 404);
 		die();
 	}
 	wp_send_json_success($result, 200);

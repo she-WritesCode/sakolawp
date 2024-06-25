@@ -33,7 +33,7 @@ foreach ($current_homework as $row) :
 				</li>
 				<li class="skwp-tab-items active">
 					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_details')); ?>">
-						<span><?php echo esc_html__('Homework Reports', 'sakolawp'); ?></span>
+						<span><?php echo esc_html__('Assessment Reports', 'sakolawp'); ?></span>
 					</a>
 				</li>
 				<!-- <li class="skwp-tab-items">
@@ -53,7 +53,7 @@ foreach ($current_homework as $row) :
 						<tr>
 							<th><?php echo esc_html__('Name', 'sakolawp'); ?></th>
 							<th><?php echo esc_html__('Delivery Status', 'sakolawp'); ?></th>
-							<th><?php echo esc_html__('Homework Detail', 'sakolawp'); ?></th>
+							<th><?php echo esc_html__('Assessment Detail', 'sakolawp'); ?></th>
 							<th><?php echo esc_html__('Mark', 'sakolawp'); ?></th>
 						</tr>
 					</thead>
@@ -98,7 +98,7 @@ foreach ($current_homework as $row) :
 
 		<div class="homework-info skwp-mt-20">
 			<h5>
-				<?php echo esc_html__('Homework Information', 'sakolawp'); ?>
+				<?php echo esc_html__('Assessment Information', 'sakolawp'); ?>
 			</h5>
 			<div class="table-responsive">
 				<table class="table table-lightbor table-lightfont">

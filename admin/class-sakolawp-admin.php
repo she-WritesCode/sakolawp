@@ -143,7 +143,7 @@ class Sakolawp_Admin
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Parent Groups', 'sakolawp'), esc_html__('Manage Parent Groups', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-section', array($this, 'manageSectionAdminSettings'), 4);
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Accountability Groups', 'sakolawp'), esc_html__('Manage Accountability Groups', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-accountability', array($this, 'manageAccountabilityAdminSettings'), 5);
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Subjects', 'sakolawp'), esc_html__('Manage Subjects', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-subject', array($this, 'manageSubjectAdminSettings'), 3);
-			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Homeworks', 'sakolawp'), esc_html__('Homeworks', 'sakolawp'), 'administrator', $this->plugin_name . '-homework', array($this, 'homeworkAdminSettings'), 6);
+			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Assessments', 'sakolawp'), esc_html__('Assessments', 'sakolawp'), 'administrator', $this->plugin_name . '-homework', array($this, 'homeworkAdminSettings'), 6);
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Routine', 'sakolawp'), esc_html__('Manage Routines', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-routine', array($this, 'manageRoutineAdminSettings'));
 			// add_submenu_page($this->plugin_name . '-settings', esc_html__('Attendance', 'sakolawp'), esc_html__('Manage Attendance', 'sakolawp'), 'administrator', $this->plugin_name . '-manage-attendance', array($this, 'manageAttendanceAdminSettings'));
 			add_submenu_page($this->plugin_name . '-settings', esc_html__('Attendance Report', 'sakolawp'), esc_html__('Attendance Report', 'sakolawp'), 'administrator', $this->plugin_name . '-attendance-records', array($this, 'manageAttendanceRecordsAdminSettings'));
@@ -1179,7 +1179,7 @@ class Sakolawp_Admin
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel"><?php esc_html_e('Student Homework', 'sakolawp'); ?></h5>
+								<h5 class="modal-title" id="exampleModalLabel"><?php esc_html_e('Student Assessment', 'sakolawp'); ?></h5>
 								<a href="?page=sakolawp-homework&homework_code=<?php echo esc_attr($homework_code); ?>&action=homeworkroom_details">
 									<span aria-hidden="true">&times;</span>
 								</a>

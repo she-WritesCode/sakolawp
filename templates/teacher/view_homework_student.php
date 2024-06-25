@@ -141,7 +141,7 @@ foreach ($homework_deliveries as $row) :
 				</li>
 				<li class="skwp-tab-items active">
 					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_details')); ?>">
-						<span><?php echo esc_html__('Homework Reports', 'sakolawp'); ?></span>
+						<span><?php echo esc_html__('Assessment Reports', 'sakolawp'); ?></span>
 					</a>
 				</li>
 				<!-- <li class="skwp-tab-items">

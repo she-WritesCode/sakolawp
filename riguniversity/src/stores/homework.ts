@@ -165,7 +165,7 @@ export const useHomeworkStore = defineStore('homework', () => {
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Homework created successfully',
+          detail: 'Assessment created successfully',
           life: 3000
         })
         closeAddForm()
@@ -199,7 +199,7 @@ export const useHomeworkStore = defineStore('homework', () => {
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Homework duplicated successfully',
+          detail: 'Assessment duplicated successfully',
           life: 3000
         })
         fetchHomeworks()
@@ -235,7 +235,7 @@ export const useHomeworkStore = defineStore('homework', () => {
         toast.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Homework updated successfully',
+          detail: 'Assessment updated successfully',
           life: 3000
         })
       })

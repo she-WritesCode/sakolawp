@@ -131,7 +131,7 @@ if (!empty($enroll)) :
 				<div class="skwp-column skwp-column-1">
 					<div class="skwp-sidebar-title">
 						<h5 class="skwp-title">
-							<?php esc_html_e('Homework Response', 'sakolawp'); ?>
+							<?php esc_html_e('Assessment Response', 'sakolawp'); ?>
 						</h5>
 					</div>
 					<p>

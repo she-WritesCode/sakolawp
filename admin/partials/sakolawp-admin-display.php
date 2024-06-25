@@ -145,7 +145,7 @@
 										</tr> -->
 										<tr>
 											<td>
-												<?php esc_html_e('Homeworks Created', 'sakolawp'); ?>
+												<?php esc_html_e('Assessments Created', 'sakolawp'); ?>
 											</td>
 											<td>
 												<?php
@@ -159,7 +159,7 @@
 										</tr>
 										<tr>
 											<td>
-												<?php esc_html_e('Homeworks Submitted By Student', 'sakolawp'); ?>
+												<?php esc_html_e('Assessments Submitted By Student', 'sakolawp'); ?>
 											</td>
 											<td>
 												<?php

@@ -13,12 +13,12 @@
 // DEFINE CONSTANTS TO HOLD EMAIL TEMPLATES
 const SKWP_NEW_HOMEWORK_TEMPLATE = 'sakolawp_new_homework_email_template';
 const SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE = [
-	"subject" => "New Homework Available: {homework_title}",
+	"subject" => "New Assessment Available: {homework_title}",
 	"template" => "Hi {student_name},\n\nA new homework has been assigned to you.\n\n{homework_details}\n\nBest Regards,\nRIG University Admin"
 ];
 const SKWP_HOMEWORK_REMINDER_TEMPLATE = 'sakolawp_homework_reminder_email_template';
 const SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE =  [
-	"subject" => "Reminder: Homework Deadline is Near: {homework_title}",
+	"subject" => "Reminder: Assessment Deadline is Near: {homework_title}",
 	"template" => "Hi {student_name},\n\nYou have a homework is due on {due_date}. \n\nDetails: {homework_details}\n\nBest Regards,\nRIG University Admin"
 ];
 const SKWP_AVAILABLE_HOMEWORK_PLACEHOLDERS = ['student_name', 'homework_details', 'due_date', 'homework_title', 'homework_description', "link_to_login"];
@@ -221,13 +221,13 @@ function sakolawp_fetch_email_templates()
 	$templates = [
 		[
 			'id' => SKWP_NEW_HOMEWORK_TEMPLATE,
-			'title' => 'New Homework Email',
+			'title' => 'New Assessment Email',
 			'placeholders' => SKWP_AVAILABLE_HOMEWORK_PLACEHOLDERS,
 			'content' => decode_email_template(get_option(SKWP_NEW_HOMEWORK_TEMPLATE, encode_email_template(SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE))),
 		],
 		[
 			'id' => SKWP_HOMEWORK_REMINDER_TEMPLATE,
-			'title' => 'Homework Reminder Email',
+			'title' => 'Assessment Reminder Email',
 			'placeholders' => SKWP_AVAILABLE_HOMEWORK_PLACEHOLDERS,
 			'content' => decode_email_template(get_option(SKWP_HOMEWORK_REMINDER_TEMPLATE, encode_email_template(SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE))),
 		],
@@ -277,7 +277,7 @@ function custom_cron_schedules($schedules)
 add_filter('cron_schedules', 'custom_cron_schedules');
 
 
-// Schedule Homework and Lesson Reminders:
+// Schedule Assessment and Lesson Reminders:
 function schedule_homework_reminders($schedules)
 {
 	foreach ($schedules as $schedule) {

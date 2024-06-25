@@ -10,13 +10,13 @@ if (is_page('myaccount') || $wp->request === "myaccount") {
 } elseif ($wp->request === "view-user") {
     $title_parts['title'] = 'Student Profile';
 } elseif ($wp->request === "homework") {
-    $title_parts['title'] = 'Class Homework';
+    $title_parts['title'] = 'Class Assessment';
 } elseif ($wp->request === "homeworkroom") {
-    $title_parts['title'] = 'Class Homework Room';
+    $title_parts['title'] = 'Class Assessment Room';
 } elseif ($wp->request === "homeworkroom_edit") {
-    $title_parts['title'] = 'Homework Room Edit';
+    $title_parts['title'] = 'Assessment Room Edit';
 } elseif ($wp->request === "homeworkroom_details") {
-    $title_parts['title'] = 'Homework Room Details';
+    $title_parts['title'] = 'Assessment Room Details';
 } elseif ($wp->request === "view_homework_student") {
-    $title_parts['title'] = 'View Homework Student';
+    $title_parts['title'] = 'View Assessment Student';
 }

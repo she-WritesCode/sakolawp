@@ -421,10 +421,10 @@ if (!empty($enroll)) :
 									</th>
 									<td>
 										<?php if (count($query) <= 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Delivered', 'sakolawp'); ?></a>
+											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Submitted', 'sakolawp'); ?></a>
 										<?php endif; ?>
 										<?php if (count($query) > 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Delivered', 'sakolawp'); ?></a>
+											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Submitted', 'sakolawp'); ?></a>
 										<?php endif; ?>
 									</td>
 								</tr>

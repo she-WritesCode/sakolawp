@@ -138,8 +138,8 @@ function duplicateAHomework() {
     <Dialog z v-model:visible="showDuplicateDialog" modal header="Duplicate Homework" :style="{ width: '30rem' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div class="form-group mb-4">
-            <label>Homework Title</label>
-            <InputText v-model="toBeDuplicated.title" placeholder="New Homework Title" class="w-full" />
+            <label>Assessment Title</label>
+            <InputText v-model="toBeDuplicated.title" placeholder="New AssessmentTitle" class="w-full" />
         </div>
         <div class="flex gap-2 justify-end">
             <Button @click="closeDuplicate" text>Cancel</Button>

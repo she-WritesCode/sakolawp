@@ -131,9 +131,10 @@ const showPreview = ref<boolean>(false)
         <div class="flex flex-col gap-2">
             <div class="mb-4">
                 <div class="flex gap-4 justify-between items-center ">
-                    <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
+                    <h4 class="text-lg font-semibold text-black">Assessment Questions</h4>
                     <div>
-                        <Button outlined @click="showPreview = !showPreview">{{ showPreview ? "Edit" : "Preview" }}</Button>
+                        <Button outlined @click="showPreview = !showPreview">{{ showPreview ? "Edit" : "Preview"
+                            }}</Button>
                     </div>
                 </div>
                 <p>How would you like your students to respond to this homework. For example: if you want them to submit
@@ -152,7 +153,7 @@ const showPreview = ref<boolean>(false)
         <div class="flex flex-col gap-2">
 
             <div class="mb-4">
-                <h4 class="text-lg font-semibold text-black">Homework Grading</h4>
+                <h4 class="text-lg font-semibold text-black">Assessment Grading</h4>
                 <p>How would you like this assessment to be graded?</p>
                 <Divider class="mb-4" />
             </div>

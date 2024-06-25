@@ -92,7 +92,7 @@ foreach ($current_homework as $row) :
 
 		<div class="homework-info skwp-mt-20">
 			<h5>
-				<?php echo esc_html__('Homework Information', 'sakolawp'); ?>
+				<?php echo esc_html__('Assessment Information', 'sakolawp'); ?>
 			</h5>
 			<div class="table-responsive">
 				<table class="table table-lightbor table-lightfont">

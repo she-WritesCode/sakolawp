@@ -26,9 +26,9 @@ onMounted(() => {
 </script>
 <template>
     <div v-if="!homeworkId && !currentHomework">
-        <h1 class="text-3xl mb-4">Homework Not Found</h1>
+        <h1 class="text-3xl mb-4">Assessment Not Found</h1>
         <p class="mb-4">Please go back and choose a different homework</p>
-        <Button label="Back to Homework List"></Button>
+        <Button label="Back to Assessment List"></Button>
     </div>
     <template v-else>
         <div class="border border-primary-50 p-4 rounded-lg w-full mb-8">
