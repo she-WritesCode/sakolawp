@@ -27,6 +27,15 @@ onMounted(() => {
     }
 });
 
+const getEditSubjectUrl = (subjectId: number) => {
+    const url = new URL(window.location.href)
+    url.pathname = '/wp-admin/post.php'
+    url.search = ""
+    url.searchParams.set('post', `${subjectId}`)
+    url.searchParams.set('action', 'edit')
+    return url.toString()
+}
+
 </script>
 
 <template>
@@ -38,7 +47,7 @@ onMounted(() => {
         <!-- Subject List -->
         <div class="border-0">
             <div class="px-2 pb-4">
-                <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Subjects</h3>
+                <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Course Schedules</h3>
                 <p>Click on + to manage the schedule of every course</p>
             </div>
 
@@ -47,7 +56,7 @@ onMounted(() => {
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                            <InputText v-model="filter.search" placeholder="Search Subjects" class="font-normal" />
+                            <InputText v-model="filter.search" placeholder="Search Courses" class="font-normal" />
                         </div>
                         <div class="">
                             <Button @click="goToEditProgram(programId as string)" size="small"
@@ -72,8 +81,13 @@ onMounted(() => {
                                             <!-- <Tag :value="`${item.lesson_count} Lessons`" severity="success" /> -->
                                         </div>
                                         <Tag :value="`Faculty: ${item.author}`" severity="info" />
+                                        <a :href="getEditSubjectUrl(item.ID)"><Button link class="!py-0"
+                                                label="Edit Course"></Button></a>
                                     </div>
                                 </template>
+
+                                <!-- <template #icons>
+                                </template> -->
 
                                 <ProgramSubjectSchedule :key="index" :homeworks="item.homeworks" :subjectId="item.ID"
                                     :programId="(programId as string)" :dripMethod="currentProgram?.drip_method">

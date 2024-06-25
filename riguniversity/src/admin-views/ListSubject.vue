@@ -80,7 +80,7 @@ function closeDelete() {
     <div v-else>
         <!-- Breadcrumb -->
         <div class="mb-4 px-2 text-sm text-surface-500">
-            <a href="/wp-admin/admin.php?page=sakolawp-manage-subject">Subjects</a>
+            <a href="/wp-admin/admin.php?page=sakolawp-manage-subject">Courses</a>
             <template v-if="currentSubject">
                 > <a :class="!currentHomework ? 'text-surface-900' : ''"
                     :href="`/wp-admin/admin.php?page=sakolawp-manage-subject&subject_id=${currentSubject?.subject_id}`">{{

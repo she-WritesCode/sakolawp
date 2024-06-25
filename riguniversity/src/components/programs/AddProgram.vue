@@ -60,7 +60,7 @@ onMounted(() => {
                 <div class="p-error text-red-500">{{ errors.start_date }}</div>
             </div>
             <div class="form-group">
-                <label for="name">Subjects</label>
+                <label for="name">Courses</label>
                 <MultiSelect name="subjects" v-model="subjects" class="w-full text-base" v-bind="subjectsProps"
                     :options="courseOptions" optionLabel="label" optionValue="value" />
                 <div class="p-error text-red-500">{{ errors.subjects }}</div>

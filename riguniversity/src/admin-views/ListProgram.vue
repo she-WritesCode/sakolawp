@@ -157,7 +157,7 @@ onUpdated(() => {
                                     Accountability Groups
                                 </div>
                                 <div>
-                                    <Tag :value="item.subject_count" severity="secondary" class="min-w-8" /> Subjects
+                                    <Tag :value="item.subject_count" severity="secondary" class="min-w-8" /> Courses
                                 </div>
                                 <div>
                                     <Tag :value="item.teacher_count" severity="secondary" class="min-w-8" /> Faculties
@@ -197,7 +197,7 @@ onUpdated(() => {
                 </a>
                 <template v-if="currentSubject">
                     > <a
-                        :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">Subjects</a>
+                        :href="`/wp-admin/admin.php?page=sakolawp-manage-class&class_id=${currentProgram?.class_id}`">Courses</a>
                 </template>
             </template>
             <template v-if="currentSubject">
@@ -236,7 +236,7 @@ onUpdated(() => {
                     </div>
                     <div class="card">
                         <div class="title">{{ currentProgram?.subject_count }}</div>
-                        <div class="content">Subjects</div>
+                        <div class="content">Courses</div>
                     </div>
                     <div class="card">
                         <div class="title">{{ currentProgram?.event_count }}</div>

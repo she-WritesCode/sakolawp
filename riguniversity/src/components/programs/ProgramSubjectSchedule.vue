@@ -141,6 +141,21 @@ const setDefaultDeadlineTime = (homework_id: string) => {
     )
   }
 }
+
+
+const getEditHomeworkUrl = (subjectId: string | number, homework_id: string) => {
+  const url = new URL(window.location.href)
+  url.pathname = '/wp-admin/post.php'
+  url.search = ""
+  url.searchParams.set('post', `${subjectId}`)
+  url.searchParams.set('post', `${subjectId}`)
+  url.searchParams.set('action', 'edit')
+  url.searchParams.set('rig_action', 'add_homework')
+  url.searchParams.set('homework_id', `${homework_id}`)
+  url.searchParams.set('expanded', '1')
+  return url.toString()
+}
+
 </script>
 
 <template>
@@ -158,9 +173,11 @@ const setDefaultDeadlineTime = (homework_id: string) => {
       <Divider />
       <template v-for="homework in homeworks" :key="homework.homework_id">
         <div class="flex flex-col md:flex-row gap-4 items-center md:justify-between">
-          <div class="text-base w-full">
-            <div>{{ homework.title }}</div>
+          <div class="w-full">
+            <div class="text-base">{{ homework.title }}</div>
             <Tag :value="`${homework.questions.length} Questions`" severity="secondary" />
+            <a :href="getEditHomeworkUrl(homework.subject_id, homework.homework_id!)"><Button link class="!py-0"
+                label="Edit Homework"></Button></a>
           </div>
           <div class="w-full md:max-w-96 lg:max-w-[600px]">
             <div v-if="dripMethod == 'days_after_release'" class="flex flex-col gap-4">

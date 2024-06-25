@@ -60,7 +60,7 @@ onMounted(() => {
     <div v-else>
         <!-- Breadcrumb -->
         <div class="mb-4 px-2 text-sm text-surface-500">
-            <a href="/wp-admin/edit.php?post_type=sakolawp-course">Subjects</a>
+            <a href="/wp-admin/edit.php?post_type=sakolawp-course">Courses</a>
             <template v-if="currentSubject">
                 > <a :class="!currentHomework ? 'text-surface-900' : ''"
                     :href="`/wp-admin/edit.php?post_type=sakolawp-course&subject_id=${currentSubject?.subject_id}`">{{
