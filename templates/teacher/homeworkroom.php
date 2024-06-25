@@ -9,33 +9,37 @@ global $wpdb;
 $running_year = get_option('running_year');
 
 $homework_code = sanitize_text_field($_GET['homework_code']);
+$class_id = sanitize_text_field($_GET['class_id']);
 $current_homework = $wpdb->get_results("SELECT homework_id, homework_code, title, peer_review_who, description, file_name, subject_id, class_id, section_id, peer_review_template, allow_peer_review, created_at FROM {$wpdb->prefix}sakolawp_homework WHERE homework_code = '$homework_code'", ARRAY_A);
 
 foreach ($current_homework as $row) :
 	$homework_id = $row['homework_id'];
 
-	$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE content_type = 'homework' AND content_id = '$homework_id'");
+	$schedule = get_homework_schedule($class_id, $homework_id);
 
-	$release_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->release_date : date('Y-m-d H:i:s', $homework_schedule->release_days * 24 * 60 * 60);
-	$due_date = $homework_schedule->drip_method == 'specific_dates' ? $homework_schedule->deadline_date : date('Y-m-d H:i:s', $homework_schedule->deadline_days * 24 * 60 * 60);
+	if (!$schedule || !$schedule['homework_is_due_for_release']) {
+		continue; // Skip if no valid schedule or not due for release
+	}
 
+	$release_date = $schedule['release_date'];
+	$due_date = $schedule['due_date'];
 
 ?>
 	<div class="homeworkroom-page skwp-content-inner">
 		<div class="skwp-tab-menu">
 			<ul class="skwp-tab-wrap">
 				<li class="skwp-tab-items active">
-					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
+					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom')); ?>">
 						<span><?php echo esc_html__('Homework', 'sakolawp'); ?></span>
 					</a>
 				</li>
 				<li class="skwp-tab-items">
-					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_details')); ?>">
+					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_details')); ?>">
 						<span><?php echo esc_html__('Homework Reports', 'sakolawp'); ?></span>
 					</a>
 				</li>
 				<!-- <li class="skwp-tab-items">
-					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_edit')); ?>">
+					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_edit')); ?>">
 						<span><?php echo esc_html__('Edit', 'sakolawp'); ?></span>
 					</a>
 				</li> -->
@@ -52,7 +56,7 @@ foreach ($current_homework as $row) :
 							<h5 class="pipeline-name">
 								<?php echo $row['title']; ?>
 
-								<a class="skwp-tab-item ml-2 btn btn-small btn-primary skwp-btn" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_edit')); ?>">
+								<a class="skwp-tab-item ml-2 btn btn-small btn-primary skwp-btn" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_edit')); ?>">
 									<span><?php echo esc_html__('Edit Homework', 'sakolawp'); ?></span>
 								</a>
 							</h5>

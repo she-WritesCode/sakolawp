@@ -4,6 +4,7 @@ defined('ABSPATH') || exit;
 
 $homeworkCode = $_GET['homework_code'];
 $studentId = $_GET['student_id'];
+$class_id = sanitize_text_field($_GET['class_id']);
 $current_user_id = get_current_user_id();
 $homework_table = $wpdb->prefix . 'sakolawp_homework';
 $deliveries_table = $wpdb->prefix . 'sakolawp_deliveries';
@@ -134,17 +135,17 @@ foreach ($homework_deliveries as $row) :
 		<div class="skwp-tab-menu">
 			<ul class="skwp-tab-wrap">
 				<li class="skwp-tab-items">
-					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
+					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom')); ?>">
 						<span><?php echo esc_html__('Homework', 'sakolawp'); ?></span>
 					</a>
 				</li>
 				<li class="skwp-tab-items active">
-					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_details')); ?>">
+					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_details')); ?>">
 						<span><?php echo esc_html__('Homework Reports', 'sakolawp'); ?></span>
 					</a>
 				</li>
 				<!-- <li class="skwp-tab-items">
-					<a class="skwp-tab-item" href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_edit')); ?>">
+					<a class="skwp-tab-item" href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_edit')); ?>">
 						<span><?php echo esc_html__('Edit', 'sakolawp'); ?></span>
 					</a>
 				</li> -->
@@ -154,7 +155,7 @@ foreach ($homework_deliveries as $row) :
 			<div class="skwp-column skwp-column-1">
 				<div class="tugas-wrap">
 					<div class="back skwp-back hidden-sm-down">
-						<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom_details')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
+						<a href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom_details')); ?>"><i class="sakolawp-icon sakolawp-icon-arrow"></i><?php echo esc_html__('Back', 'sakolawp'); ?></a>
 					</div>
 
 

@@ -83,12 +83,13 @@ if (isset($_GET['action']) == 'delete') {
 	wp_redirect(home_url('homework'));
 }
 
-$class_id = 1;
 
 if (isset($_POST['action']) == 'select_class' && isset($_POST['class_id'])) {
 	$class_id = sanitize_text_field($_POST['class_id']);
 	wp_redirect(add_query_arg(['class_id' => $class_id], home_url('homework')));
 }
+
+$class_id = isset($_GET['class_id']) ? $_GET['class_id'] : 1;
 
 get_header();
 do_action('sakolawp_before_main_content');
@@ -195,8 +196,6 @@ $my_homework = $wpdb->get_row($homework_sql);
 					$homeworks = $wpdb->get_results($homework_sql, ARRAY_A);
 					error_log($wpdb->last_error);
 					foreach ($homeworks as $row) :
-						// Temporary Hack - until we can separate classes
-						// $class_id = 1; // $row['class_id'];
 						$class = $wpdb->get_row("SELECT name, start_date FROM {$wpdb->prefix}sakolawp_class WHERE class_id = $class_id");
 						$homework_code = $row['homework_code'];
 						$homework_id = $row['homework_id'];
@@ -209,7 +208,7 @@ $my_homework = $wpdb->get_row($homework_sql);
 						$release_date = $schedule['release_date'];
 						$due_date = $schedule['due_date'];
 					?>
-						<tr data-href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>">
+						<tr data-href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom')); ?>">
 							<td hidden><?php echo $row['created_at']; ?></td>
 							<td>
 								<?php
@@ -258,7 +257,7 @@ $my_homework = $wpdb->get_row($homework_sql);
 								?>
 							</td>
 							<td>
-								<a href="<?php echo add_query_arg('homework_code', $row['homework_code'], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
+								<a href="<?php echo add_query_arg(['homework_code' => $row['homework_code'], "class_id" => $class_id], home_url('homeworkroom')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
 									<?php echo esc_html__('View', 'sakolawp'); ?>
 								</a>
 								<a class="btn btn-danger btn-rounded btn-sm skwp-btn" onClick="return confirm('Confirm Delete?')" href="<?php echo add_query_arg(array('homework_code' => $row['homework_code'], 'action' => 'delete'), home_url('homework')); ?>">
