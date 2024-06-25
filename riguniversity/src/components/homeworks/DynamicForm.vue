@@ -37,7 +37,7 @@ const range = (min: number, max: number) => {
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
         <form @submit.prevent="handleSubmit">
-            <div class="bg-surface-50 p-4" v-for="question in questions" :key="question.question_id">
+            <div class="bg-surface-0 border rounded-md p-4" v-for="question in questions" :key="question.question_id">
                 <div class="form-group" v-if="question.type === 'text'">
                     <label :for="question.question_id">{{ question.question }}</label>
                     <InputText class="w-full" type="text" :id="question.question_id"
@@ -92,7 +92,7 @@ const range = (min: number, max: number) => {
                         @change="handleFileUpload(question.question_id, $event)" />
                 </div>
             </div>
-            <Button type="submit">{{ submitLabel || 'Submit' }}</Button>
+            <!-- <Button type="submit">{{ submitLabel || 'Submit' }}</Button> -->
         </form>
     </div>
 </template>

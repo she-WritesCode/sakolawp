@@ -8,7 +8,7 @@ export interface Course {
   excerpt: string
   permalink: string
   meta: Record<string, string[]>
-  ID?: string
+  ID?: number
   teacher_id: string
   class_id: string
   author: string

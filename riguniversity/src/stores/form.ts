@@ -34,6 +34,7 @@ export interface Question {
   question: string
   type: QuestionType
   accepts?: string
+  regex?: string
   multiple?: boolean
   linear_scale_options: LinearScaleOptions
   text_options: TextOptions
@@ -62,6 +63,7 @@ export const useFormStore = defineStore('formStore', {
         question: 'Your Submission',
         type,
         accepts: '*',
+        regex: '',
         required: true,
         options:
           type === 'radio' || type === 'checkbox' || type === 'dropdown'
@@ -102,6 +104,13 @@ export const useFormStore = defineStore('formStore', {
         { label: 'Word Documents', value: '.docs|.docx' },
         { label: 'PDF File', value: '.pdf' },
         { label: 'CSV File', value: '.csv' }
+      ]
+    },
+    getTextTypeOptions() {
+      return [
+        { label: 'Plain', value: '' },
+        { label: 'Url', value: '\b((https?|ftp)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])' },
+        { label: 'Email', value: '\b[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}\b' }
       ]
     },
     generateForm() {

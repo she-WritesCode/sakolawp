@@ -3,16 +3,16 @@ import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 import type { Homework } from './homework'
-import type { Subject } from './subject'
+import type { Course } from './course'
 
-export interface programSubject extends Subject {
+export interface ProgramSubject extends Course {
   homeworks?: Homework[]
 }
 
 export const useProgramSubjectStore = defineStore('programSubject', () => {
   const toast = useToast()
-  const programSubjects = ref<programSubject[]>([])
-  const currentProgramSubject = ref<programSubject | undefined>(undefined)
+  const programSubjects = ref<ProgramSubject[]>([])
+  const currentProgramSubject = ref<ProgramSubject | undefined>(undefined)
   const filter = reactive({
     search: '',
     class_id: ''
@@ -141,7 +141,7 @@ export const useProgramSubjectStore = defineStore('programSubject', () => {
       })
   }
 
-  const createProgramSubject = (args: Partial<programSubject>) => {
+  const createProgramSubject = (args: Partial<ProgramSubject>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -175,7 +175,7 @@ export const useProgramSubjectStore = defineStore('programSubject', () => {
       })
   }
 
-  const updateProgramSubject = (args: Partial<programSubject>) => {
+  const updateProgramSubject = (args: Partial<ProgramSubject>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {

@@ -98,6 +98,7 @@ onMounted(() => {
 const onUpload = () => {
     // toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
 };
+const showPreview = ref<boolean>(false)
 </script>
 <template>
     <form id="myFor" class="flex flex-col gap-8" name="Add homework" @submit="submitForm">
@@ -128,9 +129,13 @@ const onUpload = () => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-
             <div class="mb-4">
-                <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
+                <div class="flex gap-4 justify-between items-center ">
+                    <h4 class="text-lg font-semibold text-black">Homework Questions</h4>
+                    <div>
+                        <Button outlined @click="showPreview = !showPreview">{{ showPreview ? "Edit" : "Preview" }}</Button>
+                    </div>
+                </div>
                 <p>How would you like your students to respond to this homework. For example: if you want them to submit
                     a url you can use short text, or if you want the student to respond with
                     a file, you can use the file upload instead</p>
@@ -138,9 +143,9 @@ const onUpload = () => {
             </div>
 
             <div>
-                <QuestionBuilder :key="key" :errors="errors.questions" v-model="questions" v-bind="questionsProps">
+                <QuestionBuilder :showPreview="showPreview" :key="key" :errors="errors.questions" v-model="questions"
+                    v-bind="questionsProps">
                 </QuestionBuilder>
-                <div class="p-error text-red-500">{{ }}</div>
             </div>
 
         </div>
