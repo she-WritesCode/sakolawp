@@ -242,7 +242,7 @@ function run_create_homework()
 		'homework_code' => $homework_code,
 		'title' => $title,
 		'description' => $description,
-		// 'class_id' => $subject->class_id,
+		'class_id' => $course['meta']['sakolawp_class_id'][0],
 		'section_id' => $section_id,
 		'subject_id' => $subject_id,
 		'uploader_id' => $uploader_id,

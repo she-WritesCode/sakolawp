@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFormStore, type Question } from '@/stores/form';
+import { useFormStore, type Question, QuestionLabels } from '@/stores/form';
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
@@ -142,8 +142,8 @@ watch(form.questions, (value) => {
                                 <div class="flex gap-4">
                                     <div v-for="option of getTextTypeOptions()" :key="option.value"
                                         class="flex gap-2 items-center">
-                                        <RadioButton v-model="question.regex" :inputId="option.value" name="option"
-                                            :value="option.label" />
+                                        <RadioButton v-model="question.text_options.regex" :inputId="option.value"
+                                            name="option" :value="option.value" />
                                         <label class="!my-0" :for="option.value">{{ option.label }}</label>
                                     </div>
                                 </div>
@@ -196,13 +196,17 @@ watch(form.questions, (value) => {
             <div v-if="errors" class="text-red-500 mb-4"> {{ errors }} </div>
 
             <div class="flex flex-wrap gap-2 mb-4">
-                <Button outlined @click="() => addQuestion('text')" label="Add Short Text"></Button>
-                <Button outlined @click="() => addQuestion('textarea')" label="Add Long Text"></Button>
-                <Button outlined @click="() => addQuestion('dropdown')" label="Add Dropdown"></Button>
-                <Button outlined @click="() => addQuestion('checkbox')" label="Add Checkbox"></Button>
-                <Button outlined @click="() => addQuestion('radio')" label="Add Radio"></Button>
-                <Button outlined @click="() => addQuestion('linear-scale')" label="Add Linear Scale"></Button>
-                <Button outlined @click="() => addQuestion('file')" label="Add File Upload"></Button>
+                <Button outlined @click="() => addQuestion('text')" :label="`Add ${QuestionLabels['text']}`"></Button>
+                <Button outlined @click="() => addQuestion('textarea')"
+                    :label="`Add ${QuestionLabels['textarea']}`"></Button>
+                <Button outlined @click="() => addQuestion('dropdown')"
+                    :label="`Add ${QuestionLabels['dropdown']}`"></Button>
+                <Button outlined @click="() => addQuestion('checkbox')"
+                    :label="`Add ${QuestionLabels['checkbox']}`"></Button>
+                <Button outlined @click="() => addQuestion('radio')" :label="`Add ${QuestionLabels['radio']}`"></Button>
+                <Button outlined @click="() => addQuestion('linear-scale')"
+                    :label="`Add ${QuestionLabels['linear-scale']}`"></Button>
+                <Button outlined @click="() => addQuestion('file')" :label="`Add ${QuestionLabels['file']}`"></Button>
             </div>
         </template>
     </div>

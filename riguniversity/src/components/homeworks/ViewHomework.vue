@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag';
+import { QuestionLabels } from '../../stores/form';
 import { useHomeworkStore } from '../../stores/homework';
 import { useHomeworkDeliveryStore } from '../../stores/homework-deliveries';
 import DataTable from 'primevue/datatable';
@@ -55,11 +56,6 @@ onMounted(() => {
                 <div v-else class="">
                     <Tag outlined value="Faculty Graded" severity="success" />
                 </div>
-                <div class="">
-                    <Tag outlined
-                        :value="`Due on: ${new Date(currentHomework?.date_end as any).toDateString()} ${currentHomework?.time_end}`"
-                        severity="danger" />
-                </div>
             </div>
 
             <div class="mb-4">
@@ -69,13 +65,13 @@ onMounted(() => {
                         :key="question.question_id">
                         <span class="">{{ index + 1 }}. </span>
                         <span>{{ question.question }}</span>
-                        <Tag :value="question.type" severity="secondary" />
+                        <Tag :value="QuestionLabels[question.type]" severity="secondary" />
                     </li>
                 </ol>
             </div>
         </div>
 
-        <div>
+        <!-- <div>
             <div class="mb-4">
                 <h3 class="text-lg mb-0">Submissions ({{ currentHomework?.delivery_count }})</h3>
             </div>
@@ -100,9 +96,7 @@ onMounted(() => {
                     </Column>
                 </DataTable>
             </div>
-
-
-        </div>
+        </div> -->
     </template>
     <Dialog v-model:visible="showViewScreen" modal :header="`${currentDelivery?.student_name}'s Submission`"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">

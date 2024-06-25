@@ -105,6 +105,7 @@ class RunQuestionsRepo
     /** Helper method to insert a new question */
     private function create(array $question_data)
     {
+        unset($question_data['regex']);
         global $wpdb;
 
         // Convert arrays to JSON strings
@@ -168,6 +169,7 @@ class RunQuestionsRepo
     /** Helper method to update an existing question */
     private function update($question_id, $question_data)
     {
+        unset($question_data['regex']);
         global $wpdb;
 
         // Convert arrays to JSON strings
@@ -190,31 +192,30 @@ class RunQuestionsRepo
             array('question_id' => $question_id)
         );
 
-        if ($result) {
-            // Update linear scale options if present
+        // if ($result) {
 
-            // Delete existing options
-            $wpdb->delete(
-                "{$wpdb->prefix}{$this->options_table}",
-                array('question_id' => $question_id)
-            );
+        // Delete existing options
+        $wpdb->delete(
+            "{$wpdb->prefix}{$this->options_table}",
+            array('question_id' => $question_id)
+        );
 
-            // Insert updated options
-            if ($options) {
-                foreach ($options as $option) {
-                    $option_data = [
-                        'question_id' => $question_id,
-                        'label' => !empty($option['label']) ? $option['label'] : $option['value'],
-                        'value' => $option['value'],
-                        'points' => isset($option['points']) ? $option['points'] : null
-                    ];
-                    $wpdb->insert(
-                        "{$wpdb->prefix}{$this->options_table}",
-                        $option_data
-                    );
-                }
+        // Insert updated options
+        if ($options) {
+            foreach ($options as $option) {
+                $option_data = [
+                    'question_id' => $question_id,
+                    'label' => !empty($option['label']) ? $option['label'] : $option['value'],
+                    'value' => $option['value'],
+                    'points' => isset($option['points']) ? $option['points'] : null
+                ];
+                $wpdb->insert(
+                    "{$wpdb->prefix}{$this->options_table}",
+                    $option_data
+                );
             }
         }
+        // }
 
         return $result;
     }

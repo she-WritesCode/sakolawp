@@ -29,6 +29,16 @@ export type QuestionType =
   | 'dropdown'
   | 'file'
 
+export const QuestionLabels = {
+  'linear-scale': 'Linear Scale',
+  radio: 'Radio',
+  text: 'Short Text',
+  textarea: 'Long Text',
+  checkbox: 'Checkbox',
+  dropdown: 'Dropdown',
+  file: 'File Upload'
+}
+
 export interface Question {
   question_id: string
   question: string
@@ -63,7 +73,6 @@ export const useFormStore = defineStore('formStore', {
         question: 'Your Submission',
         type,
         accepts: '*',
-        regex: '',
         required: true,
         options:
           type === 'radio' || type === 'checkbox' || type === 'dropdown'
@@ -71,8 +80,8 @@ export const useFormStore = defineStore('formStore', {
             : [],
         text_options:
           type === 'text' || type === 'textarea'
-            ? { add_word_count: false, min: 250, max: 300 }
-            : { add_word_count: false, min: 0, max: 0 },
+            ? { add_word_count: false, min: 250, max: 300, regex: '' }
+            : { add_word_count: false, min: 0, max: 0, regex: '' },
 
         linear_scale_options: {
           min: 1,
