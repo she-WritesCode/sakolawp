@@ -19,7 +19,7 @@ $logo_image     	= wp_get_attachment_image_src($logo_id, 'full');
 $page = skwp_get_page_by_title('register');
 ?>
 
-<form id="sakolawp_login_form" class="sakolawp_user_form sakolawp_form" action="" method="post">
+<form id="sakolawp_login_form" class="sakolawp_user_form sakolawp_form" action="site_url('wp-login.php', 'login_post');" method="post">
 	<fieldset class="skwp-form-inner">
 		<?php if (!empty($logo_image)) { ?>
 			<img src="<?php echo esc_url($logo_image[0]); ?>" alt="<?php esc_html_e('logo', 'sakolawp'); ?>" />

@@ -3,20 +3,29 @@ import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 
-export interface programEnrollment {
-  ID?: number
-  content?: string
-  excerpt?: string
-  permalink?: string
-  date?: string
-  author?: string
-  meta?: Record<string, string[]>
+export interface ProgramEnrollment {
+  accountability_id: string
+  accountability_name: string
+  class_id: string
+  class_name: string
+  created_at: string
+  date_added: string
+  enroll_code: string
+  enroll_id: string
+  roll: string
+  section_id: string
+  section_name: string
+  student_email: string
+  student_id: string
+  student_name: string
+  updated_at: string
+  year: string
 }
 
-export const useprogramEnrollmentStore = defineStore('programEnrollment', () => {
+export const useProgramEnrollmentStore = defineStore('programEnrollment', () => {
   const toast = useToast()
-  const programEnrollments = ref<programEnrollment[]>([])
-  const currentprogramEnrollment = ref<programEnrollment | undefined>(undefined)
+  const programEnrollments = ref<ProgramEnrollment[]>([])
+  const currentProgramEnrollment = ref<ProgramEnrollment | undefined>(undefined)
   const filter = reactive({
     search: '',
     class_id: ''
@@ -135,7 +144,7 @@ export const useprogramEnrollmentStore = defineStore('programEnrollment', () => 
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramEnrollment.value = response.data
+        currentProgramEnrollment.value = response.data
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -145,7 +154,7 @@ export const useprogramEnrollmentStore = defineStore('programEnrollment', () => 
       })
   }
 
-  const createprogramEnrollment = (args: Partial<programEnrollment>) => {
+  const createprogramEnrollment = (args: Partial<ProgramEnrollment>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -160,7 +169,7 @@ export const useprogramEnrollmentStore = defineStore('programEnrollment', () => 
     })
       .then((response) => response.json())
       .then((response) => {
-        currentprogramEnrollment.value = response.data
+        currentProgramEnrollment.value = response.data
         // showAddForm.value = false
         toast.add({
           severity: 'success',
@@ -179,7 +188,7 @@ export const useprogramEnrollmentStore = defineStore('programEnrollment', () => 
       })
   }
 
-  const updateprogramEnrollment = (args: Partial<programEnrollment>) => {
+  const updateprogramEnrollment = (args: Partial<ProgramEnrollment>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -237,7 +246,7 @@ export const useprogramEnrollmentStore = defineStore('programEnrollment', () => 
     fetchprogramEnrollments,
     filter: computed(() => filter),
     loading: computed(() => loading),
-    currentprogramEnrollment: computed(() => currentprogramEnrollment),
+    currentProgramEnrollment: computed(() => currentProgramEnrollment),
     goToViewprogramEnrollment,
     closeViewprogramEnrollment,
     programEnrollmentId,

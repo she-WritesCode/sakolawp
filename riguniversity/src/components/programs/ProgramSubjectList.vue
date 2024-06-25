@@ -60,7 +60,7 @@ const getEditSubjectUrl = (subjectId: number) => {
                         </div>
                         <div class="">
                             <Button @click="goToEditProgram(programId as string)" size="small"
-                                label="Change Subjects"></Button>
+                                label="Change Courses"></Button>
                         </div>
                     </div>
                 </template>

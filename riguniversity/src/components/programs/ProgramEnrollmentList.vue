@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { useprogramEnrollmentStore } from "../../stores/program-enrollment";
+import { onMounted, computed, ref } from "vue";
+import { useProgramEnrollmentStore } from "../../stores/program-enrollment";
 import { useProgramStore } from "../../stores/program";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -11,7 +11,6 @@ import Dialog from 'primevue/dialog';
 import Avatar from 'primevue/avatar';
 // import AddEnrollment from './AddEnrollment.vue'
 import LoadingIndicator from '../LoadingIndicator.vue'
-import { ref } from "vue";
 
 
 const {
@@ -23,7 +22,7 @@ const {
     loading,
     showAddForm,
     goToAddForm, deleteprogramEnrollment,
-} = useprogramEnrollmentStore();
+} = useProgramEnrollmentStore();
 const {
     programId
 } = useProgramStore();
@@ -34,6 +33,7 @@ onMounted(() => {
     }
 });
 
+const listToDisplay = computed(() => programEnrollments.value.filter(i => !!i.student_id))
 
 const showDeleteDialog = ref(false)
 const toBeDeleted = ref<string | null>(null)
@@ -65,7 +65,7 @@ function getInitials(name: string) {
             <div class="px-2 pb-4">
                 <h3 class="text-xl text-surface-900 dark:text-surface-0 font-bold">Enrollments</h3>
             </div>
-            <DataTable :value="programEnrollments" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
+            <DataTable :value="listToDisplay" tableStyle="min-width: 10rem" class="border-0" paginator :rows="10"
                 :rowsPerPageOptions="[5, 10, 20, 50]">
                 <template #header>
                     <div class="flex flex-wrap items-center justify-between gap-2">

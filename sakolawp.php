@@ -555,6 +555,7 @@ function sakolawp_manage_delete_routine()
 add_action('admin_post_nopriv_delete_routine_setting', 'sakolawp_manage_delete_routine');
 add_action('admin_post_delete_routine_setting', 'sakolawp_manage_delete_routine');
 
+
 function sakolawp_assign_student()
 {
 	global $wpdb;
@@ -803,6 +804,8 @@ function sakolawp_login_member()
 		if (!$user) {
 			// if the user name doesn't exist
 			sakolawp_errors()->add('empty_username', esc_html__('Invalid username', 'sakolawp'));
+			wp_safe_redirect(add_query_arg(["message" => sakolawp_errors()->get_error_messages()], home_url('myaccount')));
+			exit;
 		}
 
 		if (!isset($_POST['sakolawp_user_pass']) || $_POST['sakolawp_user_pass'] == '') {
