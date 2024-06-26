@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useProgramSubjectStore } from "../../stores/program-subject";
 import { useProgramStore } from "../../stores/program";
 import DataView from 'primevue/dataview';
 import Panel from 'primevue/panel';
+import TabMenu from 'primevue/tabmenu';
 // import TabView from 'primevue/tabview';
 // import TabPanel from 'primevue/tabpanel';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import LoadingIndicator from '../LoadingIndicator.vue'
-import ProgramSubjectSchedule from './ProgramSubjectSchedule.vue'
+import ProgramSubjectHomeworkSchedule from './ProgramSubjectHomeworkSchedule.vue'
+import ProgramSubjectLessonSchedule from './ProgramSubjectLessonSchedule.vue'
 
 
 const {
@@ -37,6 +39,38 @@ const getEditSubjectUrl = (subjectId: number | string) => {
     url.searchParams.set('action', 'edit')
     return url.toString()
 }
+
+const tabs = {
+    lessons: ProgramSubjectLessonSchedule,
+    homeworks: ProgramSubjectHomeworkSchedule,
+}
+const currentTab = ref<keyof typeof tabs>(new URL(window.location.href).searchParams.get('sub_tab') as keyof typeof tabs || "homeworks")
+const count = ref(0)
+const switchTabUrl = (tab: keyof typeof tabs) => {
+    count.value = 0
+    currentTab.value = tab
+    const url = new URL(window.location.href)
+    url.searchParams.set('sub_tab', currentTab.value)
+    window.history.pushState({}, document.title, url.toString())
+}
+const items = ref([
+    {
+        label: 'Assessments',
+        key: 'homeworks',
+        command: () => {
+            switchTabUrl('homeworks')
+        }
+    },
+    {
+        label: 'Lessons',
+        key: 'lessons',
+        command: () => {
+            switchTabUrl('lessons')
+        }
+    },
+]);
+const activeIndex = computed(() => items.value.findIndex(item => item.key == currentTab.value) ?? 0)
+
 
 </script>
 
@@ -79,8 +113,8 @@ const getEditSubjectUrl = (subjectId: number | string) => {
                                     <div>
                                         <div class="text-lg gap-2 flex items-center flex-wrap">
                                             <span>{{ item.title }}</span>
-                                            <Tag :value="`${item.homework_count} Homeworks`" severity="warning" />
-                                            <!-- <Tag :value="`${item.lesson_count} Lessons`" severity="success" /> -->
+                                            <Tag :value="`${item.homework_count} Assessment`" severity="warning" />
+                                            <Tag :value="`${item.lesson_count} Lessons`" severity="success" />
                                         </div>
                                         <Tag :value="`Faculty: ${item.author}`" severity="info" />
                                         <a :href="getEditSubjectUrl(item.ID)"><Button link class="!py-0"
@@ -90,10 +124,12 @@ const getEditSubjectUrl = (subjectId: number | string) => {
 
                                 <!-- <template #icons>
                                 </template> -->
-
-                                <ProgramSubjectSchedule :key="index" :homeworks="item.homeworks" :subjectId="item.ID"
-                                    :programId="(programId as string)" :dripMethod="currentProgram?.drip_method">
-                                </ProgramSubjectSchedule>
+                                <TabMenu size="large" class="w-full" :activeIndex="activeIndex" :model="items" />
+                                <div class="pt-8">
+                                    <component :is="tabs[currentTab]" :key="index" :homeworks="item.homeworks"
+                                        :subjectId="item.ID" :programId="(programId as string)"
+                                        :dripMethod="currentProgram?.drip_method" :lessons="item.lessons" />
+                                </div>
                             </Panel>
                         </template>
                     </div>
@@ -121,16 +157,16 @@ const getEditSubjectUrl = (subjectId: number | string) => {
                         <div class="mb-8">
                             <div class="text-lg gap-2 flex items-center flex-wrap">
                                 <span>{{ item.title }}</span>
-                                <Tag :value="`${item.homework_count} Homeworks`" severity="warning" />
+                                <Tag :value="`${item.homework_count} Assessments`" severity="warning" />
                                  <Tag :value="`${item.lesson_count} Lessons`" severity="success" />
                             </div>
                             <Tag :value="`Faculty: ${item.author}`" severity="info" />
                             <a :href="getEditSubjectUrl(item.ID!)"><Button link class="!py-0"
                                     label="Edit Course"></Button></a>
                         </div>
-                        <ProgramSubjectSchedule :key="index" :homeworks="item.homeworks!" :subjectId="item.ID!"
+                        <ProgramSubjectHomeworkSchedule :key="index" :homeworks="item.homeworks!" :subjectId="item.ID!"
                             :programId="(programId as string)" :dripMethod="currentProgram?.drip_method">
-                        </ProgramSubjectSchedule>
+                        </ProgramSubjectHomeworkSchedule>
                     </div>
                 </TabPanel>
             </TabView> -->

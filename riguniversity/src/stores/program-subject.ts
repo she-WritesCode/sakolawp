@@ -4,9 +4,11 @@ import { useToast } from 'primevue/usetoast'
 import { convertObjectToSearchParams } from '@/utils/search'
 import type { Homework } from './homework'
 import type { Course } from './course'
+import type { Lesson } from './lesson'
 
 export interface ProgramSubject extends Course {
   homeworks?: Homework[]
+  lessons?: Lesson[]
 }
 
 export const useProgramSubjectStore = defineStore('programSubject', () => {

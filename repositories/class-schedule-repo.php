@@ -26,6 +26,12 @@ class RunClassScheduleRepo
         // error_log("RunClassScheduleRepo =>" . $sql);
 
         $results = $wpdb->get_results($sql);
+
+        foreach ($results as $key => $schedule) {
+            $results[$key]->release_days = (float)$results[$key]->release_days;
+            $results[$key]->deadline_days = (float)$results[$key]->deadline_days;
+        }
+
         return $results;
     }
 

@@ -177,12 +177,23 @@ const getEditHomeworkUrl = (subjectId: string | number, homework_id: string) => 
   url.searchParams.set('expanded', '1')
   return url.toString()
 }
+const getAddHomeworkUrl = (subjectId: string | number) => {
+  const url = new URL(window.location.href)
+  url.pathname = '/wp-admin/post.php'
+  url.search = ""
+  url.searchParams.set('post', `${subjectId}`)
+  url.searchParams.set('post', `${subjectId}`)
+  url.searchParams.set('action', 'edit')
+  url.searchParams.set('rig_action', 'add_homework')
+  url.searchParams.set('expanded', '1')
+  return url.toString()
+}
 
 </script>
 
 <template>
   <form @submit="submitForm">
-    <div class="grid gap-0 mb-4">
+    <div v-if="homeworks?.length" class="grid gap-0 mb-4">
       <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
         <div class="text-yellow-700 text-sm">
           If no deadline is set the student will continue to have access to submit the homework at
@@ -274,6 +285,12 @@ const getEditHomeworkUrl = (subjectId: string | number, homework_id: string) => 
         </div>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>
+    </div>
+    <div v-else class="w-full text-center py-16">
+      <p class="text-xl mb-2">No assessments yet</p>
+      <p class="text-base mb-4">Add assessments for this courses first. Then you can schedule it here in the program.
+      </p>
+      <a :href="getAddHomeworkUrl(subjectId)"><Button icon="pi pi-external-link" label="Add Homework"></Button></a>
     </div>
   </form>
 </template>

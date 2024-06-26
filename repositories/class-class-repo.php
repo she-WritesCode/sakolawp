@@ -10,10 +10,12 @@ class RunClassRepo
     protected $lesson_table = 'sakolawp_lessons';
     protected $users_table = 'users';
     protected $courses_repo = null;
+    protected $lesson_repo = null;
 
     public function __construct()
     {
         $this->courses_repo = new RunCourseRepo();
+        $this->lesson_repo = new RunLessonRepo();
     }
 
     /** List Class */
@@ -76,6 +78,7 @@ class RunClassRepo
         if ($result) {
             foreach ($result as &$course) {
                 $course['homeworks'] = (array) $homeworkRepo->list(['subject_id' => $course['ID']]);
+                $course['lessons'] = (array) $this->lesson_repo->list([['key' => 'sakolawp_subject_id', 'value' => (string)$course['ID'], 'compare' => '=']]);
             }
         }
         return $result;
