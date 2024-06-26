@@ -2,7 +2,7 @@ import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import type { Question } from './form'
 import { useToast } from 'primevue/usetoast'
-import { convertObjectToSearchParams } from '@/utils/search'
+import { convertObjectToSearchParams, convertObjectToFormData } from '@/utils/search'
 import { useUrlParamsStore } from './urlparams'
 
 export interface Homework {
@@ -11,7 +11,10 @@ export interface Homework {
   title: string
   subject_id: string
   description: string
-  file_name: string
+  file_name?: any
+  file_date?: string
+  file_url?: string
+  file_id?: string
   allow_peer_review: boolean
   peer_review_template: string
   peer_review_who: string
@@ -91,6 +94,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
+
   const goToEditHomework = (homeworkId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('rig_action', 'add_homework')
@@ -150,10 +154,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: convertObjectToSearchParams({
+      body: convertObjectToFormData({
         action: 'run_create_homework',
         ...(args as any)
       })
@@ -168,7 +169,11 @@ export const useHomeworkStore = defineStore('homework', () => {
           detail: 'Assessment created successfully',
           life: 3000
         })
-        closeAddForm()
+        if (response.data.result) {
+          goToEditHomework(response.data.result)
+        } else {
+          closeAddForm()
+        }
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -221,10 +226,7 @@ export const useHomeworkStore = defineStore('homework', () => {
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: convertObjectToSearchParams({
+      body: convertObjectToFormData({
         action: 'run_update_homework',
         ...(args as any)
       })

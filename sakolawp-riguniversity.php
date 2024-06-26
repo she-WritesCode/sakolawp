@@ -208,6 +208,7 @@ function run_single_homework()
 /** Create a new homework */
 function run_create_homework()
 {
+	$error = [];
 	$repo = new RunHomeworkRepo();
 	$courseRepo = new RunCourseRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
@@ -237,46 +238,59 @@ function run_create_homework()
 		wp_send_json_error('Course not found', 404);
 		die();
 	}
+	$args = [];
 
-	$result = $repo->create([
+	if (isset($_FILES["file_name"])) {
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
+		require_once(ABSPATH . 'wp-admin/includes/file.php');
+		require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+		add_filter('upload_dir', 'sakolawp_custom_dir_homework');
+		$attach_id = media_handle_upload('file_name', $post_id);
+		if (is_numeric($attach_id)) {
+			update_option('homework_file_name', $attach_id);
+			update_post_meta($post_id, '_file_name', $attach_id);
+			$file_url = get_attachment_link($attach_id);
+			$file_date = date("Y-m-d H:i:s");
+			$args = array_merge($args, [
+				'file_name' => $file_name,
+				'file_id' => $attach_id,
+				'file_url' => $file_url,
+				'file_date' => $file_date,
+			]);
+		}
+		remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
+		if (!is_numeric($attach_id)) {
+			// If the file was not uploaded successfully
+			$file_name = NULL;
+			$error['message'][] = 'File was not uploaded successfully';
+		}
+	}
+
+	$result = $repo->create(array_merge($args, [
 		'homework_code' => $homework_code,
 		'title' => $title,
 		'description' => $description,
-		'class_id' => $course['meta']['sakolawp_class_id'][0],
+		// homework has no class_id
+		// 'class_id' => get_post_meta($course['ID'], 'sakolawp_class_id'),
 		'section_id' => $section_id,
 		'subject_id' => $subject_id,
 		'uploader_id' => $uploader_id,
 		'uploader_type' => $uploader_type,
-		'file_name' => $file_name,
 		'allow_peer_review' => $allow_peer_review,
 		'peer_review_template' => $peer_review_template,
 		'peer_review_who' => $peer_review_who,
 		'word_count_min' => (int)$word_count_min,
 		'word_count_max' => (int)$word_count_max,
 		'questions' => $questions,
-	]);
-
-	require_once(ABSPATH . 'wp-admin/includes/image.php');
-	require_once(ABSPATH . 'wp-admin/includes/file.php');
-	require_once(ABSPATH . 'wp-admin/includes/media.php');
-
-	add_filter('upload_dir', 'sakolawp_custom_dir_homework');
-	$attach_id = media_handle_upload('file_name', $post_id);
-	if (is_numeric($attach_id)) {
-		update_option('homework_file_name', $attach_id);
-		update_post_meta($post_id, '_file_name', $attach_id);
-	}
-	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
+	]));
 
 	if ($result) { // If the homework was created successfully
-		// do_action('sakolawp_homework_added', $repo->single($result));
-		wp_send_json_success($result, 201);
+		wp_send_json_success(['result' => $result, 'error' => $error], 201);
 		die();
 	}
-
 	// If the homework was not created successfully
-	$error = [];
-	$error['message'] = 'Failed to create homework';
+	$error['message'][] = 'Failed to create homework';
 	wp_send_json_error($error, 500);
 	die();
 }
@@ -293,8 +307,6 @@ function run_duplicate_homework()
 
 	$title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : $homework->title  . ' - Copy';
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
-
-	$post_id = $homework_code;
 
 	$result = $repo->create(array_merge([
 		'title' => $title,
@@ -324,18 +336,6 @@ function run_duplicate_homework()
 		}, $homework->questions, array_keys($homework->questions)),
 	]));
 
-	require_once(ABSPATH . 'wp-admin/includes/image.php');
-	require_once(ABSPATH . 'wp-admin/includes/file.php');
-	require_once(ABSPATH . 'wp-admin/includes/media.php');
-
-	add_filter('upload_dir', 'sakolawp_custom_dir_homework');
-	$attach_id = media_handle_upload('file_name', $post_id);
-	if (is_numeric($attach_id)) {
-		update_option('homework_file_name', $attach_id);
-		update_post_meta($post_id, '_file_name', $attach_id);
-	}
-	remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
-
 	if ($result) { // If the homework was created successfully
 		// do_action('sakolawp_homework_added', $repo->single($result));
 		wp_send_json_success($result, 201);
@@ -352,6 +352,7 @@ function run_duplicate_homework()
 /** Update an existing homework */
 function run_update_homework()
 {
+	$error = [];
 	$repo = new RunHomeworkRepo();
 	$courseRepo = new RunCourseRepo();
 
@@ -368,6 +369,7 @@ function run_update_homework()
 	$time_end = sanitize_text_field($_POST['time_end']);
 	$date_end = sanitize_text_field($_POST['date_end']);
 	$questions = $_POST['questions'];
+	$file_name = isset($_FILES["file_name"]) ? $_FILES["file_name"]["name"] : NULL;
 
 	$uploader_type  = 'teacher';
 	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
@@ -379,12 +381,41 @@ function run_update_homework()
 		wp_send_json_error('Course not found', 404);
 		die();
 	}
+	$post_id = $homework->homework_code;
 
-	$result = $repo->update($homework_id, [
+	$args = [];
+
+	if (isset($_FILES["file_name"])) {
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
+		require_once(ABSPATH . 'wp-admin/includes/file.php');
+		require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+		add_filter('upload_dir', 'sakolawp_custom_dir_homework');
+		$attach_id = media_handle_upload('file_name', $post_id);
+		if (is_numeric($attach_id)) {
+			update_option('homework_file_name', $attach_id);
+			update_post_meta($post_id, '_file_name', $attach_id);
+			$file_url = get_attachment_link($attach_id);
+			$file_date = date("Y-m-d H:i:s");
+			$args = array_merge($args, [
+				'file_name' => $file_name,
+				'file_id' => $attach_id,
+				'file_url' => $file_url,
+				'file_date' => $file_date,
+			]);
+		}
+		remove_filter('upload_dir', 'sakolawp_custom_dir_homework');
+		if (!is_numeric($attach_id)) {
+			// If the file was not uploaded successfully
+			$file_name = NULL;
+			$error['message'][] = 'File was not uploaded successfully';
+		}
+	}
+
+	$result = $repo->update($homework_id, array_merge($args, [
 		'title' => $title,
 		'description' => $description,
 		'uploader_id' => $uploader_id,
-		// 'class_id' => $subject->class_id,
 		'uploader_type' => $uploader_type,
 		'time_end' => $time_end,
 		'date_end' => $date_end,
@@ -394,9 +425,18 @@ function run_update_homework()
 		'word_count_min' => $word_count_min,
 		'word_count_max' => $word_count_max,
 		'questions' => $questions,
-	]);
+	]));
 
-	wp_send_json_success($result, 200);
+
+
+	if ($result) { // If the homework was created successfully
+		wp_send_json_success(['result' => $result, 'error' => $error], 200);
+		die();
+	}
+
+	// If the homework was not created successfully
+	$error['message'][] = 'Failed to update homework';
+	wp_send_json_error($error, 500);
 	die();
 }
 

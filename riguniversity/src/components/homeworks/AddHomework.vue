@@ -3,15 +3,16 @@ import { useForm } from 'vee-validate';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
-import FileUpload from 'primevue/fileupload';
+import FileUpload, { type FileUploadUploaderEvent } from 'primevue/fileupload';
 import Dropdown from 'primevue/dropdown';
 import SelectButton from 'primevue/selectbutton';
-// import Calendar from 'primevue/calendar';
 import QuestionBuilder from './QuestionBuilder.vue';
 import { string, object, array } from 'yup';
 import Divider from 'primevue/divider';
 import { useHomeworkStore, type Homework } from '../../stores/homework';
 import { useCourseStore } from '../../stores/course';
+import { getFileSize, formatFileSize } from '../../utils/search';
+import { DateHelper } from '../../utils/date';
 import { onMounted, watch, ref } from 'vue';
 
 const props = defineProps<{
@@ -24,11 +25,11 @@ const { courseId } = useCourseStore();
 
 const { createHomework, updateHomework, loading, homeworkId, getOneHomework, currentHomework } = useHomeworkStore()
 
-const { handleSubmit, errors, defineField, setValues } = useForm({
+const { handleSubmit, errors, defineField, resetForm, setFieldValue, meta } = useForm({
     initialValues: {
         title: '',
         description: '',
-        file_name: '',
+        file_name: null,
         allow_peer_review: false,
         peer_review_template: '',
         peer_review_who: 'student',
@@ -56,6 +57,7 @@ const [title, titleProps] = defineField('title');
 const [description, descriptionProps] = defineField('description')
 const [allow_peer_review, allow_peer_reviewProps] = defineField('allow_peer_review')
 const [peer_review_template, peer_review_templateProps] = defineField('peer_review_template')
+const [file_name] = defineField('file_name')
 const [peer_review_who, peer_review_whoProps] = defineField('peer_review_who')
 const [questions, questionsProps] = defineField('questions')
 
@@ -85,9 +87,12 @@ const key = ref(0);
 
 watch(currentHomework, (value) => {
     if (value) {
-        setValues({ ...value, questions: value.questions })
+        resetForm({ values: { ...value, questions: value.questions } })
         key.value++
     }
+    getFileSize(value?.file_url!).then((size) => {
+        fileSize.value = size;
+    })
 })
 
 onMounted(() => {
@@ -95,10 +100,15 @@ onMounted(() => {
         getOneHomework(homeworkId)
     }
 });
-const onUpload = () => {
-    // toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+const onUpload = (event: FileUploadUploaderEvent) => {
+    const file = Array.isArray(event.files) ? event.files[0] : event.files;
+    setFieldValue('file_name', file)
+    console.log(file)
 };
 const showPreview = ref<boolean>(false)
+
+
+const fileSize = ref(0);
 </script>
 <template>
     <form id="myFor" class="flex flex-col gap-8" name="Add Assessment" @submit="submitForm">
@@ -118,11 +128,31 @@ const showPreview = ref<boolean>(false)
             </div>
 
             <div class="form-group">
-                <label class="col-form-label" for="file-3">Upload homework file (optional)</label>
+                <label class="col-form-label" for="file-3">Upload Assessment file (optional)</label>
                 <div class="input-group mb-2">
-                    <FileUpload outlined mode="basic" name="file_name" id="file-3" class=""
-                        accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" :maxFileSize="1000000"
-                        @upload="onUpload" />
+                    <Transition name="slide-fade">
+                        <div v-if="file_name || currentHomework?.file_name"
+                            :class="`flex gap-4 items-center border rounded-md p-4 mb-2 ${(typeof file_name == 'string') ? '' : 'bg-yellow-50'}`">
+                            <div class="text-2xl">
+                                <i class="pi pi-file"></i>
+                            </div>
+                            <div>
+                                <div class="text-base">
+                                    {{ (typeof file_name == 'string') ? currentHomework?.file_name : file_name.name }}
+                                </div>
+                                <div>
+                                    {{ formatFileSize(fileSize) }}
+                                    | Added on: {{ DateHelper.formatDate(currentHomework?.file_date!) }}
+                                </div>
+                            </div>
+                        </div>
+                    </Transition>
+                    <div class="mb-2">
+                        {{ (typeof file_name == 'string') ? '' : "Save homework to upload file" }}</div>
+                    <FileUpload outlined mode="basic" name="file_name" id="file-1" class=""
+                        accept=".xlsx,.xls,image/*,.doc, .docx,.ppt,.pptx,.txt,.pdf" :maxFileSize="1000000"
+                        @uploader="onUpload" auto customUpload
+                        :chooseLabel="file_name ? 'Change File' : 'Choose File'" />
                     <div class="p-error text-red-500">{{ errors.file_name }}</div>
                 </div>
                 <span class="warning">Max file size up to 10MB</span>
@@ -189,7 +219,8 @@ const showPreview = ref<boolean>(false)
         </div>
         <div class="sticky w-full bottom-0 inset-x-0 bg-surface-0">
             <div class="text-center flex items-center max-w-2xl mx-auto justify-center py-4">
-                <Button :loading="loading.create || loading.update" class="w-full" type="submit" name="submit" :label="`${homeworkId ? 'Update'
+                <Button :disabled="!meta.dirty" :loading="loading.create || loading.update" class="w-full" type="submit"
+                    name="submit" :label="`${homeworkId ? 'Update'
         : 'Add'} Homework`"></Button>
             </div>
         </div>

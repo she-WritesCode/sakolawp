@@ -12,7 +12,7 @@ if (isset($_POST['submit'])) {
 
 	if ($homework_act == "add_peer_review") {
 		$_POST 	= array_map('stripslashes_deep', $_POST);
-		$date   =  date("Y-m-d H:i:s");;
+		$date   =  date("Y-m-d H:i:s");
 		$delivery_id =  sakolawp_sanitize_html($_POST['delivery_id']);
 		$homework_id = sakolawp_sanitize_html($_POST['homework_id']);
 		$peer_id = sanitize_text_field($_POST['peer_id']);

@@ -33,7 +33,7 @@ onMounted(() => {
                         severity="secondary"></Button>
                 </div>
                 <div class="md:text-center w-full">
-                    <h3 class="px-2 text-xl font-semibold">{{ homeworkId ? "Edit" : "Add" }} Homework</h3>
+                    <h3 class="px-2 text-xl font-semibold">{{ homeworkId ? "Edit" : "Add" }} Assessment</h3>
                 </div>
             </div>
             <AddHomework :initialValues="currentHomework"></AddHomework>
