@@ -29,12 +29,12 @@ table.fixed.wp-list-table.widefat {
   display: none;
 }
 
-.wp-admin a {
+/* .wp-admin a {
   color: #2271b1;
   transition-property: border, background, color;
   transition-duration: .05s;
   transition-timing-function: ease-in-out;
-}
-[id^="run-"] a {
+} */
+/* [id^="run-"] a {
   color: inherit;
-}
+} */

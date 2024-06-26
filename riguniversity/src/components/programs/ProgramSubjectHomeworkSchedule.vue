@@ -195,11 +195,10 @@ const getAddHomeworkUrl = (subjectId: string | number) => {
   <form @submit="submitForm">
     <div v-if="homeworks?.length" class="grid gap-0 mb-4">
       <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
-        <div class="text-yellow-700 text-sm">
-          If no deadline is set the student will continue to have access to submit the homework at
-          any time.
-          <br />
-          If the release date is not set the assessment would be released to the students by default
+        <div class="text-yellow-700 list-disc list-inside text-sm">
+          <li>If no deadline is set the student will continue to have access to submit the assessment at
+            any time.</li>
+          <li>If the release date is not set the assessment would be released to the students by default</li>
         </div>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>
@@ -277,11 +276,10 @@ const getAddHomeworkUrl = (subjectId: string | number) => {
         <Divider />
       </template>
       <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
-        <div class="text-yellow-700 text-sm">
-          If no deadline is set the student will continue to have access to submit the homework at
-          any time.
-          <br />
-          If the release date is not set the assessment would be released to the students by default
+        <div class="text-yellow-700 list-disc list-inside text-sm">
+          <li>If no deadline is set the student will continue to have access to submit the assessment at
+            any time.</li>
+          <li>If the release date is not set the assessment would be released to the students by default</li>
         </div>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>

@@ -165,16 +165,13 @@ const setDefaultDeadlineDaysTime = (ID: string) => {
 }
 
 
-const getEditLessonUrl = (subjectId: string | number, ID: string) => {
+const getEditLessonUrl = (ID: string) => {
   const url = new URL(window.location.href)
   url.pathname = '/wp-admin/post.php'
   url.search = ""
-  url.searchParams.set('post', `${subjectId}`)
-  url.searchParams.set('post', `${subjectId}`)
+  url.searchParams.set('post', `${ID}`)
   url.searchParams.set('action', 'edit')
-  url.searchParams.set('rig_action', 'add_lesson')
-  url.searchParams.set('ID', `${ID}`)
-  url.searchParams.set('expanded', '1')
+  // url.searchParams.set('expanded', '1')
   return url.toString()
 }
 const getAddLessonUrl = (subjectId: string | number) => {
@@ -182,9 +179,9 @@ const getAddLessonUrl = (subjectId: string | number) => {
   url.pathname = '/wp-admin/post.php'
   url.search = ""
   url.searchParams.set('post', `${subjectId}`)
-  url.searchParams.set('post', `${subjectId}`)
   url.searchParams.set('action', 'edit')
   url.searchParams.set('rig_action', 'add_lesson')
+  url.searchParams.set('rig_tab', 'lessons')
   url.searchParams.set('expanded', '1')
   return url.toString()
 }
@@ -195,12 +192,12 @@ const getAddLessonUrl = (subjectId: string | number) => {
   <form @submit="submitForm">
     <div v-if="lessons?.length" class="grid gap-0 mb-4">
       <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
-        <div class="text-yellow-700 text-sm">
-          If no deadline is set the student will continue to have access to submit the lesson at
-          any time.
-          <br />
-          If the release date is not set the lesson would be released to the students by default
-        </div>
+        <ul class="text-yellow-700 list-disc list-inside text-sm">
+          <li>If no deadline is set the student will continue to have access to submit the lesson at
+            any time.</li>
+
+          <li>If the release date is not set the lesson would be released to the students by default</li>
+        </ul>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>
       <Divider />
@@ -208,8 +205,7 @@ const getAddLessonUrl = (subjectId: string | number) => {
         <div class="flex flex-col md:flex-row gap-4 items-center md:justify-between">
           <div class="w-full">
             <div class="text-base">{{ lesson.title }}</div>
-            <a :href="getEditLessonUrl(subjectId, lesson.ID!)"><Button link class="!py-0"
-                label="Edit Lesson"></Button></a>
+            <a :href="getEditLessonUrl(lesson.ID!)"><Button link class="!py-0" label="Edit Lesson"></Button></a>
           </div>
           <div class="w-full md:max-w-96 lg:max-w-[600px]">
             <div v-if="dripMethod == 'days_after_release'" class="flex flex-col gap-4">
@@ -275,12 +271,12 @@ const getAddLessonUrl = (subjectId: string | number) => {
         <Divider />
       </template>
       <div class="flex flex-col md:flex-row gap-4 justify-between md:items-center">
-        <div class="text-yellow-700 text-sm">
-          If no deadline is set the student will continue to have access to submit the lesson at
-          any time.
-          <br />
-          If the release date is not set the lesson would be released to the students by default
-        </div>
+        <ul class="text-yellow-700 list-disc list-inside text-sm">
+          <li>If no deadline is set the student will continue to have access to submit the lesson at
+            any time.</li>
+
+          <li>If the release date is not set the lesson would be released to the students by default</li>
+        </ul>
         <Button type="submit" class="w-64" label="Save Schedule"></Button>
       </div>
     </div>

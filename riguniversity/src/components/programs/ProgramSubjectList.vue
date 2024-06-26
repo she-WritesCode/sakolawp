@@ -113,10 +113,10 @@ const activeIndex = computed(() => items.value.findIndex(item => item.key == cur
                                     <div>
                                         <div class="text-lg gap-2 flex items-center flex-wrap">
                                             <span>{{ item.title }}</span>
-                                            <Tag :value="`${item.homework_count} Assessment`" severity="warning" />
-                                            <Tag :value="`${item.lesson_count} Lessons`" severity="success" />
+                                            <Tag :value="`${item.homework_count} Assessment`" severity="secondary" />
+                                            <Tag :value="`${item.lesson_count} Lessons`" severity="secondary" />
                                         </div>
-                                        <Tag :value="`Faculty: ${item.author}`" severity="info" />
+                                        <Tag :value="`Faculty: ${item.author}`" severity="secondary" />
                                         <a :href="getEditSubjectUrl(item.ID)"><Button link class="!py-0"
                                                 label="Edit Course"></Button></a>
                                     </div>
