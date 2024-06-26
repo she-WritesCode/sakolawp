@@ -213,12 +213,11 @@ function run_create_homework()
 	$courseRepo = new RunCourseRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
 
-	//$_POST = array_map( 'stripslashes_deep', $_POST );
 	$title = sanitize_text_field($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
 	// $class_id = sanitize_text_field($_POST['class_id']);
+	// $section_id = sanitize_text_field($_POST['section_id']);
 	$file_name = $_FILES["file_name"]["name"];
-	$section_id = sanitize_text_field($_POST['section_id']);
 	$subject_id = sanitize_text_field($_POST['subject_id']);
 	$allow_peer_review = ($_POST['allow_peer_review']);
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
@@ -273,7 +272,7 @@ function run_create_homework()
 		'description' => $description,
 		// homework has no class_id
 		// 'class_id' => get_post_meta($course['ID'], 'sakolawp_class_id'),
-		'section_id' => $section_id,
+		// 'section_id' => $section_id,
 		'subject_id' => $subject_id,
 		'uploader_id' => $uploader_id,
 		'uploader_type' => $uploader_type,

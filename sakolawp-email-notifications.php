@@ -14,12 +14,12 @@
 const SKWP_NEW_HOMEWORK_TEMPLATE = 'sakolawp_new_homework_email_template';
 const SKWP_DEFAULT_NEW_HOMEWORK_TEMPLATE = [
 	"subject" => "New Assessment Available: {homework_title}",
-	"template" => "Hi {student_name},\n\nA new homework has been assigned to you.\n\n{homework_details}\n\nBest Regards,\nRIG University Admin"
+	"template" => "Hi {student_name},\n\nA new homework has been assigned to you.\n\n{homework_details}\n{link_to_login}\n\nBest Regards,\nRIG University Admin"
 ];
 const SKWP_HOMEWORK_REMINDER_TEMPLATE = 'sakolawp_homework_reminder_email_template';
 const SKWP_DEFAULT_HOMEWORK_REMINDER_TEMPLATE =  [
 	"subject" => "Reminder: Assessment Deadline is Near: {homework_title}",
-	"template" => "Hi {student_name},\n\nYou have a homework is due on {due_date}. \n\nDetails: {homework_details}\n\nBest Regards,\nRIG University Admin"
+	"template" => "Hi {student_name},\n\nYou have a homework is due on {due_date}. \n\n{homework_details}\n{link_to_login}\n\nBest Regards,\nRIG University Admin"
 ];
 const SKWP_AVAILABLE_HOMEWORK_PLACEHOLDERS = ['student_name', 'homework_details', 'due_date', 'homework_title', 'homework_description', "link_to_login"];
 
@@ -150,7 +150,7 @@ function sakolawp_send_homework_email($homework_data, $class_id)
 
 		$args = get_homework_args($homework_data, $class_id);
 		$args["link_to_login"] =  '<div><a href="' . site_url('/myaccount') . '" style="background-color: #4e80df;color: white;padding: 10px 20px;border: none;border-radius: 5px;font-size: 16px;cursor: pointer;text-decoration:none;">Login to your Dashboard</a></div>';
-		error_log(print_r($args, true));
+		// error_log(print_r($args, true));
 		// error_log(print_r($homework_data, true));
 
 		// GET home work template
@@ -278,41 +278,54 @@ add_filter('cron_schedules', 'custom_cron_schedules');
 
 
 // Schedule Assessment and Lesson Reminders:
-function schedule_homework_reminders($schedules)
+function schedule_all_class_reminders($schedules)
 {
-	foreach ($schedules as $schedule) {
-		$class_id = $schedule['class_id'];
-		$content_type = $schedule['content_type'];
-		$content_id = $schedule['content_id'];
-		$release_date_local = $schedule['release_date'];
-		$deadline_date_local = $schedule['deadline_date'];
+	// error_log("Scheduling --------> schedule_all_class_reminders");
+	$schedule_by_class = array_group_by($schedules, 'class_id');
+	$classRepo = new RunClassRepo();
+	foreach ($schedule_by_class as $class_id => $schedules) {
+		$class = $classRepo->single($class_id);
+		// error_log("Scheduling --------> Class: " . $class->name);
+		foreach ($schedules as $schedule) {
+			$content_type = $schedule['content_type'];
+			$content_id = $schedule['content_id'];
 
-		// Convert local times to UTC
-		$release_date = convert_to_utc($release_date_local);
-		$deadline_date = convert_to_utc($deadline_date_local);
+			if (empty($class)) {
+				continue;
+			}
 
-		$unique_id = $content_id . '_' . $release_date;
+			[
+				'release_date' => $release_date_local,
+				'due_date' => $deadline_date_local
+			] = get_schedule_dates($schedule, $class->start_date);
 
-		// Schedule release date reminder
-		if ($content_type == 'homework' || $content_type == 'lesson') {
+			// Convert local times to UTC
+			$release_date = convert_to_utc($release_date_local);
+			$deadline_date = convert_to_utc($deadline_date_local);
+
+			$unique_id = $content_type . '_' . $content_id . '_' . $release_date . '_' . $class_id;
+
+			// Schedule release date reminder
+			// if ($content_type == 'homework' || $content_type == 'lesson') {
 			$hook_release = 'sakolawp_send_release_reminder_' . $unique_id;
-			wp_schedule_single_event($release_date, $hook_release, array($content_id, $content_type, $class_id));
-			add_action($hook_release, 'sakolawp_send_release_reminder', 10, 2);
-		}
+			add_action($hook_release, 'sakolawp_send_release_reminder', 10, 3);
+			wp_schedule_single_event($release_date, $hook_release, [$content_id, $content_type, $class_id]);
+			// }
 
-		// Schedule due date reminders (48 hours and 24 hours before deadline)
-		if ($content_type == 'homework') {
-			$unique_id_48 = $content_id . '_' . ($deadline_date - 172800);
-			$unique_id_24 = $content_id . '_' . ($deadline_date - 86400);
+			// Schedule due date reminders (48 hours and 24 hours before deadline)
+			// if ($content_type == 'homework') {
+			$unique_id_48 = $content_type . '_' . $content_id . '_' . ($deadline_date - 172800) . '_' . $class_id;
+			$unique_id_24 = $content_type . '_' . $content_id . '_' . ($deadline_date - 86400) . '_' . $class_id;
 
 			$hook_48 = 'sakolawp_send_due_reminder_' . $unique_id_48;
 			$hook_24 = 'sakolawp_send_due_reminder_' . $unique_id_24;
 
-			wp_schedule_single_event($deadline_date - 172800, $hook_48, array($content_id, $content_type, $class_id));
-			wp_schedule_single_event($deadline_date - 86400, $hook_24, array($content_id, $content_type, $class_id));
-
 			add_action($hook_48, 'sakolawp_send_due_reminder', 10, 3);
 			add_action($hook_24, 'sakolawp_send_due_reminder', 10, 3);
+
+			wp_schedule_single_event($deadline_date - 172800, $hook_48, array($content_id, $content_type, $class_id));
+			wp_schedule_single_event($deadline_date - 86400, $hook_24, array($content_id, $content_type, $class_id));
+			// }
 		}
 	}
 }
@@ -320,7 +333,7 @@ function schedule_homework_reminders($schedules)
 // Create Callback Functions:
 function sakolawp_send_release_reminder($content_id, $content_type, $class_id)
 {
-	error_log("Scheduled cron job is running -> sakolawp_send_release_reminder");
+	// error_log("=======>>>>>>> Scheduled cron job is running -> sakolawp_send_release_reminder");
 	if ($content_type == 'homework') {
 		$repo = new RunHomeworkRepo();
 		$homework_data = $repo->single($content_id);
@@ -333,7 +346,7 @@ function sakolawp_send_release_reminder($content_id, $content_type, $class_id)
 		error_log("WE HAVE NOT SET UP LESSON RELEASE NOTIFICATION");
 	}
 }
-function sakolawp_send_due_reminder($content_id, $content_type, $class_id, $reminder_type)
+function sakolawp_send_due_reminder($content_id, $content_type, $class_id)
 {
 	error_log("Scheduled cron job is running -> sakolawp_send_due_reminder");
 	if ($content_type == 'homework') {
@@ -349,7 +362,7 @@ function sakolawp_send_due_reminder($content_id, $content_type, $class_id, $remi
 	}
 }
 
-add_action('sakolawp_send_release_reminder', 'sakolawp_send_release_reminder', 10, 2);
+add_action('sakolawp_send_release_reminder', 'sakolawp_send_release_reminder', 10, 3);
 add_action('sakolawp_send_due_reminder', 'sakolawp_send_due_reminder', 10, 3);
 
 // Handle Schedule Updates:
@@ -360,7 +373,7 @@ function sakolawp_update_schedules($new_schedules)
 		clear_existing_cron_jobs($new_schedules);
 
 		// Schedule new reminders
-		schedule_homework_reminders($new_schedules);
+		schedule_all_class_reminders($new_schedules);
 	} catch (\Throwable $th) {
 		wp_mail(
 			get_option('admin_email'),
@@ -412,8 +425,8 @@ function sakolawp_schedule_daily_digest()
 	// $timestamp = wp_next_scheduled('sakolawp_daily_digest_hook');
 	// wp_unschedule_event($timestamp, 'sakolawp_daily_digest_hook');
 	if (!wp_next_scheduled('sakolawp_daily_digest_hook')) {
-		// Schedule the event to run at 6 PM UTC daily & 7 PM GMT+1
-		$time = strtotime('18:00:00');
+		// Schedule the event to run at 5 PM UTC daily & 6 PM GMT+1
+		$time = convert_to_utc(strtotime('18:00:00'));
 		wp_schedule_event($time, 'daily', 'sakolawp_daily_digest_hook');
 	}
 }

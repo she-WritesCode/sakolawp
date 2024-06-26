@@ -2001,35 +2001,55 @@ function get_homework_schedule($class_id, $homework_id)
 	$programStartDate = $class->start_date;
 	$homework_schedule = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}sakolawp_class_schedule WHERE class_id = $class_id AND content_type = 'homework' AND content_id = '$homework_id'");
 
-	if (!$homework_schedule) {
+
+	$result = get_schedule_dates($homework_schedule, $programStartDate, $drip_method);
+	if ($result) {
+		return [
+			'release_date' => $result['release_date'],
+			'due_date' => $result['due_date'],
+			'homework_is_due_for_release' => $result['release_date_is_past'],
+		];
+	}
+	return $result;
+}
+
+
+function get_schedule_dates($schedule, $program_start_date, $drip_method = null)
+{
+	if (!$schedule) {
 		return null; // No schedule found
 	}
 
-	if ($drip_method == 'specific_dates') {
-		$release_date = $homework_schedule->release_date;
-		$due_date = $homework_schedule->deadline_date;
+	$schedule = (array)$schedule;
+	$drip_method = $drip_method ?? $schedule['drip_method'];
+
+	if ($schedule['drip_method'] == 'specific_dates') {
+		$release_date = $schedule['release_date'];
+		$due_date = $schedule['deadline_date'];
 	} else {
 		// Calculate release date
-		$time_split = array_pad(explode(':', $homework_schedule->release_days_time), 3, 0);
+		$days = $schedule['release_days'];
+		$time_split = array_pad(explode(':', $schedule['release_days_time']), 3, 0);
 		[$hours, $minutes, $seconds] = $time_split;
-		$release_date = date('Y-m-d H:i:s', strtotime($programStartDate . " +{$homework_schedule->release_days} days {$hours} hours {$minutes} minutes {$seconds} seconds"));
+		$release_date = date('Y-m-d H:i:s', strtotime($program_start_date . " +{$days} days {$hours} hours {$minutes} minutes {$seconds} seconds"));
 
 		// Calculate due date
+		$days = $schedule['deadline_days'];
 		$start_of_release_date = date('Y-m-d', strtotime($release_date));
-		$time_split = array_pad(explode(':', $homework_schedule->deadline_days_time), 3, 0);
+		$time_split = array_pad(explode(':', $schedule['deadline_days_time']), 3, 0);
 		[$hours, $minutes, $seconds] = $time_split;
-		$due_date = date('Y-m-d H:i:s', strtotime($start_of_release_date . " +{$homework_schedule->deadline_days} days {$hours} hours {$minutes} minutes {$seconds} seconds"));
+		$due_date = date('Y-m-d H:i:s', strtotime($start_of_release_date . " +{$days} days {$hours} hours {$minutes} minutes {$seconds} seconds"));
 	}
 
 	if ($due_date == '0000-00-00 00:00:00' || $due_date == '1970-01-01 00:00:00') {
 		return null; // Invalid due date
 	}
 
-	$homework_is_due_for_release = strtotime($release_date) <= max(strtotime($programStartDate), time());
+	$release_date_is_past = strtotime($release_date) <= max(strtotime($program_start_date), time());
 
 	return [
 		'release_date' => $release_date,
 		'due_date' => $due_date,
-		'homework_is_due_for_release' => $homework_is_due_for_release
+		'release_date_is_past' => $release_date_is_past
 	];
 }
