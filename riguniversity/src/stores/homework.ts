@@ -169,11 +169,11 @@ export const useHomeworkStore = defineStore('homework', () => {
           detail: 'Assessment created successfully',
           life: 3000
         })
-        if (response.data.result) {
-          goToEditHomework(response.data.result)
-        } else {
-          closeAddForm()
-        }
+        // if (response.data.result) {
+        //   goToEditHomework(response.data.result)
+        // } else {
+        closeAddForm()
+        // }
       })
       .catch((error) => {
         console.error('Error:', error)

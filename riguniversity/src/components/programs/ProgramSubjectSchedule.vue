@@ -121,6 +121,7 @@ const deadlineDate = computed(() =>
   }, {})
 )
 
+// Specific dates
 const setDefaultReleaseTime = (homework_id: string) => {
   if (
     !schedules[homework_id!]!.release_date ||
@@ -137,6 +138,27 @@ const setDefaultDeadlineTime = (homework_id: string) => {
     schedules[homework_id!]!.deadline_date == '0000-00-00 00:00:00'
   ) {
     schedules[homework_id!]!.deadline_date = DateHelper.toSimpleBackendDateAndTimeString(
+      DateHelper.setTime(new Date(), 23, 59)
+    )
+  }
+}
+// Deadline Days
+const setDefaultReleaseDaysTime = (homework_id: string) => {
+  if (
+    !schedules[homework_id!]!.release_days_time ||
+    schedules[homework_id!]!.release_days_time == '00:00'
+  ) {
+    schedules[homework_id!]!.release_days_time = DateHelper.toSimpleBackendTimeString(
+      DateHelper.setTime(new Date(), 9)
+    )
+  }
+}
+const setDefaultDeadlineDaysTime = (homework_id: string) => {
+  if (
+    !schedules[homework_id!]!.deadline_days_time ||
+    schedules[homework_id!]!.deadline_days_time == '00:00'
+  ) {
+    schedules[homework_id!]!.deadline_days_time = DateHelper.toSimpleBackendTimeString(
       DateHelper.setTime(new Date(), 23, 59)
     )
   }
@@ -195,7 +217,7 @@ const getEditHomeworkUrl = (subjectId: string | number, homework_id: string) => 
                     <label>Time</label>
                     <div class="flex gap-2 items-center">
                       <input v-model="schedules[homework.homework_id!]!.release_days_time" class="input-time w-full"
-                        placeholder="0" type="time" />
+                        placeholder="0" type="time" @focus="setDefaultReleaseDaysTime(homework.homework_id!)" />
                     </div>
                   </div>
                 </div>
@@ -217,7 +239,7 @@ const getEditHomeworkUrl = (subjectId: string | number, homework_id: string) => 
                     <label>Time</label>
                     <div class="flex gap-2 items-center">
                       <input v-model="schedules[homework.homework_id!]!.deadline_days_time" class="input-time w-full"
-                        placeholder="0" type="time" />
+                        placeholder="0" type="time" @focus="setDefaultDeadlineDaysTime(homework.homework_id!)" />
                     </div>
                   </div>
                 </div>

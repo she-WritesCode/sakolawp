@@ -35,3 +35,6 @@ table.fixed.wp-list-table.widefat {
   transition-duration: .05s;
   transition-timing-function: ease-in-out;
 }
+[id^="run"] a {
+  color: inherit;
+}

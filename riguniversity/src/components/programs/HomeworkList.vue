@@ -71,11 +71,11 @@ onMounted(() => {
                 <div>{{ new Date(slotProps.data.date_end).toDateString() }} {{ slotProps.data.time_end }}</div>
             </template>
         </Column>
-        <Column header="Submissions" class="text-center">
+        <!-- <Column header="Submissions" class="text-center">
             <template #body="slotProps">
                 <Tag :value="slotProps.data.delivery_count" severity="secondary" />
             </template>
-        </Column>
+        </Column> -->
         <Column field="teacher_name" header="Faculty"></Column>
         <Column header="">
             <template #body="slotProps">
