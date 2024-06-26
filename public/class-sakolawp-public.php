@@ -148,14 +148,35 @@ class Sakolawp_Public
 		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', ['datatables'], '1.0.0', true);
 		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
 
+
+		$current_id = get_current_user_id();
+		$user_info = get_user_meta($current_id);
+		$first_name = $user_info["first_name"][0];
+		$last_name = $user_info["last_name"][0];
+	
+		$user_name = $first_name . ' ' . $last_name;
+	
+		if (empty($first_name)) {
+			$user_info = get_userdata($current_id);
+			$user_name = $user_info->display_name;
+		}
+
+		$dataToBePassed = array(
+			'user_name'            => $user_name,
+			'first_name' => $first_name,
+			'last_name ' => $last_name ,
+		);
+
 		wp_enqueue_script('rig-university', plugin_dir_url(__FILE__) . 'js/index.js', [], '1.0.0', true);
-		wp_localize_script('rig-university', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
+		wp_localize_script('rig-university', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php'), 'userInfo' => $dataToBePassed, 'default' ));
 
 		if ($wp->request === "exam") {
 			wp_enqueue_script('cookie-js', plugin_dir_url(__FILE__) . 'js/js.cookie.js', array('jquery'), false);
 			wp_enqueue_script('jquery-simple-pagination-plugin', plugin_dir_url(__FILE__) . 'js/jquery-simple-pagination-plugin.js', array('jquery'), false);
 			wp_enqueue_script('sakolawp-validations', plugin_dir_url(__FILE__) . 'js/validations.js', array('jquery'), false);
 		}
+
+
 	}
 
 	function sakolawp_select_section_f()
