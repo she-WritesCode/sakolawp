@@ -50,6 +50,7 @@ class RunClassScheduleRepo
                 'release_date' => $results[$key]->actual_release_date,
                 'due_date' => $results[$key]->actual_deadline_date,
                 'release_date_is_past' => $results[$key]->actual_release_date_is_past,
+                'deadline_date_is_past' => $results[$key]->actual_deadline_date_is_past,
             ] = get_schedule_dates($schedule, $class->start_date, $class->drip_method);
         }
 

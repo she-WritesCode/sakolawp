@@ -14,6 +14,15 @@ export class DateHelper {
    * @param format - Format string using date-fns
    * @returns Formatted date string
    */
+  static fullDate(date: Date | string, format: string = 'EEEE, MMMM dd, yyyy h:mm aa'): string {
+    return this.formatDate(date, format)
+  }
+  /**
+   * Format a date to a readable string
+   * @param date - Date object or date string
+   * @param format - Format string using date-fns
+   * @returns Formatted date string
+   */
   static formatDate(date: Date | string, format: string = 'MMMM dd, yyyy'): string {
     try {
       const dateObj = typeof date === 'string' ? new Date(date) : date
@@ -49,6 +58,14 @@ export class DateHelper {
     const dateTimeObj = typeof dateTime === 'string' ? new Date(dateTime) : dateTime
     const diff = Date.now() - dateTimeObj.getTime()
 
+    // x days from now
+    if (diff < 0) {
+      if (diff > -86400000) {
+        return 'tomorrow'
+      } else if (diff > -172800000) {
+        return `${Math.floor(-diff / (24 * 60 * 60 * 1000))} days from now`
+      }
+    }
     if (diff < 60 * 1000) {
       return 'just now'
     } else if (diff < 60 * 60 * 1000) {
@@ -58,10 +75,9 @@ export class DateHelper {
     } else if (diff < 7 * 24 * 60 * 60 * 1000) {
       return `${Math.floor(diff / (24 * 60 * 60 * 1000))} days ago`
     } else {
-      return dateFns.format(dateTimeObj, 'MMMM dd, yyyy')
+      return `${Math.floor(diff / (24 * 60 * 60 * 1000))} days ago`
+      // return dateFns.format(dateTimeObj, 'MMMM dd, yyyy')
     }
-
-    // x days from now
   }
 
   /**

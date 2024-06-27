@@ -52,6 +52,7 @@ class RunDeliveryRepo
             // get courses 
             foreach ($result as $key => $row) {
                 $result[$key]->course = $this->courses_repo->single($row->subject_id);
+                $result[$key]->responses = json_decode($row->responses);
             }
         }
 
@@ -141,9 +142,11 @@ class RunDeliveryRepo
     {
         global $wpdb;
 
-        $result = $wpdb->insert(
+        $result = skwp_insert_or_update_record(
             "{$wpdb->prefix}{$this->deliveries_table}",
-            $delivery_data
+            $delivery_data,
+            ['homework_code', 'student_id'],
+            'delivery_id'
         );
         return $result;
     }

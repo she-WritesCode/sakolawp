@@ -72,6 +72,20 @@ class RunEnrollRepo
     }
 
     /** Get an enrollment by ID */
+    public function single_by($args)
+    {
+        global $wpdb;
+
+        $result = $this->list($args);
+
+        if (count($result) > 0) {
+            return $result[0];
+        }
+
+        return $result;
+    }
+
+    /** Get an enrollment by ID */
     public function single($enroll_id)
     {
         global $wpdb;

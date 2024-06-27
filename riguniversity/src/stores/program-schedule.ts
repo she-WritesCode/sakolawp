@@ -18,9 +18,10 @@ export interface ProgramSchedule {
   deadline_days: number
   release_days_time: string
   deadline_days_time: string
-  actual_release_date: string
-  actual_deadline_date: string
-  actual_release_date_is_past: boolean
+  actual_release_date?: string
+  actual_deadline_date?: string
+  actual_release_date_is_past?: boolean
+  actual_deadline_date_is_past?: boolean
   created_at?: string
   updated_at?: string
 }

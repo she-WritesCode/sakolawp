@@ -2046,10 +2046,12 @@ function get_schedule_dates($schedule, $program_start_date, $drip_method = null)
 	}
 
 	$release_date_is_past = strtotime($release_date) <= max(strtotime($program_start_date), time());
+	$deadline_date_is_past = strtotime($due_date) <= time();
 
 	return [
 		'release_date' => $release_date,
 		'due_date' => $due_date,
-		'release_date_is_past' => $release_date_is_past
+		'release_date_is_past' => $release_date_is_past,
+		'deadline_date_is_past' => $deadline_date_is_past
 	];
 }

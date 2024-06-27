@@ -14,7 +14,7 @@ import DynamicForm from '../components/homeworks/DynamicForm.vue';
 const homework_code = ref(new URL(window.location.href).searchParams.get('homework_code'));
 
 const { filter: homeworkFilter, homeworks } = useHomeworkStore()
-const { filter: deliveryFilter, deliveries } = useHomeworkDeliveryStore()
+const { filter: deliveryFilter, deliveries, createHomeworkDelivery } = useHomeworkDeliveryStore()
 const { filter: scheduleFilter, programSchedules } = useProgramScheduleStore()
 const { programEnrollments, fetchCurrentUserEnrollments } = useProgramEnrollmentStore()
 
@@ -59,9 +59,24 @@ watch(currentEnrollment, () => {
 })
 
 const submitHomework = (values) => {
-    // createDelivery
+    createHomeworkDelivery({
+        homework_code: currentHomework.value?.homework_code!,
+        class_id: currentEnrollment.value?.class_id!,
+        responses: values,
+        homework_reply: '',
+        student_comment: '',
+        student_id: currentEnrollment.value?.student_id!,
+    })
     console.log('Yay!', values)
 }
+
+const submitLabel = computed(() => currentSubmission.value ? 'Update Assessment Submission' : 'Submit Assessment')
+const disableSubmission = computed(() => {
+    if (currentSchedule.value) {
+        return currentSchedule.value.actual_deadline_date_is_past!
+    }
+    return true
+})
 </script>
 <template>
     <Toast position="bottom-center" />
@@ -70,18 +85,20 @@ const submitHomework = (values) => {
             <p class="text-xl">Assessment Schedule Not Found.</p>
         </template>
         <template v-else>
-            <h2>{{ currentHomework.title ?? "" }}</h2>
+            <h3>{{ currentHomework.title ?? "" }}</h3>
+            <div class="font-medium">Due Date: {{ DateHelper.fullDate(currentSchedule.actual_deadline_date!) }}</div>
             <div class="mb-2 flex gap-2 flex-wrap">
-                <Tag severity="info"
-                    :value="`Due on : ${DateHelper.formatDate(currentSchedule.actual_deadline_date)} ${DateHelper.formatTime(currentSchedule.actual_deadline_date)}`">
-                </Tag>
                 <Tag v-if="currentHomework.allow_peer_review && currentHomework.peer_review_who == 'student'"
                     severity="warning" value="Peer Reviewed">
                 </Tag>
+                <Tag v-if="disableSubmission" severity="danger"
+                    :value="`Sorry you cannot submit this homework any longer. The deadline was ${DateHelper.relativeTime(currentSchedule.actual_deadline_date!)}`">
+                </Tag>
             </div>
             <div class="whitespace-break-spaces mb-4">{{ currentHomework.description ?? "" }}</div>
-            <DynamicForm :submit="submitHomework" :initialResponse="currentSubmission?.responses"
-                :questions="currentHomework!.questions" submitLabel="Submit Assessment"></DynamicForm>
+            <DynamicForm :demo="disableSubmission" :submit="submitHomework"
+                :initialResponse="currentSubmission?.responses" :questions="currentHomework!.questions"
+                :submitLabel="submitLabel"></DynamicForm>
         </template>
     </div>
     <div v-else>

@@ -184,7 +184,7 @@ if (!empty($enroll)) :
 
 			<div id="run-viewhomework"></div>
 
-			<div class="skwp-row">
+			<!-- <div class="skwp-row">
 				<div class="skwp-column skwp-column-1">
 					<div class="pipeline white lined-primary shadow diskusi-desc">
 						<div class="pipeline-header">
@@ -283,196 +283,195 @@ if (!empty($enroll)) :
 							</form>
 						<?php endif; ?>
 
-						<!-- Tugas Sudah Dikirim -->
-						<?php
-						$tugas_ada = $query;
-						if (count($query) > 0) : ?>
+			<?php
+			$tugas_ada = $query;
+			if (count($query) > 0) : ?>
 
-							<form class="update-delivery" id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
-								<?php if (!$should_calculate_word_count) : ?>
-									<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
-								<?php else : ?>
-									<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
-									<div class="flex justify-between">
-										<p id="word-count">Word Count: 0</p>
-										<p>Min: <?php echo $word_count_min; ?> | Max: <?php echo $word_count_max; ?> </p>
+				<form class="update-delivery" id="myForm" name="myform" action="" method="POST" enctype="multipart/form-data">
+					<?php if (!$should_calculate_word_count) : ?>
+						<textarea cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+					<?php else : ?>
+						<textarea class="word-count" data-min-word-count="<?php echo $word_count_min; ?>" data-max-word-count="<?php echo $word_count_max; ?>" cols="80" id="editordatamurid" required="" name="reply" rows="10" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo $tugas_ada[0]["homework_reply"]; ?></textarea>
+						<div class="flex justify-between">
+							<p id="word-count">Word Count: 0</p>
+							<p>Min: <?php echo $word_count_min; ?> | Max: <?php echo $word_count_max; ?> </p>
+						</div>
+					<?php endif; ?>
+					<?php if ($tugas_ada[0]["file_name"] != "") {
+						$url_file = site_url() . '/wp-content/uploads/sakolawp/deliveries/' . $tugas_ada[0]["file_name"];
+						$url_file = str_replace(' ', '-', $url_file); ?>
+						<a class="download-delivery-attachment btn btn-rounded btn-sm btn-primary skwp-btn" href="<?php echo esc_url($url_file); ?>" target="_blank">
+							<?php esc_html_e('Download File', 'sakolawp'); ?>
+						</a>
+					<?php } ?>
+					<input class="form-control" id="file-3" name="file_name" type="file" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" <?php echo ($is_late) ? 'readonly' : ''; ?> />
+					<input type="hidden" name="post_id" id="post_id" value="<?php echo esc_attr($homework_code); ?>" />
+					<?php wp_nonce_field('file_name', 'file_name_nonce'); ?>
+					<p style="font-style: italic; margin: 20px 0;"><?php esc_html_e('Max file size up to 10MB', 'sakolawp'); ?></p>
+					<input type="hidden" name="action" value="update_homework" />
+					<input type="hidden" name="homework_type" value="file">
+					<input type="hidden" name="student_id" value="<?php echo esc_attr($student_id); ?>">
+					<input type="hidden" name="homework_code" value="<?php echo esc_attr($homework_code); ?>">
+					<input type="hidden" name="class_id" value="<?php echo esc_attr($row['class_id']); ?>">
+					<input type="hidden" name="section_id" value="<?php echo esc_attr($row['section_id']); ?>">
+					<input type="hidden" name="subject_id" value="<?php echo esc_attr($row['subject_id']); ?>">
+					<div class="skwp-row">
+						<div class="skwp-column skwp-column-60">
+							<div class="form-group">
+								<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="4" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo esc_html($tugas_ada[0]["student_comment"]); ?></textarea>
+							</div>
+						</div>
+						<?php if ($mark === NULL) { ?>
+							<div class="skwp-column skwp-column-40">
+								<?php if (!$is_late) : ?>
+									<div class="form-buttons skwp-form-button">
+										<button class="btn btn-rounded btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Update', 'sakolawp'); ?></button>
 									</div>
 								<?php endif; ?>
-								<?php if ($tugas_ada[0]["file_name"] != "") {
-									$url_file = site_url() . '/wp-content/uploads/sakolawp/deliveries/' . $tugas_ada[0]["file_name"];
-									$url_file = str_replace(' ', '-', $url_file); ?>
-									<a class="download-delivery-attachment btn btn-rounded btn-sm btn-primary skwp-btn" href="<?php echo esc_url($url_file); ?>" target="_blank">
-										<?php esc_html_e('Download File', 'sakolawp'); ?>
-									</a>
-								<?php } ?>
-								<input class="form-control" id="file-3" name="file_name" type="file" accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" multiple="false" <?php echo ($is_late) ? 'readonly' : ''; ?> />
-								<input type="hidden" name="post_id" id="post_id" value="<?php echo esc_attr($homework_code); ?>" />
-								<?php wp_nonce_field('file_name', 'file_name_nonce'); ?>
-								<p style="font-style: italic; margin: 20px 0;"><?php esc_html_e('Max file size up to 10MB', 'sakolawp'); ?></p>
-								<input type="hidden" name="action" value="update_homework" />
-								<input type="hidden" name="homework_type" value="file">
-								<input type="hidden" name="student_id" value="<?php echo esc_attr($student_id); ?>">
-								<input type="hidden" name="homework_code" value="<?php echo esc_attr($homework_code); ?>">
-								<input type="hidden" name="class_id" value="<?php echo esc_attr($row['class_id']); ?>">
-								<input type="hidden" name="section_id" value="<?php echo esc_attr($row['section_id']); ?>">
-								<input type="hidden" name="subject_id" value="<?php echo esc_attr($row['subject_id']); ?>">
-								<div class="skwp-row">
-									<div class="skwp-column skwp-column-60">
-										<div class="form-group">
-											<textarea class="form-control" placeholder="<?php esc_html_e('Your Comment', 'sakolawp'); ?>" name="comment" rows="4" <?php echo ($is_late) ? 'readonly' : ''; ?>><?php echo esc_html($tugas_ada[0]["student_comment"]); ?></textarea>
-										</div>
-									</div>
-									<?php if ($mark === NULL) { ?>
-										<div class="skwp-column skwp-column-40">
-											<?php if (!$is_late) : ?>
-												<div class="form-buttons skwp-form-button">
-													<button class="btn btn-rounded btn-primary skwp-btn" type="submit" name="submit" value="submit"><?php esc_html_e('Update', 'sakolawp'); ?></button>
-												</div>
-											<?php endif; ?>
-										</div>
-									<?php } ?>
-								</div>
-							</form>
-						<?php endif; ?>
-
+							</div>
+						<?php } ?>
 					</div>
+				</form>
+			<?php endif; ?>
+
+		</div>
+		</div>
+
+		<div class="skwp-column skwp-column-1 homework-info">
+			<div class="skwp-content-sidebar">
+				<div class="skwp-sidebar-title">
+					<h5 class="skwp-title">
+						<?php esc_html_e('Information', 'sakolawp'); ?>
+					</h5>
 				</div>
-
-				<div class="skwp-column skwp-column-1 homework-info">
-					<div class="skwp-content-sidebar">
-						<div class="skwp-sidebar-title">
-							<h5 class="skwp-title">
-								<?php esc_html_e('Information', 'sakolawp'); ?>
-							</h5>
-						</div>
-						<div class="table-responsive">
-							<table class="table table-lightbor table-lightfont">
-								<tr>
-									<th>
-										<?php esc_html_e('Subject:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<?php
-										$subject_id = $row["subject_id"];
-										$subject = get_post((int)$subject_id);
-										echo esc_html($subject->post_title);
-										?>
-									</td>
-								</tr>
-								<tr>
-									<th>
-										<?php esc_html_e('Faculty:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<?php
-										$user_info = get_user_meta($row['uploader_id']);
-										$first_name = $user_info["first_name"][0];
-										$last_name = $user_info["last_name"][0];
-
-										$user_name = $first_name . ' ' . $last_name;
-
-										if (empty($first_name)) {
-											$user_info = get_userdata($row['uploader_id']);
-											$user_name = $user_info->display_name;
-										}
-										echo esc_html($user_name);
-										?>
-									</td>
-								</tr>
-								<tr>
-									<th>
-										<?php esc_html_e('Class:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<?php
-										$class_id = $enroll->class_id;
-										$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$class_id'", ARRAY_A);
-										echo esc_html($class['name']);
-										?>
-									</td>
-								</tr>
-								<tr>
-									<?php
-									$section_id = $row["section_id"];
-									$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
-									if (isset($section)) {
-									?>
-
-										<th>
-											<?php esc_html_e('Parent Group:', 'sakolawp'); ?>
-										</th>
-										<td>
-											<?php echo esc_html($section['name']); ?>
-										</td>
-									<?php } ?>
-								</tr>
-								<tr>
-									<th>
-										<?php esc_html_e('Due Date:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<a class="btn nc btn-rounded btn-sm skwp-btn btn-success">
-											<?php echo esc_html(date("l F j, Y g:i a", strtotime($due_date))); ?>
-										</a>
-									</td>
-								</tr>
-								<tr>
-									<th>
-										<?php esc_html_e('Status:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<?php if (count($query) <= 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Submitted', 'sakolawp'); ?></a>
-										<?php endif; ?>
-										<?php if (count($query) > 0) : ?>
-											<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Submitted', 'sakolawp'); ?></a>
-										<?php endif; ?>
-									</td>
-								</tr>
-								<tr>
-									<th>
-										<?php esc_html_e('Mark:', 'sakolawp'); ?>
-									</th>
-									<td>
-										<?php if (count($query) < 0) : ?>
-											<a class="btn btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Marked', 'sakolawp'); ?></a>
-										<?php endif; ?>
-										<?php if (count($query) > 0) : ?>
-											<?php if ($mark != NULL) { ?>
-												<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($mark); ?></a>
-											<?php } elseif ($row['allow_peer_review']) {
-												$score = 0;
-												foreach ($peer_reviews as $review) {
-													$score += $review->mark;
-												}
-												$mean_score = count($peer_reviews) > 0 ? $score / count($peer_reviews) : 0;
-												echo esc_attr(round($mean_score, 2));
-												if ($row['peer_review_who'] == 'student') {
-													echo esc_html_e(' (Peer Reviewed)', 'sakolawp');
-												}
-											} else {
-												esc_html_e('On Review', 'sakolawp');
-											} ?>
-										<?php endif; ?>
-									</td>
-								</tr>
+				<div class="table-responsive">
+					<table class="table table-lightbor table-lightfont">
+						<tr>
+							<th>
+								<?php esc_html_e('Subject:', 'sakolawp'); ?>
+							</th>
+							<td>
 								<?php
-								if (isset($homework_deliveries) && isset($homework_deliveries[0]) && $homework_deliveries[0]["teacher_comment"] != NULL) { ?>
-									<tr>
-										<th>
-											<?php esc_html_e('Faculty Comment', 'sakolawp'); ?>
-										</th>
-										<td>
-											<?php echo esc_html($homework_deliveries[0]["teacher_comment"]); ?>
-										</td>
-									</tr>
-								<?php } ?>
-							</table>
-						</div>
-					</div>
-				</div>
+								$subject_id = $row["subject_id"];
+								$subject = get_post((int)$subject_id);
+								echo esc_html($subject->post_title);
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<?php esc_html_e('Faculty:', 'sakolawp'); ?>
+							</th>
+							<td>
+								<?php
+								$user_info = get_user_meta($row['uploader_id']);
+								$first_name = $user_info["first_name"][0];
+								$last_name = $user_info["last_name"][0];
 
+								$user_name = $first_name . ' ' . $last_name;
+
+								if (empty($first_name)) {
+									$user_info = get_userdata($row['uploader_id']);
+									$user_name = $user_info->display_name;
+								}
+								echo esc_html($user_name);
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<?php esc_html_e('Class:', 'sakolawp'); ?>
+							</th>
+							<td>
+								<?php
+								$class_id = $enroll->class_id;
+								$class = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_class WHERE class_id = '$class_id'", ARRAY_A);
+								echo esc_html($class['name']);
+								?>
+							</td>
+						</tr>
+						<tr>
+							<?php
+							$section_id = $row["section_id"];
+							$section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = '$section_id'", ARRAY_A);
+							if (isset($section)) {
+							?>
+
+								<th>
+									<?php esc_html_e('Parent Group:', 'sakolawp'); ?>
+								</th>
+								<td>
+									<?php echo esc_html($section['name']); ?>
+								</td>
+							<?php } ?>
+						</tr>
+						<tr>
+							<th>
+								<?php esc_html_e('Due Date:', 'sakolawp'); ?>
+							</th>
+							<td>
+								<a class="btn nc btn-rounded btn-sm skwp-btn btn-success">
+									<?php echo esc_html(date("l F j, Y g:i a", strtotime($due_date))); ?>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<?php esc_html_e('Status:', 'sakolawp'); ?>
+							</th>
+							<td>
+								<?php if (count($query) <= 0) : ?>
+									<a class="btn nc btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Submitted', 'sakolawp'); ?></a>
+								<?php endif; ?>
+								<?php if (count($query) > 0) : ?>
+									<a class="btn nc btn-rounded btn-sm skwp-btn btn-success"><?php esc_html_e('Submitted', 'sakolawp'); ?></a>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<?php esc_html_e('Mark:', 'sakolawp'); ?>
+							</th>
+							<td>
+								<?php if (count($query) < 0) : ?>
+									<a class="btn btn-rounded btn-sm skwp-btn btn-danger"><?php esc_html_e('Not Marked', 'sakolawp'); ?></a>
+								<?php endif; ?>
+								<?php if (count($query) > 0) : ?>
+									<?php if ($mark != NULL) { ?>
+										<a class="btn btn-rounded btn-sm skwp-btn btn-primary"><?php echo esc_html($mark); ?></a>
+									<?php } elseif ($row['allow_peer_review']) {
+										$score = 0;
+										foreach ($peer_reviews as $review) {
+											$score += $review->mark;
+										}
+										$mean_score = count($peer_reviews) > 0 ? $score / count($peer_reviews) : 0;
+										echo esc_attr(round($mean_score, 2));
+										if ($row['peer_review_who'] == 'student') {
+											echo esc_html_e(' (Peer Reviewed)', 'sakolawp');
+										}
+									} else {
+										esc_html_e('On Review', 'sakolawp');
+									} ?>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<?php
+						if (isset($homework_deliveries) && isset($homework_deliveries[0]) && $homework_deliveries[0]["teacher_comment"] != NULL) { ?>
+							<tr>
+								<th>
+									<?php esc_html_e('Faculty Comment', 'sakolawp'); ?>
+								</th>
+								<td>
+									<?php echo esc_html($homework_deliveries[0]["teacher_comment"]); ?>
+								</td>
+							</tr>
+						<?php } ?>
+					</table>
+				</div>
 			</div>
+		</div>
+
+		</div> -->
 		</div>
 
 <?php

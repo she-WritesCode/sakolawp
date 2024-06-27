@@ -157,6 +157,29 @@ class RunHomeworkRepo
 
         return $result;
     }
+    /** Read a single homework */
+    function single_by_homework_code($homework_code)
+    {
+        global $wpdb;
+
+        $sql = "SELECT h.*,  COUNT(d.delivery_id) AS delivery_count, t.display_name as teacher_name 
+         FROM {$wpdb->prefix}{$this->homework_table} h
+         LEFT JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
+         LEFT JOIN {$wpdb->prefix}{$this->users_table} t ON h.uploader_id = t.ID
+         WHERE h.homework_code = '$homework_code'
+         GROUP BY h.homework_id";
+
+        $result = $wpdb->get_row($sql);
+
+        if ($result) {
+            $result->questions = $this->questions_repo->get_by_homework($homework_code);
+            $result->allow_peer_review = $result->allow_peer_review  == '1' ? true : false;
+        } else {
+            error_log($wpdb->last_error);
+        }
+
+        return $result;
+    }
 
     /** Create a new homework */
     function create($homework_data)

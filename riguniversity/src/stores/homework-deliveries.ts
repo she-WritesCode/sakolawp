@@ -1,18 +1,22 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { convertObjectToSearchParams } from '@/utils/search'
+import { convertObjectToFormData, convertObjectToSearchParams } from '@/utils/search'
+import { useToast } from 'primevue/usetoast'
 
 export interface HomeworkDelivery {
   delivery_id?: string
-  student_name: string
+  student_name?: string
+  homework_code: string
   homework_reply: string
+  student_comment: string
   student_id: string
-  mark: string
+  class_id: string
+  mark?: string
   responses: Record<string, any>
 }
 
 export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => {
-  // const toast = useToast()
+  const toast = useToast()
   const deliveries = ref<HomeworkDelivery[]>([])
   const currentDelivery = ref<HomeworkDelivery | undefined>(undefined)
   const filter = reactive({
@@ -140,6 +144,44 @@ export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => 
       })
   }
 
+  const createHomeworkDelivery = (args: HomeworkDelivery) => {
+    loading.create = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      body: convertObjectToFormData({
+        action: 'run_create_delivery',
+        ...(args as any)
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Assessment created successfully',
+            life: 3000
+          })
+          fetchHomeworkDeliveries()
+        } else {
+          toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: response.data,
+            life: 5000
+          })
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+        toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 })
+      })
+      .finally(() => {
+        loading.create = false
+      })
+  }
+
   return {
     deliveries: computed(() => deliveries),
     fetchHomeworkDeliveries,
@@ -154,6 +196,7 @@ export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => 
     showEditScreen: computed(() => showEditScreen),
     updateHomeworkDelivery,
     goToEditHomeworkDelivery,
-    closeEditHomeworkDelivery
+    closeEditHomeworkDelivery,
+    createHomeworkDelivery
   }
 })

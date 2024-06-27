@@ -219,6 +219,7 @@ CREATE TABLE $deliveries_table (
 	subject_id int(11) NOT NULL,
 	status int(11) NOT NULL,
 	homework_reply longtext NULL,
+	responses JSON NOT NULL,
 	mark varchar(110) NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

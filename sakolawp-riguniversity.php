@@ -1004,9 +1004,54 @@ function run_single_delivery()
 function run_create_delivery()
 {
 	$repo = new RunDeliveryRepo();
-	$delivery_data = array_map('stripslashes_deep', $_POST);
+	$homeworkRepo = new RunHomeworkRepo();
+	$enrollRepo = new RunEnrollRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$delivery_data['date']         = sanitize_text_field(date('Y-m-d H:i:s'));
+	$delivery_data['homework_reply'] =  isset($_POST['homework_reply']) ? sakolawp_sanitize_html($_POST['homework_reply']) : '';
+	$delivery_data['responses'] =  isset($_POST['responses']) ? json_encode($_POST['responses']) : NULL;
+	$delivery_data['student_comment'] = isset($_POST['student_comment']) ? sakolawp_sanitize_html($_POST['student_comment']) : '';
+	$delivery_data['status'] = sanitize_text_field('1');
+	$delivery_data['homework_code'] = isset($_POST['homework_code']) ? sanitize_text_field($_POST['homework_code']) : '';
+	$delivery_data['class_id']      = isset($_POST['class_id']) ? sanitize_text_field($_POST['class_id']) : '';
+	$delivery_data['student_id']    = get_current_user_id();
+
+	if (!$delivery_data['responses']) {
+		wp_send_json_error('Responses are required', 400);
+		die();
+	}
+	if (!$delivery_data['class_id']) {
+		wp_send_json_error('Class is required', 400);
+		die();
+	}
+	if (!$delivery_data['homework_code']) {
+		wp_send_json_error('Homework is required', 400);
+		die();
+	}
+
+	$enrollment = $enrollRepo->single_by(['student_id' => $delivery_data['student_id'], 'class_id' => $delivery_data['class_id']]);
+	if (!$enrollment) {
+		wp_send_json_error('Enrollment not found', 404);
+		die();
+	}
+	$homework = $homeworkRepo->single_by_homework_code($delivery_data['homework_code']);
+	if (!$homework) {
+		wp_send_json_error('Homework not found', 404);
+		die();
+	}
+
+	$delivery_data['section_id']    = $enrollment->section_id;
+	$delivery_data['subject_id'] = $homework->subject_id;
+
+	$post_id = $delivery_data['homework_code']; // homework code
 
 	$result = $repo->create($delivery_data);
+
+	if (!$result) {
+		wp_send_json_error('Failed to submit assessment', 500);
+		die();
+	}
 
 	wp_send_json_success($result, 201);
 	die();
