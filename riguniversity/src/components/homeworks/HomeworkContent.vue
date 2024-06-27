@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-// import { embed } from 'embedrax';
 
 const props = defineProps<{
     content: string;
 }>();
 
-const videos = ref<any[]>([
-]);
-
 const parsedContent = ref('');
-
 
 const parseContent = () => {
     let contentWithLinks = props.content;
@@ -26,6 +21,8 @@ const parseContent = () => {
     const vimeoRegex = /(?:https?:\/\/)?(?:www\.)?vimeo\.com\/([0-9]+)/;
     const dailymotionRegex = /(?:https?:\/\/)?(?:www\.)?dailymotion\.com\/video\/([a-zA-Z0-9]+)/;
     const googleDriveRegex = /(?:https?:\/\/)?(?:www\.)?drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\/view/;
+    const dropboxRegex = /(?:https?:\/\/)?(?:www\.)?dropbox\.com\/s\/([a-zA-Z0-9]+)\/[^?]+/;
+
 
     contentWithLinks = contentWithLinks.replace(urlRegex, (url) => {
         let embed = ''
@@ -71,6 +68,13 @@ const parseContent = () => {
                 const fileId = match[1];
                 embed = `<iframe class="embed-google-drive" src="https://drive.google.com/file/d/${fileId}/preview" width="560" height="315" frameborder="0" allowfullscreen></iframe>`;
             }
+        } else if (dropboxRegex.test(url)) {
+            const match = dropboxRegex.exec(url);
+            if (match) {
+                const fileId = match[1];
+                const embedUrl = `https://www.dropbox.com/s/${fileId}?raw=1`;
+                embed = `<iframe class="embed-dropbox" src="${embedUrl}" width="640" height="360" frameborder="0" allowfullscreen></iframe>`;
+            }
         }
         const urltag = `<a href="${url}" target="_blank">${url}</a>`
         return embed ? `${embed}<br/>${urltag}` : urltag;
@@ -88,9 +92,6 @@ onMounted(() => {
 watch(() => props.content, () => {
     parseContent();
 });
-watch(videos, () => {
-});
-
 </script>
 
 <template>
@@ -156,6 +157,11 @@ watch(videos, () => {
 }
 
 .embed-google-drive {
+    display: block;
+    /* You can assign any css properties */
+}
+
+.embed-dropbox {
     display: block;
     /* You can assign any css properties */
 }
