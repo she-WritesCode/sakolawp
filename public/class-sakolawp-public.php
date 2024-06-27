@@ -56,7 +56,7 @@ class Sakolawp_Public
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-		add_action('wp_ajax_sakolawp_select_section',        'sakolawp_select_section_f');
+		add_action('wp_ajax_sakolawp_select_section', 'sakolawp_select_section_f');
 		add_action('wp_ajax_nopriv_sakolawp_select_section', 'sakolawp_select_section_f');
 
 		add_action('wp_ajax_sakolawp_select_subject_teacher', 'sakolawp_select_subject_teacher_f');    // If called from admin panel
@@ -93,7 +93,7 @@ class Sakolawp_Public
 		wp_enqueue_style('datatablesstyle', plugin_dir_url(__FILE__) . 'css/datatables.min.css', array());
 		wp_enqueue_style('daterangepicker', plugin_dir_url(__FILE__) . 'css/daterangepicker.css', array());
 		wp_enqueue_style('clockpicker', plugin_dir_url(__FILE__) . 'css/clockpicker.min.css', array());
-		// wp_enqueue_style('fonts', plugin_dir_url(__FILE__) . 'css/fonts.css', array());
+		wp_enqueue_style('fonts', plugin_dir_url(__FILE__) . 'css/fonts.css', array());
 		wp_enqueue_style($this->plugin_name . '-rtl', plugin_dir_url(__FILE__) . 'css/sakolawp-public-rtl.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/sakolawp-public.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . '-responsive', plugin_dir_url(__FILE__) . 'css/sakolawp-responsive.css', array(), $this->version, 'all');
@@ -143,7 +143,7 @@ class Sakolawp_Public
 		wp_enqueue_script('datatables-checkbox', plugin_dir_url(__FILE__) . 'js/dataTables.checkboxes.min.js', array('jquery'), false, true);
 
 		wp_enqueue_script('skwp-chart', plugin_dir_url(__FILE__) . 'js/skwp-chart.js', ['chartjs'], '1.0.0', true);
-		wp_localize_script('skwp-chart', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php',)));
+		wp_localize_script('skwp-chart', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php', )));
 
 		wp_enqueue_script('skwp-custom', plugin_dir_url(__FILE__) . 'js/skwp-custom.js', ['datatables'], '1.0.0', true);
 		wp_localize_script('skwp-custom', 'skwp_ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
@@ -187,11 +187,12 @@ class Sakolawp_Public
 
 	function sakolawp_show_alert_dialog()
 	{
-		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'true') : ?>
+		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'true'): ?>
 			<!-- Success Alert -->
 			<div id="formSuccessAlert" class="alert alert-success">
 				<div class="flex gap-2 items-center">
-					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+						stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 					</svg>
 					Successful!
@@ -202,11 +203,12 @@ class Sakolawp_Public
 			</div>
 		<?php endif;
 
-		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'false' && !isset($_GET['message'])) : ?>
+		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'false' && !isset($_GET['message'])): ?>
 			<!-- Danger Alert -->
 			<div id="formDangerAlert" class="alert alert-danger">
 				<div class="flex gap-2 items-center">
-					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+						stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 					</svg>
 					Error occurred during form submission.
@@ -216,12 +218,14 @@ class Sakolawp_Public
 				</button>
 			</div>
 		<?php endif;
-		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'false' && isset($_GET['message'])) : ?>
+		if (isset($_GET['form_submitted']) && $_GET['form_submitted'] == 'false' && isset($_GET['message'])): ?>
 			<!-- Warning Alert -->
 			<div id="formWarningAlert" class="alert alert-warning">
 				<div class="flex gap-2 items-center">
-					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m0-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+					<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+						stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M13 16h-1v-4h-1m0-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
 					</svg>
 					Warning: <?= $_GET['message'] ?>
 				</div>
@@ -229,7 +233,7 @@ class Sakolawp_Public
 					&times;
 				</button>
 			</div>
-<?php endif;
+		<?php endif;
 	}
 
 

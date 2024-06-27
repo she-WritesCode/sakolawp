@@ -219,6 +219,8 @@
 		const $targetGroup = $(targetGroup);
 		const $inputs = $(`input[name="${inputName}"]`);
 
+		if (!checkbox) return;
+
 		if (checkbox.checked) {
 			$targetGroup.show();
 			$inputs.prop('hidden', false);

@@ -17,7 +17,7 @@ $enroll_table = $wpdb->prefix . 'sakolawp_enroll';
 
 $enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$enroll_table} WHERE student_id = $student_id");
 
-if (!empty($enroll)) :
+if (!empty($enroll)):
 
 	$user_info = get_userdata($student_id);
 	$student_name = $user_info->display_name;
@@ -44,7 +44,7 @@ if (!empty($enroll)) :
 		AND d.class_id = '$enroll->class_id' 
 		AND e.section_id = '$enroll->section_id'
 		ORDER BY h.created_at DESC, d.date DESC;", ARRAY_A);
-?>
+	?>
 
 	<div class="homework-inner skwp-content-inner skwp-clearfix">
 
@@ -71,12 +71,13 @@ if (!empty($enroll)) :
 
 		<?php
 		$grouped_by_homework = array_group_by($homework_deliveries, 'homework_code');
-		foreach ($grouped_by_homework as $deliveries) :
-		?>
+		foreach ($grouped_by_homework as $deliveries):
+			?>
 			<div class="my-8">
 				<h6><?php echo esc_html($deliveries[0]['title']); ?></h6>
 				<div class="skwp-table table-responsive">
-					<table id="tableini" class="homework-table-<?php echo esc_html($deliveries[0]['homework_code']); ?> table dataTable homework-table">
+					<table id="tableini"
+						class="homework-table-<?php echo esc_html($deliveries[0]['homework_code']); ?> table dataTable homework-table">
 						<thead>
 							<tr>
 								<th class="title-homework"><?php esc_html_e('Peer', 'sakolawp'); ?></th>
@@ -88,12 +89,12 @@ if (!empty($enroll)) :
 						</thead>
 						<tbody>
 							<?php
-							foreach ($deliveries as $row) :
+							foreach ($deliveries as $row):
 								$delivery_id = $row['delivery_id'];
 								$peer_id = $row['student_id'];
 								$peer_enroll = $wpdb->get_row("SELECT class_id, section_id, accountability_id FROM {$wpdb->prefix}sakolawp_enroll WHERE student_id = $peer_id");
 
-							?>
+								?>
 								<tr>
 									<td>
 										<?php
@@ -112,8 +113,10 @@ if (!empty($enroll)) :
 										$peer_section = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_section WHERE section_id = $peer_enroll->section_id");
 										$peer_accountability = $wpdb->get_row("SELECT name FROM {$wpdb->prefix}sakolawp_accountability WHERE accountability_id = $peer_enroll->accountability_id");
 										if (isset($peer_section) && isset($peer_accountability)) {
-										?>
-											<i class="text-sm"> <?php echo '<br/>' . esc_html($peer_section->name) . ' - ' . $peer_accountability->name; ?> </i>
+											?>
+											<i class="text-sm">
+												<?php echo '<br/>' . esc_html($peer_section->name) . ' - ' . $peer_accountability->name; ?>
+											</i>
 										<?php } ?>
 									</td>
 									<!-- <td>
@@ -124,7 +127,7 @@ if (!empty($enroll)) :
 										// going this route because I recently changed subject to courses(a custom post type) and deliveries where not migrated
 										$subject_id = $wpdb->get_var("SELECT subject_id FROM {$homework_table} WHERE homework_code = '{$row['homework_code']}'");
 										// $subject_id = $row['subject_id'];
-										$subject = get_post((int)$subject_id);
+										$subject = get_post((int) $subject_id);
 										echo esc_html($subject->post_title);
 										?>
 									</td>
@@ -137,14 +140,16 @@ if (!empty($enroll)) :
 										$current_peer_review = $wpdb->get_row("SELECT * FROM $peer_reviews_table
 											WHERE delivery_id = '$delivery_id'
 											AND reviewer_id = '$student_id';", ARRAY_A);
-										if (empty($current_peer_review)) :
-										?>
+										if (empty($current_peer_review)):
+											?>
 
-											<a href="<?php echo add_query_arg('delivery_id', $delivery_id, home_url('peer_review_room')); ?>" class="btn btn-primary btn-rounded btn-sm skwp-btn">
+											<a href="<?php echo add_query_arg('delivery_id', $delivery_id, home_url('peer_review_room')); ?>"
+												class="btn btn-primary btn-rounded btn-sm skwp-btn">
 												<?php echo esc_html__('Review', 'sakolawp'); ?>
 											</a>
-										<?php else : ?>
-											<a href="<?php echo add_query_arg('delivery_id', $delivery_id, home_url('peer_review_room')); ?>" class="btn btn-success btn-rounded btn-sm skwp-btn">
+										<?php else: ?>
+											<a href="<?php echo add_query_arg('delivery_id', $delivery_id, home_url('peer_review_room')); ?>"
+												class="btn btn-success btn-rounded btn-sm skwp-btn">
 												<?php echo esc_html__('Reviewed', 'sakolawp'); ?>
 											</a>
 										<?php endif; ?>
@@ -158,8 +163,8 @@ if (!empty($enroll)) :
 		<?php endforeach; ?>
 	</div>
 
-<?php
-else :
+	<?php
+else:
 	esc_html_e('You are not assigned to a class yet', 'sakolawp');
 endif;
 

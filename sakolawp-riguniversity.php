@@ -220,7 +220,7 @@ function run_create_homework()
 	// $section_id = sanitize_text_field($_POST['section_id']);
 	$file_name = $_FILES["file_name"]["name"];
 	$subject_id = sanitize_text_field($_POST['subject_id']);
-	$allow_peer_review = ($_POST['allow_peer_review']);
+	$allow_peer_review = isset($_POST['allow_peer_review']) ? $_POST['allow_peer_review'] == 'true' : false;
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
 	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
 	$word_count_min = sanitize_text_field($_POST['word_count_min']);
@@ -363,7 +363,7 @@ function run_update_homework()
 	$_POST = array_map('stripslashes_deep', $_POST);
 	$title = sakolawp_sanitize_html($_POST['title']);
 	$description = sakolawp_sanitize_html($_POST['description']);
-	$allow_peer_review = ($_POST['allow_peer_review']);
+	$allow_peer_review = isset($_POST['allow_peer_review']) ? $_POST['allow_peer_review'] == 'true' : false;
 	$peer_review_who = sanitize_text_field($_POST['peer_review_who']);
 	$peer_review_template = sanitize_text_field($_POST['peer_review_template']);
 	$limit_word_count = ($_POST['limit_word_count']);

@@ -63,6 +63,7 @@ watch(currentSubmission, () => {
     }
 })
 watch(currentEnrollment, () => {
+    deliveryFilter.student_id = currentEnrollment.value?.student_id!
     scheduleFilter.content_id = currentHomework.value!.homework_id!
     scheduleFilter.content_type = "homework"
     scheduleFilter.class_id = currentEnrollment.value?.class_id ?? ""

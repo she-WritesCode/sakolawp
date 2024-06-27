@@ -23,7 +23,8 @@ export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => 
   const currentDelivery = ref<HomeworkDelivery | undefined>(undefined)
   const filter = reactive({
     search: '',
-    homework_code: ''
+    homework_code: '',
+    student_id: ''
   })
   const loading = reactive({ list: false, get: false, create: false, update: false, delete: false })
 

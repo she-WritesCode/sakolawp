@@ -118,8 +118,8 @@ export const useFormStore = defineStore('formStore', {
     getTextTypeOptions() {
       return [
         { label: 'Plain', value: '' },
-        { label: 'Url', value: '\b((https?|ftp)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])' },
-        { label: 'Email', value: '\b[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}\b' }
+        { label: 'Url', value: 'url' },
+        { label: 'Email', value: 'email' }
       ]
     },
     generateForm() {
