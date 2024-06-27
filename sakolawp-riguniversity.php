@@ -5,6 +5,7 @@ require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-subject-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-homework-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-questions-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-deliveries-repo.php';
+require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-peer-review-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-class-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-lesson-repo.php';
 require_once SAKOLAWP_PLUGIN_DIR . '/repositories/class-enroll-repo.php';
@@ -194,7 +195,7 @@ function run_single_homework()
 	$repo = new RunHomeworkRepo();
 	// $_POST = array_map('stripslashes_deep', $_POST);
 
-	$homework_id = (int)($_POST['homework_id']);
+	$homework_id = (int) ($_POST['homework_id']);
 	$result = $repo->single($homework_id);
 
 	if (!$result) {
@@ -225,8 +226,8 @@ function run_create_homework()
 	$word_count_min = sanitize_text_field($_POST['word_count_min']);
 	$word_count_max = sanitize_text_field($_POST['word_count_max']);
 	$questions = $_POST['questions'];
-	$uploader_type  = 'teacher';
-	$uploader_id  = get_current_user_id();
+	$uploader_type = 'teacher';
+	$uploader_id = get_current_user_id();
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
 
 	$post_id = $homework_code;
@@ -240,9 +241,9 @@ function run_create_homework()
 	$args = [];
 
 	if (isset($_FILES["file_name"])) {
-		require_once(ABSPATH . 'wp-admin/includes/image.php');
-		require_once(ABSPATH . 'wp-admin/includes/file.php');
-		require_once(ABSPATH . 'wp-admin/includes/media.php');
+		require_once (ABSPATH . 'wp-admin/includes/image.php');
+		require_once (ABSPATH . 'wp-admin/includes/file.php');
+		require_once (ABSPATH . 'wp-admin/includes/media.php');
 
 		add_filter('upload_dir', 'sakolawp_custom_dir_homework');
 		$attach_id = media_handle_upload('file_name', $post_id);
@@ -279,8 +280,8 @@ function run_create_homework()
 		'allow_peer_review' => $allow_peer_review,
 		'peer_review_template' => $peer_review_template,
 		'peer_review_who' => $peer_review_who,
-		'word_count_min' => (int)$word_count_min,
-		'word_count_max' => (int)$word_count_max,
+		'word_count_min' => (int) $word_count_min,
+		'word_count_max' => (int) $word_count_max,
 		'questions' => $questions,
 	]));
 
@@ -304,7 +305,7 @@ function run_duplicate_homework()
 	$homework_id = isset($_POST['homework_id']) ? sanitize_text_field($_POST['homework_id']) : '';
 	$homework = $repo->single($homework_id);
 
-	$title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : $homework->title  . ' - Copy';
+	$title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : $homework->title . ' - Copy';
 	$homework_code = substr(md5(rand(100000000, 200000000)), 0, 10);
 
 	$result = $repo->create(array_merge([
@@ -323,16 +324,16 @@ function run_duplicate_homework()
 		'allow_peer_review' => $homework->allow_peer_review,
 		'peer_review_template' => $homework->peer_review_template,
 		'peer_review_who' => $homework->peer_review_who,
-		'word_count_min' => (int)$homework->word_count_min,
-		'word_count_max' => (int)$homework->word_count_max,
+		'word_count_min' => (int) $homework->word_count_min,
+		'word_count_max' => (int) $homework->word_count_max,
 	], [
 		'homework_code' => $homework_code,
 		'questions' => array_map(function ($question, $key) {
-			$question = (array)$question;
+			$question = (array) $question;
 			return array_merge($question, [
-				'question_id' => 'q' . (string)$key,
+				'question_id' => 'q' . (string) $key,
 				'options' => array_map(function ($option) {
-					return (array)$option;
+					return (array) $option;
 				}, $question['options'])
 			]);
 		}, $homework->questions, array_keys($homework->questions)),
@@ -373,8 +374,8 @@ function run_update_homework()
 	$questions = $_POST['questions'];
 	$file_name = isset($_FILES["file_name"]) ? $_FILES["file_name"]["name"] : NULL;
 
-	$uploader_type  = 'teacher';
-	$uploader_id  = sanitize_text_field($_POST['uploader_id']);
+	$uploader_type = 'teacher';
+	$uploader_id = sanitize_text_field($_POST['uploader_id']);
 
 	$homework = $repo->single($homework_id);
 	$course = $courseRepo->single($homework->subject_id);
@@ -388,9 +389,9 @@ function run_update_homework()
 	$args = [];
 
 	if (isset($_FILES["file_name"])) {
-		require_once(ABSPATH . 'wp-admin/includes/image.php');
-		require_once(ABSPATH . 'wp-admin/includes/file.php');
-		require_once(ABSPATH . 'wp-admin/includes/media.php');
+		require_once (ABSPATH . 'wp-admin/includes/image.php');
+		require_once (ABSPATH . 'wp-admin/includes/file.php');
+		require_once (ABSPATH . 'wp-admin/includes/media.php');
 
 		add_filter('upload_dir', 'sakolawp_custom_dir_homework');
 		$attach_id = media_handle_upload('file_name', $post_id);
@@ -1008,14 +1009,14 @@ function run_create_delivery()
 	$enrollRepo = new RunEnrollRepo();
 	$_POST = array_map('stripslashes_deep', $_POST);
 
-	$delivery_data['date']         = sanitize_text_field(date('Y-m-d H:i:s'));
-	$delivery_data['homework_reply'] =  isset($_POST['homework_reply']) ? sakolawp_sanitize_html($_POST['homework_reply']) : '';
-	$delivery_data['responses'] =  isset($_POST['responses']) ? json_encode($_POST['responses']) : NULL;
+	$delivery_data['date'] = sanitize_text_field(date('Y-m-d H:i:s'));
+	$delivery_data['homework_reply'] = isset($_POST['homework_reply']) ? sakolawp_sanitize_html($_POST['homework_reply']) : '';
+	$delivery_data['responses'] = isset($_POST['responses']) ? json_encode($_POST['responses']) : NULL;
 	$delivery_data['student_comment'] = isset($_POST['student_comment']) ? sakolawp_sanitize_html($_POST['student_comment']) : '';
 	$delivery_data['status'] = sanitize_text_field('1');
 	$delivery_data['homework_code'] = isset($_POST['homework_code']) ? sanitize_text_field($_POST['homework_code']) : '';
-	$delivery_data['class_id']      = isset($_POST['class_id']) ? sanitize_text_field($_POST['class_id']) : '';
-	$delivery_data['student_id']    = get_current_user_id();
+	$delivery_data['class_id'] = isset($_POST['class_id']) ? sanitize_text_field($_POST['class_id']) : '';
+	$delivery_data['student_id'] = get_current_user_id();
 
 	if (!$delivery_data['responses']) {
 		wp_send_json_error('Responses are required', 400);
@@ -1041,7 +1042,7 @@ function run_create_delivery()
 		die();
 	}
 
-	$delivery_data['section_id']    = $enrollment->section_id;
+	$delivery_data['section_id'] = $enrollment->section_id;
 	$delivery_data['subject_id'] = $homework->subject_id;
 
 	$post_id = $delivery_data['homework_code']; // homework code
@@ -1088,6 +1089,125 @@ add_action('wp_ajax_run_single_delivery', 'run_single_delivery');
 add_action('wp_ajax_run_create_delivery', 'run_create_delivery');
 add_action('wp_ajax_run_update_delivery', 'run_update_delivery');
 add_action('wp_ajax_run_delete_delivery', 'run_delete_delivery');
+
+
+/** List Peer Reviews */
+function run_list_peer_reviews()
+{
+	$repo = new RunPeerReviewRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->list($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Read a single delivery */
+function run_single_peer_review()
+{
+	$repo = new RunPeerReviewRepo();
+	// $_POST = array_map('stripslashes_deep', $_POST);
+
+	$peer_review_id = sanitize_text_field($_POST['peer_review_id']);
+	$result = $repo->single($peer_review_id);
+
+	if (!$result) {
+		wp_send_json_error('PeerReview not found', 404);
+		die();
+	}
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Create a new peer_review */
+function run_create_peer_review()
+{
+	$repo = new RunPeerReviewRepo();
+	$homeworkRepo = new RunHomeworkRepo();
+	$enrollRepo = new RunEnrollRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$peer_review_data['date'] = sanitize_text_field(date('Y-m-d H:i:s'));
+	$peer_review_data['homework_reply'] = isset($_POST['homework_reply']) ? sakolawp_sanitize_html($_POST['homework_reply']) : '';
+	$peer_review_data['responses'] = isset($_POST['responses']) ? json_encode($_POST['responses']) : NULL;
+	$peer_review_data['student_comment'] = isset($_POST['student_comment']) ? sakolawp_sanitize_html($_POST['student_comment']) : '';
+	$peer_review_data['status'] = sanitize_text_field('1');
+	$peer_review_data['homework_code'] = isset($_POST['homework_code']) ? sanitize_text_field($_POST['homework_code']) : '';
+	$peer_review_data['class_id'] = isset($_POST['class_id']) ? sanitize_text_field($_POST['class_id']) : '';
+	$peer_review_data['student_id'] = get_current_user_id();
+
+	if (!$peer_review_data['responses']) {
+		wp_send_json_error('Responses are required', 400);
+		die();
+	}
+	if (!$peer_review_data['class_id']) {
+		wp_send_json_error('Class is required', 400);
+		die();
+	}
+	if (!$peer_review_data['homework_code']) {
+		wp_send_json_error('Homework is required', 400);
+		die();
+	}
+
+	$enrollment = $enrollRepo->single_by(['student_id' => $peer_review_data['student_id'], 'class_id' => $peer_review_data['class_id']]);
+	if (!$enrollment) {
+		wp_send_json_error('Enrollment not found', 404);
+		die();
+	}
+	$homework = $homeworkRepo->single_by_homework_code($peer_review_data['homework_code']);
+	if (!$homework) {
+		wp_send_json_error('Homework not found', 404);
+		die();
+	}
+
+	$peer_review_data['section_id'] = $enrollment->section_id;
+	$peer_review_data['subject_id'] = $homework->subject_id;
+
+	$post_id = $peer_review_data['homework_code']; // homework code
+
+	$result = $repo->create($peer_review_data);
+
+	if (!$result) {
+		wp_send_json_error('Failed to submit assessment', 500);
+		die();
+	}
+
+	wp_send_json_success($result, 201);
+	die();
+}
+
+/** Update an existing peer_review */
+function run_update_peer_review()
+{
+	$repo = new RunPeerReviewRepo();
+	$peer_review_id = sanitize_text_field($_POST['peer_review_id']);
+	$peer_review_data = array_map('stripslashes_deep', $_POST);
+
+	$result = $repo->update($peer_review_id, $peer_review_data);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** Delete a peer_review */
+function run_delete_peer_review($peer_review_id)
+{
+	$repo = new RunPeerReviewRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+
+	$peer_review_id = sanitize_text_field($_POST['peer_review_id']);
+	$result = $repo->delete($peer_review_id);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+add_action('wp_ajax_run_list_peer_reviews', 'run_list_peer_reviews');
+add_action('wp_ajax_run_single_peer_review', 'run_single_peer_review');
+add_action('wp_ajax_run_create_peer_review', 'run_create_peer_review');
+add_action('wp_ajax_run_update_peer_review', 'run_update_peer_review');
+add_action('wp_ajax_run_delete_peer_review', 'run_delete_peer_review');
 
 /** List Sections */
 function run_list_sections()

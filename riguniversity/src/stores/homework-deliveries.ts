@@ -12,6 +12,8 @@ export interface HomeworkDelivery {
   student_id: string
   class_id: string
   mark?: string
+  created_at?: string
+  updated_at?: string
   responses: Record<string, any>
 }
 

@@ -494,7 +494,7 @@ function sakolawp_get_peer_reviews($enrollment)
 	$student_id = $enrollment->student_id;
 	$deliveryRepo = new RunDeliveryRepo();
 	$peer_reviews = $deliveryRepo->peer_reviews([
-		'student_id' => $student_id,
+		'reviewer_id' => $student_id,
 		'section_id' => $section_id,
 		'class_id' => $class_id,
 		// 'interval_in_days' => 5,

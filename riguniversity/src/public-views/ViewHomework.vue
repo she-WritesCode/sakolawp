@@ -7,15 +7,18 @@ import { DateHelper } from '../utils/date';
 import { useHomeworkStore } from '../stores/homework';
 import { useHomeworkDeliveryStore } from '../stores/homework-deliveries';
 import { useProgramScheduleStore } from '../stores/program-schedule';
+import { usePeerReviewStore } from '../stores/peer-review';
 import { useProgramEnrollmentStore } from '../stores/program-enrollment';
 import DynamicForm from '../components/homeworks/DynamicForm.vue';
+import LoadingIndicator from '../components/LoadingIndicator.vue';
 
 
 const homework_code = ref(new URL(window.location.href).searchParams.get('homework_code'));
 
-const { filter: homeworkFilter, homeworks } = useHomeworkStore()
-const { filter: deliveryFilter, deliveries, createHomeworkDelivery } = useHomeworkDeliveryStore()
-const { filter: scheduleFilter, programSchedules } = useProgramScheduleStore()
+const { filter: homeworkFilter, homeworks, loading: homeworkLoading } = useHomeworkStore()
+const { filter: deliveryFilter, deliveries, createHomeworkDelivery, loading: deliveryLoading } = useHomeworkDeliveryStore()
+const { filter: scheduleFilter, programSchedules, loading: scheduleLoading } = useProgramScheduleStore()
+const { filter: peerReviewFilter, peerReviews, loading: peerReviewLoading } = usePeerReviewStore()
 const { programEnrollments, fetchCurrentUserEnrollments } = useProgramEnrollmentStore()
 
 const currentHomework = computed(() => {
@@ -52,13 +55,20 @@ watch(currentHomework, () => {
     scheduleFilter.content_type = "homework"
     scheduleFilter.class_id = currentEnrollment.value?.class_id ?? ""
 })
+watch(currentSubmission, () => {
+    if (currentHomework.value && currentHomework.value.allow_peer_review) {
+        peerReviewFilter.delivery_id = currentSubmission.value!.delivery_id!
+        peerReviewFilter.class_id = currentEnrollment.value?.class_id ?? ""
+        peerReviewFilter.peer_id = currentEnrollment.value?.student_id ?? ""
+    }
+})
 watch(currentEnrollment, () => {
     scheduleFilter.content_id = currentHomework.value!.homework_id!
     scheduleFilter.content_type = "homework"
     scheduleFilter.class_id = currentEnrollment.value?.class_id ?? ""
 })
 
-const submitHomework = (values) => {
+const submitHomework = (values: Record<string, any>) => {
     createHomeworkDelivery({
         homework_code: currentHomework.value?.homework_code!,
         class_id: currentEnrollment.value?.class_id!,
@@ -77,10 +87,15 @@ const disableSubmission = computed(() => {
     }
     return true
 })
+
+const peerReviewStarted = computed(() => !!peerReviews.value.length)
 </script>
 <template>
     <Toast position="bottom-center" />
-    <div v-if="currentHomework">
+    <div v-if="homeworkLoading.list || scheduleLoading.list || deliveryLoading.list || peerReviewLoading.list">
+        <LoadingIndicator></LoadingIndicator>
+    </div>
+    <div v-else-if="currentHomework">
         <template v-if="!currentSchedule">
             <p class="text-xl">Assessment Schedule Not Found.</p>
         </template>
@@ -92,11 +107,17 @@ const disableSubmission = computed(() => {
                     severity="warning" value="Peer Reviewed">
                 </Tag>
                 <Tag v-if="disableSubmission" severity="danger"
-                    :value="`Sorry you cannot submit this homework any longer. The deadline was ${DateHelper.relativeTime(currentSchedule.actual_deadline_date!)}`">
+                    :value="`Sorry you cannot submit this assessment any longer. The deadline was ${DateHelper.relativeTime(currentSchedule.actual_deadline_date!)}`">
+                </Tag>
+                <Tag v-if="currentSubmission && !disableSubmission" severity="info"
+                    :value="`You submitted this assessment on ${DateHelper.fullDate(currentSubmission.created_at!)}. \nHowever, you can still edit your response before the due date`">
+                </Tag>
+                <Tag v-if="currentSubmission && peerReviewStarted" severity="warning"
+                    :value="`You submitted this assessment on ${DateHelper.fullDate(currentSubmission.created_at!)}. \nYour submission has been reviewed so you are not allowed to update it any more`">
                 </Tag>
             </div>
             <div class="whitespace-break-spaces mb-4">{{ currentHomework.description ?? "" }}</div>
-            <DynamicForm :demo="disableSubmission" :submit="submitHomework"
+            <DynamicForm :demo="disableSubmission || peerReviewStarted" :submit="submitHomework"
                 :initialResponse="currentSubmission?.responses" :questions="currentHomework!.questions"
                 :submitLabel="submitLabel"></DynamicForm>
         </template>

@@ -64,22 +64,22 @@ class RunDeliveryRepo
         global $wpdb;
 
         $section_id = isset($args['section_id']) ? $args['section_id'] : '';
-        $student_id = isset($args['student_id']) ? $args['student_id'] : '';
+        $reviewer_id = isset($args['reviewer_id']) ? $args['reviewer_id'] : '';
         $class_id = isset($args['class_id']) ? $args['class_id'] : '';
         $interval_in_days = isset($args['interval_in_days']) ? $args['interval_in_days'] : '';
 
         $sql = "SELECT d.*, h.title as homework_title, h.section_id, h.homework_code, s.name as subject_name
 		FROM {$wpdb->prefix}{$this->homework_table} h
 		JOIN {$wpdb->prefix}{$this->deliveries_table} d ON h.homework_code = d.homework_code
-		JOIN {$wpdb->prefix}{$this->enroll_table} e ON d.student_id = e.student_id
+		JOIN {$wpdb->prefix}{$this->enroll_table} e ON d.reviewer_id = e.reviewer_id
 		WHERE h.allow_peer_review = 1  
 		AND h.peer_review_who = 'student'";
 
 
 
-        // Add student_id condition
-        if (!empty($student_id)) {
-            $sql .= $wpdb->prepare(" AND d.student_id != %s", $student_id);
+        // Add reviewer_id condition
+        if (!empty($reviewer_id)) {
+            $sql .= $wpdb->prepare(" AND d.reviewer_id != %s", $reviewer_id);
         }
 
         // Add section_id condition
