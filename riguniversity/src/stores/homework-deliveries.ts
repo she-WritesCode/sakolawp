@@ -1,7 +1,6 @@
 import { ref, computed, watch, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { convertObjectToSearchParams } from '@/utils/search'
-import { useHomeworkStore } from './homework'
 
 export interface HomeworkDelivery {
   delivery_id?: string
@@ -9,6 +8,7 @@ export interface HomeworkDelivery {
   homework_reply: string
   student_id: string
   mark: string
+  responses: Record<string, any>
 }
 
 export const useHomeworkDeliveryStore = defineStore('homeworkDeliveries', () => {

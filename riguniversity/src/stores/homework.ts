@@ -33,7 +33,8 @@ export const useHomeworkStore = defineStore('homework', () => {
   const currentHomework = ref<Homework | undefined>(undefined)
   const filter = reactive({
     search: '',
-    subject_id: ''
+    subject_id: '',
+    homework_code: ''
   })
   const loading = reactive({
     list: false,

@@ -48,7 +48,7 @@ watch(form.questions, (value) => {
 </script>
 <template>
     <div class="">
-        <DynamicForm title="" description="" v-if="showPreview" :questions="form.questions" />
+        <DynamicForm demo title="" description="" v-if="showPreview" :questions="form.questions" />
 
         <!-- <div class="mb-4">
             <label for="formTitle" class="block text-sm font-medium text-gray-700">Form Title:</label>

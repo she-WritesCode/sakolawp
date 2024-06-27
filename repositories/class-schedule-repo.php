@@ -3,33 +3,54 @@
 class RunClassScheduleRepo
 {
     protected $class_schedule_table = 'sakolawp_class_schedule';
+    protected $classRepo = null;
+
+    public function __construct()
+    {
+        $this->classRepo = new RunClassRepo();
+    }
 
     /** List Schedules */
     public function list($args = [])
     {
         global $wpdb;
 
+        $subject_id = isset($args['subject_id']) ? $args['subject_id'] : '';
+        $content_type = isset($args['content_type']) ? $args['content_type'] : '';
+        $content_id = isset($args['content_id']) ? $args['content_id'] : '';
+        $class_id = isset($args['class_id']) ? $args['class_id'] : '';
+
         $sql = "SELECT * FROM {$wpdb->prefix}{$this->class_schedule_table} WHERE 1=1";
 
-        if (isset($args['subject_id'])) {
-            $sql .= $wpdb->prepare(" AND subject_id = %d", $args['subject_id']);
+        if (!empty($subject_id)) {
+            $sql .= $wpdb->prepare(" AND subject_id = %d", $subject_id);
         }
 
-        if (isset($args['class_id'])) {
-            $sql .= $wpdb->prepare(" AND class_id = %d", $args['class_id']);
+        if (!empty($content_type)) {
+            $sql .= $wpdb->prepare(" AND content_type = %d", $content_type);
         }
 
-        if (isset($args['content_type'])) {
-            $sql .= $wpdb->prepare(" AND content_type = %s", $args['content_type']);
+        if (!empty($content_id)) {
+            $sql .= $wpdb->prepare(" AND content_id = %s", $content_id);
         }
 
-        // error_log("RunClassScheduleRepo =>" . $sql);
+        if (!empty($class_id)) {
+            $sql .= $wpdb->prepare(" AND class_id = %s", $class_id);
+        }
+
+        error_log("RunClassScheduleRepo =>" . $sql);
 
         $results = $wpdb->get_results($sql);
 
         foreach ($results as $key => $schedule) {
             $results[$key]->release_days = (float)$results[$key]->release_days;
             $results[$key]->deadline_days = (float)$results[$key]->deadline_days;
+            $class = $this->classRepo->single($schedule->class_id);
+            [
+                'release_date' => $results[$key]->actual_release_date,
+                'due_date' => $results[$key]->actual_deadline_date,
+                'release_date_is_past' => $results[$key]->actual_release_date_is_past,
+            ] = get_schedule_dates($schedule, $class->start_date, $class->drip_method);
         }
 
         return $results;

@@ -8,18 +8,20 @@ import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
 
 const props = defineProps<{
-    title: string;
-    description: string;
+    title?: string;
+    description?: string;
+    initialResponse?: Record<string, any>;
     questions: Question[]
     submit?: (values: Record<string, any>) => void
     submitLabel?: string;
+    demo?: boolean
 }>();
 
-const responses = reactive<Record<string, any>>({})
+const responses = reactive<Record<string, any>>(props.initialResponse || {})
 
-const handleSubmit = (values: Record<string, any>) => {
-    console.log("Dynamic Form", values)
-    props.submit && props.submit(values)
+const handleSubmit = (event: Event) => {
+    console.log("Dynamic Form", event)
+    props.submit && props.submit(responses)
 }
 
 const handleFileUpload = (questionId: string, event: Event) => {
@@ -85,8 +87,8 @@ const range = (min: number, max: number) => {
 </script>
 <template>
     <div>
-        <h1>{{ title }}</h1>
-        <p>{{ description }}</p>
+        <h1>{{ title ?? "" }}</h1>
+        <div class="whitespace-break-spaces mb-4">{{ description ?? "" }}</div>
         <form @submit.prevent="handleSubmit">
             <div class="bg-surface-0 border rounded-md p-4" v-for="(question, ) in questions"
                 :key="question.question_id">
@@ -100,7 +102,7 @@ const range = (min: number, max: number) => {
                     <label :for="question.question_id">{{ question.question }}</label>
                     <Textarea @blur="updateWordCount(question.question_id)"
                         @keyup="updateWordCount(question.question_id)" @keypress="updateWordCount(question.question_id)"
-                        @load="updateWordCount(question.question_id)" :rows="6" class="w-full"
+                        @load="updateWordCount(question.question_id)" :rows="10" class="w-full"
                         :id="question.question_id" v-model="responses[question.question_id]"></Textarea>
                     <div class="flex gap-2 justify-between items-center" v-if="question.text_options.add_word_count">
                         <div :class="isValidWordCount(question.question_id) ? '' : 'text-red-500'">
@@ -153,7 +155,7 @@ const range = (min: number, max: number) => {
                         @change="handleFileUpload(question.question_id, $event)" />
                 </div>
             </div>
-            <!-- <Button type="submit">{{ submitLabel || 'Submit' }}</Button> -->
+            <Button v-if="!demo" type="submit">{{ submitLabel || 'Submit' }}</Button>
         </form>
     </div>
 </template>
@@ -166,5 +168,9 @@ form {
 
 form>div {
     margin-bottom: 1rem;
+}
+
+.form-group label {
+    @apply text-base font-medium;
 }
 </style>

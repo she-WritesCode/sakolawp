@@ -537,6 +537,19 @@ add_action('wp_ajax_run_update_lesson', 'run_update_lesson');
 add_action('wp_ajax_run_delete_lesson', 'run_delete_lesson');
 
 /** List Enrolls */
+function run_list_current_user_enrolls()
+{
+	$repo = new RunEnrollRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$student_id = get_current_user_id();
+
+	$result = $repo->list(array_merge($_POST, ['student_id' => $student_id]));
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
+/** List Enrolls */
 function run_list_enrolls()
 {
 	$repo = new RunEnrollRepo();
@@ -604,6 +617,7 @@ function run_delete_enroll($enroll_id)
 }
 
 add_action('wp_ajax_run_list_enrolls', 'run_list_enrolls');
+add_action('wp_ajax_run_list_current_user_enrolls', 'run_list_current_user_enrolls');
 add_action('wp_ajax_run_single_enroll', 'run_single_enroll');
 add_action('wp_ajax_run_create_enroll', 'run_create_enroll');
 add_action('wp_ajax_run_update_enroll', 'run_update_enroll');

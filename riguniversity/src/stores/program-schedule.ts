@@ -18,6 +18,9 @@ export interface ProgramSchedule {
   deadline_days: number
   release_days_time: string
   deadline_days_time: string
+  actual_release_date: string
+  actual_deadline_date: string
+  actual_release_date_is_past: boolean
   created_at?: string
   updated_at?: string
 }
@@ -49,7 +52,9 @@ export const useProgramScheduleStore = (uniqueStoreName = 'programSchedule') =>
     const filter = reactive({
       search: '',
       subject_id: '',
-      class_id: ''
+      class_id: '',
+      content_id: '',
+      content_type: ''
     })
     const loading = reactive({
       list: false,

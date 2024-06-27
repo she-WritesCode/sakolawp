@@ -60,6 +60,8 @@ export class DateHelper {
     } else {
       return dateFns.format(dateTimeObj, 'MMMM dd, yyyy')
     }
+
+    // x days from now
   }
 
   /**

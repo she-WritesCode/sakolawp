@@ -55,10 +55,10 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
   )
 
   watch(filter, () => {
-    fetchprogramEnrollments()
+    fetchProgramEnrollments()
   })
 
-  const fetchprogramEnrollments = () => {
+  const fetchProgramEnrollments = () => {
     if (!filter.search) loading.list = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -83,7 +83,32 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
       })
   }
 
-  const goToViewprogramEnrollment = (programEnrollmentId: string) => {
+  const fetchCurrentUserEnrollments = () => {
+    if (!filter.search) loading.list = true
+    // @ts-ignore
+    fetch(skwp_ajax_object.ajaxurl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'run_list_current_user_enrolls',
+        ...filter
+      })
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        programEnrollments.value = response.data
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+      .finally(() => {
+        loading.list = false
+      })
+  }
+
+  const goToViewProgramEnrollment = (programEnrollmentId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'view_programEnrollment')
     url.searchParams.set('class_id', programEnrollmentId)
@@ -91,14 +116,14 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
     window.location.href = url.toString()
   }
 
-  const closeViewprogramEnrollment = () => {
+  const closeViewProgramEnrollment = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.delete('class_id')
     // showViewScreen.value = false
     window.location.href = url.toString()
   }
-  const goToEditprogramEnrollment = (programEnrollmentId: string) => {
+  const goToEditProgramEnrollment = (programEnrollmentId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('action', 'add_programEnrollment')
     url.searchParams.set('class_id', programEnrollmentId)
@@ -106,7 +131,7 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
     window.location.href = url.toString()
   }
 
-  const closeEditprogramEnrollment = () => {
+  const closeEditProgramEnrollment = () => {
     const url = new URL(window.location.href)
     url.searchParams.delete('action')
     url.searchParams.set('class_id', programEnrollmentId.value as string)
@@ -129,7 +154,7 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
     window.location.href = url.toString()
   }
 
-  const getOneprogramEnrollment = (id: string) => {
+  const getOneProgramEnrollment = (id: string) => {
     loading.get = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -154,7 +179,7 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
       })
   }
 
-  const createprogramEnrollment = (args: Partial<ProgramEnrollment>) => {
+  const createProgramEnrollment = (args: Partial<ProgramEnrollment>) => {
     loading.create = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -188,7 +213,7 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
       })
   }
 
-  const updateprogramEnrollment = (args: Partial<ProgramEnrollment>) => {
+  const updateProgramEnrollment = (args: Partial<ProgramEnrollment>) => {
     loading.update = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -203,7 +228,7 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
     })
       .then((response) => response.json())
       .then(() => {
-        getOneprogramEnrollment(programEnrollmentId.value as string)
+        getOneProgramEnrollment(programEnrollmentId.value as string)
         toast.add({
           severity: 'success',
           summary: 'Success',
@@ -219,7 +244,7 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
       })
   }
 
-  const deleteprogramEnrollment = (id: string) => {
+  const deleteProgramEnrollment = (id: string) => {
     loading.delete = true
     // @ts-ignore
     fetch(skwp_ajax_object.ajaxurl, {
@@ -237,29 +262,30 @@ export const useProgramEnrollmentStore = defineStore('programEnrollment', () => 
       })
       .finally(() => {
         loading.delete = false
-        fetchprogramEnrollments()
+        fetchProgramEnrollments()
       })
   }
 
   return {
     programEnrollments: computed(() => programEnrollments),
-    fetchprogramEnrollments,
+    fetchProgramEnrollments,
+    fetchCurrentUserEnrollments,
     filter: computed(() => filter),
     loading: computed(() => loading),
     currentProgramEnrollment: computed(() => currentProgramEnrollment),
-    goToViewprogramEnrollment,
-    closeViewprogramEnrollment,
+    goToViewProgramEnrollment,
+    closeViewProgramEnrollment,
     programEnrollmentId,
-    getOneprogramEnrollment,
+    getOneProgramEnrollment,
     showAddForm,
     showViewScreen,
     showEditScreen,
     goToAddForm,
     closeAddForm,
-    createprogramEnrollment,
-    updateprogramEnrollment,
-    deleteprogramEnrollment,
-    goToEditprogramEnrollment,
-    closeEditprogramEnrollment
+    createProgramEnrollment,
+    updateProgramEnrollment,
+    deleteProgramEnrollment,
+    goToEditProgramEnrollment,
+    closeEditProgramEnrollment
   }
 })

@@ -135,8 +135,8 @@ if (!empty($enroll)) :
 										<?php
 
 										$current_peer_review = $wpdb->get_row("SELECT * FROM $peer_reviews_table
-									WHERE delivery_id = '$delivery_id'
-									AND reviewer_id = '$student_id';", ARRAY_A);
+											WHERE delivery_id = '$delivery_id'
+											AND reviewer_id = '$student_id';", ARRAY_A);
 										if (empty($current_peer_review)) :
 										?>
 

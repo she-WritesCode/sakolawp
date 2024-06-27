@@ -17,11 +17,11 @@ import LoadingIndicator from '../LoadingIndicator.vue'
 const {
     programEnrollments,
     filter,
-    goToViewprogramEnrollment,
+    goToViewProgramEnrollment,
     programEnrollmentId,
     loading,
     showAddForm,
-    goToAddForm, deleteprogramEnrollment,
+    goToAddForm, deleteProgramEnrollment,
 } = useProgramEnrollmentStore();
 const {
     programId
@@ -46,7 +46,7 @@ function closeDelete() {
     toBeDeleted.value = null
 }
 function deleteAEnrollment(id: string) {
-    deleteprogramEnrollment(id)
+    deleteProgramEnrollment(id)
     closeDelete()
 }
 function getInitials(name: string) {
@@ -111,7 +111,7 @@ function getInitials(name: string) {
                 <Column header="">
                     <template #body="slotProps">
                         <div class="flex gap-2 text-sm">
-                            <Button outlined size="small" @click="goToViewprogramEnrollment(slotProps.data.ID)"
+                            <Button outlined size="small" @click="goToViewProgramEnrollment(slotProps.data.ID)"
                                 label="View"></Button>
                             <Button size="small" @click="initDelete(slotProps.data.ID)" text severity="danger"
                                 label="Delete"></Button>

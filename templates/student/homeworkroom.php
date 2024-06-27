@@ -182,6 +182,7 @@ if (!empty($enroll)) :
 
 			<?php do_action('sakolawp_show_alert_dialog') ?>
 
+			<div id="run-viewhomework"></div>
 
 			<div class="skwp-row">
 				<div class="skwp-column skwp-column-1">
