@@ -106,7 +106,7 @@ class RunDeliveryRepo
             // get courses 
             foreach ($result as $key => $row) {
                 $result[$key]->course = $this->courses_repo->single($row->subject_id);
-                $result[$key]->responses = isset($row->responses) ? json_decode($row->responses) : [];
+                $result[$key]->responses = isset($row->responses) ? json_decode($row->responses) : NULL;
             }
         }
 
