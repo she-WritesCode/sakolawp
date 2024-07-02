@@ -2,6 +2,15 @@
 defined('ABSPATH') || exit;
 
 get_header();
+?>
+<style>
+
+#site-header {
+	display: none;
+}
+</style>
+
+<?php
 do_action('sakolawp_before_main_content');
 //global variables
 global $wpdb;
@@ -19,6 +28,10 @@ if (empty($first_name)) {
 	$user_name = $user_info->display_name;
 } ?>
 <div class="dashboard-inner skwp-content-inner skwp-row skwp-clearfix">
+	<div style="margin-bottom: 270px;">
+		<!-- Vue app -->
+		<div id="run-dashboard"></div>
+	</div>
 	<div class="dash-item skwp-column skwp-column-1">
 		<div class="welcome-wrap">
 			<h1 class="skwp-hello"><?php echo esc_html__('Hello,', 'sakolawp'); ?> <?php echo esc_html($user_name); ?></h1>
@@ -26,6 +39,8 @@ if (empty($first_name)) {
 			<div class="img-account-hello"></div>
 		</div>
 	</div>
+
+
 
 	<div class="dash-item skwp-column skwp-column-1">
 		<div class="news-wrap">

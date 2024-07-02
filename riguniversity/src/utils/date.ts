@@ -153,4 +153,36 @@ export class DateHelper {
     const dateObj = typeof date === 'string' ? new Date(date) : date
     return dateFns.format(dateObj, 'HH:mm')
   }
+
+  static formatMonthsAgo(value: string | number | Date): string {
+    const timestamp = typeof value === 'string' ? parseInt(value) : value;
+    const pastDate = new Date(timestamp * 1000); // Convert seconds to milliseconds
+    const currentDate = new Date();
+  
+    // Calculate the difference in months
+    const yearsDifference = currentDate.getFullYear() - pastDate.getFullYear();
+    const monthsDifference = currentDate.getMonth() - pastDate.getMonth();
+    const monthsAgo = yearsDifference * 12 + monthsDifference;
+  
+    return `${monthsAgo} months ago`;
+}
+
+static getFormattedDateInfo(dateStr: string, formatType = 'short') {
+  // Parse the date string into a Date object
+  const date = dateFns.parse(dateStr, 'MMMM dd, yyyy', new Date());
+
+  // Determine the format for the day of the week
+  const dayOfWeekFormat = formatType === 'full' ? 'EEEE' : 'EEE';
+
+  // Get the day of the week in the specified format
+  const dayOfWeek = dateFns.format(date, dayOfWeekFormat);
+
+  // Get the day of the month
+  const dayOfMonth = dateFns.getDate(date);
+
+  return {
+    dayOfWeek,
+    dayOfMonth
+  };
+}
 }

@@ -72,6 +72,11 @@ if ($user_active == 1) {
 		$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/student/view_mark.php';
 		return $new_template;
 	}
+	// view_profile
+	elseif ($wp->request === "profile") {
+		$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/student/profile.php';
+		return $new_template;
+	}
 
 	if ($user_active == 1 && get_page_template_slug() == 'register-template.php') {
 		$new_template =  SAKOLAWP_PLUGIN_DIR . '/templates/teacher/dashboard.php';

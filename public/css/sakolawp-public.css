@@ -281,8 +281,9 @@ input {
 .skwp-navigation-inner {
 	background-color: #ffffff;
 	padding: 20px 0px;
-	border-radius: 15px;
-	box-shadow:0px 0px 10px -2px #ddd;
+	/* border-radius: 15px; */
+	/* box-shadow:0px 0px 10px -2px #ddd; */
+	height: 100%;
 }
 .skwp-menu-item {
 	position: relative;
@@ -292,12 +293,21 @@ input {
 	padding: 12px 30px;
 	text-decoration: none;
 	color: #000000;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 24.2px;
+	padding: 15px 25px;
+
+
 }
 .skwp-menu-item.active a, .skwp-menu-item a:hover {
-	background-color: #8bdbad;
+	background-color: #EEF3FE;
 	color: #ffffff;
+	border-radius: 5px;
+	color: #4E80DF;
+
 }
-.skwp-menu-item.active:after {
+/* .skwp-menu-item.active:after {
 	content: '';
 	width: 0; 
 	height: 0; 
@@ -308,7 +318,7 @@ input {
 	right: 0;
 	top: 50%;
 	transform: translateY(-50%);
-}
+} */
 
 .sakolawp-inner-content {
 	padding: 30px;
@@ -2756,5 +2766,48 @@ fieldset {
 .sakolawp-navigation {
 
     position: sticky;
-    top: 30px;
+    /* top: 30px; */
+	height: 100vh;
+}
+
+.skwp-container  {
+	display: flex;
+	flex-wrap: nowrap;
+	min-height: 100vh;
+}
+
+
+.sakolawp-navigation {
+	width: 25%;
+    padding: 20px;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100dvh;
+}
+
+.sakolawp-content-wrapper.skwp-column-main.skwp-column {
+	width: 75%;
+  padding: 20px;
+  background-color: inherit; /* Example background color */
+  padding: 2rem;
+  margin: auto;
+  max-width: 1109px;
+}
+
+.main-sakolawp-wrap {
+	padding: 0px;
+}
+
+.skwp-site-name {
+	padding: 5px 25px 40px 25px;
+}
+
+.skwp-site-title {
+font-size: 20px;
+font-weight: 700;
+line-height: 24.2px;
+text-align: left;
+text-transform: capitalize;
 }
