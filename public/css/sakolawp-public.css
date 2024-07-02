@@ -2801,7 +2801,14 @@ fieldset {
 }
 
 .skwp-site-name {
-	padding: 5px 25px 40px 25px;
+	padding: 5px 25px 40px 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.skwp-site-logo {
+	max-width: 70px;
 }
 
 .skwp-site-title {

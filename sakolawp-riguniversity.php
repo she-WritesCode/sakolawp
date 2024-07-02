@@ -456,12 +456,26 @@ function run_delete_homework($homework_id)
 	die();
 }
 
+/**
+ * Show homework belonging to a student
+ */
+function run_list_student_homework()
+{
+	$repo = new RunHomeworkRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$result = $repo->list_homework_by_student($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
 add_action('wp_ajax_run_list_homeworks', 'run_list_homeworks');
 add_action('wp_ajax_run_single_homework', 'run_single_homework');
 add_action('wp_ajax_run_create_homework', 'run_create_homework');
 add_action('wp_ajax_run_duplicate_homework', 'run_duplicate_homework');
 add_action('wp_ajax_run_update_homework', 'run_update_homework');
 add_action('wp_ajax_run_delete_homework', 'run_delete_homework');
+add_action('wp_ajax_run_list_student_homework', 'run_list_student_homework');
 
 
 /** List Lessons */

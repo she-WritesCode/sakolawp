@@ -28,3 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+
+../public/js/index.js  
+../public/css/index.css  
