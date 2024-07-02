@@ -76,8 +76,8 @@ if ( $site_name  ) : ?>
 			<?php echo esc_html__('Event', 'sakolawp'); ?>
 		</a>
 	</div>
-	<div class="skwp-menu-item <?php if ($wp->request === "profile_post" || 'sakolawp-event' == get_post_type()) echo esc_attr('active'); ?>">
-		<a href="<?php echo esc_url(home_url('/profile_post')); ?>">
+	<div class="skwp-menu-item <?php if ($wp->request === "profile" || 'sakolawp-event' == get_post_type()) echo esc_attr('active'); ?>">
+		<a href="<?php echo esc_url(home_url('/profile')); ?>">
 			<i class="sakolawp-icon sakolawp-icon-printed"></i>
 			<?php echo esc_html__('My Account', 'sakolawp'); ?>
 		</a>

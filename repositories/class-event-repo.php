@@ -146,4 +146,33 @@ class RunEventRepo
     {
         return wp_delete_post($event_id, true);
     }
+
+    /** Get Events for a Student */
+    public function get_user_enrolled_events($user_id) 
+    {
+        global $wpdb;
+    
+        // Ensure a user ID is provided
+        if (!$user_id) {
+            return [];
+        }
+    
+        // Define table names
+        $enroll_table = "{$wpdb->prefix}sakolawp_enroll";
+        $class_table = "{$wpdb->prefix}class";
+    
+        // SQL query to fetch classes the user is enrolled in
+        $sql = $wpdb->prepare("
+            SELECT e.*, c.name as class_name, u.display_name as student_name
+            FROM $enroll_table e
+            JOIN $class_table c ON e.class_id = c.class_id
+            JOIN {$wpdb->prefix}users u ON e.student_id = u.ID
+            WHERE e.student_id = %d
+        ", $user_id);
+    
+        // Execute the query and get the results
+        $result = $wpdb->get_results($sql);
+    
+        return $result;
+    }
 }

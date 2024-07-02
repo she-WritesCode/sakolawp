@@ -2,13 +2,27 @@
 import { ref, onMounted } from 'vue';
 import Toast from 'primevue/toast';
 import Button from 'primevue/button';
-import StudentLayout from './../components/StudentLayout.vue'
+import StudentLayout from '@/components/StudentLayout.vue';
+import { useDashboardStore } from '@/stores/dashboard';
+import { DateHelper } from '@/utils/date';
+import Skeleton from 'primevue/skeleton';
+import { useProgramMeetingStore } from '@/stores/program-meeting';
+
 
 const userFirstName = ref('');
 
+const { enrolledPrograms, fetchEnrolledPrograms, fetchNews, news : events, filter, loading, studentId } = useDashboardStore();
+const { fetchProgramMeetings, programMeetings, goToViewProgramMeeting } = useProgramMeetingStore();
 onMounted(() => {
   userFirstName.value = skwp_ajax_object.userInfo.user_name;
-});
+  fetchEnrolledPrograms();
+  fetchProgramMeetings();
+  fetchNews()
+  //console.log(programMeetings, 'here');
+} 
+
+);
+
 
 </script>
 <template>
@@ -29,14 +43,14 @@ onMounted(() => {
             </div>
 
             <div>
-                <Button class=" rounded-xl" label="Take Attendance"></Button>
+                <Button class="w ring-primary text-red-300 heds"  outlined  label="Take Attendance"></Button>
             </div>
 
         </div>
 
         <!-- Assesements -->
         <div class="">
-            <h2 class="text-primary-600 font-semibold">
+            <h2 class="font-semibold">
                 Upcoming Assesement
             </h2>
     
@@ -67,27 +81,27 @@ onMounted(() => {
 
         <!-- Meetings -->
         <div class="">
-            <h2 class="text-primary-600 font-semibold">Meetings</h2>
+            <h2 class="font-semibold">Meetings</h2>
             <div class="grid md:grid-cols-2 gap-5">
-                <div v-for="meeting in [1, 2]" :key="meeting" class="bg-white border-2 rounded-xl p-4 grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-1">
+                <div v-for="meeting in programMeetings" :key="meeting.ID" class="bg-white border-2 rounded-xl p-4 grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-1">
                     <div class="size-20 flex flex-col items-center justify-center font-medium bg-black text-white rounded-xl p-3">
-                            <div>MON</div>
-                            <div>0{{ meeting }}</div>
+                            <div class="uppercase">{{ DateHelper.getFormattedDateInfo(meeting!.date).dayOfWeek }}</div>
+                            <div>{{ DateHelper.getFormattedDateInfo(meeting!.date).dayOfMonth }}</div>
                     </div>
 
-                    <div class="col-span-2 md:col-span-4 lg:flex justify-between items-center w-full">
+                    <div class="col-span-2 md:pl-5 md:col-span-4 lg:flex justify-between items-center w-full">
 
                         <div>
                             <h5 class="mb-0 font-semibold ">
-                                Class Meeting
+                                {{  meeting.title }}
                             </h5>
-                            <div class="font-medium text-sm">Location of Meeting</div>
+                            <div class="font-medium text-sm">{{ meeting.content }}</div>
                             <div class="inline-flex gap-1">
                                 <img src="./../assets/clock.svg" />
-                                <small>09.00 - 10:00</small>
+                                <small>{{ meeting.meta._sakolawp_event_date_clock[0] }}</small>
                             </div>
                         </div>
-                        <div class="flex gap-2 font-semibold text-sm"> View  <img src="./../assets/chevron-right.svg" /></div>
+                        <div @click="goToViewProgramMeeting(meeting.ID)" class="flex gap-2 font-semibold text-sm cursor-pointer hover:underline"> View  <img src="./../assets/chevron-right.svg" /></div>
 
                     </div>
 
@@ -98,30 +112,82 @@ onMounted(() => {
 
         <!-- Program Enrolled -->
         <div class="">
-            <h2 class="text-primary-600 font-semibold">Program Enrolled</h2>
+            <h2 class="font-semibold">Programs Enrolled</h2>
 
             <div class="grid md:grid-cols-2 gap-5">
-                <div v-for="meeting in [1, 2]" :key="meeting" class="bg-white border-2 rounded-lg p-5">
-                    <div class="space-y-3 w-full">
-                        <div class="flex justify-between">
-                            <h4 class=" font-semibold text-xl mb-0">RUN LAGOS 2024</h4>
-                            <div class="text-orange-500  font-semibold text-xl">45%</div>
+                <!-- loader -->
+                <template v-if="loading.list">
+                        <div v-for="i in [1, 2,]" :key="i" class="space-y-3 w-full bg-white border-2 rounded-lg p-5">
+                            <div class="flex justify-between">
+                                <Skeleton  width="10rem"></Skeleton>
+                                <Skeleton  width="5rem"></Skeleton>
+                            </div>
+                            <div class="w-full rounded-full bg-gray-200">
+                                <Skeleton class="rounded-full p-1"></Skeleton>
+                            </div>
+                            <div>
+                                <Skeleton width="10rem" class="text-sm"></Skeleton>
+                            </div>
                         </div>
-                        <div class="w-full rounded-full bg-gray-200">
-                            <div class="bg-orange-500 rounded-full w-[45%] h-full p-1"></div>
+                </template>
+                <template v-else>
+                    <div v-for="program in enrolledPrograms" :key="program.id" class="bg-white border-2 rounded-lg p-5">
+                        <div class="space-y-3 w-full">
+                            <div class="flex justify-between">
+                                <h4 class="font-semibold text-xl mb-0 uppercase">{{ program.class_name }}</h4>
+                                <div class="text-orange-500 font-semibold text-xl">10%</div>
+                            </div>
+                            <div class="w-full rounded-full bg-gray-200">
+                                <!-- <div :style="{ width: program.progress + '%' }" class="bg-orange-500 rounded-full h-full p-1"></div> -->
+                                <div class="bg-orange-500 rounded-full w-[45%] h-full p-1"></div>
+                            </div>
+                            <div>
+                                <small class="font-semibold text-sm">Started {{ DateHelper.formatMonthsAgo(program.date_added)  }}</small>
+                            </div>
                         </div>
-                        <div>
-                            <small class="font-semibold text-sm">started 2 Months ago</small>
-                        </div>
-                </div>
-                </div>
-
+                    </div>
+                </template>
             </div>
 
         </div>
+
+
+            <!-- Latest News -->
+            <div class="">
+            <h2 class="font-semibold">Lastest News</h2>
+            <div class="grid md:grid-cols-3 gap-5">
+                <div v-for="event in events" :key="event.ID.toString()" class="bg-white border-2 rounded-xl p-2 flex items-center gap-3">
+                    <div class="w-[45%] flex flex-col items-center justify-center font-medium bg-black text-white rounded-xl">
+                            <img src="./../assets/news-default.png" alt="" class="w-full h-full object-fill" /> 
+                    </div>
+
+                    <div class="">
+                            <h5 class="mb-0 font-semibold ">
+
+                                {{ event.title }}
+                            </h5>
+
+                            <div class="text-sm flex w-full justify-between">
+                                    <small> {{  DateHelper.relativeTime(event.date)  }}</small>
+                                    <small> NEWS RUN</small>
+                            </div>
+                        
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+       
     </div>
 </StudentLayout>
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.heds {
+    border-color: transparent!important;
+}
+</style>
