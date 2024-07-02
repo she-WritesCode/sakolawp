@@ -60,7 +60,7 @@ const navigateToAttendanceReport = () => {
             <!-- Assesements -->
             <div class="">
                 <Skeleton class="mb-3" width="50%" v-if="loading.homework" />
-                <template v-else >
+                <template v-else>
                     <h2 class="font-semibold text-xl">
                         Upcoming Assesement
                     </h2>
@@ -68,12 +68,12 @@ const navigateToAttendanceReport = () => {
 
                 <template v-if="loading.homework">
                     <div class="grid lg:grid-cols-3 gap-3">
-                        <div v-for="assesement in [1,2,3]" :key="assesement"
+                        <div v-for="assesement in [1, 2, 3]" :key="assesement"
                             class="grid grid-cols-5 gap-10 content-center justify-center items-center border-2 bg-white rounded-md p-5">
                             <div class="col-span-4 space-y-3">
                                 <Skeleton />
-                                    <Skeleton  width="50%" />
-                                    <Skeleton  width="50%" />
+                                <Skeleton width="50%" />
+                                <Skeleton width="50%" />
                             </div>
                             <div class="col-span-1">
                                 <Skeleton shape="circle" size="2rem" />
@@ -114,7 +114,7 @@ const navigateToAttendanceReport = () => {
                     <div v-for="meeting in programMeetings" :key="meeting.ID"
                         class="bg-white border-2 rounded-xl p-4 grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-1">
                         <div
-                            class="size-20 flex flex-col items-center justify-center font-medium bg-black text-white rounded-xl p-3">
+                            class="size-20 flex flex-col items-center justify-center font-semibold bg-black text-white rounded-xl p-3">
                             <div class="uppercase">{{ DateHelper.getFormattedDateInfo(meeting!.date).dayOfWeek }}</div>
                             <div>{{ DateHelper.getFormattedDateInfo(meeting!.date).dayOfMonth }}</div>
                         </div>
@@ -167,7 +167,8 @@ const navigateToAttendanceReport = () => {
                             class="bg-white border-2 rounded-lg p-5">
                             <div class="space-y-3 w-full">
                                 <div class="flex justify-between">
-                                    <h4 class="font-semibold text-xl mb-0 uppercase truncate line-clamp-1">{{ program.class_name }}</h4>
+                                    <h4 class="font-semibold text-xl mb-0 uppercase truncate line-clamp-1">{{
+                                        program.class_name }}</h4>
                                     <div class="text-orange-500 font-semibold text-xl">10%</div>
                                 </div>
                                 <div class="w-full rounded-full bg-gray-200">
@@ -228,5 +229,8 @@ const navigateToAttendanceReport = () => {
 <style scoped>
 .heds {
     border-color: transparent !important;
+    padding: 10px 15px 10px 15px!important;
+    border-radius: 10px;
+    background-color: #5687F2!important;
 }
 </style>
