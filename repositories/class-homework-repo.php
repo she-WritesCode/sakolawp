@@ -245,4 +245,30 @@ class RunHomeworkRepo
 
         return $result;
     }
+
+    /** List Homeworks */
+    function list_homework_by_student($args = [])
+    {
+        
+        global $wpdb;
+        $student_id = isset($args['student_id']) ? intval($args['student_id']) : get_current_user_id();
+        $sql = $wpdb->prepare("
+        SELECT h.homework_id, h.title, h.date_end, IFNULL(d.submitted, 0) AS submitted
+        FROM {$wpdb->prefix}sakolawp_homework h
+        LEFT JOIN (
+            SELECT homework_code, 1 AS submitted
+            FROM {$wpdb->prefix}sakolawp_deliveries
+            WHERE student_id = %d
+        ) d ON h.homework_code = d.homework_code
+        WHERE h.class_id IN (
+            SELECT class_id
+            FROM {$wpdb->prefix}sakolawp_enroll
+            WHERE student_id = %d
+        )
+    ", $student_id, $student_id);
+
+        $result = $wpdb->get_results($sql);
+
+        return $result;
+    }
 }

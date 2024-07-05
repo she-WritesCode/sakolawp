@@ -456,12 +456,26 @@ function run_delete_homework($homework_id)
 	die();
 }
 
+/**
+ * Show homework belonging to a student
+ */
+function run_list_student_homework()
+{
+	$repo = new RunHomeworkRepo();
+	$_POST = array_map('stripslashes_deep', $_POST);
+	$result = $repo->list_homework_by_student($_POST);
+
+	wp_send_json_success($result, 200);
+	die();
+}
+
 add_action('wp_ajax_run_list_homeworks', 'run_list_homeworks');
 add_action('wp_ajax_run_single_homework', 'run_single_homework');
 add_action('wp_ajax_run_create_homework', 'run_create_homework');
 add_action('wp_ajax_run_duplicate_homework', 'run_duplicate_homework');
 add_action('wp_ajax_run_update_homework', 'run_update_homework');
 add_action('wp_ajax_run_delete_homework', 'run_delete_homework');
+add_action('wp_ajax_run_list_student_homework', 'run_list_student_homework');
 
 
 /** List Lessons */
@@ -1354,3 +1368,85 @@ add_action('wp_ajax_run_single_accountability', 'run_single_accountability');
 add_action('wp_ajax_run_create_accountability', 'run_create_accountability');
 add_action('wp_ajax_run_update_accountability', 'run_update_accountability');
 add_action('wp_ajax_run_delete_accountability', 'run_delete_accountability');
+
+
+
+
+add_action('wp_ajax_run_user_enrolled_classes', 'run_user_enrolled_classes');
+add_action('wp_ajax_nopriv_run_user_enrolled_classes', 'run_user_enrolled_classes');
+
+/** Get List of Programs Student is enrolled in */
+function run_user_enrolled_classes() {
+    global $wpdb;
+
+    // Get the ID of the currently logged-in user
+    $user_id = get_current_user_id();
+
+    //Ensure a user is logged in
+    if (!$user_id) {
+        return [];
+    }
+
+	$repo = new RunEnrollRepo();
+	$ky['student_id'] = $user_id;
+
+	$result = $repo->list($ky);
+
+	wp_send_json_success($result, 200);
+ 
+}
+
+
+// Register the AJAX action for logged-in users
+add_action('wp_ajax_run_user_enrolled_events', 'run_user_enrolled_events');
+
+function run_user_enrolled_events() {
+    // Get the ID of the currently logged-in user
+    $user_id = get_current_user_id();
+
+    // Fetch the enrolled classes
+	$repo = new RunEventRepo();
+    $enrolled_classes = $repo->get_user_enrolled_events($user_id);
+
+    wp_send_json_success($enrolled_classes);
+}
+
+
+// Register the AJAX action for logged-in users
+add_action('wp_ajax_run_latest_news', 'run_latest_news');
+add_action('wp_ajax_nopriv_run_latest_news', 'run_latest_news');
+
+
+function run_latest_news() {
+
+
+	$sakolawp_news_args  = array(
+		'post_type'      => 'sakolawp-news',
+		'posts_per_page' => 3,
+		'ignore_sticky_posts' => true,
+	);
+
+
+	$query = new WP_Query($sakolawp_news_args);
+	$news = array();
+
+	if ($query->have_posts()) {
+		while ($query->have_posts()) {
+			$query->the_post();
+			global $post;
+			$news[] = array(
+				'ID'        => get_the_ID(),
+				'img_url' => wp_get_attachment_image_src(get_post_thumbnail_id(), 'full'),
+				'title'     => get_the_title(),
+				'content'   => get_the_content(),
+				'permalink' => get_permalink(),
+				'date'      => get_the_date(),
+				'category_terms' => get_the_terms($post->ID, 'news-category'),
+			);
+		}
+		wp_reset_postdata();
+	}
+
+	wp_send_json_success($news);
+
+}

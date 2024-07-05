@@ -27,6 +27,9 @@ if (is_page('myaccount') || $wp->request === "myaccount") {
     $title_parts['title'] = 'Attendance Report';
 } elseif ($wp->request === "report_attendance_view") {
     $title_parts['title'] = 'Attendance Report';
+} elseif ($wp->request === "profile") {
+    $title_parts['title'] = 'Profile';
+} elseif ($wp->request === "news_post") {
 } elseif ($wp->request === "edit_profile") {
     $title_parts['title'] = 'Edit Profile';
 } elseif ($wp->request === "news_post") {
